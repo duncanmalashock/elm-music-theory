@@ -2,6 +2,7 @@ module MusicTheory.Chord exposing (chord, toPitchClasses)
 
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Internal.PitchClass
+import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.PitchClass as PitchClass
 
 

@@ -81,6 +81,13 @@ flatNine alterations =
     }
 
 
+flatThirteen : Alterations -> Alterations
+flatThirteen alterations =
+    { alterations
+        | flatThirteenth = True
+    }
+
+
 seventhChordToString : SeventhChord -> String
 seventhChordToString seventhChord =
     case seventhChord of
@@ -341,10 +348,10 @@ seventhChordToIntervals seventhChord =
 
 
 extensionAndAlterationsToIntervals : Maybe Extension -> Alterations -> List Interval.Interval
-extensionAndAlterationsToIntervals maybeExtension ({ sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } as alterations) =
+extensionAndAlterationsToIntervals maybeExtension ({ flatFifth, sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } as alterations) =
     let
         maybeNaturalFifth =
-            if not sharpFifth then
+            if not sharpFifth || flatFifth then
                 [ Interval.perfectFifth ]
 
             else
@@ -393,7 +400,7 @@ extensionAndAlterationsToIntervals maybeExtension ({ sharpFifth, flatNinth, shar
 
 
 alterationsToIntervals : Alterations -> List Interval.Interval
-alterationsToIntervals { sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } =
+alterationsToIntervals { flatFifth, sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } =
     let
         boolToMaybe condition valueToJust =
             if condition then
@@ -403,7 +410,8 @@ alterationsToIntervals { sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatT
                 Nothing
     in
     List.filterMap identity
-        [ boolToMaybe sharpFifth Interval.augmentedFifth
+        [ boolToMaybe flatFifth Interval.diminishedFifth
+        , boolToMaybe sharpFifth Interval.augmentedFifth
         , boolToMaybe flatNinth Interval.minorSecond
         , boolToMaybe sharpNinth Interval.augmentedSecond
         , boolToMaybe sharpEleventh Interval.augmentedFourth
@@ -526,6 +534,17 @@ diminishedSeventh =
             Nothing
             (noAlterations
                 |> flatFive
+            )
+
+
+diminishedSeventhElevenFlatThirteen : ChordClass
+diminishedSeventhElevenFlatThirteen =
+    SeventhChord <|
+        DiminishedSeventh
+            (Just Eleventh)
+            (noAlterations
+                |> flatFive
+                |> flatThirteen
             )
 
 
