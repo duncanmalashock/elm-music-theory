@@ -236,30 +236,46 @@ toIntervals chordClass =
         Triad triad ->
             case triad of
                 MajorTriad ->
-                    []
+                    [ Interval.perfectUnison
+                    , Interval.majorThird
+                    , Interval.perfectFifth
+                    ]
 
                 MinorTriad ->
-                    []
+                    [ Interval.perfectUnison
+                    , Interval.minorThird
+                    , Interval.perfectFifth
+                    ]
 
                 AugmentedTriad ->
-                    []
+                    [ Interval.perfectUnison
+                    , Interval.majorThird
+                    , Interval.augmentedFifth
+                    ]
 
                 DiminishedTriad ->
-                    []
+                    [ Interval.perfectUnison
+                    , Interval.minorThird
+                    , Interval.diminishedFifth
+                    ]
 
                 Sus2Triad ->
-                    []
+                    [ Interval.perfectUnison
+                    , Interval.majorSecond
+                    , Interval.perfectFifth
+                    ]
 
                 Sus4Triad ->
-                    []
+                    [ Interval.perfectUnison
+                    , Interval.perfectFourth
+                    , Interval.perfectFifth
+                    ]
 
         TriadAdd9 majorOrMinorThird ->
-            case majorOrMinorThird of
-                MajorThird ->
-                    []
-
-                MinorThird ->
-                    []
+            [ Interval.perfectUnison
+            , majorOrMinorThirdToInterval majorOrMinorThird
+            , Interval.perfectFifth
+            ]
 
         SixthChord majorOrMinorThird { ninthAdded } ->
             [ Interval.perfectUnison
@@ -275,7 +291,124 @@ toIntervals chordClass =
                    )
 
         SeventhChord seventhChord ->
-            []
+            seventhChordToIntervals seventhChord
+
+
+seventhChordToIntervals : SeventhChord -> List Interval.Interval
+seventhChordToIntervals seventhChord =
+    case seventhChord of
+        MajorSeventh maybeExtension alterations ->
+            [ Interval.perfectUnison
+            , Interval.majorThird
+            , Interval.majorSeventh
+            ]
+                ++ extensionAndAlterationsToIntervals maybeExtension alterations
+
+        MinorSeventh maybeExtension alterations ->
+            [ Interval.perfectUnison
+            , Interval.minorThird
+            , Interval.minorSeventh
+            ]
+                ++ extensionAndAlterationsToIntervals maybeExtension alterations
+
+        DominantSeventh maybeExtension alterations ->
+            [ Interval.perfectUnison
+            , Interval.majorThird
+            , Interval.minorSeventh
+            ]
+                ++ extensionAndAlterationsToIntervals maybeExtension alterations
+
+        DominantSeventhSus4 maybeExtension alterations ->
+            [ Interval.perfectUnison
+            , Interval.perfectFourth
+            , Interval.minorSeventh
+            ]
+                ++ extensionAndAlterationsToIntervals maybeExtension alterations
+
+        DiminishedSeventh maybeExtension alterations ->
+            [ Interval.perfectUnison
+            , Interval.minorThird
+            , Interval.diminishedSeventh
+            ]
+                ++ extensionAndAlterationsToIntervals maybeExtension alterations
+
+        MinorMajorSeventh maybeExtension alterations ->
+            [ Interval.perfectUnison
+            , Interval.minorThird
+            , Interval.majorSeventh
+            ]
+                ++ extensionAndAlterationsToIntervals maybeExtension alterations
+
+
+extensionAndAlterationsToIntervals : Maybe Extension -> Alterations -> List Interval.Interval
+extensionAndAlterationsToIntervals maybeExtension ({ sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } as alterations) =
+    let
+        maybeNaturalFifth =
+            if not sharpFifth then
+                [ Interval.perfectFifth ]
+
+            else
+                []
+
+        maybeNaturalNinth =
+            if not (sharpNinth || flatNinth) then
+                [ Interval.majorSecond ]
+
+            else
+                []
+
+        maybeNaturalEleventh =
+            if not sharpEleventh then
+                [ Interval.perfectFourth ]
+
+            else
+                []
+
+        maybeNaturalThirteenth =
+            if not flatThirteenth then
+                [ Interval.majorSixth ]
+
+            else
+                []
+    in
+    case maybeExtension of
+        Nothing ->
+            maybeNaturalFifth
+                ++ alterationsToIntervals alterations
+
+        Just Ninth ->
+            maybeNaturalNinth
+                ++ alterationsToIntervals alterations
+
+        Just Eleventh ->
+            maybeNaturalEleventh
+                ++ maybeNaturalNinth
+                ++ alterationsToIntervals alterations
+
+        Just Thirteenth ->
+            maybeNaturalThirteenth
+                ++ maybeNaturalEleventh
+                ++ maybeNaturalNinth
+                ++ alterationsToIntervals alterations
+
+
+alterationsToIntervals : Alterations -> List Interval.Interval
+alterationsToIntervals { sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } =
+    let
+        boolToMaybe condition valueToJust =
+            if condition then
+                Just valueToJust
+
+            else
+                Nothing
+    in
+    List.filterMap identity
+        [ boolToMaybe sharpFifth Interval.augmentedFifth
+        , boolToMaybe flatNinth Interval.minorSecond
+        , boolToMaybe sharpNinth Interval.augmentedSecond
+        , boolToMaybe sharpEleventh Interval.augmentedFourth
+        , boolToMaybe flatThirteenth Interval.minorSixth
+        ]
 
 
 majorOrMinorThirdToInterval : MajorOrMinorThird -> Interval
