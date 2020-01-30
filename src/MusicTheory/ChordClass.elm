@@ -1,5 +1,6 @@
 module MusicTheory.ChordClass exposing
     ( ChordClass
+    , TertianFactors
     , augmented
     , diminished
     , diminishedSeventh
@@ -21,6 +22,7 @@ module MusicTheory.ChordClass exposing
     , majorSeventh
     , majorSix
     , majorSixNine
+    , mapTertianFactors
     , minor
     , minorAddNine
     , minorMajorSeventh
@@ -44,14 +46,26 @@ type ChordClass
     | SeventhChord SeventhChord
 
 
-type alias TertianFactors =
-    { root : Interval.Interval
-    , thirdOrSus : Interval.Interval
-    , fifth : List Interval.Interval
-    , seventh : Maybe Interval.Interval
-    , ninth : List Interval.Interval
-    , eleventh : Maybe Interval.Interval
-    , thirteenthOrSixth : Maybe Interval.Interval
+type alias TertianFactors a =
+    { root : a
+    , thirdOrSus : a
+    , fifth : List a
+    , seventh : Maybe a
+    , ninth : List a
+    , eleventh : Maybe a
+    , thirteenthOrSixth : Maybe a
+    }
+
+
+mapTertianFactors : (a -> b) -> TertianFactors a -> TertianFactors b
+mapTertianFactors fn tertianFactors =
+    { root = fn tertianFactors.root
+    , thirdOrSus = fn tertianFactors.thirdOrSus
+    , fifth = List.map fn tertianFactors.fifth
+    , seventh = Maybe.map fn tertianFactors.seventh
+    , ninth = List.map fn tertianFactors.ninth
+    , eleventh = Maybe.map fn tertianFactors.eleventh
+    , thirteenthOrSixth = Maybe.map fn tertianFactors.thirteenthOrSixth
     }
 
 
@@ -291,7 +305,7 @@ triadToTertianFactors :
     , thirdOrSus : Interval.Interval
     , fifth : Interval.Interval
     }
-    -> TertianFactors
+    -> TertianFactors Interval
 triadToTertianFactors { root, thirdOrSus, fifth } =
     { root = root
     , thirdOrSus = thirdOrSus
@@ -303,21 +317,35 @@ triadToTertianFactors { root, thirdOrSus, fifth } =
     }
 
 
-tertianFactorsWithNinth : Interval -> TertianFactors -> TertianFactors
+tertianFactorsWithFifth : Interval -> TertianFactors Interval -> TertianFactors Interval
+tertianFactorsWithFifth newFifth factors =
+    { factors
+        | ninth = factors.fifth ++ [ newFifth ]
+    }
+
+
+tertianFactorsWithNinth : Interval -> TertianFactors Interval -> TertianFactors Interval
 tertianFactorsWithNinth newNinth factors =
     { factors
         | ninth = factors.ninth ++ [ newNinth ]
     }
 
 
-tertianFactorsWithSixth : Interval -> TertianFactors -> TertianFactors
+tertianFactorsWithEleventh : Interval -> TertianFactors Interval -> TertianFactors Interval
+tertianFactorsWithEleventh newEleventh factors =
+    { factors
+        | eleventh = Just newEleventh
+    }
+
+
+tertianFactorsWithSixth : Interval -> TertianFactors Interval -> TertianFactors Interval
 tertianFactorsWithSixth newSixth factors =
     { factors
         | thirteenthOrSixth = Just newSixth
     }
 
 
-toTertianFactors : ChordClass -> TertianFactors
+toTertianFactors : ChordClass -> TertianFactors Interval
 toTertianFactors chordClass =
     case chordClass of
         Triad triad ->
@@ -390,126 +418,160 @@ toTertianFactors chordClass =
             seventhChordToTertianFactors seventhChord
 
 
-seventhChordToTertianFactors : SeventhChord -> List Interval.Interval
+rootAndGuideTonesToTertianFactors :
+    { root : Interval.Interval
+    , thirdOrSus : Interval.Interval
+    , seventh : Interval.Interval
+    }
+    -> TertianFactors Interval
+rootAndGuideTonesToTertianFactors { root, thirdOrSus, seventh } =
+    { root = root
+    , thirdOrSus = thirdOrSus
+    , fifth = []
+    , seventh = Just seventh
+    , ninth = []
+    , eleventh = Nothing
+    , thirteenthOrSixth = Nothing
+    }
+
+
+seventhChordToTertianFactors : SeventhChord -> TertianFactors Interval
 seventhChordToTertianFactors seventhChord =
     case seventhChord of
         MajorSeventh maybeExtension alterations ->
-            [ Interval.perfectUnison
-            , Interval.majorThird
-            , Interval.majorSeventh
-            ]
-                ++ extensionAndAlterationsToTertianFactors maybeExtension alterations
+            rootAndGuideTonesToTertianFactors
+                { root = Interval.perfectUnison
+                , thirdOrSus = Interval.majorThird
+                , seventh = Interval.majorSeventh
+                }
+                |> extensionAndAlterationsToTertianFactors maybeExtension alterations
 
         MinorSeventh maybeExtension alterations ->
-            [ Interval.perfectUnison
-            , Interval.minorThird
-            , Interval.minorSeventh
-            ]
-                ++ extensionAndAlterationsToTertianFactors maybeExtension alterations
+            rootAndGuideTonesToTertianFactors
+                { root = Interval.perfectUnison
+                , thirdOrSus = Interval.minorThird
+                , seventh = Interval.minorSeventh
+                }
+                |> extensionAndAlterationsToTertianFactors maybeExtension alterations
 
         DominantSeventh maybeExtension alterations ->
-            [ Interval.perfectUnison
-            , Interval.majorThird
-            , Interval.minorSeventh
-            ]
-                ++ extensionAndAlterationsToTertianFactors maybeExtension alterations
+            rootAndGuideTonesToTertianFactors
+                { root = Interval.perfectUnison
+                , thirdOrSus = Interval.majorThird
+                , seventh = Interval.minorSeventh
+                }
+                |> extensionAndAlterationsToTertianFactors maybeExtension alterations
 
         DominantSeventhSus4 maybeExtension alterations ->
-            [ Interval.perfectUnison
-            , Interval.perfectFourth
-            , Interval.minorSeventh
-            ]
-                ++ extensionAndAlterationsToTertianFactors maybeExtension alterations
+            rootAndGuideTonesToTertianFactors
+                { root = Interval.perfectUnison
+                , thirdOrSus = Interval.perfectFourth
+                , seventh = Interval.minorSeventh
+                }
+                |> extensionAndAlterationsToTertianFactors maybeExtension alterations
 
         DiminishedSeventh maybeExtension alterations ->
-            [ Interval.perfectUnison
-            , Interval.minorThird
-            , Interval.diminishedSeventh
-            ]
-                ++ extensionAndAlterationsToTertianFactors maybeExtension alterations
+            rootAndGuideTonesToTertianFactors
+                { root = Interval.perfectUnison
+                , thirdOrSus = Interval.minorThird
+                , seventh = Interval.diminishedSeventh
+                }
+                |> extensionAndAlterationsToTertianFactors maybeExtension alterations
 
         MinorMajorSeventh maybeExtension alterations ->
-            [ Interval.perfectUnison
-            , Interval.minorThird
-            , Interval.majorSeventh
-            ]
-                ++ extensionAndAlterationsToTertianFactors maybeExtension alterations
+            rootAndGuideTonesToTertianFactors
+                { root = Interval.perfectUnison
+                , thirdOrSus = Interval.minorThird
+                , seventh = Interval.majorSeventh
+                }
+                |> extensionAndAlterationsToTertianFactors maybeExtension alterations
 
 
-extensionAndAlterationsToTertianFactors : Maybe Extension -> Alterations -> List Interval.Interval
-extensionAndAlterationsToTertianFactors maybeExtension ({ flatFifth, sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } as alterations) =
+extensionAndAlterationsToTertianFactors : Maybe Extension -> Alterations -> TertianFactors Interval -> TertianFactors Interval
+extensionAndAlterationsToTertianFactors maybeExtension { flatFifth, sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } tertianFactors =
     let
-        maybeNaturalFifth =
-            if not sharpFifth || flatFifth then
-                [ Interval.perfectFifth ]
+        addFifth =
+            case ( sharpFifth, flatFifth ) of
+                ( False, False ) ->
+                    tertianFactorsWithFifth Interval.perfectFifth
+
+                ( True, False ) ->
+                    tertianFactorsWithFifth Interval.augmentedFifth
+
+                ( False, True ) ->
+                    tertianFactorsWithFifth Interval.diminishedFifth
+
+                ( True, True ) ->
+                    tertianFactorsWithFifth Interval.diminishedFifth
+                        >> tertianFactorsWithFifth Interval.augmentedFifth
+
+        addNinth =
+            case ( sharpNinth, flatNinth ) of
+                ( False, False ) ->
+                    case maybeExtension of
+                        Nothing ->
+                            identity
+
+                        Just Ninth ->
+                            tertianFactorsWithNinth Interval.majorSecond
+
+                        Just Eleventh ->
+                            tertianFactorsWithNinth Interval.majorSecond
+
+                        Just Thirteenth ->
+                            tertianFactorsWithNinth Interval.majorSecond
+
+                ( True, False ) ->
+                    tertianFactorsWithNinth Interval.augmentedSecond
+
+                ( False, True ) ->
+                    tertianFactorsWithNinth Interval.minorSecond
+
+                ( True, True ) ->
+                    tertianFactorsWithNinth Interval.minorSecond
+                        >> tertianFactorsWithNinth Interval.augmentedSecond
+
+        addEleventh =
+            if sharpEleventh then
+                tertianFactorsWithEleventh Interval.augmentedFourth
 
             else
-                []
+                case maybeExtension of
+                    Nothing ->
+                        identity
 
-        maybeNaturalNinth =
-            if not (sharpNinth || flatNinth) then
-                [ Interval.majorSecond ]
+                    Just Ninth ->
+                        identity
 
-            else
-                []
+                    Just Eleventh ->
+                        tertianFactorsWithEleventh Interval.perfectFourth
 
-        maybeNaturalEleventh =
-            if not sharpEleventh then
-                [ Interval.perfectFourth ]
+                    Just Thirteenth ->
+                        tertianFactorsWithEleventh Interval.perfectFourth
 
-            else
-                []
-
-        maybeNaturalThirteenth =
-            if not flatThirteenth then
-                [ Interval.majorSixth ]
+        addThirteenth =
+            if flatThirteenth then
+                tertianFactorsWithSixth Interval.minorSixth
 
             else
-                []
+                case maybeExtension of
+                    Nothing ->
+                        identity
+
+                    Just Ninth ->
+                        identity
+
+                    Just Eleventh ->
+                        identity
+
+                    Just Thirteenth ->
+                        tertianFactorsWithSixth Interval.majorSixth
     in
-    case maybeExtension of
-        Nothing ->
-            maybeNaturalFifth
-                ++ alterationsToTertianFactors alterations
-
-        Just Ninth ->
-            maybeNaturalNinth
-                ++ alterationsToTertianFactors alterations
-
-        Just Eleventh ->
-            maybeNaturalEleventh
-                ++ maybeNaturalNinth
-                ++ alterationsToTertianFactors alterations
-
-        Just Thirteenth ->
-            maybeNaturalThirteenth
-                ++ maybeNaturalEleventh
-                ++ maybeNaturalNinth
-                ++ alterationsToTertianFactors alterations
-
-
-alterationsToTertianFactors : Alterations -> List Interval.Interval
-alterationsToTertianFactors { flatFifth, sharpFifth, flatNinth, sharpNinth, sharpEleventh, flatThirteenth } =
-    let
-        boolToMaybe condition valueToJust =
-            if condition then
-                Just valueToJust
-
-            else
-                Nothing
-    in
-    List.filterMap identity
-        [ boolToMaybe flatFifth Interval.diminishedFifth
-        , boolToMaybe sharpFifth Interval.augmentedFifth
-        , boolToMaybe flatNinth Interval.minorSecond
-        , boolToMaybe sharpNinth Interval.augmentedSecond
-        , boolToMaybe sharpEleventh Interval.augmentedFourth
-        , boolToMaybe flatThirteenth Interval.minorSixth
-        ]
-
-
-
--- To Intervals
+    tertianFactors
+        |> addFifth
+        |> addNinth
+        |> addEleventh
+        |> addThirteenth
 
 
 toIntervals : ChordClass -> List Interval
