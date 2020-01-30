@@ -320,7 +320,7 @@ triadToTertianFactors { root, thirdOrSus, fifth } =
 tertianFactorsWithFifth : Interval -> TertianFactors Interval -> TertianFactors Interval
 tertianFactorsWithFifth newFifth factors =
     { factors
-        | ninth = factors.fifth ++ [ newFifth ]
+        | fifth = factors.fifth ++ [ newFifth ]
     }
 
 
