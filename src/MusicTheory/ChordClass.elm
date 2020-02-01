@@ -1016,3 +1016,34 @@ dominantSeventhFlatNineSharpNineFlatThirteen =
                 |> sharpNine
                 |> flatThirteen
             )
+
+
+dominantThirteenthFlatNine : ChordClass
+dominantThirteenthFlatNine =
+    SeventhChord <|
+        DominantSeventh
+            (Just Thirteenth)
+            (noAlterations
+                |> flatNine
+            )
+
+
+dominantThirteenthSharpNine : ChordClass
+dominantThirteenthSharpNine =
+    SeventhChord <|
+        DominantSeventh
+            (Just Thirteenth)
+            (noAlterations
+                |> sharpNine
+            )
+
+
+dominantThirteenthSharpNineFlatNine : ChordClass
+dominantThirteenthSharpNineFlatNine =
+    SeventhChord <|
+        DominantSeventh
+            (Just Thirteenth)
+            (noAlterations
+                |> flatNine
+                |> sharpNine
+            )
