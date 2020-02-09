@@ -1,4 +1,4 @@
-module MusicTheory.TertianFactors exposing
+module MusicTheory.Internal.TertianFactors exposing
     ( Alteration(..)
     , Extension(..)
     , TertianFactors

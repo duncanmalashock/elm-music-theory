@@ -1,5 +1,5 @@
 module MusicTheory.ChordClass exposing
-    ( ChordClass(..)
+    ( ChordClass
     , augmented
     , diminished
     , diminishedSeventh
@@ -33,31 +33,19 @@ module MusicTheory.ChordClass exposing
     , nonTertian
     , sus2
     , sus4
-    , toIntervals
     )
 
-import MusicTheory.Interval exposing (Interval)
-import MusicTheory.TertianFactors as TertianFactors
+import MusicTheory.Internal.ChordClass exposing (ChordClass(..))
+import MusicTheory.Internal.TertianFactors as TertianFactors
     exposing
         ( Alteration(..)
         , Extension(..)
-        , TertianFactors
         )
+import MusicTheory.Interval exposing (Interval)
 
 
-type ChordClass
-    = Tertian TertianFactors
-    | NonTertian (List Interval)
-
-
-toIntervals : ChordClass -> List Interval
-toIntervals chordClass =
-    case chordClass of
-        Tertian tertianFactors ->
-            TertianFactors.toIntervals tertianFactors
-
-        NonTertian intervals ->
-            intervals
+type alias ChordClass =
+    MusicTheory.Internal.ChordClass.ChordClass
 
 
 
