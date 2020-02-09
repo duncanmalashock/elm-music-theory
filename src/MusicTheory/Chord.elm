@@ -1,6 +1,6 @@
 module MusicTheory.Chord exposing (Chord, chord, root, toPitchClasses)
 
-import MusicTheory.ChordClass as ChordClass
+import MusicTheory.Internal.ChordClass as ChordClass
 import MusicTheory.Internal.PitchClass
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.PitchClass as PitchClass

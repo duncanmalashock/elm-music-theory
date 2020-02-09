@@ -1,7 +1,7 @@
 module MusicTheory.Internal.ChordClass exposing (ChordClass(..), toIntervals)
 
+import MusicTheory.Internal.TertianFactors as TertianFactors exposing (TertianFactors)
 import MusicTheory.Interval exposing (Interval)
-import MusicTheory.TertianFactors as TertianFactors exposing (TertianFactors)
 
 
 type ChordClass
