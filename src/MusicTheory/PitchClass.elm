@@ -10,6 +10,7 @@ module MusicTheory.PitchClass exposing
     , pitchClass
     , semitones
     , sharp
+    , toString
     , transposeDown
     , transposeUp
     , tripleFlat
