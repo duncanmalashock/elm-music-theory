@@ -11,7 +11,6 @@ module MusicTheory.Internal.PitchClass exposing
     , offset
     , pitchClass
     , semitones
-    , semitonesNotOctaveBound
     , sharp
     , toString
     , transposeDown
@@ -47,14 +46,9 @@ letter (PitchClass l _) =
     l
 
 
-semitonesNotOctaveBound : PitchClass -> Int
-semitonesNotOctaveBound (PitchClass l (Offset o)) =
-    Letter.semitones l + o
-
-
 semitones : PitchClass -> Int
-semitones pc =
-    semitonesNotOctaveBound pc |> modBy 12
+semitones (PitchClass l (Offset o)) =
+    Letter.semitones l + o
 
 
 all : List PitchClass

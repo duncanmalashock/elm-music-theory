@@ -92,7 +92,7 @@ fromPitchClass o p =
 
 semitones : Pitch -> Int
 semitones (Pitch pc o) =
-    Octave.semitones o + PitchClass.semitonesNotOctaveBound pc
+    Octave.semitones o + PitchClass.semitones pc
 
 
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool
@@ -134,7 +134,7 @@ transpose trans addIntervalSemitones interval p =
                 |> trans interval
 
         targetOctaveSemitones =
-            addIntervalSemitones (semitones p) (Interval.semitones interval) - PitchClass.semitonesNotOctaveBound transposedPitchClass
+            addIntervalSemitones (semitones p) (Interval.semitones interval) - PitchClass.semitones transposedPitchClass
 
         numberOfOctaves =
             targetOctaveSemitones // 12
