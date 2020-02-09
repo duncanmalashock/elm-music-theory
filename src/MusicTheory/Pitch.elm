@@ -23,7 +23,7 @@ import MusicTheory.Internal.Pitch as Pitch
 import MusicTheory.Internal.PitchClass as PitchClass exposing (Offset, PitchClass)
 import MusicTheory.Interval exposing (Interval)
 import MusicTheory.Letter exposing (Letter)
-import MusicTheory.Octave as Octave exposing (Octave, OctaveError(..))
+import MusicTheory.Octave exposing (Octave, OctaveError(..))
 
 
 type alias Pitch =
