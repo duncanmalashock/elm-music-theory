@@ -1,10 +1,11 @@
 module MusicTheory.Pitch exposing
     ( Pitch
-    , TransposeError
+    , TransposeError(..)
     , all
     , areEnharmonicEquivalents
     , doubleFlat
     , doubleSharp
+    , errorToString
     , flat
     , fromPitchClass
     , natural
@@ -19,29 +20,24 @@ module MusicTheory.Pitch exposing
     , tripleSharp
     )
 
-import MusicTheory.Internal.Pitch as Pitch
-import MusicTheory.Internal.PitchClass as PitchClass exposing (Offset, PitchClass)
-import MusicTheory.Interval exposing (Interval)
+import MusicTheory.Interval as Interval exposing (Interval)
 import MusicTheory.Letter exposing (Letter)
-import MusicTheory.Octave exposing (Octave, OctaveError(..))
+import MusicTheory.Octave as Octave exposing (Octave, OctaveError(..))
+import MusicTheory.PitchClass as PitchClass exposing (Offset, PitchClass)
 
 
-type alias Pitch =
-    Pitch.Pitch
+type Pitch
+    = Pitch PitchClass Octave
 
 
-type alias TransposeError =
-    Pitch.TransposeError
+type TransposeError
+    = InvalidOctave OctaveError
+    | InternalError
 
 
 pitch : Letter -> Offset -> Octave -> Pitch
-pitch =
-    Pitch.pitch
-
-
-all : List Pitch
-all =
-    Pitch.all
+pitch l os o =
+    fromPitchClass o (PitchClass.pitchClass l os)
 
 
 tripleFlat : Offset
@@ -80,35 +76,76 @@ tripleSharp =
 
 
 pitchClass : Pitch -> PitchClass
-pitchClass =
-    Pitch.pitchClass
+pitchClass (Pitch pc _) =
+    pc
 
 
 octave : Pitch -> Octave
-octave =
-    Pitch.octave
+octave (Pitch _ o) =
+    o
 
 
 fromPitchClass : Octave -> PitchClass -> Pitch
-fromPitchClass =
-    Pitch.fromPitchClass
+fromPitchClass o p =
+    Pitch p o
 
 
 semitones : Pitch -> Int
-semitones =
-    Pitch.semitones
+semitones (Pitch pc o) =
+    Octave.semitones o + PitchClass.semitones pc
 
 
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool
-areEnharmonicEquivalents =
-    Pitch.areEnharmonicEquivalents
+areEnharmonicEquivalents lhs rhs =
+    semitones lhs == semitones rhs
+
+
+all : List Pitch
+all =
+    Octave.all
+        |> List.concatMap (\o -> PitchClass.all |> List.map (\pc -> Pitch pc o))
+
+
+errorToString : TransposeError -> String
+errorToString error =
+    case error of
+        InvalidOctave err ->
+            "Could not transpose pitch. " ++ Octave.errorToString err
+
+        InternalError ->
+            "Could not transpose pitch. Something went wrong internally."
 
 
 transposeUp : Interval -> Pitch -> Result TransposeError Pitch
 transposeUp =
-    Pitch.transposeUp
+    transpose PitchClass.transposeUp (+)
 
 
 transposeDown : Interval -> Pitch -> Result TransposeError Pitch
 transposeDown =
-    Pitch.transposeDown
+    transpose PitchClass.transposeDown (-)
+
+
+transpose : (Interval -> PitchClass -> PitchClass) -> (Int -> Int -> Int) -> Interval -> Pitch -> Result TransposeError Pitch
+transpose trans addIntervalSemitones interval p =
+    let
+        transposedPitchClass =
+            pitchClass p
+                |> trans interval
+
+        targetOctaveSemitones =
+            addIntervalSemitones (semitones p) (Interval.semitones interval) - PitchClass.semitones transposedPitchClass
+
+        numberOfOctaves =
+            targetOctaveSemitones // 12
+
+        remainder =
+            targetOctaveSemitones |> remainderBy 12
+    in
+    if remainder == 0 then
+        Octave.octave numberOfOctaves
+            |> Result.map (\o -> Pitch transposedPitchClass o)
+            |> Result.mapError InvalidOctave
+
+    else
+        Err InternalError

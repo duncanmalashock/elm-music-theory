@@ -5,9 +5,8 @@ module MusicTheory.Scale exposing
     , toList
     )
 
-import MusicTheory.Internal.ScaleClass as Internal
 import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
-import MusicTheory.ScaleClass exposing (ScaleClass)
+import MusicTheory.ScaleClass as ScaleClass exposing (ScaleClass)
 
 
 
@@ -66,16 +65,16 @@ type alias OctatonicDegrees =
 scale : PitchClass -> ScaleClass -> Scale
 scale scaleRoot scaleClass =
     case scaleClass of
-        Internal.Pentatonic pentatonicScaleClassIntervals ->
+        ScaleClass.Pentatonic pentatonicScaleClassIntervals ->
             pentatonicScale scaleRoot pentatonicScaleClassIntervals
 
-        Internal.Hexatonic hexatonicScaleClassIntervals ->
+        ScaleClass.Hexatonic hexatonicScaleClassIntervals ->
             hexatonicScale scaleRoot hexatonicScaleClassIntervals
 
-        Internal.Heptatonic heptatonicScaleClassIntervals ->
+        ScaleClass.Heptatonic heptatonicScaleClassIntervals ->
             heptatonicScale scaleRoot heptatonicScaleClassIntervals
 
-        Internal.Octatonic octatonicScaleClassIntervals ->
+        ScaleClass.Octatonic octatonicScaleClassIntervals ->
             octatonicScale scaleRoot octatonicScaleClassIntervals
 
 
@@ -137,7 +136,7 @@ toList theScale =
             ]
 
 
-pentatonicScale : PitchClass -> Internal.PentatonicIntervals -> Scale
+pentatonicScale : PitchClass -> ScaleClass.PentatonicIntervals -> Scale
 pentatonicScale scaleRoot intervals =
     let
         secondDegree =
@@ -161,7 +160,7 @@ pentatonicScale scaleRoot intervals =
         }
 
 
-hexatonicScale : PitchClass -> Internal.HexatonicIntervals -> Scale
+hexatonicScale : PitchClass -> ScaleClass.HexatonicIntervals -> Scale
 hexatonicScale scaleRoot intervals =
     let
         secondDegree =
@@ -189,7 +188,7 @@ hexatonicScale scaleRoot intervals =
         }
 
 
-heptatonicScale : PitchClass -> Internal.HeptatonicIntervals -> Scale
+heptatonicScale : PitchClass -> ScaleClass.HeptatonicIntervals -> Scale
 heptatonicScale scaleRoot intervals =
     let
         secondDegree =
@@ -221,7 +220,7 @@ heptatonicScale scaleRoot intervals =
         }
 
 
-octatonicScale : PitchClass -> Internal.OctatonicIntervals -> Scale
+octatonicScale : PitchClass -> ScaleClass.OctatonicIntervals -> Scale
 octatonicScale scaleRoot intervals =
     let
         secondDegree =

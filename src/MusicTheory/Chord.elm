@@ -1,7 +1,6 @@
 module MusicTheory.Chord exposing (Chord, chord, root, toPitchClasses)
 
-import MusicTheory.Internal.ChordClass as ChordClass
-import MusicTheory.Internal.PitchClass
+import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.PitchClass as PitchClass
 
@@ -24,6 +23,6 @@ toPitchClasses : Chord -> List PitchClass.PitchClass
 toPitchClasses (Chord rootPitchClass chordClass) =
     List.map
         (\interval ->
-            MusicTheory.Internal.PitchClass.transposeUp interval rootPitchClass
+            PitchClass.transposeUp interval rootPitchClass
         )
         (ChordClass.toIntervals chordClass)

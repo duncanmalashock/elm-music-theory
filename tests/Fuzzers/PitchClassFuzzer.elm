@@ -1,7 +1,6 @@
 module Fuzzers.PitchClassFuzzer exposing (pitchClass)
 
 import Fuzz exposing (Fuzzer)
-import MusicTheory.Internal.PitchClass as Internal
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
 
@@ -38,7 +37,7 @@ numberToLetter n =
                 numberToLetter (other + 7)
 
 
-numberToAccidental : Int -> Internal.Offset
+numberToAccidental : Int -> PitchClass.Offset
 numberToAccidental n =
     if n == -3 then
         PitchClass.tripleFlat

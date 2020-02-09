@@ -1,5 +1,6 @@
 module MusicTheory.PitchClass exposing
-    ( PitchClass
+    ( Offset
+    , PitchClass
     , all
     , areEnharmonicEquivalents
     , doubleFlat
@@ -15,79 +16,126 @@ module MusicTheory.PitchClass exposing
     , tripleSharp
     )
 
-import MusicTheory.Internal.PitchClass as Internal
-import MusicTheory.Interval exposing (Interval)
-import MusicTheory.Letter exposing (Letter)
+import MusicTheory.Interval as Interval exposing (Interval(..))
+import MusicTheory.Letter as Letter exposing (Letter(..))
 
 
-type alias Offset =
-    Internal.Offset
+type Offset
+    = Offset Int
 
 
-type alias PitchClass =
-    Internal.PitchClass
-
-
-tripleFlat : Offset
-tripleFlat =
-    Internal.tripleFlat
-
-
-doubleFlat : Offset
-doubleFlat =
-    Internal.doubleFlat
-
-
-flat : Offset
-flat =
-    Internal.flat
-
-
-natural : Offset
-natural =
-    Internal.natural
-
-
-sharp : Offset
-sharp =
-    Internal.sharp
-
-
-doubleSharp : Offset
-doubleSharp =
-    Internal.doubleSharp
-
-
-tripleSharp : Offset
-tripleSharp =
-    Internal.tripleSharp
+type PitchClass
+    = PitchClass Letter Offset
 
 
 pitchClass : Letter -> Offset -> PitchClass
-pitchClass =
-    Internal.pitchClass
+pitchClass l o =
+    PitchClass l o
+
+
+offset : PitchClass -> Int
+offset (PitchClass _ (Offset o)) =
+    o
+
+
+letter : PitchClass -> Letter
+letter (PitchClass l _) =
+    l
+
+
+semitones : PitchClass -> Int
+semitones (PitchClass l (Offset o)) =
+    Letter.semitones l + o
 
 
 all : List PitchClass
 all =
-    Internal.all
+    Letter.letters
+        |> List.concatMap (\l -> [ tripleFlat, doubleFlat, flat, natural, sharp, doubleSharp, tripleSharp ] |> List.map (pitchClass l))
 
 
-semitones : PitchClass -> Int
-semitones =
-    Internal.semitones
+tripleFlat : Offset
+tripleFlat =
+    Offset -3
+
+
+doubleFlat : Offset
+doubleFlat =
+    Offset -2
+
+
+flat : Offset
+flat =
+    Offset -1
+
+
+natural : Offset
+natural =
+    Offset 0
+
+
+sharp : Offset
+sharp =
+    Offset 1
+
+
+doubleSharp : Offset
+doubleSharp =
+    Offset 2
+
+
+tripleSharp : Offset
+tripleSharp =
+    Offset 3
+
+
+toString : PitchClass -> String
+toString pc =
+    case pc of
+        PitchClass l (Offset o) ->
+            if o == 0 then
+                Letter.toString l
+
+            else if o < 0 then
+                Letter.toString l ++ (List.repeat (abs o) "♭" |> String.join "")
+
+            else
+                Letter.toString l ++ (List.repeat (abs o) "♯" |> String.join "")
 
 
 transposeUp : Interval -> PitchClass -> PitchClass
-transposeUp =
-    Internal.transposeUp
+transposeUp interval pc =
+    let
+        ( targetLetter, letterToLetterDistance ) =
+            targetLetterWithSemitoneDistance (Letter.index (letter pc)) (Interval.intervalNumberIndex (Interval.number interval)) ( letter pc, 0 )
+    in
+    PitchClass targetLetter (Offset (Interval.semitones interval - letterToLetterDistance + offset pc))
 
 
 transposeDown : Interval -> PitchClass -> PitchClass
-transposeDown =
-    Internal.transposeDown
+transposeDown interval pc =
+    interval
+        |> Interval.complementary
+        |> (\i -> transposeUp i pc)
 
 
 areEnharmonicEquivalents : PitchClass -> PitchClass -> Bool
 areEnharmonicEquivalents lhs rhs =
     semitones lhs == semitones rhs
+
+
+
+-- INTERNALS
+
+
+targetLetterWithSemitoneDistance : Int -> Int -> ( Letter, Int ) -> ( Letter, Int )
+targetLetterWithSemitoneDistance currentIndex steps ( currentLetter, totalSemitones ) =
+    if steps <= 0 then
+        ( currentLetter, totalSemitones )
+
+    else
+        let
+            ( currentTargetLetter, stepSemitones ) =
+                Letter.indexToLetterAndSteps (currentIndex + 1)
+        in
+        targetLetterWithSemitoneDistance (currentIndex + 1) (steps - 1) ( currentTargetLetter, totalSemitones + stepSemitones )

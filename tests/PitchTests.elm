@@ -3,12 +3,11 @@ module PitchTests exposing (all)
 import Expect
 import Fuzzers.IntervalFuzzer
 import Fuzzers.PitchFuzzer
-import MusicTheory.Internal.Pitch as Internal exposing (TransposeError(..))
-import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Interval as Interval
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.Octave as Octave exposing (OctaveError(..))
-import MusicTheory.Pitch as Pitch
+import MusicTheory.Pitch as Pitch exposing (TransposeError(..))
+import MusicTheory.PitchClass as PitchClass
 import Test exposing (Test, describe, fuzz, fuzz2, fuzz3, test)
 
 
@@ -17,17 +16,17 @@ all =
     describe "Pitch Tests"
         [ test "semitones of B##4 should be 61 (4*12 (octave) + 11 (letter B) + 2 (double sharp))" <|
             \_ ->
-                Internal.fromPitchClass
+                Pitch.fromPitchClass
                     Octave.four
                     (PitchClass.pitchClass B PitchClass.doubleSharp)
-                    |> Internal.semitones
+                    |> Pitch.semitones
                     |> Expect.equal 61
         , test "semitones of C#5 should be 61 (5*12 (octave) + 0 (letter C) + 1 (sharp))" <|
             \_ ->
-                Internal.fromPitchClass
+                Pitch.fromPitchClass
                     Octave.five
                     (PitchClass.pitchClass C PitchClass.sharp)
-                    |> Internal.semitones
+                    |> Pitch.semitones
                     |> Expect.equal 61
         , test "transpose up perfect 5 from C4 should be G4" <|
             \_ ->
