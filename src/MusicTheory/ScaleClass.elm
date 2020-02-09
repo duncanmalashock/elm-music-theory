@@ -11,7 +11,9 @@ module MusicTheory.ScaleClass exposing
     , lydian
     , major
     , minor
-    ,  mixolydian
+    , mixolydian
+    , phrygian
+    ,  toIntervals
        -- , alteredDoubleFlat7
        -- , altered
        -- , arabian
@@ -63,7 +65,6 @@ module MusicTheory.ScaleClass exposing
        -- , todiTheta
        -- , wholeTone
 
-    , phrygian
     )
 
 import MusicTheory.Interval as Interval exposing (Interval)
@@ -112,6 +113,48 @@ type alias OctatonicIntervals =
     , rootToSeventh : Interval
     , rootToEighth : Interval
     }
+
+
+toIntervals : ScaleClass -> List Interval
+toIntervals theScale =
+    case theScale of
+        Pentatonic scaleDegrees ->
+            [ Interval.perfectUnison
+            , scaleDegrees.rootToSecond
+            , scaleDegrees.rootToThird
+            , scaleDegrees.rootToFourth
+            , scaleDegrees.rootToFifth
+            ]
+
+        Hexatonic scaleDegrees ->
+            [ Interval.perfectUnison
+            , scaleDegrees.rootToSecond
+            , scaleDegrees.rootToThird
+            , scaleDegrees.rootToFourth
+            , scaleDegrees.rootToFifth
+            , scaleDegrees.rootToSixth
+            ]
+
+        Heptatonic scaleDegrees ->
+            [ Interval.perfectUnison
+            , scaleDegrees.rootToSecond
+            , scaleDegrees.rootToThird
+            , scaleDegrees.rootToFourth
+            , scaleDegrees.rootToFifth
+            , scaleDegrees.rootToSixth
+            , scaleDegrees.rootToSeventh
+            ]
+
+        Octatonic scaleDegrees ->
+            [ Interval.perfectUnison
+            , scaleDegrees.rootToSecond
+            , scaleDegrees.rootToThird
+            , scaleDegrees.rootToFourth
+            , scaleDegrees.rootToFifth
+            , scaleDegrees.rootToSixth
+            , scaleDegrees.rootToSeventh
+            , scaleDegrees.rootToEighth
+            ]
 
 
 
