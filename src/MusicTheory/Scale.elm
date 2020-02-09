@@ -9,10 +9,6 @@ import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
 import MusicTheory.ScaleClass as ScaleClass exposing (ScaleClass)
 
 
-
--- Scale
-
-
 type Scale
     = Pentatonic PentatonicDegrees
     | Hexatonic HexatonicDegrees
@@ -138,119 +134,49 @@ toList theScale =
 
 pentatonicScale : PitchClass -> ScaleClass.PentatonicIntervals -> Scale
 pentatonicScale scaleRoot intervals =
-    let
-        secondDegree =
-            PitchClass.transposeUp intervals.first scaleRoot
-
-        thirdDegree =
-            PitchClass.transposeUp intervals.second secondDegree
-
-        fourthDegree =
-            PitchClass.transposeUp intervals.third thirdDegree
-
-        fifthDegree =
-            PitchClass.transposeUp intervals.fourth fourthDegree
-    in
     Pentatonic
         { root = scaleRoot
-        , second = secondDegree
-        , third = thirdDegree
-        , fourth = fourthDegree
-        , fifth = fifthDegree
+        , second = PitchClass.transposeUp intervals.rootToSecond scaleRoot
+        , third = PitchClass.transposeUp intervals.rootToThird scaleRoot
+        , fourth = PitchClass.transposeUp intervals.rootToFourth scaleRoot
+        , fifth = PitchClass.transposeUp intervals.rootToFifth scaleRoot
         }
 
 
 hexatonicScale : PitchClass -> ScaleClass.HexatonicIntervals -> Scale
 hexatonicScale scaleRoot intervals =
-    let
-        secondDegree =
-            PitchClass.transposeUp intervals.first scaleRoot
-
-        thirdDegree =
-            PitchClass.transposeUp intervals.second secondDegree
-
-        fourthDegree =
-            PitchClass.transposeUp intervals.third thirdDegree
-
-        fifthDegree =
-            PitchClass.transposeUp intervals.fourth fourthDegree
-
-        sixthDegree =
-            PitchClass.transposeUp intervals.fifth fifthDegree
-    in
     Hexatonic
         { root = scaleRoot
-        , second = secondDegree
-        , third = thirdDegree
-        , fourth = fourthDegree
-        , fifth = fifthDegree
-        , sixth = sixthDegree
+        , second = PitchClass.transposeUp intervals.rootToSecond scaleRoot
+        , third = PitchClass.transposeUp intervals.rootToThird scaleRoot
+        , fourth = PitchClass.transposeUp intervals.rootToFourth scaleRoot
+        , fifth = PitchClass.transposeUp intervals.rootToFifth scaleRoot
+        , sixth = PitchClass.transposeUp intervals.rootToSixth scaleRoot
         }
 
 
 heptatonicScale : PitchClass -> ScaleClass.HeptatonicIntervals -> Scale
 heptatonicScale scaleRoot intervals =
-    let
-        secondDegree =
-            PitchClass.transposeUp intervals.first scaleRoot
-
-        thirdDegree =
-            PitchClass.transposeUp intervals.second secondDegree
-
-        fourthDegree =
-            PitchClass.transposeUp intervals.third thirdDegree
-
-        fifthDegree =
-            PitchClass.transposeUp intervals.fourth fourthDegree
-
-        sixthDegree =
-            PitchClass.transposeUp intervals.fifth fifthDegree
-
-        seventhDegree =
-            PitchClass.transposeUp intervals.sixth sixthDegree
-    in
     Heptatonic
         { root = scaleRoot
-        , second = secondDegree
-        , third = thirdDegree
-        , fourth = fourthDegree
-        , fifth = fifthDegree
-        , sixth = sixthDegree
-        , seventh = seventhDegree
+        , second = PitchClass.transposeUp intervals.rootToSecond scaleRoot
+        , third = PitchClass.transposeUp intervals.rootToThird scaleRoot
+        , fourth = PitchClass.transposeUp intervals.rootToFourth scaleRoot
+        , fifth = PitchClass.transposeUp intervals.rootToFifth scaleRoot
+        , sixth = PitchClass.transposeUp intervals.rootToSixth scaleRoot
+        , seventh = PitchClass.transposeUp intervals.rootToSeventh scaleRoot
         }
 
 
 octatonicScale : PitchClass -> ScaleClass.OctatonicIntervals -> Scale
 octatonicScale scaleRoot intervals =
-    let
-        secondDegree =
-            PitchClass.transposeUp intervals.first scaleRoot
-
-        thirdDegree =
-            PitchClass.transposeUp intervals.second secondDegree
-
-        fourthDegree =
-            PitchClass.transposeUp intervals.third thirdDegree
-
-        fifthDegree =
-            PitchClass.transposeUp intervals.fourth fourthDegree
-
-        sixthDegree =
-            PitchClass.transposeUp intervals.fifth fifthDegree
-
-        seventhDegree =
-            PitchClass.transposeUp intervals.sixth sixthDegree
-
-        eighthDegree =
-            PitchClass.transposeUp intervals.seventh seventhDegree
-    in
     Octatonic
         { root = scaleRoot
-        , second = secondDegree
-        , third = thirdDegree
-        , fourth = fourthDegree
-        , fifth = fifthDegree
-        , sixth = sixthDegree
-        , seventh = seventhDegree
-        , eighth = eighthDegree
+        , second = PitchClass.transposeUp intervals.rootToSecond scaleRoot
+        , third = PitchClass.transposeUp intervals.rootToThird scaleRoot
+        , fourth = PitchClass.transposeUp intervals.rootToFourth scaleRoot
+        , fifth = PitchClass.transposeUp intervals.rootToFifth scaleRoot
+        , sixth = PitchClass.transposeUp intervals.rootToSixth scaleRoot
+        , seventh = PitchClass.transposeUp intervals.rootToSeventh scaleRoot
+        , eighth = PitchClass.transposeUp intervals.rootToEighth scaleRoot
         }
