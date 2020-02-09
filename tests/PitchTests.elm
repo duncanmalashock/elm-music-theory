@@ -17,44 +17,54 @@ all =
     describe "Pitch Tests"
         [ test "semitones of B##4 should be 61 (4*12 (octave) + 11 (letter B) + 2 (double sharp))" <|
             \_ ->
-                Internal.fromPitchClass Octave.four (PitchClass.pitchClass B PitchClass.doubleSharp)
+                Internal.fromPitchClass
+                    Octave.four
+                    (PitchClass.pitchClass B PitchClass.doubleSharp)
                     |> Internal.semitones
                     |> Expect.equal 61
         , test "semitones of C#5 should be 61 (5*12 (octave) + 0 (letter C) + 1 (sharp))" <|
             \_ ->
-                Internal.fromPitchClass Octave.five (PitchClass.pitchClass C PitchClass.sharp)
+                Internal.fromPitchClass
+                    Octave.five
+                    (PitchClass.pitchClass C PitchClass.sharp)
                     |> Internal.semitones
                     |> Expect.equal 61
         , test "transpose up perfect 5 from C4 should be G4" <|
             \_ ->
                 Pitch.pitch C Pitch.natural Octave.four
                     |> Pitch.transposeUp Interval.perfectFifth
-                    |> Expect.equal (Ok <| Pitch.pitch G Pitch.natural Octave.four)
+                    |> Expect.equal
+                        (Ok <| Pitch.pitch G Pitch.natural Octave.four)
         , test "transpose up perfect 5 from G4 should be D5" <|
             \_ ->
                 Pitch.pitch G Pitch.natural Octave.four
                     |> Pitch.transposeUp Interval.perfectFifth
-                    |> Expect.equal (Ok <| Pitch.pitch D Pitch.natural Octave.five)
+                    |> Expect.equal
+                        (Ok <| Pitch.pitch D Pitch.natural Octave.five)
         , test "transpose up major 3 from A8 should fail" <|
             \_ ->
                 Pitch.pitch A Pitch.natural Octave.eight
                     |> Pitch.transposeUp Interval.majorThird
-                    |> Expect.equal (Err <| InvalidOctave <| AboveValidRange 9)
+                    |> Expect.equal
+                        (Err <| InvalidOctave <| AboveValidRange 9)
         , test "transpose down perfect 5 from G4 should be C4" <|
             \_ ->
                 Pitch.pitch G Pitch.natural Octave.four
                     |> Pitch.transposeDown Interval.perfectFifth
-                    |> Expect.equal (Ok <| Pitch.pitch C Pitch.natural Octave.four)
+                    |> Expect.equal
+                        (Ok <| Pitch.pitch C Pitch.natural Octave.four)
         , test "transpose down perfect 5 from D5 should be G4" <|
             \_ ->
                 Pitch.pitch D Pitch.natural Octave.five
                     |> Pitch.transposeDown Interval.perfectFifth
-                    |> Expect.equal (Ok <| Pitch.pitch G Pitch.natural Octave.four)
+                    |> Expect.equal
+                        (Ok <| Pitch.pitch G Pitch.natural Octave.four)
         , test "transpose down major 3 from D0 should fail" <|
             \_ ->
                 Pitch.pitch D Pitch.natural Octave.zero
                     |> Pitch.transposeDown Interval.majorThird
-                    |> Expect.equal (Err <| InvalidOctave <| BelowValidRange -1)
+                    |> Expect.equal
+                        (Err <| InvalidOctave <| BelowValidRange -1)
         , fuzz2
             (Fuzzers.PitchFuzzer.pitchWithOctave Octave.four)
             Fuzzers.IntervalFuzzer.interval
@@ -64,7 +74,8 @@ all =
                 pitch
                     |> Pitch.transposeUp interval
                     |> Result.map Pitch.semitones
-                    |> Expect.equal (Ok <| Interval.semitones interval + Pitch.semitones pitch)
+                    |> Expect.equal
+                        (Ok <| Interval.semitones interval + Pitch.semitones pitch)
         , fuzz2
             (Fuzzers.PitchFuzzer.pitchWithOctave Octave.four)
             Fuzzers.IntervalFuzzer.interval

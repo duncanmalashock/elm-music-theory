@@ -9,7 +9,10 @@ import MusicTheory.Pitch as Pitch exposing (Pitch)
 
 pitch : Fuzzer Pitch
 pitch =
-    Fuzz.map2 Pitch.fromPitchClass Fuzzers.OctaveFuzzer.octave Fuzzers.PitchClassFuzzer.pitchClass
+    Fuzz.map2
+        Pitch.fromPitchClass
+        Fuzzers.OctaveFuzzer.octave
+        Fuzzers.PitchClassFuzzer.pitchClass
 
 
 pitchWithOctave : Octave -> Fuzzer Pitch

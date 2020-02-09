@@ -72,5 +72,9 @@ pitchClass : Fuzzer PitchClass
 pitchClass =
     Fuzz.map2
         PitchClass.pitchClass
-        (Fuzz.intRange 0 6 |> Fuzz.map numberToLetter)
-        (Fuzz.intRange -3 3 |> Fuzz.map numberToAccidental)
+        (Fuzz.intRange 0 6
+            |> Fuzz.map numberToLetter
+        )
+        (Fuzz.intRange -3 3
+            |> Fuzz.map numberToAccidental
+        )

@@ -105,7 +105,9 @@ all =
                         , pitchClass C doubleFlat
                         ]
                 in
-                Scale.scale (pitchClass C natural) ScaleClass.diminishedHalfToneWholeTone
+                Scale.scale
+                    (pitchClass C natural)
+                    ScaleClass.diminishedHalfToneWholeTone
                     |> Scale.toList
                     |> Expect.equal pitchClassesInCDiminishedHalfWhole
         , test "C diminished whole-half" <|
@@ -122,7 +124,9 @@ all =
                         , pitchClass C flat
                         ]
                 in
-                Scale.scale (pitchClass C natural) ScaleClass.diminishedWholeToneHalfTone
+                Scale.scale
+                    (pitchClass C natural)
+                    ScaleClass.diminishedWholeToneHalfTone
                     |> Scale.toList
                     |> Expect.equal pitchClassesInCDiminishedWholeHalf
         , test "C minor major sixth pentatonic" <|
@@ -136,7 +140,9 @@ all =
                         , pitchClass A natural
                         ]
                 in
-                Scale.scale (pitchClass C natural) ScaleClass.minor6Pentatonic
+                Scale.scale
+                    (pitchClass C natural)
+                    ScaleClass.minor6Pentatonic
                     |> Scale.toList
                     |> Expect.equal expected
         , test "C major minor sixth pentatonic" <|
@@ -150,7 +156,9 @@ all =
                         , pitchClass A flat
                         ]
                 in
-                Scale.scale (pitchClass C natural) ScaleClass.majorFlat6Pentatonic
+                Scale.scale
+                    (pitchClass C natural)
+                    ScaleClass.majorFlat6Pentatonic
                     |> Scale.toList
                     |> Expect.equal expected
         , test "C minor 7 diminished fifth pentatonic" <|
@@ -164,7 +172,9 @@ all =
                         , pitchClass B flat
                         ]
                 in
-                Scale.scale (pitchClass C natural) ScaleClass.minorFlat5Pentatonic
+                Scale.scale
+                    (pitchClass C natural)
+                    ScaleClass.minorFlat5Pentatonic
                     |> Scale.toList
                     |> Expect.equal expected
         , test "C major minor 2 pentatonic" <|
@@ -178,7 +188,9 @@ all =
                         , pitchClass A natural
                         ]
                 in
-                Scale.scale (pitchClass C natural) ScaleClass.majorFlat2Pentatonic
+                Scale.scale
+                    (pitchClass C natural)
+                    ScaleClass.majorFlat2Pentatonic
                     |> Scale.toList
                     |> Expect.equal expected
         ]
