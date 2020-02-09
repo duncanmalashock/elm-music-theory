@@ -22,7 +22,7 @@ module MusicTheory.Internal.Pitch exposing
 
 import MusicTheory.Internal.PitchClass as PitchClass exposing (Offset, PitchClass)
 import MusicTheory.Interval as Interval exposing (Interval)
-import MusicTheory.Letter as Letter exposing (Letter)
+import MusicTheory.Letter exposing (Letter)
 import MusicTheory.Octave as Octave exposing (Octave, OctaveError(..))
 
 

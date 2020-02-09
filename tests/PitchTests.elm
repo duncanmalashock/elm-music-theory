@@ -1,16 +1,15 @@
 module PitchTests exposing (all)
 
 import Expect
-import Fuzz exposing (Fuzzer)
+import Fuzzers.IntervalFuzzer
+import Fuzzers.PitchFuzzer
 import MusicTheory.Internal.Pitch as Internal exposing (TransposeError(..))
 import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Interval as Interval
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.Octave as Octave exposing (OctaveError(..))
 import MusicTheory.Pitch as Pitch
-import Test exposing (..)
-import Util.IntervalFuzzer
-import Util.PitchFuzzer
+import Test exposing (Test, describe, fuzz, fuzz2, fuzz3, test)
 
 
 all : Test
@@ -26,24 +25,6 @@ all =
                 Internal.fromPitchClass Octave.five (PitchClass.pitchClass C PitchClass.sharp)
                     |> Internal.semitones
                     |> Expect.equal 61
-        , test "toString" <|
-            \_ ->
-                let
-                    testCases =
-                        [ ( Internal.pitch C Internal.natural Octave.four, "C4" )
-                        , ( Internal.pitch A Internal.flat Octave.zero, "A♭0" )
-                        , ( Internal.pitch G Internal.tripleSharp Octave.six, "A♯6" )
-                        , ( Internal.pitch B Internal.sharp Octave.eight, "C9" )
-                        , ( Internal.pitch C Internal.flat Octave.zero, "B-1" )
-                        ]
-
-                    input =
-                        testCases |> List.map (Tuple.first >> Pitch.toString)
-
-                    expected =
-                        testCases |> List.map Tuple.second
-                in
-                Expect.equal input expected
         , test "transpose up perfect 5 from C4 should be G4" <|
             \_ ->
                 Pitch.pitch C Pitch.natural Octave.four
@@ -74,29 +55,48 @@ all =
                 Pitch.pitch D Pitch.natural Octave.zero
                     |> Pitch.transposeDown Interval.majorThird
                     |> Expect.equal (Err <| InvalidOctave <| BelowValidRange -1)
-        , fuzz2 (Util.PitchFuzzer.pitchWithOctave Octave.four) Util.IntervalFuzzer.interval "transpose pitch by interval, result should have correct number of semitones" <|
+        , fuzz2
+            (Fuzzers.PitchFuzzer.pitchWithOctave Octave.four)
+            Fuzzers.IntervalFuzzer.interval
+            "transpose pitch by interval, result should have correct number of semitones"
+          <|
             \pitch interval ->
                 pitch
                     |> Pitch.transposeUp interval
                     |> Result.map Pitch.semitones
                     |> Expect.equal (Ok <| Interval.semitones interval + Pitch.semitones pitch)
-        , fuzz2 (Util.PitchFuzzer.pitchWithOctave Octave.four) Util.IntervalFuzzer.interval "transpose a pitch up and down by the same interval should result in the original pitch" <|
+        , fuzz2
+            (Fuzzers.PitchFuzzer.pitchWithOctave Octave.four)
+            Fuzzers.IntervalFuzzer.interval
+            "transpose a pitch up and down by the same interval should result in the original pitch"
+          <|
             \pitch interval ->
                 pitch
                     |> Pitch.transposeUp interval
                     |> Result.andThen (Pitch.transposeDown interval)
                     |> Expect.equal (Ok pitch)
-        , fuzz Util.PitchFuzzer.pitch "transpose pitch up a perfect unison should result in the original pitch" <|
+        , fuzz
+            Fuzzers.PitchFuzzer.pitch
+            "transpose pitch up a perfect unison should result in the original pitch"
+          <|
             \pitch ->
                 pitch
                     |> Pitch.transposeUp Interval.perfectUnison
                     |> Expect.equal (Ok pitch)
-        , fuzz Util.PitchFuzzer.pitch "transpose pitch down a perfect unison result in the original pitch " <|
+        , fuzz
+            Fuzzers.PitchFuzzer.pitch
+            "transpose pitch down a perfect unison result in the original pitch "
+          <|
             \pitch ->
                 pitch
                     |> Pitch.transposeDown Interval.perfectUnison
                     |> Expect.equal (Ok pitch)
-        , fuzz3 (Util.PitchFuzzer.pitchWithOctave Octave.four) Util.IntervalFuzzer.interval Util.IntervalFuzzer.interval "transpose up and down 2 intervals, expect original pitch" <|
+        , fuzz3
+            (Fuzzers.PitchFuzzer.pitchWithOctave Octave.four)
+            Fuzzers.IntervalFuzzer.interval
+            Fuzzers.IntervalFuzzer.interval
+            "transpose up and down 2 intervals, expect original pitch"
+          <|
             \pitch i1 i2 ->
                 pitch
                     |> Pitch.transposeUp i1

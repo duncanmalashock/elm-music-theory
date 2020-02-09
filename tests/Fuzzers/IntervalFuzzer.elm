@@ -1,10 +1,10 @@
-module Util.IntervalFuzzer exposing (interval)
+module Fuzzers.IntervalFuzzer exposing (interval)
 
 import Fuzz exposing (Fuzzer)
+import Fuzzers.Fuzzer
 import MusicTheory.Interval as Interval
-import Util.Fuzzer
 
 
 interval : Fuzzer Interval.Interval
 interval =
-    Util.Fuzzer.fromList Interval.all
+    Fuzzers.Fuzzer.fromList Interval.all

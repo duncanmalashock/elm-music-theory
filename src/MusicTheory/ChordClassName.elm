@@ -7,7 +7,7 @@ module MusicTheory.ChordClassName exposing
     , toString
     )
 
-import MusicTheory.ChordClass exposing (ChordClass)
+import MusicTheory.Internal.ChordClass exposing (ChordClass(..))
 import MusicTheory.Internal.TertianFactors as TertianFactors
     exposing
         ( Alteration(..)

@@ -1,4 +1,4 @@
-module Util.PitchClassFuzzer exposing (pitchClass)
+module Fuzzers.PitchClassFuzzer exposing (pitchClass)
 
 import Fuzz exposing (Fuzzer)
 import MusicTheory.Internal.PitchClass as Internal

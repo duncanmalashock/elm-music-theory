@@ -2,10 +2,10 @@ module ScaleTests exposing (all)
 
 import Expect
 import MusicTheory.Letter exposing (Letter(..))
-import MusicTheory.PitchClass exposing (..)
+import MusicTheory.PitchClass exposing (doubleFlat, flat, natural, pitchClass, sharp)
 import MusicTheory.Scale as Scale
 import MusicTheory.ScaleClass as ScaleClass
-import Test exposing (..)
+import Test exposing (Test, describe, test)
 
 
 all : Test

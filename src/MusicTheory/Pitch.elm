@@ -13,7 +13,6 @@ module MusicTheory.Pitch exposing
     , pitchClass
     , semitones
     , sharp
-    , toString
     , transposeDown
     , transposeUp
     , tripleFlat
@@ -25,7 +24,6 @@ import MusicTheory.Internal.PitchClass as PitchClass exposing (Offset, PitchClas
 import MusicTheory.Interval exposing (Interval)
 import MusicTheory.Letter exposing (Letter)
 import MusicTheory.Octave as Octave exposing (Octave, OctaveError(..))
-import MusicTheory.Pitch.Enharmonic as Enharmonic exposing (EnharmonicTransformationError(..))
 
 
 type alias Pitch =
@@ -114,16 +112,3 @@ transposeUp =
 transposeDown : Interval -> Pitch -> Result TransposeError Pitch
 transposeDown =
     Pitch.transposeDown
-
-
-toString : Pitch -> String
-toString pc =
-    case pc |> Enharmonic.simple of
-        Ok enharmonic ->
-            (pitchClass enharmonic |> PitchClass.toString) ++ String.fromInt (octave enharmonic |> Octave.number)
-
-        Err (Invalid thePitchClass (AboveValidRange o)) ->
-            PitchClass.toString thePitchClass ++ String.fromInt o
-
-        Err (Invalid thePitchClass (BelowValidRange o)) ->
-            PitchClass.toString thePitchClass ++ String.fromInt o

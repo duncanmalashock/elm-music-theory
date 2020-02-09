@@ -1,16 +1,12 @@
 module PitchClassTests exposing (all)
 
 import Expect
-import Fuzz
-import Maybe.Extra
+import Fuzzers.IntervalFuzzer as IntervalFuzzer
+import Fuzzers.PitchClassFuzzer as PitchClassFuzzer
 import MusicTheory.Interval as Interval
 import MusicTheory.Letter exposing (Letter(..))
-import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
-import MusicTheory.PitchClass.Enharmonic as Enharmonic
-import MusicTheory.PitchClass.Spelling as Spelling exposing (Accidental(..))
-import Test exposing (..)
-import Util.IntervalFuzzer as IntervalFuzzer
-import Util.PitchClassFuzzer as PitchClassFuzzer
+import MusicTheory.PitchClass as PitchClass
+import Test exposing (Test, describe, fuzz, fuzz2, fuzz3)
 
 
 all : Test
@@ -61,24 +57,4 @@ all =
                     |> PitchClass.transposeDown i1
                     |> PitchClass.transposeDown i2
                     |> Expect.equal pc
-        , test "toString" <|
-            \_ ->
-                let
-                    testCases =
-                        [ ( PitchClass.pitchClass C PitchClass.tripleSharp, "D♯" )
-                        , ( PitchClass.pitchClass C PitchClass.flat, "B" )
-                        , ( PitchClass.pitchClass C PitchClass.flat, "B" )
-                        , ( PitchClass.pitchClass E PitchClass.sharp, "F" )
-                        , ( PitchClass.pitchClass A PitchClass.tripleFlat, "G♭" )
-                        ]
-
-                    input =
-                        testCases |> List.map Tuple.first
-
-                    expected =
-                        testCases |> List.map Tuple.second
-                in
-                input
-                    |> List.map PitchClass.toString
-                    |> Expect.equal expected
         ]

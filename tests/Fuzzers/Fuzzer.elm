@@ -1,8 +1,7 @@
-module Util.Fuzzer exposing (fromList)
+module Fuzzers.Fuzzer exposing (fromList)
 
 import Fuzz exposing (Fuzzer)
 import List.Extra
-import MusicTheory.Octave as Octave exposing (Octave)
 
 
 fromList : List a -> Fuzzer a

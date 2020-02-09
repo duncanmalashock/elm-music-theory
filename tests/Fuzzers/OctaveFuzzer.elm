@@ -1,10 +1,10 @@
-module Util.OctaveFuzzer exposing (octave)
+module Fuzzers.OctaveFuzzer exposing (octave)
 
 import Fuzz exposing (Fuzzer)
+import Fuzzers.Fuzzer
 import MusicTheory.Octave as Octave exposing (Octave)
-import Util.Fuzzer
 
 
 octave : Fuzzer Octave
 octave =
-    Util.Fuzzer.fromList Octave.all
+    Fuzzers.Fuzzer.fromList Octave.all

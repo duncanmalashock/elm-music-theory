@@ -6,8 +6,7 @@ module MusicTheory.Internal.ScaleClass exposing
     , ScaleClass(..)
     )
 
-import MusicTheory.Interval as Interval exposing (Interval)
-import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
+import MusicTheory.Interval exposing (Interval)
 
 
 type ScaleClass
