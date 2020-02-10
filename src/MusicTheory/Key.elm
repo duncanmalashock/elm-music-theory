@@ -39,7 +39,7 @@ import MusicTheory.ScaleClass as ScaleClass
 
 
 type Key
-    = Key MajorOrMinor Scale
+    = Key PitchClass MajorOrMinor
 
 
 type MajorOrMinor
@@ -49,22 +49,27 @@ type MajorOrMinor
 
 major : PitchClass -> Key
 major root =
-    Key Major <| Scale.scale root ScaleClass.major
+    Key root Major
 
 
 minor : PitchClass -> Key
 minor root =
-    Key Minor <| Scale.scale root ScaleClass.minor
+    Key root Minor
 
 
 scale : Key -> Scale
-scale (Key _ keyScale) =
-    keyScale
+scale (Key root majorOrMinor) =
+    case majorOrMinor of
+        Major ->
+            Scale.scale root ScaleClass.major
+
+        Minor ->
+            Scale.scale root ScaleClass.minor
 
 
 tonic : Key -> PitchClass
-tonic key =
-    Scale.root <| scale key
+tonic (Key root _) =
+    root
 
 
 
