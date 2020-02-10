@@ -1,6 +1,8 @@
 module MusicTheory.TertianFactors exposing
     ( Alteration(..)
     , Extension(..)
+    , TaggedInterval
+    , TaggedPitchClass
     , TertianFactors
     , alterations
     , extension
@@ -21,6 +23,8 @@ module MusicTheory.TertianFactors exposing
     , isTriad
     , tertianFactors
     , toIntervals
+    , toTaggedInterval
+    , toTaggedPitchClass
     , withDiminishedSeventh
     , withEleventh
     , withFifth
@@ -42,10 +46,56 @@ module MusicTheory.TertianFactors exposing
     )
 
 import MusicTheory.Interval as Interval exposing (Interval)
+import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
+
+
+type TertianFactor
+    = Root
+    | MajorThird
+    | MinorThird
+    | SuspendedFourth
+    | SuspendedSecond
+    | Fifth
+    | SharpFifth
+    | FlatFifth
+    | Sixth
+    | DiminishedSeventh
+    | MinorSeventh
+    | MajorSeventh
+    | FlatNinth
+    | Ninth
+    | SharpNinth
+    | Eleventh
+    | SharpEleventh
+    | Thirteenth
+    | FlatThirteenth
+
+
+type Alteration
+    = AlterationSharpFifth
+    | AlterationFlatFifth
+    | AlterationFlatNinth
+    | AlterationSharpNinth
+    | AlterationSharpEleventh
+    | AlterationFlatThirteenth
+
+
+type Extension
+    = ExtensionNinth
+    | ExtensionEleventh
+    | ExtensionThirteenth
 
 
 type TertianFactors
     = TertianFactors (List TertianFactor)
+
+
+type alias TaggedInterval =
+    ( TertianFactor, Interval )
+
+
+type alias TaggedPitchClass =
+    ( TertianFactor, PitchClass )
 
 
 tertianFactors : TertianFactors
@@ -235,6 +285,16 @@ toIntervals (TertianFactors factors) =
     factors
         |> sort
         |> List.map toInterval
+
+
+toTaggedInterval : TertianFactor -> TaggedInterval
+toTaggedInterval factor =
+    ( factor, toInterval factor )
+
+
+toTaggedPitchClass : PitchClass -> TertianFactor -> TaggedPitchClass
+toTaggedPitchClass root factor =
+    ( factor, PitchClass.transposeUp (toInterval factor) root )
 
 
 toInterval : TertianFactor -> Interval
@@ -507,43 +567,6 @@ withFlatThirteenth factors =
         |> remove Sixth
         |> remove Thirteenth
         |> add FlatThirteenth
-
-
-type TertianFactor
-    = Root
-    | MajorThird
-    | MinorThird
-    | SuspendedFourth
-    | SuspendedSecond
-    | Fifth
-    | SharpFifth
-    | FlatFifth
-    | Sixth
-    | DiminishedSeventh
-    | MinorSeventh
-    | MajorSeventh
-    | FlatNinth
-    | Ninth
-    | SharpNinth
-    | Eleventh
-    | SharpEleventh
-    | Thirteenth
-    | FlatThirteenth
-
-
-type Alteration
-    = AlterationSharpFifth
-    | AlterationFlatFifth
-    | AlterationFlatNinth
-    | AlterationSharpNinth
-    | AlterationSharpEleventh
-    | AlterationFlatThirteenth
-
-
-type Extension
-    = ExtensionNinth
-    | ExtensionEleventh
-    | ExtensionThirteenth
 
 
 sortExtensions : List Extension -> List Extension

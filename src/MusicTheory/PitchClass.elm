@@ -21,12 +21,12 @@ import MusicTheory.Interval as Interval exposing (Interval(..))
 import MusicTheory.Letter as Letter exposing (Letter(..))
 
 
-type Offset
-    = Offset Int
-
-
 type PitchClass
     = PitchClass Letter Offset
+
+
+type Offset
+    = Offset Int
 
 
 pitchClass : Letter -> Offset -> PitchClass
