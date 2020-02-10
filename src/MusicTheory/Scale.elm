@@ -10,6 +10,10 @@ import MusicTheory.ScaleClass as ScaleClass exposing (ScaleClass)
 
 
 type Scale
+    = Scale PitchClass ScaleClass
+
+
+type ScaleDegrees
     = Pentatonic PentatonicDegrees
     | Hexatonic HexatonicDegrees
     | Heptatonic HeptatonicDegrees
@@ -60,39 +64,17 @@ type alias OctatonicDegrees =
 
 scale : PitchClass -> ScaleClass -> Scale
 scale scaleRoot scaleClass =
-    case scaleClass of
-        ScaleClass.Pentatonic pentatonicScaleClassIntervals ->
-            pentatonicScale scaleRoot pentatonicScaleClassIntervals
-
-        ScaleClass.Hexatonic hexatonicScaleClassIntervals ->
-            hexatonicScale scaleRoot hexatonicScaleClassIntervals
-
-        ScaleClass.Heptatonic heptatonicScaleClassIntervals ->
-            heptatonicScale scaleRoot heptatonicScaleClassIntervals
-
-        ScaleClass.Octatonic octatonicScaleClassIntervals ->
-            octatonicScale scaleRoot octatonicScaleClassIntervals
+    Scale scaleRoot scaleClass
 
 
 root : Scale -> PitchClass
-root theScale =
-    case theScale of
-        Pentatonic scaleDegrees ->
-            scaleDegrees.root
-
-        Hexatonic scaleDegrees ->
-            scaleDegrees.root
-
-        Heptatonic scaleDegrees ->
-            scaleDegrees.root
-
-        Octatonic scaleDegrees ->
-            scaleDegrees.root
+root (Scale scaleRoot _) =
+    scaleRoot
 
 
 toList : Scale -> List PitchClass
 toList theScale =
-    case theScale of
+    case toScaleDegrees theScale of
         Pentatonic scaleDegrees ->
             [ scaleDegrees.root
             , scaleDegrees.second
@@ -132,51 +114,47 @@ toList theScale =
             ]
 
 
-pentatonicScale : PitchClass -> ScaleClass.PentatonicIntervals -> Scale
-pentatonicScale scaleRoot intervals =
-    Pentatonic
-        { root = scaleRoot
-        , second = PitchClass.transposeUp intervals.rootToSecond scaleRoot
-        , third = PitchClass.transposeUp intervals.rootToThird scaleRoot
-        , fourth = PitchClass.transposeUp intervals.rootToFourth scaleRoot
-        , fifth = PitchClass.transposeUp intervals.rootToFifth scaleRoot
-        }
+toScaleDegrees : Scale -> ScaleDegrees
+toScaleDegrees (Scale scaleRoot scaleClass) =
+    case ScaleClass.toScaleClassIntervals scaleClass of
+        ScaleClass.Pentatonic scaleClassIntervals ->
+            Pentatonic
+                { root = scaleRoot
+                , second = PitchClass.transposeUp scaleClassIntervals.rootToSecond scaleRoot
+                , third = PitchClass.transposeUp scaleClassIntervals.rootToThird scaleRoot
+                , fourth = PitchClass.transposeUp scaleClassIntervals.rootToFourth scaleRoot
+                , fifth = PitchClass.transposeUp scaleClassIntervals.rootToFifth scaleRoot
+                }
 
+        ScaleClass.Hexatonic scaleClassIntervals ->
+            Hexatonic
+                { root = scaleRoot
+                , second = PitchClass.transposeUp scaleClassIntervals.rootToSecond scaleRoot
+                , third = PitchClass.transposeUp scaleClassIntervals.rootToThird scaleRoot
+                , fourth = PitchClass.transposeUp scaleClassIntervals.rootToFourth scaleRoot
+                , fifth = PitchClass.transposeUp scaleClassIntervals.rootToFifth scaleRoot
+                , sixth = PitchClass.transposeUp scaleClassIntervals.rootToSixth scaleRoot
+                }
 
-hexatonicScale : PitchClass -> ScaleClass.HexatonicIntervals -> Scale
-hexatonicScale scaleRoot intervals =
-    Hexatonic
-        { root = scaleRoot
-        , second = PitchClass.transposeUp intervals.rootToSecond scaleRoot
-        , third = PitchClass.transposeUp intervals.rootToThird scaleRoot
-        , fourth = PitchClass.transposeUp intervals.rootToFourth scaleRoot
-        , fifth = PitchClass.transposeUp intervals.rootToFifth scaleRoot
-        , sixth = PitchClass.transposeUp intervals.rootToSixth scaleRoot
-        }
+        ScaleClass.Heptatonic scaleClassIntervals ->
+            Heptatonic
+                { root = scaleRoot
+                , second = PitchClass.transposeUp scaleClassIntervals.rootToSecond scaleRoot
+                , third = PitchClass.transposeUp scaleClassIntervals.rootToThird scaleRoot
+                , fourth = PitchClass.transposeUp scaleClassIntervals.rootToFourth scaleRoot
+                , fifth = PitchClass.transposeUp scaleClassIntervals.rootToFifth scaleRoot
+                , sixth = PitchClass.transposeUp scaleClassIntervals.rootToSixth scaleRoot
+                , seventh = PitchClass.transposeUp scaleClassIntervals.rootToSeventh scaleRoot
+                }
 
-
-heptatonicScale : PitchClass -> ScaleClass.HeptatonicIntervals -> Scale
-heptatonicScale scaleRoot intervals =
-    Heptatonic
-        { root = scaleRoot
-        , second = PitchClass.transposeUp intervals.rootToSecond scaleRoot
-        , third = PitchClass.transposeUp intervals.rootToThird scaleRoot
-        , fourth = PitchClass.transposeUp intervals.rootToFourth scaleRoot
-        , fifth = PitchClass.transposeUp intervals.rootToFifth scaleRoot
-        , sixth = PitchClass.transposeUp intervals.rootToSixth scaleRoot
-        , seventh = PitchClass.transposeUp intervals.rootToSeventh scaleRoot
-        }
-
-
-octatonicScale : PitchClass -> ScaleClass.OctatonicIntervals -> Scale
-octatonicScale scaleRoot intervals =
-    Octatonic
-        { root = scaleRoot
-        , second = PitchClass.transposeUp intervals.rootToSecond scaleRoot
-        , third = PitchClass.transposeUp intervals.rootToThird scaleRoot
-        , fourth = PitchClass.transposeUp intervals.rootToFourth scaleRoot
-        , fifth = PitchClass.transposeUp intervals.rootToFifth scaleRoot
-        , sixth = PitchClass.transposeUp intervals.rootToSixth scaleRoot
-        , seventh = PitchClass.transposeUp intervals.rootToSeventh scaleRoot
-        , eighth = PitchClass.transposeUp intervals.rootToEighth scaleRoot
-        }
+        ScaleClass.Octatonic scaleClassIntervals ->
+            Octatonic
+                { root = scaleRoot
+                , second = PitchClass.transposeUp scaleClassIntervals.rootToSecond scaleRoot
+                , third = PitchClass.transposeUp scaleClassIntervals.rootToThird scaleRoot
+                , fourth = PitchClass.transposeUp scaleClassIntervals.rootToFourth scaleRoot
+                , fifth = PitchClass.transposeUp scaleClassIntervals.rootToFifth scaleRoot
+                , sixth = PitchClass.transposeUp scaleClassIntervals.rootToSixth scaleRoot
+                , seventh = PitchClass.transposeUp scaleClassIntervals.rootToSeventh scaleRoot
+                , eighth = PitchClass.transposeUp scaleClassIntervals.rootToEighth scaleRoot
+                }

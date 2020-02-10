@@ -4,7 +4,9 @@ module MusicTheory.ScaleClass exposing
     , OctatonicIntervals
     , PentatonicIntervals
     , ScaleClass(..)
+    , ScaleClassIntervals(..)
     , aeolian
+    , all
     , dorian
     , ionian
     , locrian
@@ -13,7 +15,8 @@ module MusicTheory.ScaleClass exposing
     , minor
     , mixolydian
     , phrygian
-    ,  toIntervals
+    , toIntervals
+    ,  toScaleClassIntervals
        -- , alteredDoubleFlat7
        -- , altered
        -- , arabian
@@ -71,6 +74,18 @@ import MusicTheory.Interval as Interval exposing (Interval)
 
 
 type ScaleClass
+    = Aeolian
+    | Dorian
+    | Ionian
+    | Locrian
+    | Lydian
+    | Major
+    | Minor
+    | Mixolydian
+    | Phrygian
+
+
+type ScaleClassIntervals
     = Pentatonic PentatonicIntervals
     | Hexatonic HexatonicIntervals
     | Heptatonic HeptatonicIntervals
@@ -117,7 +132,7 @@ type alias OctatonicIntervals =
 
 toIntervals : ScaleClass -> List Interval
 toIntervals theScale =
-    case theScale of
+    case toScaleClassIntervals theScale of
         Pentatonic scaleDegrees ->
             [ Interval.perfectUnison
             , scaleDegrees.rootToSecond
@@ -157,102 +172,161 @@ toIntervals theScale =
             ]
 
 
+all : List ScaleClass
+all =
+    [ aeolian
+    , dorian
+    , ionian
+    , locrian
+    , lydian
+    , mixolydian
+    , phrygian
+    , minor
+    , major
+    ]
+
+
 
 -- Modes of major
 
 
 major : ScaleClass
 major =
-    ionian
+    Major
 
 
 minor : ScaleClass
 minor =
-    aeolian
+    Minor
 
 
 ionian : ScaleClass
 ionian =
-    Heptatonic
-        { rootToSecond = Interval.majorSecond
-        , rootToThird = Interval.majorThird
-        , rootToFourth = Interval.perfectFourth
-        , rootToFifth = Interval.perfectFifth
-        , rootToSixth = Interval.majorSixth
-        , rootToSeventh = Interval.majorSeventh
-        }
+    Ionian
 
 
 dorian : ScaleClass
 dorian =
-    Heptatonic
-        { rootToSecond = Interval.majorSecond
-        , rootToThird = Interval.minorThird
-        , rootToFourth = Interval.perfectFourth
-        , rootToFifth = Interval.perfectFifth
-        , rootToSixth = Interval.majorSixth
-        , rootToSeventh = Interval.minorSeventh
-        }
+    Dorian
 
 
 phrygian : ScaleClass
 phrygian =
-    Heptatonic
-        { rootToSecond = Interval.minorSecond
-        , rootToThird = Interval.minorThird
-        , rootToFourth = Interval.perfectFourth
-        , rootToFifth = Interval.perfectFifth
-        , rootToSixth = Interval.minorSixth
-        , rootToSeventh = Interval.minorSeventh
-        }
+    Phrygian
 
 
 lydian : ScaleClass
 lydian =
-    Heptatonic
-        { rootToSecond = Interval.majorSecond
-        , rootToThird = Interval.majorThird
-        , rootToFourth = Interval.augmentedFourth
-        , rootToFifth = Interval.perfectFifth
-        , rootToSixth = Interval.majorSixth
-        , rootToSeventh = Interval.majorSeventh
-        }
+    Lydian
 
 
 mixolydian : ScaleClass
 mixolydian =
-    Heptatonic
-        { rootToSecond = Interval.majorSecond
-        , rootToThird = Interval.majorThird
-        , rootToFourth = Interval.perfectFourth
-        , rootToFifth = Interval.perfectFifth
-        , rootToSixth = Interval.majorSixth
-        , rootToSeventh = Interval.minorSeventh
-        }
+    Mixolydian
 
 
 aeolian : ScaleClass
 aeolian =
-    Heptatonic
-        { rootToSecond = Interval.majorSecond
-        , rootToThird = Interval.minorThird
-        , rootToFourth = Interval.perfectFourth
-        , rootToFifth = Interval.perfectFifth
-        , rootToSixth = Interval.minorSixth
-        , rootToSeventh = Interval.minorSeventh
-        }
+    Aeolian
 
 
 locrian : ScaleClass
 locrian =
-    Heptatonic
-        { rootToSecond = Interval.minorSecond
-        , rootToThird = Interval.minorThird
-        , rootToFourth = Interval.perfectFourth
-        , rootToFifth = Interval.diminishedFifth
-        , rootToSixth = Interval.minorSixth
-        , rootToSeventh = Interval.minorSeventh
-        }
+    Locrian
+
+
+toScaleClassIntervals : ScaleClass -> ScaleClassIntervals
+toScaleClassIntervals scaleClass =
+    case scaleClass of
+        Major ->
+            Heptatonic
+                { rootToSecond = Interval.majorSecond
+                , rootToThird = Interval.majorThird
+                , rootToFourth = Interval.perfectFourth
+                , rootToFifth = Interval.perfectFifth
+                , rootToSixth = Interval.majorSixth
+                , rootToSeventh = Interval.majorSeventh
+                }
+
+        Minor ->
+            Heptatonic
+                { rootToSecond = Interval.majorSecond
+                , rootToThird = Interval.minorThird
+                , rootToFourth = Interval.perfectFourth
+                , rootToFifth = Interval.perfectFifth
+                , rootToSixth = Interval.minorSixth
+                , rootToSeventh = Interval.minorSeventh
+                }
+
+        Ionian ->
+            Heptatonic
+                { rootToSecond = Interval.majorSecond
+                , rootToThird = Interval.majorThird
+                , rootToFourth = Interval.perfectFourth
+                , rootToFifth = Interval.perfectFifth
+                , rootToSixth = Interval.majorSixth
+                , rootToSeventh = Interval.majorSeventh
+                }
+
+        Dorian ->
+            Heptatonic
+                { rootToSecond = Interval.majorSecond
+                , rootToThird = Interval.minorThird
+                , rootToFourth = Interval.perfectFourth
+                , rootToFifth = Interval.perfectFifth
+                , rootToSixth = Interval.majorSixth
+                , rootToSeventh = Interval.minorSeventh
+                }
+
+        Phrygian ->
+            Heptatonic
+                { rootToSecond = Interval.minorSecond
+                , rootToThird = Interval.minorThird
+                , rootToFourth = Interval.perfectFourth
+                , rootToFifth = Interval.perfectFifth
+                , rootToSixth = Interval.minorSixth
+                , rootToSeventh = Interval.minorSeventh
+                }
+
+        Lydian ->
+            Heptatonic
+                { rootToSecond = Interval.majorSecond
+                , rootToThird = Interval.majorThird
+                , rootToFourth = Interval.augmentedFourth
+                , rootToFifth = Interval.perfectFifth
+                , rootToSixth = Interval.majorSixth
+                , rootToSeventh = Interval.majorSeventh
+                }
+
+        Mixolydian ->
+            Heptatonic
+                { rootToSecond = Interval.majorSecond
+                , rootToThird = Interval.majorThird
+                , rootToFourth = Interval.perfectFourth
+                , rootToFifth = Interval.perfectFifth
+                , rootToSixth = Interval.majorSixth
+                , rootToSeventh = Interval.minorSeventh
+                }
+
+        Aeolian ->
+            Heptatonic
+                { rootToSecond = Interval.majorSecond
+                , rootToThird = Interval.minorThird
+                , rootToFourth = Interval.perfectFourth
+                , rootToFifth = Interval.perfectFifth
+                , rootToSixth = Interval.minorSixth
+                , rootToSeventh = Interval.minorSeventh
+                }
+
+        Locrian ->
+            Heptatonic
+                { rootToSecond = Interval.minorSecond
+                , rootToThird = Interval.minorThird
+                , rootToFourth = Interval.perfectFourth
+                , rootToFifth = Interval.diminishedFifth
+                , rootToSixth = Interval.minorSixth
+                , rootToSeventh = Interval.minorSeventh
+                }
 
 
 

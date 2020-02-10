@@ -1,4 +1,7 @@
-module MusicTheory.Analyze.ChordClass exposing (isInScaleClass)
+module MusicTheory.Analyze.ChordClass exposing
+    ( isInScaleClass
+    , scaleClassesFor
+    )
 
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.ScaleClass as ScaleClass
@@ -12,3 +15,12 @@ isInScaleClass scaleClass chordClass =
                 (ScaleClass.toIntervals scaleClass)
         )
         (ChordClass.toIntervals chordClass)
+
+
+scaleClassesFor : ChordClass.ChordClass -> List ScaleClass.ScaleClass
+scaleClassesFor chordClass =
+    List.filter
+        (\scaleClass ->
+            isInScaleClass scaleClass chordClass
+        )
+        ScaleClass.all
