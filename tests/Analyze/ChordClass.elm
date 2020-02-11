@@ -3,7 +3,9 @@ module Analyze.ChordClass exposing (all)
 import Expect
 import MusicTheory.Analyze.ChordClass as AnalyzeChordClass
 import MusicTheory.ChordClass as ChordClass
+import MusicTheory.Interval as Interval
 import MusicTheory.ScaleClass as ScaleClass
+import MusicTheory.TertianFactors exposing (TertianFactor(..))
 import Test exposing (..)
 
 
@@ -82,5 +84,76 @@ all =
                             AnalyzeChordClass.scaleClassesFor minorSeventhChordClass
                     in
                     Expect.equal chordClassesForScaleClass expectedScaleClasses
+            ]
+        , describe "taggedIntervalsInRootCategoryFor"
+            [ test "Root and ninth are in root category for a minor ninth chord" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                [ ( Root, Interval.perfectUnison )
+                                , ( Ninth, Interval.majorSecond )
+                                ]
+
+                        minorNinthChordClass =
+                            ChordClass.minorNinth
+
+                        result =
+                            AnalyzeChordClass.taggedIntervalsInRootCategoryFor minorNinthChordClass
+                    in
+                    Expect.equal expected result
+            ]
+        , describe "taggedIntervalsInThirdCategoryFor"
+            [ test "Minor third is in third category for a minor ninth chord" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                [ ( MinorThird, Interval.minorThird )
+                                ]
+
+                        minorNinthChordClass =
+                            ChordClass.minorNinth
+
+                        result =
+                            AnalyzeChordClass.taggedIntervalsInThirdCategoryFor minorNinthChordClass
+                    in
+                    Expect.equal expected result
+            ]
+        , describe "taggedIntervalsInFifthCategoryFor"
+            [ test "Fifth, eleventh, and thirteenth are in fifth category for a dominant thirteenth chord" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                [ ( Fifth, Interval.perfectFifth )
+                                , ( Eleventh, Interval.perfectFourth )
+                                , ( Thirteenth, Interval.majorSixth )
+                                ]
+
+                        dominantThirteenthChordClass =
+                            ChordClass.dominantThirteenth
+
+                        result =
+                            AnalyzeChordClass.taggedIntervalsInFifthCategoryFor dominantThirteenthChordClass
+                    in
+                    Expect.equal expected result
+            ]
+        , describe "taggedIntervalsInSeventhCategoryFor"
+            [ test "Seventh is in seventh category for a dominant thirteenth chord" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                [ ( MinorSeventh, Interval.minorSeventh )
+                                ]
+
+                        dominantThirteenthChordClass =
+                            ChordClass.dominantThirteenth
+
+                        result =
+                            AnalyzeChordClass.taggedIntervalsInSeventhCategoryFor dominantThirteenthChordClass
+                    in
+                    Expect.equal expected result
             ]
         ]

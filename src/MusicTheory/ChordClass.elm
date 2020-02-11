@@ -1,5 +1,6 @@
 module MusicTheory.ChordClass exposing
     ( ChordClass(..)
+    , ChordClassError(..)
     , augmented
     , diminished
     , diminishedSeventh
@@ -18,6 +19,7 @@ module MusicTheory.ChordClass exposing
     , dominantThirteenthFlatNine
     , dominantThirteenthSharpNine
     , dominantThirteenthSharpNineFlatNine
+    , errorToString
     , halfDiminished
     , major
     , majorAddNine
@@ -27,6 +29,7 @@ module MusicTheory.ChordClass exposing
     , minor
     , minorAddNine
     , minorMajorSeventh
+    , minorNinth
     , minorSeventh
     , minorSix
     , minorSixNine
@@ -34,6 +37,7 @@ module MusicTheory.ChordClass exposing
     , sus2
     , sus4
     , toIntervals
+    , toTaggedIntervals
     )
 
 import MusicTheory.Interval exposing (Interval)
@@ -58,6 +62,27 @@ toIntervals chordClass =
 
         NonTertian intervals ->
             intervals
+
+
+toTaggedIntervals : ChordClass -> Result ChordClassError (List TertianFactors.TaggedInterval)
+toTaggedIntervals chordClass =
+    case chordClass of
+        NonTertian _ ->
+            Err (ChordClassIsNonTertian chordClass)
+
+        Tertian tertianFactors ->
+            Ok (TertianFactors.toTaggedIntervals tertianFactors)
+
+
+type ChordClassError
+    = ChordClassIsNonTertian ChordClass
+
+
+errorToString : ChordClassError -> String
+errorToString error =
+    case error of
+        ChordClassIsNonTertian chordClass ->
+            "Cannot convert non-tertian chord class to tertian chord factors."
 
 
 
@@ -195,6 +220,16 @@ minorSeventh =
         |> TertianFactors.withMinorThird
         |> TertianFactors.withFifth
         |> TertianFactors.withMinorSeventh
+        |> Tertian
+
+
+minorNinth : ChordClass
+minorNinth =
+    TertianFactors.tertianFactors
+        |> TertianFactors.withMinorThird
+        |> TertianFactors.withFifth
+        |> TertianFactors.withMinorSeventh
+        |> TertianFactors.withNinth
         |> Tertian
 
 

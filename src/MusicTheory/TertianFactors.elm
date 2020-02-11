@@ -3,6 +3,7 @@ module MusicTheory.TertianFactors exposing
     , Extension(..)
     , TaggedInterval
     , TaggedPitchClass
+    , TertianFactor(..)
     , TertianFactors
     , alterations
     , extension
@@ -23,7 +24,7 @@ module MusicTheory.TertianFactors exposing
     , isTriad
     , tertianFactors
     , toIntervals
-    , toTaggedInterval
+    , toTaggedIntervals
     , toTaggedPitchClass
     , withDiminishedSeventh
     , withEleventh
@@ -287,9 +288,14 @@ toIntervals (TertianFactors factors) =
         |> List.map toInterval
 
 
-toTaggedInterval : TertianFactor -> TaggedInterval
-toTaggedInterval factor =
-    ( factor, toInterval factor )
+toTaggedIntervals : TertianFactors -> List TaggedInterval
+toTaggedIntervals (TertianFactors factors) =
+    factors
+        |> sort
+        |> List.map
+            (\factor ->
+                ( factor, toInterval factor )
+            )
 
 
 toTaggedPitchClass : PitchClass -> TertianFactor -> TaggedPitchClass
