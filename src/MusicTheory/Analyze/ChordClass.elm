@@ -1,10 +1,7 @@
 module MusicTheory.Analyze.ChordClass exposing
     ( isInScaleClass
     , scaleClassesFor
-    , taggedIntervalsInFifthCategoryFor
-    , taggedIntervalsInRootCategoryFor
-    , taggedIntervalsInSeventhCategoryFor
-    , taggedIntervalsInThirdCategoryFor
+    , taggedIntervalsByCategory
     )
 
 import MusicTheory.Analyze.TertianFactors as AnalyzeTertianFactors
@@ -32,53 +29,22 @@ scaleClassesFor chordClass =
         ScaleClass.all
 
 
-taggedIntervalsInRootCategoryFor : ChordClass.ChordClass -> Result ChordClass.ChordClassError (List TertianFactors.TaggedInterval)
-taggedIntervalsInRootCategoryFor chordClass =
+type alias ChordTonesByCategory =
+    { root : List TertianFactors.TaggedInterval
+    , third : List TertianFactors.TaggedInterval
+    , fifth : List TertianFactors.TaggedInterval
+    , seventh : List TertianFactors.TaggedInterval
+    }
+
+
+taggedIntervalsByCategory : ChordClass.ChordClass -> Result ChordClass.ChordClassError ChordTonesByCategory
+taggedIntervalsByCategory chordClass =
     ChordClass.toTaggedIntervals chordClass
         |> Result.map
             (\list ->
-                List.filter
-                    (\( tertianFactor, _ ) ->
-                        AnalyzeTertianFactors.isRootToneCategory tertianFactor
-                    )
-                    list
-            )
-
-
-taggedIntervalsInThirdCategoryFor : ChordClass.ChordClass -> Result ChordClass.ChordClassError (List TertianFactors.TaggedInterval)
-taggedIntervalsInThirdCategoryFor chordClass =
-    ChordClass.toTaggedIntervals chordClass
-        |> Result.map
-            (\list ->
-                List.filter
-                    (\( tertianFactor, _ ) ->
-                        AnalyzeTertianFactors.isThirdToneCategory tertianFactor
-                    )
-                    list
-            )
-
-
-taggedIntervalsInFifthCategoryFor : ChordClass.ChordClass -> Result ChordClass.ChordClassError (List TertianFactors.TaggedInterval)
-taggedIntervalsInFifthCategoryFor chordClass =
-    ChordClass.toTaggedIntervals chordClass
-        |> Result.map
-            (\list ->
-                List.filter
-                    (\( tertianFactor, _ ) ->
-                        AnalyzeTertianFactors.isFifthToneCategory tertianFactor
-                    )
-                    list
-            )
-
-
-taggedIntervalsInSeventhCategoryFor : ChordClass.ChordClass -> Result ChordClass.ChordClassError (List TertianFactors.TaggedInterval)
-taggedIntervalsInSeventhCategoryFor chordClass =
-    ChordClass.toTaggedIntervals chordClass
-        |> Result.map
-            (\list ->
-                List.filter
-                    (\( tertianFactor, _ ) ->
-                        AnalyzeTertianFactors.isSeventhToneCategory tertianFactor
-                    )
-                    list
+                { root = List.filter (\( tertianFactor, _ ) -> AnalyzeTertianFactors.isRootToneCategory tertianFactor) list
+                , third = List.filter (\( tertianFactor, _ ) -> AnalyzeTertianFactors.isThirdToneCategory tertianFactor) list
+                , fifth = List.filter (\( tertianFactor, _ ) -> AnalyzeTertianFactors.isFifthToneCategory tertianFactor) list
+                , seventh = List.filter (\( tertianFactor, _ ) -> AnalyzeTertianFactors.isSeventhToneCategory tertianFactor) list
+                }
             )

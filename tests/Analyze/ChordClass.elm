@@ -86,73 +86,32 @@ all =
                     Expect.equal chordClassesForScaleClass expectedScaleClasses
             ]
         , describe "taggedIntervalsInRootCategoryFor"
-            [ test "Root and ninth are in root category for a minor ninth chord" <|
+            [ test "Correct tagged intervals for each category for a dominant 7 b9 b13 chord" <|
                 \_ ->
                     let
                         expected =
                             Ok
-                                [ ( Root, Interval.perfectUnison )
-                                , ( Ninth, Interval.majorSecond )
-                                ]
+                                { fifth =
+                                    [ ( Fifth, Interval.perfectFifth )
+                                    , ( FlatThirteenth, Interval.minorSixth )
+                                    ]
+                                , root =
+                                    [ ( Root, Interval.perfectUnison )
+                                    , ( FlatNinth, Interval.minorSecond )
+                                    ]
+                                , seventh =
+                                    [ ( MinorSeventh, Interval.minorSeventh )
+                                    ]
+                                , third =
+                                    [ ( MajorThird, Interval.majorThird )
+                                    ]
+                                }
 
-                        minorNinthChordClass =
-                            ChordClass.minorNinth
-
-                        result =
-                            AnalyzeChordClass.taggedIntervalsInRootCategoryFor minorNinthChordClass
-                    in
-                    Expect.equal expected result
-            ]
-        , describe "taggedIntervalsInThirdCategoryFor"
-            [ test "Minor third is in third category for a minor ninth chord" <|
-                \_ ->
-                    let
-                        expected =
-                            Ok
-                                [ ( MinorThird, Interval.minorThird )
-                                ]
-
-                        minorNinthChordClass =
-                            ChordClass.minorNinth
+                        dominantSeventhFlatNineFlatThirteenChordClass =
+                            ChordClass.dominantSeventhFlatNineFlatThirteen
 
                         result =
-                            AnalyzeChordClass.taggedIntervalsInThirdCategoryFor minorNinthChordClass
-                    in
-                    Expect.equal expected result
-            ]
-        , describe "taggedIntervalsInFifthCategoryFor"
-            [ test "Fifth, eleventh, and thirteenth are in fifth category for a dominant thirteenth chord" <|
-                \_ ->
-                    let
-                        expected =
-                            Ok
-                                [ ( Fifth, Interval.perfectFifth )
-                                , ( Eleventh, Interval.perfectFourth )
-                                , ( Thirteenth, Interval.majorSixth )
-                                ]
-
-                        dominantThirteenthChordClass =
-                            ChordClass.dominantThirteenth
-
-                        result =
-                            AnalyzeChordClass.taggedIntervalsInFifthCategoryFor dominantThirteenthChordClass
-                    in
-                    Expect.equal expected result
-            ]
-        , describe "taggedIntervalsInSeventhCategoryFor"
-            [ test "Seventh is in seventh category for a dominant thirteenth chord" <|
-                \_ ->
-                    let
-                        expected =
-                            Ok
-                                [ ( MinorSeventh, Interval.minorSeventh )
-                                ]
-
-                        dominantThirteenthChordClass =
-                            ChordClass.dominantThirteenth
-
-                        result =
-                            AnalyzeChordClass.taggedIntervalsInSeventhCategoryFor dominantThirteenthChordClass
+                            AnalyzeChordClass.taggedIntervalsByCategory dominantSeventhFlatNineFlatThirteenChordClass
                     in
                     Expect.equal expected result
             ]
