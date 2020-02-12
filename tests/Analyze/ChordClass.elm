@@ -91,19 +91,19 @@ all =
                     let
                         expected =
                             Ok
-                                { fifth =
-                                    [ ( Fifth, Interval.perfectFifth )
-                                    , ( FlatThirteenth, Interval.minorSixth )
-                                    ]
-                                , root =
+                                { root =
                                     [ ( Root, Interval.perfectUnison )
                                     , ( FlatNinth, Interval.minorSecond )
                                     ]
-                                , seventh =
-                                    [ ( MinorSeventh, Interval.minorSeventh )
-                                    ]
                                 , third =
                                     [ ( MajorThird, Interval.majorThird )
+                                    ]
+                                , fifth =
+                                    [ ( Fifth, Interval.perfectFifth )
+                                    , ( FlatThirteenth, Interval.minorSixth )
+                                    ]
+                                , seventh =
+                                    [ ( MinorSeventh, Interval.minorSeventh )
                                     ]
                                 }
 
