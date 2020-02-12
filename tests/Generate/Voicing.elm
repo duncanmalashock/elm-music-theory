@@ -3,7 +3,7 @@ module Generate.Voicing exposing (all)
 import Expect
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
-import MusicTheory.Generate.Voicing as GenerateVoicing
+import MusicTheory.Generate.Voicing as GenerateVoicing exposing (VoicingError(..))
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.PitchClass as PitchClass exposing (natural)
 import Test exposing (..)
@@ -65,6 +65,19 @@ all =
 
                         result =
                             GenerateVoicing.fourWayClose cMajorSixNineChord
+                    in
+                    Expect.equal expected result
+            , test "Should not be able to create voicing plans for chord without all four voice categories" <|
+                \_ ->
+                    let
+                        cMajorChord =
+                            Chord.chord (PitchClass.pitchClass C natural) ChordClass.major
+
+                        expected =
+                            Err MissingVoiceCategory
+
+                        result =
+                            GenerateVoicing.fourWayClose cMajorChord
                     in
                     Expect.equal expected result
             ]

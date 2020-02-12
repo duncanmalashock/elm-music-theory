@@ -1,4 +1,7 @@
-module MusicTheory.Generate.Voicing exposing (fourWayClose)
+module MusicTheory.Generate.Voicing exposing
+    ( VoicingError(..)
+    , fourWayClose
+    )
 
 import Libs.Permutations
 import MusicTheory.Analyze.ChordClass as AnalyzeChordClass
@@ -37,16 +40,27 @@ rotateVoices fourPartVoicingPlan =
 
 
 type VoicingError
-    = VoicingError
+    = CantVoiceNonTertianChord ChordClass.ChordClassError
+    | MissingVoiceCategory
 
 
-fourWayClose : Chord.Chord -> Result ChordClass.ChordClassError (List FourPartVoicingPlan)
+fourWayClose : Chord.Chord -> Result VoicingError (List FourPartVoicingPlan)
 fourWayClose chord =
     Result.map
         (\factorsByCategory ->
             factorsByCategoryToFourPartVoicingPlan (Chord.root chord) factorsByCategory
         )
         (AnalyzeChordClass.tertianFactorsByCategory (Chord.chordClass chord))
+        |> Result.mapError CantVoiceNonTertianChord
+        |> Result.andThen
+            (\list ->
+                case list of
+                    [] ->
+                        Err MissingVoiceCategory
+
+                    theList ->
+                        Ok theList
+            )
 
 
 factorToPitchClass : PitchClass.PitchClass -> TertianFactors.TertianFactor -> PitchClass.PitchClass

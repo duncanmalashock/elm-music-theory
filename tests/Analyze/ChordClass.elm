@@ -3,7 +3,6 @@ module Analyze.ChordClass exposing (all)
 import Expect
 import MusicTheory.Analyze.ChordClass as AnalyzeChordClass
 import MusicTheory.ChordClass as ChordClass
-import MusicTheory.Interval as Interval
 import MusicTheory.ScaleClass as ScaleClass
 import MusicTheory.TertianFactors exposing (TertianFactor(..))
 import Test exposing (..)
