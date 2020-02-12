@@ -4,6 +4,7 @@ import Expect
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Generate.Voicing as GenerateVoicing exposing (VoicingError(..))
+import MusicTheory.Interval as Interval
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.PitchClass as PitchClass exposing (natural)
 import Test exposing (..)
@@ -75,6 +76,22 @@ all =
 
                         expected =
                             Err MissingVoiceCategory
+
+                        result =
+                            GenerateVoicing.fourWayClose cMajorChord
+                    in
+                    Expect.equal expected result
+            , test "Should not be able to create voicings for non-tertian chords" <|
+                \_ ->
+                    let
+                        nonTertianChordClass =
+                            ChordClass.nonTertian [ Interval.perfectUnison, Interval.perfectFifth ]
+
+                        cMajorChord =
+                            Chord.chord (PitchClass.pitchClass C natural) nonTertianChordClass
+
+                        expected =
+                            Err <| CantVoiceNonTertianChord <| ChordClass.ChordClassIsNonTertian nonTertianChordClass
 
                         result =
                             GenerateVoicing.fourWayClose cMajorChord
