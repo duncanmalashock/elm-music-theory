@@ -1,4 +1,10 @@
-module MusicTheory.Chord exposing (Chord, chord, root, toPitchClasses)
+module MusicTheory.Chord exposing
+    ( Chord
+    , chord
+    , chordClass
+    , root
+    , toPitchClasses
+    )
 
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Letter exposing (Letter(..))
@@ -10,8 +16,8 @@ type Chord
 
 
 chord : PitchClass.PitchClass -> ChordClass.ChordClass -> Chord
-chord rootPitchClass chordClass =
-    Chord rootPitchClass chordClass
+chord rootPitchClass theChordClass =
+    Chord rootPitchClass theChordClass
 
 
 root : Chord -> PitchClass.PitchClass
@@ -19,10 +25,15 @@ root (Chord rootPitchClass _) =
     rootPitchClass
 
 
+chordClass : Chord -> ChordClass.ChordClass
+chordClass (Chord _ theChordClass) =
+    theChordClass
+
+
 toPitchClasses : Chord -> List PitchClass.PitchClass
-toPitchClasses (Chord rootPitchClass chordClass) =
+toPitchClasses (Chord rootPitchClass theChordClass) =
     List.map
         (\interval ->
             PitchClass.transposeUp interval rootPitchClass
         )
-        (ChordClass.toIntervals chordClass)
+        (ChordClass.toIntervals theChordClass)

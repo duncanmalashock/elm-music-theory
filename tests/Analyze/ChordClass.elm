@@ -92,18 +92,18 @@ all =
                         expected =
                             Ok
                                 { root =
-                                    [ ( Root, Interval.perfectUnison )
-                                    , ( FlatNinth, Interval.minorSecond )
+                                    [ Root
+                                    , FlatNinth
                                     ]
                                 , third =
-                                    [ ( MajorThird, Interval.majorThird )
+                                    [ MajorThird
                                     ]
                                 , fifth =
-                                    [ ( Fifth, Interval.perfectFifth )
-                                    , ( FlatThirteenth, Interval.minorSixth )
+                                    [ Fifth
+                                    , FlatThirteenth
                                     ]
                                 , seventh =
-                                    [ ( MinorSeventh, Interval.minorSeventh )
+                                    [ MinorSeventh
                                     ]
                                 }
 
@@ -111,7 +111,7 @@ all =
                             ChordClass.dominantSeventhFlatNineFlatThirteen
 
                         result =
-                            AnalyzeChordClass.taggedIntervalsByCategory dominantSeventhFlatNineFlatThirteenChordClass
+                            AnalyzeChordClass.tertianFactorsByCategory dominantSeventhFlatNineFlatThirteenChordClass
                     in
                     Expect.equal expected result
             ]

@@ -1,7 +1,8 @@
 module MusicTheory.Analyze.ChordClass exposing
-    ( isInScaleClass
+    ( TertianFactorsByCategory
+    , isInScaleClass
     , scaleClassesFor
-    , taggedIntervalsByCategory
+    , tertianFactorsByCategory
     )
 
 import MusicTheory.Analyze.TertianFactors as AnalyzeTertianFactors
@@ -29,22 +30,23 @@ scaleClassesFor chordClass =
         ScaleClass.all
 
 
-type alias ChordTonesByCategory =
-    { root : List TertianFactors.TaggedInterval
-    , third : List TertianFactors.TaggedInterval
-    , fifth : List TertianFactors.TaggedInterval
-    , seventh : List TertianFactors.TaggedInterval
+type alias TertianFactorsByCategory =
+    { root : List TertianFactors.TertianFactor
+    , third : List TertianFactors.TertianFactor
+    , fifth : List TertianFactors.TertianFactor
+    , seventh : List TertianFactors.TertianFactor
     }
 
 
-taggedIntervalsByCategory : ChordClass.ChordClass -> Result ChordClass.ChordClassError ChordTonesByCategory
-taggedIntervalsByCategory chordClass =
-    ChordClass.toTaggedIntervals chordClass
+tertianFactorsByCategory : ChordClass.ChordClass -> Result ChordClass.ChordClassError TertianFactorsByCategory
+tertianFactorsByCategory chordClass =
+    ChordClass.toTertianFactors chordClass
+        |> Result.map TertianFactors.toList
         |> Result.map
             (\list ->
-                { root = List.filter (\( tertianFactor, _ ) -> AnalyzeTertianFactors.isRootToneCategory tertianFactor) list
-                , third = List.filter (\( tertianFactor, _ ) -> AnalyzeTertianFactors.isThirdToneCategory tertianFactor) list
-                , fifth = List.filter (\( tertianFactor, _ ) -> AnalyzeTertianFactors.isFifthToneCategory tertianFactor) list
-                , seventh = List.filter (\( tertianFactor, _ ) -> AnalyzeTertianFactors.isSeventhToneCategory tertianFactor) list
+                { root = List.filter AnalyzeTertianFactors.isRootToneCategory list
+                , third = List.filter AnalyzeTertianFactors.isThirdToneCategory list
+                , fifth = List.filter AnalyzeTertianFactors.isFifthToneCategory list
+                , seventh = List.filter AnalyzeTertianFactors.isSeventhToneCategory list
                 }
             )

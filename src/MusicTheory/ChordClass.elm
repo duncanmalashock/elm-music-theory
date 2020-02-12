@@ -37,7 +37,7 @@ module MusicTheory.ChordClass exposing
     , sus2
     , sus4
     , toIntervals
-    , toTaggedIntervals
+    , toTertianFactors
     )
 
 import MusicTheory.Interval exposing (Interval)
@@ -64,14 +64,14 @@ toIntervals chordClass =
             intervals
 
 
-toTaggedIntervals : ChordClass -> Result ChordClassError (List TertianFactors.TaggedInterval)
-toTaggedIntervals chordClass =
+toTertianFactors : ChordClass -> Result ChordClassError TertianFactors.TertianFactors
+toTertianFactors chordClass =
     case chordClass of
         NonTertian _ ->
             Err (ChordClassIsNonTertian chordClass)
 
         Tertian tertianFactors ->
-            Ok (TertianFactors.toTaggedIntervals tertianFactors)
+            Ok tertianFactors
 
 
 type ChordClassError

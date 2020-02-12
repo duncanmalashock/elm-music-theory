@@ -1,8 +1,6 @@
 module MusicTheory.TertianFactors exposing
     ( Alteration(..)
     , Extension(..)
-    , TaggedInterval
-    , TaggedPitchClass
     , TertianFactor(..)
     , TertianFactors
     , alterations
@@ -23,9 +21,9 @@ module MusicTheory.TertianFactors exposing
     , isSixthChord
     , isTriad
     , tertianFactors
+    , toInterval
     , toIntervals
-    , toTaggedIntervals
-    , toTaggedPitchClass
+    , toList
     , withDiminishedSeventh
     , withEleventh
     , withFifth
@@ -47,7 +45,6 @@ module MusicTheory.TertianFactors exposing
     )
 
 import MusicTheory.Interval as Interval exposing (Interval)
-import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
 
 
 type TertianFactor
@@ -91,17 +88,15 @@ type TertianFactors
     = TertianFactors (List TertianFactor)
 
 
-type alias TaggedInterval =
-    ( TertianFactor, Interval )
-
-
-type alias TaggedPitchClass =
-    ( TertianFactor, PitchClass )
-
-
 tertianFactors : TertianFactors
 tertianFactors =
     TertianFactors [ Root ]
+
+
+toList : TertianFactors -> List TertianFactor
+toList (TertianFactors factorList) =
+    factorList
+        |> sort
 
 
 isTriad : TertianFactors -> Bool
@@ -286,21 +281,6 @@ toIntervals (TertianFactors factors) =
     factors
         |> sort
         |> List.map toInterval
-
-
-toTaggedIntervals : TertianFactors -> List TaggedInterval
-toTaggedIntervals (TertianFactors factors) =
-    factors
-        |> sort
-        |> List.map
-            (\factor ->
-                ( factor, toInterval factor )
-            )
-
-
-toTaggedPitchClass : PitchClass -> TertianFactor -> TaggedPitchClass
-toTaggedPitchClass root factor =
-    ( factor, PitchClass.transposeUp (toInterval factor) root )
 
 
 toInterval : TertianFactor -> Interval

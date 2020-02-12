@@ -3,6 +3,7 @@ module MusicTheory.Analyze.TertianFactors exposing
     , isRootToneCategory
     , isSeventhToneCategory
     , isThirdToneCategory
+    , nextToneCategory
     )
 
 import MusicTheory.TertianFactors exposing (TertianFactor(..))
@@ -33,6 +34,22 @@ isFifthToneCategory factor =
 isSeventhToneCategory : TertianFactor -> Bool
 isSeventhToneCategory factor =
     tertianFactorToJazzChordToneCategory factor == SeventhCategory
+
+
+nextToneCategory : JazzChordToneCategory -> JazzChordToneCategory
+nextToneCategory toneCategory =
+    case toneCategory of
+        RootCategory ->
+            ThirdCategory
+
+        ThirdCategory ->
+            FifthCategory
+
+        FifthCategory ->
+            SeventhCategory
+
+        SeventhCategory ->
+            RootCategory
 
 
 tertianFactorToJazzChordToneCategory : TertianFactor -> JazzChordToneCategory
