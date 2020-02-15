@@ -1,11 +1,45 @@
 module MusicTheory.PitchClass exposing
     ( Offset
     , PitchClass
-    , all
+    , a
+    , aDoubleFlat
+    , aDoubleSharp
+    , aFlat
+    , aSharp
     , areEnharmonicEquivalents
+    , b
+    , bDoubleFlat
+    , bDoubleSharp
+    , bFlat
+    , bSharp
+    , c
+    , cDoubleFlat
+    , cDoubleSharp
+    , cFlat
+    , cSharp
+    , d
+    , dDoubleFlat
+    , dDoubleSharp
+    , dFlat
+    , dSharp
     , doubleFlat
     , doubleSharp
+    , e
+    , eDoubleFlat
+    , eDoubleSharp
+    , eFlat
+    , eSharp
+    , f
+    , fDoubleFlat
+    , fDoubleSharp
+    , fFlat
+    , fSharp
     , flat
+    , g
+    , gDoubleFlat
+    , gDoubleSharp
+    , gFlat
+    , gSharp
     , natural
     , pitchClass
     , semitones
@@ -19,6 +53,181 @@ module MusicTheory.PitchClass exposing
 
 import MusicTheory.Interval as Interval exposing (Interval(..))
 import MusicTheory.Letter as Letter exposing (Letter(..))
+
+
+a : PitchClass
+a =
+    pitchClass A natural
+
+
+aSharp : PitchClass
+aSharp =
+    pitchClass A sharp
+
+
+aDoubleSharp : PitchClass
+aDoubleSharp =
+    pitchClass A doubleSharp
+
+
+aFlat : PitchClass
+aFlat =
+    pitchClass A flat
+
+
+aDoubleFlat : PitchClass
+aDoubleFlat =
+    pitchClass A doubleFlat
+
+
+b : PitchClass
+b =
+    pitchClass B natural
+
+
+bSharp : PitchClass
+bSharp =
+    pitchClass B sharp
+
+
+bDoubleSharp : PitchClass
+bDoubleSharp =
+    pitchClass B doubleSharp
+
+
+bFlat : PitchClass
+bFlat =
+    pitchClass B flat
+
+
+bDoubleFlat : PitchClass
+bDoubleFlat =
+    pitchClass B doubleFlat
+
+
+c : PitchClass
+c =
+    pitchClass C natural
+
+
+cSharp : PitchClass
+cSharp =
+    pitchClass C sharp
+
+
+cDoubleSharp : PitchClass
+cDoubleSharp =
+    pitchClass C doubleSharp
+
+
+cFlat : PitchClass
+cFlat =
+    pitchClass C flat
+
+
+cDoubleFlat : PitchClass
+cDoubleFlat =
+    pitchClass C doubleFlat
+
+
+d : PitchClass
+d =
+    pitchClass D natural
+
+
+dSharp : PitchClass
+dSharp =
+    pitchClass D sharp
+
+
+dDoubleSharp : PitchClass
+dDoubleSharp =
+    pitchClass D doubleSharp
+
+
+dFlat : PitchClass
+dFlat =
+    pitchClass D flat
+
+
+dDoubleFlat : PitchClass
+dDoubleFlat =
+    pitchClass D doubleFlat
+
+
+e : PitchClass
+e =
+    pitchClass E natural
+
+
+eSharp : PitchClass
+eSharp =
+    pitchClass E sharp
+
+
+eDoubleSharp : PitchClass
+eDoubleSharp =
+    pitchClass E doubleSharp
+
+
+eFlat : PitchClass
+eFlat =
+    pitchClass E flat
+
+
+eDoubleFlat : PitchClass
+eDoubleFlat =
+    pitchClass E doubleFlat
+
+
+f : PitchClass
+f =
+    pitchClass F natural
+
+
+fSharp : PitchClass
+fSharp =
+    pitchClass F sharp
+
+
+fDoubleSharp : PitchClass
+fDoubleSharp =
+    pitchClass F doubleSharp
+
+
+fFlat : PitchClass
+fFlat =
+    pitchClass F flat
+
+
+fDoubleFlat : PitchClass
+fDoubleFlat =
+    pitchClass F doubleFlat
+
+
+g : PitchClass
+g =
+    pitchClass G natural
+
+
+gSharp : PitchClass
+gSharp =
+    pitchClass G sharp
+
+
+gDoubleSharp : PitchClass
+gDoubleSharp =
+    pitchClass G doubleSharp
+
+
+gFlat : PitchClass
+gFlat =
+    pitchClass G flat
+
+
+gDoubleFlat : PitchClass
+gDoubleFlat =
+    pitchClass G doubleFlat
 
 
 type PitchClass
@@ -47,23 +256,6 @@ letter (PitchClass l _) =
 semitones : PitchClass -> Int
 semitones (PitchClass l (Offset o)) =
     Letter.semitones l + o
-
-
-all : List PitchClass
-all =
-    Letter.letters
-        |> List.concatMap
-            (\l ->
-                [ tripleFlat
-                , doubleFlat
-                , flat
-                , natural
-                , sharp
-                , doubleSharp
-                , tripleSharp
-                ]
-                    |> List.map (pitchClass l)
-            )
 
 
 tripleFlat : Offset

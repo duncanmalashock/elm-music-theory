@@ -10,6 +10,24 @@ module MusicTheory.Pitch exposing
     , a6
     , a7
     , a8
+    , aDoubleFlat0
+    , aDoubleFlat1
+    , aDoubleFlat2
+    , aDoubleFlat3
+    , aDoubleFlat4
+    , aDoubleFlat5
+    , aDoubleFlat6
+    , aDoubleFlat7
+    , aDoubleFlat8
+    , aDoubleSharp0
+    , aDoubleSharp1
+    , aDoubleSharp2
+    , aDoubleSharp3
+    , aDoubleSharp4
+    , aDoubleSharp5
+    , aDoubleSharp6
+    , aDoubleSharp7
+    , aDoubleSharp8
     , aFlat0
     , aFlat1
     , aFlat2
@@ -28,7 +46,6 @@ module MusicTheory.Pitch exposing
     , aSharp6
     , aSharp7
     , aSharp8
-    , all
     , allForPitchClass
     , areEnharmonicEquivalents
     , b0
@@ -40,6 +57,23 @@ module MusicTheory.Pitch exposing
     , b6
     , b7
     , b8
+    , bDoubleFlat0
+    , bDoubleFlat1
+    , bDoubleFlat2
+    , bDoubleFlat3
+    , bDoubleFlat4
+    , bDoubleFlat5
+    , bDoubleFlat6
+    , bDoubleFlat7
+    , bDoubleFlat8
+    , bDoubleSharp0
+    , bDoubleSharp1
+    , bDoubleSharp2
+    , bDoubleSharp3
+    , bDoubleSharp4
+    , bDoubleSharp5
+    , bDoubleSharp6
+    , bDoubleSharp7
     , bFlat0
     , bFlat1
     , bFlat2
@@ -67,6 +101,23 @@ module MusicTheory.Pitch exposing
     , c6
     , c7
     , c8
+    , cDoubleFlat1
+    , cDoubleFlat2
+    , cDoubleFlat3
+    , cDoubleFlat4
+    , cDoubleFlat5
+    , cDoubleFlat6
+    , cDoubleFlat7
+    , cDoubleFlat8
+    , cDoubleSharp0
+    , cDoubleSharp1
+    , cDoubleSharp2
+    , cDoubleSharp3
+    , cDoubleSharp4
+    , cDoubleSharp5
+    , cDoubleSharp6
+    , cDoubleSharp7
+    , cDoubleSharp8
     , cFlat1
     , cFlat2
     , cFlat3
@@ -93,6 +144,24 @@ module MusicTheory.Pitch exposing
     , d6
     , d7
     , d8
+    , dDoubleFlat0
+    , dDoubleFlat1
+    , dDoubleFlat2
+    , dDoubleFlat3
+    , dDoubleFlat4
+    , dDoubleFlat5
+    , dDoubleFlat6
+    , dDoubleFlat7
+    , dDoubleFlat8
+    , dDoubleSharp0
+    , dDoubleSharp1
+    , dDoubleSharp2
+    , dDoubleSharp3
+    , dDoubleSharp4
+    , dDoubleSharp5
+    , dDoubleSharp6
+    , dDoubleSharp7
+    , dDoubleSharp8
     , dFlat0
     , dFlat1
     , dFlat2
@@ -122,6 +191,24 @@ module MusicTheory.Pitch exposing
     , e6
     , e7
     , e8
+    , eDoubleFlat0
+    , eDoubleFlat1
+    , eDoubleFlat2
+    , eDoubleFlat3
+    , eDoubleFlat4
+    , eDoubleFlat5
+    , eDoubleFlat6
+    , eDoubleFlat7
+    , eDoubleFlat8
+    , eDoubleSharp0
+    , eDoubleSharp1
+    , eDoubleSharp2
+    , eDoubleSharp3
+    , eDoubleSharp4
+    , eDoubleSharp5
+    , eDoubleSharp6
+    , eDoubleSharp7
+    , eDoubleSharp8
     , eFlat0
     , eFlat1
     , eFlat2
@@ -150,6 +237,24 @@ module MusicTheory.Pitch exposing
     , f6
     , f7
     , f8
+    , fDoubleFlat0
+    , fDoubleFlat1
+    , fDoubleFlat2
+    , fDoubleFlat3
+    , fDoubleFlat4
+    , fDoubleFlat5
+    , fDoubleFlat6
+    , fDoubleFlat7
+    , fDoubleFlat8
+    , fDoubleSharp0
+    , fDoubleSharp1
+    , fDoubleSharp2
+    , fDoubleSharp3
+    , fDoubleSharp4
+    , fDoubleSharp5
+    , fDoubleSharp6
+    , fDoubleSharp7
+    , fDoubleSharp8
     , fFlat0
     , fFlat1
     , fFlat2
@@ -181,6 +286,24 @@ module MusicTheory.Pitch exposing
     , g6
     , g7
     , g8
+    , gDoubleFlat0
+    , gDoubleFlat1
+    , gDoubleFlat2
+    , gDoubleFlat3
+    , gDoubleFlat4
+    , gDoubleFlat5
+    , gDoubleFlat6
+    , gDoubleFlat7
+    , gDoubleFlat8
+    , gDoubleSharp0
+    , gDoubleSharp1
+    , gDoubleSharp2
+    , gDoubleSharp3
+    , gDoubleSharp4
+    , gDoubleSharp5
+    , gDoubleSharp6
+    , gDoubleSharp7
+    , gDoubleSharp8
     , gFlat0
     , gFlat1
     , gFlat2
@@ -229,942 +352,1562 @@ semitonesLowerLimit =
 
 c0 : Pitch
 c0 =
-    Pitch (PitchClass.pitchClass C natural) Octave.zero
+    Pitch PitchClass.c Octave.zero
 
 
 cSharp0 : Pitch
 cSharp0 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.zero
+    Pitch PitchClass.cSharp Octave.zero
+
+
+cDoubleSharp0 : Pitch
+cDoubleSharp0 =
+    Pitch PitchClass.cDoubleSharp Octave.zero
+
+
+dDoubleSharp0 : Pitch
+dDoubleSharp0 =
+    Pitch PitchClass.dDoubleSharp Octave.zero
+
+
+eDoubleSharp0 : Pitch
+eDoubleSharp0 =
+    Pitch PitchClass.eDoubleSharp Octave.zero
+
+
+fDoubleSharp0 : Pitch
+fDoubleSharp0 =
+    Pitch PitchClass.fDoubleSharp Octave.zero
+
+
+gDoubleSharp0 : Pitch
+gDoubleSharp0 =
+    Pitch PitchClass.gDoubleSharp Octave.zero
+
+
+aDoubleSharp0 : Pitch
+aDoubleSharp0 =
+    Pitch PitchClass.aDoubleSharp Octave.zero
+
+
+bDoubleSharp0 : Pitch
+bDoubleSharp0 =
+    Pitch PitchClass.bDoubleSharp Octave.zero
+
+
+cDoubleSharp1 : Pitch
+cDoubleSharp1 =
+    Pitch PitchClass.cDoubleSharp Octave.one
+
+
+dDoubleSharp1 : Pitch
+dDoubleSharp1 =
+    Pitch PitchClass.dDoubleSharp Octave.one
+
+
+eDoubleSharp1 : Pitch
+eDoubleSharp1 =
+    Pitch PitchClass.eDoubleSharp Octave.one
+
+
+fDoubleSharp1 : Pitch
+fDoubleSharp1 =
+    Pitch PitchClass.fDoubleSharp Octave.one
+
+
+gDoubleSharp1 : Pitch
+gDoubleSharp1 =
+    Pitch PitchClass.gDoubleSharp Octave.one
+
+
+aDoubleSharp1 : Pitch
+aDoubleSharp1 =
+    Pitch PitchClass.aDoubleSharp Octave.one
+
+
+bDoubleSharp1 : Pitch
+bDoubleSharp1 =
+    Pitch PitchClass.bDoubleSharp Octave.one
+
+
+cDoubleSharp2 : Pitch
+cDoubleSharp2 =
+    Pitch PitchClass.cDoubleSharp Octave.two
+
+
+dDoubleSharp2 : Pitch
+dDoubleSharp2 =
+    Pitch PitchClass.dDoubleSharp Octave.two
+
+
+eDoubleSharp2 : Pitch
+eDoubleSharp2 =
+    Pitch PitchClass.eDoubleSharp Octave.two
+
+
+fDoubleSharp2 : Pitch
+fDoubleSharp2 =
+    Pitch PitchClass.fDoubleSharp Octave.two
+
+
+gDoubleSharp2 : Pitch
+gDoubleSharp2 =
+    Pitch PitchClass.gDoubleSharp Octave.two
+
+
+aDoubleSharp2 : Pitch
+aDoubleSharp2 =
+    Pitch PitchClass.aDoubleSharp Octave.two
+
+
+bDoubleSharp2 : Pitch
+bDoubleSharp2 =
+    Pitch PitchClass.bDoubleSharp Octave.two
+
+
+cDoubleSharp3 : Pitch
+cDoubleSharp3 =
+    Pitch PitchClass.cDoubleSharp Octave.three
+
+
+dDoubleSharp3 : Pitch
+dDoubleSharp3 =
+    Pitch PitchClass.dDoubleSharp Octave.three
+
+
+eDoubleSharp3 : Pitch
+eDoubleSharp3 =
+    Pitch PitchClass.eDoubleSharp Octave.three
+
+
+fDoubleSharp3 : Pitch
+fDoubleSharp3 =
+    Pitch PitchClass.fDoubleSharp Octave.three
+
+
+gDoubleSharp3 : Pitch
+gDoubleSharp3 =
+    Pitch PitchClass.gDoubleSharp Octave.three
+
+
+aDoubleSharp3 : Pitch
+aDoubleSharp3 =
+    Pitch PitchClass.aDoubleSharp Octave.three
+
+
+bDoubleSharp3 : Pitch
+bDoubleSharp3 =
+    Pitch PitchClass.bDoubleSharp Octave.three
+
+
+cDoubleSharp4 : Pitch
+cDoubleSharp4 =
+    Pitch PitchClass.cDoubleSharp Octave.four
+
+
+dDoubleSharp4 : Pitch
+dDoubleSharp4 =
+    Pitch PitchClass.dDoubleSharp Octave.four
+
+
+eDoubleSharp4 : Pitch
+eDoubleSharp4 =
+    Pitch PitchClass.eDoubleSharp Octave.four
+
+
+fDoubleSharp4 : Pitch
+fDoubleSharp4 =
+    Pitch PitchClass.fDoubleSharp Octave.four
+
+
+gDoubleSharp4 : Pitch
+gDoubleSharp4 =
+    Pitch PitchClass.gDoubleSharp Octave.four
+
+
+aDoubleSharp4 : Pitch
+aDoubleSharp4 =
+    Pitch PitchClass.aDoubleSharp Octave.four
+
+
+bDoubleSharp4 : Pitch
+bDoubleSharp4 =
+    Pitch PitchClass.bDoubleSharp Octave.four
+
+
+cDoubleSharp5 : Pitch
+cDoubleSharp5 =
+    Pitch PitchClass.cDoubleSharp Octave.five
+
+
+dDoubleSharp5 : Pitch
+dDoubleSharp5 =
+    Pitch PitchClass.dDoubleSharp Octave.five
+
+
+eDoubleSharp5 : Pitch
+eDoubleSharp5 =
+    Pitch PitchClass.eDoubleSharp Octave.five
+
+
+fDoubleSharp5 : Pitch
+fDoubleSharp5 =
+    Pitch PitchClass.fDoubleSharp Octave.five
+
+
+gDoubleSharp5 : Pitch
+gDoubleSharp5 =
+    Pitch PitchClass.gDoubleSharp Octave.five
+
+
+aDoubleSharp5 : Pitch
+aDoubleSharp5 =
+    Pitch PitchClass.aDoubleSharp Octave.five
+
+
+bDoubleSharp5 : Pitch
+bDoubleSharp5 =
+    Pitch PitchClass.bDoubleSharp Octave.five
+
+
+cDoubleSharp6 : Pitch
+cDoubleSharp6 =
+    Pitch PitchClass.cDoubleSharp Octave.six
+
+
+dDoubleSharp6 : Pitch
+dDoubleSharp6 =
+    Pitch PitchClass.dDoubleSharp Octave.six
+
+
+eDoubleSharp6 : Pitch
+eDoubleSharp6 =
+    Pitch PitchClass.eDoubleSharp Octave.six
+
+
+fDoubleSharp6 : Pitch
+fDoubleSharp6 =
+    Pitch PitchClass.fDoubleSharp Octave.six
+
+
+gDoubleSharp6 : Pitch
+gDoubleSharp6 =
+    Pitch PitchClass.gDoubleSharp Octave.six
+
+
+aDoubleSharp6 : Pitch
+aDoubleSharp6 =
+    Pitch PitchClass.aDoubleSharp Octave.six
+
+
+bDoubleSharp6 : Pitch
+bDoubleSharp6 =
+    Pitch PitchClass.bDoubleSharp Octave.six
+
+
+cDoubleSharp7 : Pitch
+cDoubleSharp7 =
+    Pitch PitchClass.cDoubleSharp Octave.seven
+
+
+dDoubleSharp7 : Pitch
+dDoubleSharp7 =
+    Pitch PitchClass.dDoubleSharp Octave.seven
+
+
+eDoubleSharp7 : Pitch
+eDoubleSharp7 =
+    Pitch PitchClass.eDoubleSharp Octave.seven
+
+
+fDoubleSharp7 : Pitch
+fDoubleSharp7 =
+    Pitch PitchClass.fDoubleSharp Octave.seven
+
+
+gDoubleSharp7 : Pitch
+gDoubleSharp7 =
+    Pitch PitchClass.gDoubleSharp Octave.seven
+
+
+aDoubleSharp7 : Pitch
+aDoubleSharp7 =
+    Pitch PitchClass.aDoubleSharp Octave.seven
+
+
+bDoubleSharp7 : Pitch
+bDoubleSharp7 =
+    Pitch PitchClass.bDoubleSharp Octave.seven
+
+
+cDoubleSharp8 : Pitch
+cDoubleSharp8 =
+    Pitch PitchClass.cDoubleSharp Octave.eight
+
+
+dDoubleSharp8 : Pitch
+dDoubleSharp8 =
+    Pitch PitchClass.dDoubleSharp Octave.eight
+
+
+eDoubleSharp8 : Pitch
+eDoubleSharp8 =
+    Pitch PitchClass.eDoubleSharp Octave.eight
+
+
+fDoubleSharp8 : Pitch
+fDoubleSharp8 =
+    Pitch PitchClass.fDoubleSharp Octave.eight
+
+
+gDoubleSharp8 : Pitch
+gDoubleSharp8 =
+    Pitch PitchClass.gDoubleSharp Octave.eight
+
+
+aDoubleSharp8 : Pitch
+aDoubleSharp8 =
+    Pitch PitchClass.aDoubleSharp Octave.eight
+
+
+dDoubleFlat0 : Pitch
+dDoubleFlat0 =
+    Pitch PitchClass.dDoubleFlat Octave.zero
+
+
+eDoubleFlat0 : Pitch
+eDoubleFlat0 =
+    Pitch PitchClass.eDoubleFlat Octave.zero
+
+
+fDoubleFlat0 : Pitch
+fDoubleFlat0 =
+    Pitch PitchClass.fDoubleFlat Octave.zero
+
+
+gDoubleFlat0 : Pitch
+gDoubleFlat0 =
+    Pitch PitchClass.gDoubleFlat Octave.zero
+
+
+aDoubleFlat0 : Pitch
+aDoubleFlat0 =
+    Pitch PitchClass.aDoubleFlat Octave.zero
+
+
+bDoubleFlat0 : Pitch
+bDoubleFlat0 =
+    Pitch PitchClass.bDoubleFlat Octave.zero
+
+
+cDoubleFlat1 : Pitch
+cDoubleFlat1 =
+    Pitch PitchClass.cDoubleFlat Octave.one
+
+
+dDoubleFlat1 : Pitch
+dDoubleFlat1 =
+    Pitch PitchClass.dDoubleFlat Octave.one
+
+
+eDoubleFlat1 : Pitch
+eDoubleFlat1 =
+    Pitch PitchClass.eDoubleFlat Octave.one
+
+
+fDoubleFlat1 : Pitch
+fDoubleFlat1 =
+    Pitch PitchClass.fDoubleFlat Octave.one
+
+
+gDoubleFlat1 : Pitch
+gDoubleFlat1 =
+    Pitch PitchClass.gDoubleFlat Octave.one
+
+
+aDoubleFlat1 : Pitch
+aDoubleFlat1 =
+    Pitch PitchClass.aDoubleFlat Octave.one
+
+
+bDoubleFlat1 : Pitch
+bDoubleFlat1 =
+    Pitch PitchClass.bDoubleFlat Octave.one
+
+
+cDoubleFlat2 : Pitch
+cDoubleFlat2 =
+    Pitch PitchClass.cDoubleFlat Octave.two
+
+
+dDoubleFlat2 : Pitch
+dDoubleFlat2 =
+    Pitch PitchClass.dDoubleFlat Octave.two
+
+
+eDoubleFlat2 : Pitch
+eDoubleFlat2 =
+    Pitch PitchClass.eDoubleFlat Octave.two
+
+
+fDoubleFlat2 : Pitch
+fDoubleFlat2 =
+    Pitch PitchClass.fDoubleFlat Octave.two
+
+
+gDoubleFlat2 : Pitch
+gDoubleFlat2 =
+    Pitch PitchClass.gDoubleFlat Octave.two
+
+
+aDoubleFlat2 : Pitch
+aDoubleFlat2 =
+    Pitch PitchClass.aDoubleFlat Octave.two
+
+
+bDoubleFlat2 : Pitch
+bDoubleFlat2 =
+    Pitch PitchClass.bDoubleFlat Octave.two
+
+
+cDoubleFlat3 : Pitch
+cDoubleFlat3 =
+    Pitch PitchClass.cDoubleFlat Octave.three
+
+
+dDoubleFlat3 : Pitch
+dDoubleFlat3 =
+    Pitch PitchClass.dDoubleFlat Octave.three
+
+
+eDoubleFlat3 : Pitch
+eDoubleFlat3 =
+    Pitch PitchClass.eDoubleFlat Octave.three
+
+
+fDoubleFlat3 : Pitch
+fDoubleFlat3 =
+    Pitch PitchClass.fDoubleFlat Octave.three
+
+
+gDoubleFlat3 : Pitch
+gDoubleFlat3 =
+    Pitch PitchClass.gDoubleFlat Octave.three
+
+
+aDoubleFlat3 : Pitch
+aDoubleFlat3 =
+    Pitch PitchClass.aDoubleFlat Octave.three
+
+
+bDoubleFlat3 : Pitch
+bDoubleFlat3 =
+    Pitch PitchClass.bDoubleFlat Octave.three
+
+
+cDoubleFlat4 : Pitch
+cDoubleFlat4 =
+    Pitch PitchClass.cDoubleFlat Octave.four
+
+
+dDoubleFlat4 : Pitch
+dDoubleFlat4 =
+    Pitch PitchClass.dDoubleFlat Octave.four
+
+
+eDoubleFlat4 : Pitch
+eDoubleFlat4 =
+    Pitch PitchClass.eDoubleFlat Octave.four
+
+
+fDoubleFlat4 : Pitch
+fDoubleFlat4 =
+    Pitch PitchClass.fDoubleFlat Octave.four
+
+
+gDoubleFlat4 : Pitch
+gDoubleFlat4 =
+    Pitch PitchClass.gDoubleFlat Octave.four
+
+
+aDoubleFlat4 : Pitch
+aDoubleFlat4 =
+    Pitch PitchClass.aDoubleFlat Octave.four
+
+
+bDoubleFlat4 : Pitch
+bDoubleFlat4 =
+    Pitch PitchClass.bDoubleFlat Octave.four
+
+
+cDoubleFlat5 : Pitch
+cDoubleFlat5 =
+    Pitch PitchClass.cDoubleFlat Octave.five
+
+
+dDoubleFlat5 : Pitch
+dDoubleFlat5 =
+    Pitch PitchClass.dDoubleFlat Octave.five
+
+
+eDoubleFlat5 : Pitch
+eDoubleFlat5 =
+    Pitch PitchClass.eDoubleFlat Octave.five
+
+
+fDoubleFlat5 : Pitch
+fDoubleFlat5 =
+    Pitch PitchClass.fDoubleFlat Octave.five
+
+
+gDoubleFlat5 : Pitch
+gDoubleFlat5 =
+    Pitch PitchClass.gDoubleFlat Octave.five
+
+
+aDoubleFlat5 : Pitch
+aDoubleFlat5 =
+    Pitch PitchClass.aDoubleFlat Octave.five
+
+
+bDoubleFlat5 : Pitch
+bDoubleFlat5 =
+    Pitch PitchClass.bDoubleFlat Octave.five
+
+
+cDoubleFlat6 : Pitch
+cDoubleFlat6 =
+    Pitch PitchClass.cDoubleFlat Octave.six
+
+
+dDoubleFlat6 : Pitch
+dDoubleFlat6 =
+    Pitch PitchClass.dDoubleFlat Octave.six
+
+
+eDoubleFlat6 : Pitch
+eDoubleFlat6 =
+    Pitch PitchClass.eDoubleFlat Octave.six
+
+
+fDoubleFlat6 : Pitch
+fDoubleFlat6 =
+    Pitch PitchClass.fDoubleFlat Octave.six
+
+
+gDoubleFlat6 : Pitch
+gDoubleFlat6 =
+    Pitch PitchClass.gDoubleFlat Octave.six
+
+
+aDoubleFlat6 : Pitch
+aDoubleFlat6 =
+    Pitch PitchClass.aDoubleFlat Octave.six
+
+
+bDoubleFlat6 : Pitch
+bDoubleFlat6 =
+    Pitch PitchClass.bDoubleFlat Octave.six
+
+
+cDoubleFlat7 : Pitch
+cDoubleFlat7 =
+    Pitch PitchClass.cDoubleFlat Octave.seven
+
+
+dDoubleFlat7 : Pitch
+dDoubleFlat7 =
+    Pitch PitchClass.dDoubleFlat Octave.seven
+
+
+eDoubleFlat7 : Pitch
+eDoubleFlat7 =
+    Pitch PitchClass.eDoubleFlat Octave.seven
+
+
+fDoubleFlat7 : Pitch
+fDoubleFlat7 =
+    Pitch PitchClass.fDoubleFlat Octave.seven
+
+
+gDoubleFlat7 : Pitch
+gDoubleFlat7 =
+    Pitch PitchClass.gDoubleFlat Octave.seven
+
+
+aDoubleFlat7 : Pitch
+aDoubleFlat7 =
+    Pitch PitchClass.aDoubleFlat Octave.seven
+
+
+bDoubleFlat7 : Pitch
+bDoubleFlat7 =
+    Pitch PitchClass.bDoubleFlat Octave.seven
+
+
+cDoubleFlat8 : Pitch
+cDoubleFlat8 =
+    Pitch PitchClass.cDoubleFlat Octave.eight
+
+
+dDoubleFlat8 : Pitch
+dDoubleFlat8 =
+    Pitch PitchClass.dDoubleFlat Octave.eight
+
+
+eDoubleFlat8 : Pitch
+eDoubleFlat8 =
+    Pitch PitchClass.eDoubleFlat Octave.eight
+
+
+fDoubleFlat8 : Pitch
+fDoubleFlat8 =
+    Pitch PitchClass.fDoubleFlat Octave.eight
+
+
+gDoubleFlat8 : Pitch
+gDoubleFlat8 =
+    Pitch PitchClass.gDoubleFlat Octave.eight
+
+
+aDoubleFlat8 : Pitch
+aDoubleFlat8 =
+    Pitch PitchClass.aDoubleFlat Octave.eight
+
+
+bDoubleFlat8 : Pitch
+bDoubleFlat8 =
+    Pitch PitchClass.bDoubleFlat Octave.eight
 
 
 d0 : Pitch
 d0 =
-    Pitch (PitchClass.pitchClass D natural) Octave.zero
+    Pitch PitchClass.d Octave.zero
 
 
 dSharp0 : Pitch
 dSharp0 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.zero
+    Pitch PitchClass.dSharp Octave.zero
 
 
 dFlat0 : Pitch
 dFlat0 =
-    Pitch (PitchClass.pitchClass D flat) Octave.zero
+    Pitch PitchClass.dFlat Octave.zero
 
 
 e0 : Pitch
 e0 =
-    Pitch (PitchClass.pitchClass E natural) Octave.zero
+    Pitch PitchClass.e Octave.zero
 
 
 eSharp0 : Pitch
 eSharp0 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.zero
+    Pitch PitchClass.eSharp Octave.zero
 
 
 eFlat0 : Pitch
 eFlat0 =
-    Pitch (PitchClass.pitchClass E flat) Octave.zero
+    Pitch PitchClass.eFlat Octave.zero
 
 
 f0 : Pitch
 f0 =
-    Pitch (PitchClass.pitchClass F natural) Octave.zero
+    Pitch PitchClass.f Octave.zero
 
 
 fSharp0 : Pitch
 fSharp0 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.zero
+    Pitch PitchClass.fSharp Octave.zero
 
 
 fFlat0 : Pitch
 fFlat0 =
-    Pitch (PitchClass.pitchClass F flat) Octave.zero
+    Pitch PitchClass.fFlat Octave.zero
 
 
 g0 : Pitch
 g0 =
-    Pitch (PitchClass.pitchClass G natural) Octave.zero
+    Pitch PitchClass.g Octave.zero
 
 
 gSharp0 : Pitch
 gSharp0 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.zero
+    Pitch PitchClass.gSharp Octave.zero
 
 
 gFlat0 : Pitch
 gFlat0 =
-    Pitch (PitchClass.pitchClass G flat) Octave.zero
+    Pitch PitchClass.gFlat Octave.zero
 
 
 a0 : Pitch
 a0 =
-    Pitch (PitchClass.pitchClass A natural) Octave.zero
+    Pitch PitchClass.a Octave.zero
 
 
 aSharp0 : Pitch
 aSharp0 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.zero
+    Pitch PitchClass.aSharp Octave.zero
 
 
 aFlat0 : Pitch
 aFlat0 =
-    Pitch (PitchClass.pitchClass A flat) Octave.zero
+    Pitch PitchClass.aFlat Octave.zero
 
 
 b0 : Pitch
 b0 =
-    Pitch (PitchClass.pitchClass B natural) Octave.zero
+    Pitch PitchClass.b Octave.zero
 
 
 bSharp0 : Pitch
 bSharp0 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.zero
+    Pitch PitchClass.bSharp Octave.zero
 
 
 bFlat0 : Pitch
 bFlat0 =
-    Pitch (PitchClass.pitchClass B flat) Octave.zero
+    Pitch PitchClass.bFlat Octave.zero
 
 
 c1 : Pitch
 c1 =
-    Pitch (PitchClass.pitchClass C natural) Octave.one
+    Pitch PitchClass.c Octave.one
 
 
 cSharp1 : Pitch
 cSharp1 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.one
+    Pitch PitchClass.cSharp Octave.one
 
 
 cFlat1 : Pitch
 cFlat1 =
-    Pitch (PitchClass.pitchClass C flat) Octave.one
+    Pitch PitchClass.cFlat Octave.one
 
 
 d1 : Pitch
 d1 =
-    Pitch (PitchClass.pitchClass D natural) Octave.one
+    Pitch PitchClass.d Octave.one
 
 
 dSharp1 : Pitch
 dSharp1 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.one
+    Pitch PitchClass.dSharp Octave.one
 
 
 dFlat1 : Pitch
 dFlat1 =
-    Pitch (PitchClass.pitchClass D flat) Octave.one
+    Pitch PitchClass.dFlat Octave.one
 
 
 e1 : Pitch
 e1 =
-    Pitch (PitchClass.pitchClass E natural) Octave.one
+    Pitch PitchClass.e Octave.one
 
 
 eSharp1 : Pitch
 eSharp1 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.one
+    Pitch PitchClass.eSharp Octave.one
 
 
 eFlat1 : Pitch
 eFlat1 =
-    Pitch (PitchClass.pitchClass E flat) Octave.one
+    Pitch PitchClass.eFlat Octave.one
 
 
 f1 : Pitch
 f1 =
-    Pitch (PitchClass.pitchClass F natural) Octave.one
+    Pitch PitchClass.f Octave.one
 
 
 fSharp1 : Pitch
 fSharp1 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.one
+    Pitch PitchClass.fSharp Octave.one
 
 
 fFlat1 : Pitch
 fFlat1 =
-    Pitch (PitchClass.pitchClass F flat) Octave.one
+    Pitch PitchClass.fFlat Octave.one
 
 
 g1 : Pitch
 g1 =
-    Pitch (PitchClass.pitchClass G natural) Octave.one
+    Pitch PitchClass.g Octave.one
 
 
 gSharp1 : Pitch
 gSharp1 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.one
+    Pitch PitchClass.gSharp Octave.one
 
 
 gFlat1 : Pitch
 gFlat1 =
-    Pitch (PitchClass.pitchClass G flat) Octave.one
+    Pitch PitchClass.gFlat Octave.one
 
 
 a1 : Pitch
 a1 =
-    Pitch (PitchClass.pitchClass A natural) Octave.one
+    Pitch PitchClass.a Octave.one
 
 
 aSharp1 : Pitch
 aSharp1 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.one
+    Pitch PitchClass.aSharp Octave.one
 
 
 aFlat1 : Pitch
 aFlat1 =
-    Pitch (PitchClass.pitchClass A flat) Octave.one
+    Pitch PitchClass.aFlat Octave.one
 
 
 b1 : Pitch
 b1 =
-    Pitch (PitchClass.pitchClass B natural) Octave.one
+    Pitch PitchClass.b Octave.one
 
 
 bSharp1 : Pitch
 bSharp1 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.one
+    Pitch PitchClass.bSharp Octave.one
 
 
 bFlat1 : Pitch
 bFlat1 =
-    Pitch (PitchClass.pitchClass B flat) Octave.one
+    Pitch PitchClass.bFlat Octave.one
 
 
 c2 : Pitch
 c2 =
-    Pitch (PitchClass.pitchClass C natural) Octave.two
+    Pitch PitchClass.c Octave.two
 
 
 cSharp2 : Pitch
 cSharp2 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.two
+    Pitch PitchClass.cSharp Octave.two
 
 
 cFlat2 : Pitch
 cFlat2 =
-    Pitch (PitchClass.pitchClass C flat) Octave.two
+    Pitch PitchClass.cFlat Octave.two
 
 
 d2 : Pitch
 d2 =
-    Pitch (PitchClass.pitchClass D natural) Octave.two
+    Pitch PitchClass.d Octave.two
 
 
 dSharp2 : Pitch
 dSharp2 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.two
+    Pitch PitchClass.dSharp Octave.two
 
 
 dFlat2 : Pitch
 dFlat2 =
-    Pitch (PitchClass.pitchClass D flat) Octave.two
+    Pitch PitchClass.dFlat Octave.two
 
 
 e2 : Pitch
 e2 =
-    Pitch (PitchClass.pitchClass E natural) Octave.two
+    Pitch PitchClass.e Octave.two
 
 
 eSharp2 : Pitch
 eSharp2 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.two
+    Pitch PitchClass.eSharp Octave.two
 
 
 eFlat2 : Pitch
 eFlat2 =
-    Pitch (PitchClass.pitchClass E flat) Octave.two
+    Pitch PitchClass.eFlat Octave.two
 
 
 f2 : Pitch
 f2 =
-    Pitch (PitchClass.pitchClass F natural) Octave.two
+    Pitch PitchClass.f Octave.two
 
 
 fSharp2 : Pitch
 fSharp2 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.two
+    Pitch PitchClass.fSharp Octave.two
 
 
 fFlat2 : Pitch
 fFlat2 =
-    Pitch (PitchClass.pitchClass F flat) Octave.two
+    Pitch PitchClass.fFlat Octave.two
 
 
 g2 : Pitch
 g2 =
-    Pitch (PitchClass.pitchClass G natural) Octave.two
+    Pitch PitchClass.g Octave.two
 
 
 gSharp2 : Pitch
 gSharp2 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.two
+    Pitch PitchClass.gSharp Octave.two
 
 
 gFlat2 : Pitch
 gFlat2 =
-    Pitch (PitchClass.pitchClass G flat) Octave.two
+    Pitch PitchClass.gFlat Octave.two
 
 
 a2 : Pitch
 a2 =
-    Pitch (PitchClass.pitchClass A natural) Octave.two
+    Pitch PitchClass.a Octave.two
 
 
 aSharp2 : Pitch
 aSharp2 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.two
+    Pitch PitchClass.aSharp Octave.two
 
 
 aFlat2 : Pitch
 aFlat2 =
-    Pitch (PitchClass.pitchClass A flat) Octave.two
+    Pitch PitchClass.aFlat Octave.two
 
 
 b2 : Pitch
 b2 =
-    Pitch (PitchClass.pitchClass B natural) Octave.two
+    Pitch PitchClass.b Octave.two
 
 
 bSharp2 : Pitch
 bSharp2 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.two
+    Pitch PitchClass.bSharp Octave.two
 
 
 bFlat2 : Pitch
 bFlat2 =
-    Pitch (PitchClass.pitchClass B flat) Octave.two
+    Pitch PitchClass.bFlat Octave.two
 
 
 c3 : Pitch
 c3 =
-    Pitch (PitchClass.pitchClass C natural) Octave.three
+    Pitch PitchClass.c Octave.three
 
 
 cSharp3 : Pitch
 cSharp3 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.three
+    Pitch PitchClass.cSharp Octave.three
 
 
 cFlat3 : Pitch
 cFlat3 =
-    Pitch (PitchClass.pitchClass C flat) Octave.three
+    Pitch PitchClass.cFlat Octave.three
 
 
 d3 : Pitch
 d3 =
-    Pitch (PitchClass.pitchClass D natural) Octave.three
+    Pitch PitchClass.d Octave.three
 
 
 dSharp3 : Pitch
 dSharp3 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.three
+    Pitch PitchClass.dSharp Octave.three
 
 
 dFlat3 : Pitch
 dFlat3 =
-    Pitch (PitchClass.pitchClass D flat) Octave.three
+    Pitch PitchClass.dFlat Octave.three
 
 
 e3 : Pitch
 e3 =
-    Pitch (PitchClass.pitchClass E natural) Octave.three
+    Pitch PitchClass.e Octave.three
 
 
 eSharp3 : Pitch
 eSharp3 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.three
+    Pitch PitchClass.eSharp Octave.three
 
 
 eFlat3 : Pitch
 eFlat3 =
-    Pitch (PitchClass.pitchClass E flat) Octave.three
+    Pitch PitchClass.eFlat Octave.three
 
 
 f3 : Pitch
 f3 =
-    Pitch (PitchClass.pitchClass F natural) Octave.three
+    Pitch PitchClass.f Octave.three
 
 
 fSharp3 : Pitch
 fSharp3 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.three
+    Pitch PitchClass.fSharp Octave.three
 
 
 fFlat3 : Pitch
 fFlat3 =
-    Pitch (PitchClass.pitchClass F flat) Octave.three
+    Pitch PitchClass.fFlat Octave.three
 
 
 g3 : Pitch
 g3 =
-    Pitch (PitchClass.pitchClass G natural) Octave.three
+    Pitch PitchClass.g Octave.three
 
 
 gSharp3 : Pitch
 gSharp3 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.three
+    Pitch PitchClass.gSharp Octave.three
 
 
 gFlat3 : Pitch
 gFlat3 =
-    Pitch (PitchClass.pitchClass G flat) Octave.three
+    Pitch PitchClass.gFlat Octave.three
 
 
 a3 : Pitch
 a3 =
-    Pitch (PitchClass.pitchClass A natural) Octave.three
+    Pitch PitchClass.a Octave.three
 
 
 aSharp3 : Pitch
 aSharp3 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.three
+    Pitch PitchClass.aSharp Octave.three
 
 
 aFlat3 : Pitch
 aFlat3 =
-    Pitch (PitchClass.pitchClass A flat) Octave.three
+    Pitch PitchClass.aFlat Octave.three
 
 
 b3 : Pitch
 b3 =
-    Pitch (PitchClass.pitchClass B natural) Octave.three
+    Pitch PitchClass.b Octave.three
 
 
 bSharp3 : Pitch
 bSharp3 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.three
+    Pitch PitchClass.bSharp Octave.three
 
 
 bFlat3 : Pitch
 bFlat3 =
-    Pitch (PitchClass.pitchClass B flat) Octave.three
+    Pitch PitchClass.bFlat Octave.three
 
 
 c4 : Pitch
 c4 =
-    Pitch (PitchClass.pitchClass C natural) Octave.four
+    Pitch PitchClass.c Octave.four
 
 
 cSharp4 : Pitch
 cSharp4 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.four
+    Pitch PitchClass.cSharp Octave.four
 
 
 cFlat4 : Pitch
 cFlat4 =
-    Pitch (PitchClass.pitchClass C flat) Octave.four
+    Pitch PitchClass.cFlat Octave.four
 
 
 d4 : Pitch
 d4 =
-    Pitch (PitchClass.pitchClass D natural) Octave.four
+    Pitch PitchClass.d Octave.four
 
 
 dSharp4 : Pitch
 dSharp4 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.four
+    Pitch PitchClass.dSharp Octave.four
 
 
 dFlat4 : Pitch
 dFlat4 =
-    Pitch (PitchClass.pitchClass D flat) Octave.four
+    Pitch PitchClass.dFlat Octave.four
 
 
 e4 : Pitch
 e4 =
-    Pitch (PitchClass.pitchClass E natural) Octave.four
+    Pitch PitchClass.e Octave.four
 
 
 eSharp4 : Pitch
 eSharp4 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.four
+    Pitch PitchClass.eSharp Octave.four
 
 
 eFlat4 : Pitch
 eFlat4 =
-    Pitch (PitchClass.pitchClass E flat) Octave.four
+    Pitch PitchClass.eFlat Octave.four
 
 
 f4 : Pitch
 f4 =
-    Pitch (PitchClass.pitchClass F natural) Octave.four
+    Pitch PitchClass.f Octave.four
 
 
 fSharp4 : Pitch
 fSharp4 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.four
+    Pitch PitchClass.fSharp Octave.four
 
 
 fFlat4 : Pitch
 fFlat4 =
-    Pitch (PitchClass.pitchClass F flat) Octave.four
+    Pitch PitchClass.fFlat Octave.four
 
 
 g4 : Pitch
 g4 =
-    Pitch (PitchClass.pitchClass G natural) Octave.four
+    Pitch PitchClass.g Octave.four
 
 
 gSharp4 : Pitch
 gSharp4 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.four
+    Pitch PitchClass.gSharp Octave.four
 
 
 gFlat4 : Pitch
 gFlat4 =
-    Pitch (PitchClass.pitchClass G flat) Octave.four
+    Pitch PitchClass.gFlat Octave.four
 
 
 a4 : Pitch
 a4 =
-    Pitch (PitchClass.pitchClass A natural) Octave.four
+    Pitch PitchClass.a Octave.four
 
 
 aSharp4 : Pitch
 aSharp4 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.four
+    Pitch PitchClass.aSharp Octave.four
 
 
 aFlat4 : Pitch
 aFlat4 =
-    Pitch (PitchClass.pitchClass A flat) Octave.four
+    Pitch PitchClass.aFlat Octave.four
 
 
 b4 : Pitch
 b4 =
-    Pitch (PitchClass.pitchClass B natural) Octave.four
+    Pitch PitchClass.b Octave.four
 
 
 bSharp4 : Pitch
 bSharp4 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.four
+    Pitch PitchClass.bSharp Octave.four
 
 
 bFlat4 : Pitch
 bFlat4 =
-    Pitch (PitchClass.pitchClass B flat) Octave.four
+    Pitch PitchClass.bFlat Octave.four
 
 
 c5 : Pitch
 c5 =
-    Pitch (PitchClass.pitchClass C natural) Octave.five
+    Pitch PitchClass.c Octave.five
 
 
 cSharp5 : Pitch
 cSharp5 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.five
+    Pitch PitchClass.cSharp Octave.five
 
 
 cFlat5 : Pitch
 cFlat5 =
-    Pitch (PitchClass.pitchClass C flat) Octave.five
+    Pitch PitchClass.cFlat Octave.five
 
 
 d5 : Pitch
 d5 =
-    Pitch (PitchClass.pitchClass D natural) Octave.five
+    Pitch PitchClass.d Octave.five
 
 
 dSharp5 : Pitch
 dSharp5 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.five
+    Pitch PitchClass.dSharp Octave.five
 
 
 dFlat5 : Pitch
 dFlat5 =
-    Pitch (PitchClass.pitchClass D flat) Octave.five
+    Pitch PitchClass.dFlat Octave.five
 
 
 e5 : Pitch
 e5 =
-    Pitch (PitchClass.pitchClass E natural) Octave.five
+    Pitch PitchClass.e Octave.five
 
 
 eSharp5 : Pitch
 eSharp5 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.five
+    Pitch PitchClass.eSharp Octave.five
 
 
 eFlat5 : Pitch
 eFlat5 =
-    Pitch (PitchClass.pitchClass E flat) Octave.five
+    Pitch PitchClass.eFlat Octave.five
 
 
 f5 : Pitch
 f5 =
-    Pitch (PitchClass.pitchClass F natural) Octave.five
+    Pitch PitchClass.f Octave.five
 
 
 fSharp5 : Pitch
 fSharp5 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.five
+    Pitch PitchClass.fSharp Octave.five
 
 
 fFlat5 : Pitch
 fFlat5 =
-    Pitch (PitchClass.pitchClass F flat) Octave.five
+    Pitch PitchClass.fFlat Octave.five
 
 
 g5 : Pitch
 g5 =
-    Pitch (PitchClass.pitchClass G natural) Octave.five
+    Pitch PitchClass.g Octave.five
 
 
 gSharp5 : Pitch
 gSharp5 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.five
+    Pitch PitchClass.gSharp Octave.five
 
 
 gFlat5 : Pitch
 gFlat5 =
-    Pitch (PitchClass.pitchClass G flat) Octave.five
+    Pitch PitchClass.gFlat Octave.five
 
 
 a5 : Pitch
 a5 =
-    Pitch (PitchClass.pitchClass A natural) Octave.five
+    Pitch PitchClass.a Octave.five
 
 
 aSharp5 : Pitch
 aSharp5 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.five
+    Pitch PitchClass.aSharp Octave.five
 
 
 aFlat5 : Pitch
 aFlat5 =
-    Pitch (PitchClass.pitchClass A flat) Octave.five
+    Pitch PitchClass.aFlat Octave.five
 
 
 b5 : Pitch
 b5 =
-    Pitch (PitchClass.pitchClass B natural) Octave.five
+    Pitch PitchClass.b Octave.five
 
 
 bSharp5 : Pitch
 bSharp5 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.five
+    Pitch PitchClass.bSharp Octave.five
 
 
 bFlat5 : Pitch
 bFlat5 =
-    Pitch (PitchClass.pitchClass B flat) Octave.five
+    Pitch PitchClass.bFlat Octave.five
 
 
 c6 : Pitch
 c6 =
-    Pitch (PitchClass.pitchClass C natural) Octave.six
+    Pitch PitchClass.c Octave.six
 
 
 cSharp6 : Pitch
 cSharp6 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.six
+    Pitch PitchClass.cSharp Octave.six
 
 
 cFlat6 : Pitch
 cFlat6 =
-    Pitch (PitchClass.pitchClass C flat) Octave.six
+    Pitch PitchClass.cFlat Octave.six
 
 
 d6 : Pitch
 d6 =
-    Pitch (PitchClass.pitchClass D natural) Octave.six
+    Pitch PitchClass.d Octave.six
 
 
 dSharp6 : Pitch
 dSharp6 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.six
+    Pitch PitchClass.dSharp Octave.six
 
 
 dFlat6 : Pitch
 dFlat6 =
-    Pitch (PitchClass.pitchClass D flat) Octave.six
+    Pitch PitchClass.dFlat Octave.six
 
 
 e6 : Pitch
 e6 =
-    Pitch (PitchClass.pitchClass E natural) Octave.six
+    Pitch PitchClass.e Octave.six
 
 
 eSharp6 : Pitch
 eSharp6 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.six
+    Pitch PitchClass.eSharp Octave.six
 
 
 eFlat6 : Pitch
 eFlat6 =
-    Pitch (PitchClass.pitchClass E flat) Octave.six
+    Pitch PitchClass.eFlat Octave.six
 
 
 f6 : Pitch
 f6 =
-    Pitch (PitchClass.pitchClass F natural) Octave.six
+    Pitch PitchClass.f Octave.six
 
 
 fSharp6 : Pitch
 fSharp6 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.six
+    Pitch PitchClass.fSharp Octave.six
 
 
 fFlat6 : Pitch
 fFlat6 =
-    Pitch (PitchClass.pitchClass F flat) Octave.six
+    Pitch PitchClass.fFlat Octave.six
 
 
 g6 : Pitch
 g6 =
-    Pitch (PitchClass.pitchClass G natural) Octave.six
+    Pitch PitchClass.g Octave.six
 
 
 gSharp6 : Pitch
 gSharp6 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.six
+    Pitch PitchClass.gSharp Octave.six
 
 
 gFlat6 : Pitch
 gFlat6 =
-    Pitch (PitchClass.pitchClass G flat) Octave.six
+    Pitch PitchClass.gFlat Octave.six
 
 
 a6 : Pitch
 a6 =
-    Pitch (PitchClass.pitchClass A natural) Octave.six
+    Pitch PitchClass.a Octave.six
 
 
 aSharp6 : Pitch
 aSharp6 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.six
+    Pitch PitchClass.aSharp Octave.six
 
 
 aFlat6 : Pitch
 aFlat6 =
-    Pitch (PitchClass.pitchClass A flat) Octave.six
+    Pitch PitchClass.aFlat Octave.six
 
 
 b6 : Pitch
 b6 =
-    Pitch (PitchClass.pitchClass B natural) Octave.six
+    Pitch PitchClass.b Octave.six
 
 
 bSharp6 : Pitch
 bSharp6 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.six
+    Pitch PitchClass.bSharp Octave.six
 
 
 bFlat6 : Pitch
 bFlat6 =
-    Pitch (PitchClass.pitchClass B flat) Octave.six
+    Pitch PitchClass.bFlat Octave.six
 
 
 c7 : Pitch
 c7 =
-    Pitch (PitchClass.pitchClass C natural) Octave.seven
+    Pitch PitchClass.c Octave.seven
 
 
 cSharp7 : Pitch
 cSharp7 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.seven
+    Pitch PitchClass.cSharp Octave.seven
 
 
 cFlat7 : Pitch
 cFlat7 =
-    Pitch (PitchClass.pitchClass C flat) Octave.seven
+    Pitch PitchClass.cFlat Octave.seven
 
 
 d7 : Pitch
 d7 =
-    Pitch (PitchClass.pitchClass D natural) Octave.seven
+    Pitch PitchClass.d Octave.seven
 
 
 dSharp7 : Pitch
 dSharp7 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.seven
+    Pitch PitchClass.dSharp Octave.seven
 
 
 dFlat7 : Pitch
 dFlat7 =
-    Pitch (PitchClass.pitchClass D flat) Octave.seven
+    Pitch PitchClass.dFlat Octave.seven
 
 
 e7 : Pitch
 e7 =
-    Pitch (PitchClass.pitchClass E natural) Octave.seven
+    Pitch PitchClass.e Octave.seven
 
 
 eSharp7 : Pitch
 eSharp7 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.seven
+    Pitch PitchClass.eSharp Octave.seven
 
 
 eFlat7 : Pitch
 eFlat7 =
-    Pitch (PitchClass.pitchClass E flat) Octave.seven
+    Pitch PitchClass.eFlat Octave.seven
 
 
 f7 : Pitch
 f7 =
-    Pitch (PitchClass.pitchClass F natural) Octave.seven
+    Pitch PitchClass.f Octave.seven
 
 
 fSharp7 : Pitch
 fSharp7 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.seven
+    Pitch PitchClass.fSharp Octave.seven
 
 
 fFlat7 : Pitch
 fFlat7 =
-    Pitch (PitchClass.pitchClass F flat) Octave.seven
+    Pitch PitchClass.fFlat Octave.seven
 
 
 g7 : Pitch
 g7 =
-    Pitch (PitchClass.pitchClass G natural) Octave.seven
+    Pitch PitchClass.g Octave.seven
 
 
 gSharp7 : Pitch
 gSharp7 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.seven
+    Pitch PitchClass.gSharp Octave.seven
 
 
 gFlat7 : Pitch
 gFlat7 =
-    Pitch (PitchClass.pitchClass G flat) Octave.seven
+    Pitch PitchClass.gFlat Octave.seven
 
 
 a7 : Pitch
 a7 =
-    Pitch (PitchClass.pitchClass A natural) Octave.seven
+    Pitch PitchClass.a Octave.seven
 
 
 aSharp7 : Pitch
 aSharp7 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.seven
+    Pitch PitchClass.aSharp Octave.seven
 
 
 aFlat7 : Pitch
 aFlat7 =
-    Pitch (PitchClass.pitchClass A flat) Octave.seven
+    Pitch PitchClass.aFlat Octave.seven
 
 
 b7 : Pitch
 b7 =
-    Pitch (PitchClass.pitchClass B natural) Octave.seven
+    Pitch PitchClass.b Octave.seven
 
 
 bSharp7 : Pitch
 bSharp7 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.seven
+    Pitch PitchClass.bSharp Octave.seven
 
 
 bFlat7 : Pitch
 bFlat7 =
-    Pitch (PitchClass.pitchClass B flat) Octave.seven
+    Pitch PitchClass.bFlat Octave.seven
 
 
 c8 : Pitch
 c8 =
-    Pitch (PitchClass.pitchClass C natural) Octave.eight
+    Pitch PitchClass.c Octave.eight
 
 
 cSharp8 : Pitch
 cSharp8 =
-    Pitch (PitchClass.pitchClass C sharp) Octave.eight
+    Pitch PitchClass.cSharp Octave.eight
 
 
 cFlat8 : Pitch
 cFlat8 =
-    Pitch (PitchClass.pitchClass C flat) Octave.eight
+    Pitch PitchClass.cFlat Octave.eight
 
 
 d8 : Pitch
 d8 =
-    Pitch (PitchClass.pitchClass D natural) Octave.eight
+    Pitch PitchClass.d Octave.eight
 
 
 dSharp8 : Pitch
 dSharp8 =
-    Pitch (PitchClass.pitchClass D sharp) Octave.eight
+    Pitch PitchClass.dSharp Octave.eight
 
 
 dFlat8 : Pitch
 dFlat8 =
-    Pitch (PitchClass.pitchClass D flat) Octave.eight
+    Pitch PitchClass.dFlat Octave.eight
 
 
 e8 : Pitch
 e8 =
-    Pitch (PitchClass.pitchClass E natural) Octave.eight
+    Pitch PitchClass.e Octave.eight
 
 
 eSharp8 : Pitch
 eSharp8 =
-    Pitch (PitchClass.pitchClass E sharp) Octave.eight
+    Pitch PitchClass.eSharp Octave.eight
 
 
 eFlat8 : Pitch
 eFlat8 =
-    Pitch (PitchClass.pitchClass E flat) Octave.eight
+    Pitch PitchClass.eFlat Octave.eight
 
 
 f8 : Pitch
 f8 =
-    Pitch (PitchClass.pitchClass F natural) Octave.eight
+    Pitch PitchClass.f Octave.eight
 
 
 fSharp8 : Pitch
 fSharp8 =
-    Pitch (PitchClass.pitchClass F sharp) Octave.eight
+    Pitch PitchClass.fSharp Octave.eight
 
 
 fFlat8 : Pitch
 fFlat8 =
-    Pitch (PitchClass.pitchClass F flat) Octave.eight
+    Pitch PitchClass.fFlat Octave.eight
 
 
 g8 : Pitch
 g8 =
-    Pitch (PitchClass.pitchClass G natural) Octave.eight
+    Pitch PitchClass.g Octave.eight
 
 
 gSharp8 : Pitch
 gSharp8 =
-    Pitch (PitchClass.pitchClass G sharp) Octave.eight
+    Pitch PitchClass.gSharp Octave.eight
 
 
 gFlat8 : Pitch
 gFlat8 =
-    Pitch (PitchClass.pitchClass G flat) Octave.eight
+    Pitch PitchClass.gFlat Octave.eight
 
 
 a8 : Pitch
 a8 =
-    Pitch (PitchClass.pitchClass A natural) Octave.eight
+    Pitch PitchClass.a Octave.eight
 
 
 aSharp8 : Pitch
 aSharp8 =
-    Pitch (PitchClass.pitchClass A sharp) Octave.eight
+    Pitch PitchClass.aSharp Octave.eight
 
 
 aFlat8 : Pitch
 aFlat8 =
-    Pitch (PitchClass.pitchClass A flat) Octave.eight
+    Pitch PitchClass.aFlat Octave.eight
 
 
 b8 : Pitch
 b8 =
-    Pitch (PitchClass.pitchClass B natural) Octave.eight
+    Pitch PitchClass.b Octave.eight
 
 
 bSharp8 : Pitch
 bSharp8 =
-    Pitch (PitchClass.pitchClass B sharp) Octave.eight
+    Pitch PitchClass.bSharp Octave.eight
 
 
 bFlat8 : Pitch
 bFlat8 =
-    Pitch (PitchClass.pitchClass B flat) Octave.eight
+    Pitch PitchClass.bFlat Octave.eight
 
 
 type Pitch
@@ -1252,16 +1995,6 @@ semitones (Pitch pc o) =
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool
 areEnharmonicEquivalents lhs rhs =
     semitones lhs == semitones rhs
-
-
-all : List Pitch
-all =
-    Octave.all
-        |> List.concatMap
-            (\o ->
-                PitchClass.all
-                    |> List.map (\pc -> Pitch pc o)
-            )
 
 
 allForPitchClass : PitchClass -> List Pitch
