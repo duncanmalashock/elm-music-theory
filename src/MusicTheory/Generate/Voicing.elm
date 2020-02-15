@@ -42,41 +42,84 @@ rotateVoices fourPartVoicingPlan =
 type VoicingError
     = CantVoiceNonTertianChord ChordClass.ChordClassError
     | MissingVoiceCategory
+    | VoiceOutOfRange Pitch.PitchError
+    | NoVoicingsFound
 
 
-fourWayClose : Chord.Chord -> Result VoicingError (List FourPartVoicingPlan)
+fourWayClose : Chord.Chord -> Result VoicingError (List FourPartVoicing)
 fourWayClose chord =
-    Result.map
-        (\factorsByCategory ->
-            factorsByCategoryToFourPartVoicingPlan (Chord.root chord) factorsByCategory
-        )
-        (AnalyzeChordClass.tertianFactorsByCategory (Chord.chordClass chord))
+    getFourPartVoicingPlans chord
+        |> Result.map (List.map planToFourWayCloseVoicings)
+        |> Result.map (List.filterMap Result.toMaybe)
+        |> Result.map List.concat
+
+
+getFourPartVoicingPlans :
+    Chord.Chord
+    -> Result VoicingError (List FourPartVoicingPlan)
+getFourPartVoicingPlans chord =
+    AnalyzeChordClass.tertianFactorsByCategory
+        (Chord.chordClass chord)
         |> Result.mapError CantVoiceNonTertianChord
-        |> Result.andThen
-            (\list ->
-                case list of
-                    [] ->
-                        Err MissingVoiceCategory
-
-                    theList ->
-                        Ok theList
-            )
+        |> Result.andThen (fourPartVoicingPlans (Chord.root chord))
 
 
-factorToPitchClass : PitchClass.PitchClass -> TertianFactors.TertianFactor -> PitchClass.PitchClass
-factorToPitchClass root factor =
-    PitchClass.transposeUp (TertianFactors.toInterval factor) root
-
-
-factorsByCategoryToFourPartVoicingPlan : PitchClass.PitchClass -> AnalyzeChordClass.TertianFactorsByCategory -> List FourPartVoicingPlan
-factorsByCategoryToFourPartVoicingPlan root factorCats =
+planToFourWayCloseVoicings :
+    FourPartVoicingPlan
+    -> Result VoicingError (List FourPartVoicing)
+planToFourWayCloseVoicings plan =
     let
+        voicings =
+            List.map
+                (planToFourWayCloseVoicingForOctave plan)
+                Octave.all
+                |> List.filterMap Result.toMaybe
+    in
+    case voicings of
+        [] ->
+            Err NoVoicingsFound
+
+        nonEmptyList ->
+            Ok nonEmptyList
+
+
+planToFourWayCloseVoicingForOctave :
+    FourPartVoicingPlan
+    -> Octave.Octave
+    -> Result VoicingError FourPartVoicing
+planToFourWayCloseVoicingForOctave plan octave =
+    let
+        voiceOne =
+            Pitch.fromPitchClass octave plan.voiceOne
+
+        voiceTwo =
+            Result.andThen (Pitch.firstBelow plan.voiceTwo) voiceOne
+
+        voiceThree =
+            Result.andThen (Pitch.firstBelow plan.voiceThree) voiceTwo
+
+        voiceFour =
+            Result.andThen (Pitch.firstBelow plan.voiceFour) voiceThree
+    in
+    Result.map4 FourPartVoicing voiceOne voiceTwo voiceThree voiceFour
+        |> Result.mapError VoiceOutOfRange
+
+
+fourPartVoicingPlans :
+    PitchClass.PitchClass
+    -> AnalyzeChordClass.TertianFactorsByCategory
+    -> Result VoicingError (List FourPartVoicingPlan)
+fourPartVoicingPlans root factorCats =
+    let
+        factorToPitchClass factor =
+            PitchClass.transposeUp (TertianFactors.toInterval factor) root
+
         plans =
             Libs.Permutations.permutations4
-                (List.map (factorToPitchClass root) factorCats.root)
-                (List.map (factorToPitchClass root) factorCats.seventh)
-                (List.map (factorToPitchClass root) factorCats.fifth)
-                (List.map (factorToPitchClass root) factorCats.third)
+                (List.map factorToPitchClass factorCats.root)
+                (List.map factorToPitchClass factorCats.seventh)
+                (List.map factorToPitchClass factorCats.fifth)
+                (List.map factorToPitchClass factorCats.third)
                 FourPartVoicingPlan
 
         planRotatedOnce =
@@ -88,7 +131,14 @@ factorsByCategoryToFourPartVoicingPlan root factorCats =
         planRotatedThreeTimes =
             List.map rotateVoices planRotatedTwice
     in
-    plans
-        ++ planRotatedOnce
-        ++ planRotatedTwice
-        ++ planRotatedThreeTimes
+    case plans of
+        [] ->
+            Err MissingVoiceCategory
+
+        nonEmptyPlans ->
+            Ok
+                (nonEmptyPlans
+                    ++ planRotatedOnce
+                    ++ planRotatedTwice
+                    ++ planRotatedThreeTimes
+                )

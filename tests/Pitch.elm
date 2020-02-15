@@ -77,7 +77,7 @@ all =
                         |> Result.andThen
                             (Pitch.firstBelow (PitchClass.pitchClass A Pitch.natural))
                         |> Expect.equal
-                            (Err OutOfRange)
+                            (Err ValidPitchNotFound)
             ]
         , describe "firstAbove"
             [ test "should return D5 (first occurence of D below F4)" <|
@@ -93,6 +93,6 @@ all =
                         |> Result.andThen
                             (Pitch.firstAbove (PitchClass.pitchClass A Pitch.natural))
                         |> Expect.equal
-                            (Err OutOfRange)
+                            (Err ValidPitchNotFound)
             ]
         ]

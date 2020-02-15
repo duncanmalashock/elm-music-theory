@@ -45,7 +45,8 @@ type Pitch
 
 type PitchError
     = InvalidOctave OctaveError
-    | OutOfRange
+    | SemitonesOutOfRange Int
+    | ValidPitchNotFound
     | InternalError
 
 
@@ -109,7 +110,7 @@ fromPitchClass o p =
         (semitones newPitch > semitonesUpperLimit)
             || (semitones newPitch < semitonesLowerLimit)
     then
-        Err <| OutOfRange
+        Err <| SemitonesOutOfRange (semitones newPitch)
 
     else
         Ok newPitch
@@ -160,7 +161,7 @@ firstBelow thePitchClass startPitch =
     in
     case maybePitch of
         Nothing ->
-            Err OutOfRange
+            Err ValidPitchNotFound
 
         Just thePitch ->
             Ok thePitch
@@ -180,7 +181,7 @@ firstAbove thePitchClass startPitch =
     in
     case maybePitch of
         Nothing ->
-            Err OutOfRange
+            Err ValidPitchNotFound
 
         Just thePitch ->
             Ok thePitch
@@ -194,12 +195,17 @@ errorToString error =
         InvalidOctave err ->
             Octave.errorToString err
 
-        OutOfRange ->
-            "Pitch semitone count is not between the legal range of "
+        SemitonesOutOfRange semis ->
+            "Pitch semitone count"
+                ++ String.fromInt semis
+                ++ " is not between the legal range of "
                 ++ String.fromInt semitonesLowerLimit
                 ++ " and "
                 ++ String.fromInt semitonesUpperLimit
                 ++ "."
+
+        ValidPitchNotFound ->
+            "A valid pitch could not be constructed."
 
         InternalError ->
             "Something went wrong internally."
