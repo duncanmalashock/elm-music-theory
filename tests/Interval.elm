@@ -1,4 +1,4 @@
-module IntervalTests exposing (all)
+module Interval exposing (all)
 
 import Expect
 import Fuzzers.IntervalFuzzer as Fuzzer

@@ -1,4 +1,4 @@
-module KeyTests exposing (all)
+module Key exposing (all)
 
 import Expect
 import Fuzz exposing (Fuzzer)

@@ -1,4 +1,4 @@
-module ScaleTests exposing (all)
+module Scale exposing (all)
 
 import Expect
 import MusicTheory.Letter exposing (Letter(..))

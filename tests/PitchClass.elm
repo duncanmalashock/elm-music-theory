@@ -1,4 +1,4 @@
-module PitchClassTests exposing (all)
+module PitchClass exposing (all)
 
 import Expect
 import Fuzzers.IntervalFuzzer as IntervalFuzzer

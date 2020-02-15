@@ -52,7 +52,18 @@ semitones (PitchClass l (Offset o)) =
 all : List PitchClass
 all =
     Letter.letters
-        |> List.concatMap (\l -> [ tripleFlat, doubleFlat, flat, natural, sharp, doubleSharp, tripleSharp ] |> List.map (pitchClass l))
+        |> List.concatMap
+            (\l ->
+                [ tripleFlat
+                , doubleFlat
+                , flat
+                , natural
+                , sharp
+                , doubleSharp
+                , tripleSharp
+                ]
+                    |> List.map (pitchClass l)
+            )
 
 
 tripleFlat : Offset
@@ -108,9 +119,21 @@ transposeUp : Interval -> PitchClass -> PitchClass
 transposeUp interval pc =
     let
         ( targetLetter, letterToLetterDistance ) =
-            targetLetterWithSemitoneDistance (Letter.index (letter pc)) (Interval.intervalNumberIndex (Interval.number interval)) ( letter pc, 0 )
+            targetLetterWithSemitoneDistance
+                (Letter.index (letter pc))
+                (Interval.intervalNumberIndex
+                    (Interval.number interval)
+                )
+                ( letter pc, 0 )
     in
-    PitchClass targetLetter (Offset (Interval.semitones interval - letterToLetterDistance + offset pc))
+    PitchClass
+        targetLetter
+        (Offset
+            (Interval.semitones interval
+                - letterToLetterDistance
+                + offset pc
+            )
+        )
 
 
 transposeDown : Interval -> PitchClass -> PitchClass
@@ -139,4 +162,9 @@ targetLetterWithSemitoneDistance currentIndex steps ( currentLetter, totalSemito
             ( currentTargetLetter, stepSemitones ) =
                 Letter.indexToLetterAndSteps (currentIndex + 1)
         in
-        targetLetterWithSemitoneDistance (currentIndex + 1) (steps - 1) ( currentTargetLetter, totalSemitones + stepSemitones )
+        targetLetterWithSemitoneDistance
+            (currentIndex + 1)
+            (steps - 1)
+            ( currentTargetLetter
+            , totalSemitones + stepSemitones
+            )
