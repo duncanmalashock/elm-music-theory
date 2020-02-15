@@ -1,5 +1,6 @@
 module MusicTheory.Generate.Voicing exposing
-    ( VoicingError(..)
+    ( FourPartVoicing
+    , VoicingError(..)
     , fourWayClose
     )
 
