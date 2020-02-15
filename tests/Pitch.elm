@@ -31,28 +31,28 @@ all =
         , describe "transposeUp"
             [ test "transpose up perfect 5 from G4 should be D5" <|
                 \_ ->
-                    Pitch.pitch G Pitch.natural Octave.four
-                        |> Result.andThen (Pitch.transposeUp Interval.perfectFifth)
+                    Pitch.g4
+                        |> Pitch.transposeUp Interval.perfectFifth
                         |> Expect.equal
-                            (Pitch.pitch D Pitch.natural Octave.five)
+                            (Ok Pitch.d5)
             , test "transpose up major 3 from A8 should fail" <|
                 \_ ->
-                    Pitch.pitch A Pitch.natural Octave.eight
-                        |> Result.andThen (Pitch.transposeUp Interval.majorThird)
+                    Pitch.a8
+                        |> Pitch.transposeUp Interval.majorThird
                         |> Expect.equal
                             (Err <| InvalidOctave <| AboveValidRange 9)
             ]
         , describe "transposeDown"
             [ test "transpose down perfect 5 from D5 should be G4" <|
                 \_ ->
-                    Pitch.pitch D Pitch.natural Octave.five
-                        |> Result.andThen (Pitch.transposeDown Interval.perfectFifth)
+                    Pitch.d5
+                        |> Pitch.transposeDown Interval.perfectFifth
                         |> Expect.equal
-                            (Pitch.pitch G Pitch.natural Octave.four)
+                            (Ok Pitch.g4)
             , test "transpose down major 3 from D0 should fail" <|
                 \_ ->
-                    Pitch.pitch D Pitch.natural Octave.zero
-                        |> Result.andThen (Pitch.transposeDown Interval.majorThird)
+                    Pitch.d0
+                        |> Pitch.transposeDown Interval.majorThird
                         |> Expect.equal
                             (Err <| InvalidOctave <| BelowValidRange -1)
             ]
@@ -66,32 +66,28 @@ all =
         , describe "firstBelow"
             [ test "should return D4 (first occurence of D below F4)" <|
                 \_ ->
-                    Pitch.pitch F Pitch.natural Octave.four
-                        |> Result.andThen
-                            (Pitch.firstBelow (PitchClass.pitchClass D Pitch.natural))
+                    Pitch.f4
+                        |> Pitch.firstBelow (PitchClass.pitchClass D Pitch.natural)
                         |> Expect.equal
-                            (Pitch.pitch D Pitch.natural Octave.four)
+                            (Ok Pitch.d4)
             , test "should return nothing if no valid pitch exists below" <|
                 \_ ->
-                    Pitch.pitch C Pitch.natural Octave.zero
-                        |> Result.andThen
-                            (Pitch.firstBelow (PitchClass.pitchClass A Pitch.natural))
+                    Pitch.c0
+                        |> Pitch.firstBelow (PitchClass.pitchClass A Pitch.natural)
                         |> Expect.equal
                             (Err ValidPitchNotFound)
             ]
         , describe "firstAbove"
             [ test "should return D5 (first occurence of D below F4)" <|
                 \_ ->
-                    Pitch.pitch F Pitch.natural Octave.four
-                        |> Result.andThen
-                            (Pitch.firstAbove (PitchClass.pitchClass D Pitch.natural))
+                    Pitch.f4
+                        |> Pitch.firstAbove (PitchClass.pitchClass D Pitch.natural)
                         |> Expect.equal
-                            (Pitch.pitch D Pitch.natural Octave.five)
+                            (Ok Pitch.d5)
             , test "should return nothing if no valid pitch exists above" <|
                 \_ ->
-                    Pitch.pitch B Pitch.natural Octave.eight
-                        |> Result.andThen
-                            (Pitch.firstAbove (PitchClass.pitchClass A Pitch.natural))
+                    Pitch.b8
+                        |> Pitch.firstAbove (PitchClass.pitchClass A Pitch.natural)
                         |> Expect.equal
                             (Err ValidPitchNotFound)
             ]

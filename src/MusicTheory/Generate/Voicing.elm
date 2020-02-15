@@ -70,9 +70,7 @@ planToFourWayCloseVoicings :
 planToFourWayCloseVoicings plan =
     let
         voicings =
-            List.map
-                (planToFourWayCloseVoicingForOctave plan)
-                Octave.all
+            List.map (planToFourWayCloseVoicingForOctave plan) Octave.all
                 |> List.filterMap Result.toMaybe
     in
     case voicings of
