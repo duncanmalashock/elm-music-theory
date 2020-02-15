@@ -1,14 +1,18 @@
 module MusicTheory.Generate.Voicing exposing
     ( FourPartVoicing
     , VoicingError(..)
+    , containsIntervalFourParts
+    , containsSemitoneDistanceFourParts
     , diffFourParts
     , fourWayClose
+    , passesMinorNinthRule
     )
 
 import Libs.Permutations
 import MusicTheory.Analyze.ChordClass as AnalyzeChordClass
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
+import MusicTheory.Interval as Interval
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
@@ -154,3 +158,45 @@ diffFourParts firstVoicing secondVoicing =
         + diff firstVoicing.voiceTwo secondVoicing.voiceTwo
         + diff firstVoicing.voiceThree secondVoicing.voiceThree
         + diff firstVoicing.voiceFour secondVoicing.voiceFour
+
+
+containsIntervalFourParts : Interval.Interval -> FourPartVoicing -> Int
+containsIntervalFourParts theInterval voicing =
+    let
+        intervalSemitones =
+            Interval.semitones theInterval
+
+        checkForInterval a b =
+            Basics.abs (Pitch.semitones a - Pitch.semitones b) == intervalSemitones
+    in
+    [ checkForInterval voicing.voiceOne voicing.voiceTwo
+    , checkForInterval voicing.voiceOne voicing.voiceThree
+    , checkForInterval voicing.voiceOne voicing.voiceFour
+    , checkForInterval voicing.voiceTwo voicing.voiceThree
+    , checkForInterval voicing.voiceTwo voicing.voiceFour
+    , checkForInterval voicing.voiceThree voicing.voiceFour
+    ]
+        |> List.filter identity
+        |> List.length
+
+
+containsSemitoneDistanceFourParts : Int -> FourPartVoicing -> Int
+containsSemitoneDistanceFourParts semitoneDistance voicing =
+    let
+        checkForSemitoneDistance a b =
+            Basics.abs (Pitch.semitones a - Pitch.semitones b) == semitoneDistance
+    in
+    [ checkForSemitoneDistance voicing.voiceOne voicing.voiceTwo
+    , checkForSemitoneDistance voicing.voiceOne voicing.voiceThree
+    , checkForSemitoneDistance voicing.voiceOne voicing.voiceFour
+    , checkForSemitoneDistance voicing.voiceTwo voicing.voiceThree
+    , checkForSemitoneDistance voicing.voiceTwo voicing.voiceFour
+    , checkForSemitoneDistance voicing.voiceThree voicing.voiceFour
+    ]
+        |> List.filter identity
+        |> List.length
+
+
+passesMinorNinthRule : FourPartVoicing -> Bool
+passesMinorNinthRule voicing =
+    containsSemitoneDistanceFourParts 13 voicing == 0

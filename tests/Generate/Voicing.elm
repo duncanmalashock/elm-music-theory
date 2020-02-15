@@ -116,4 +116,76 @@ all =
                     in
                     Expect.equal result expected
             ]
+        , describe "containsIntervalFourParts"
+            [ test "First inversion of C major seventh should contain a minor second" <|
+                \_ ->
+                    let
+                        cMaj7FirstInv =
+                            { voiceOne = Pitch.e4
+                            , voiceTwo = Pitch.g4
+                            , voiceThree = Pitch.b4
+                            , voiceFour = Pitch.c5
+                            }
+
+                        result =
+                            GenerateVoicing.containsIntervalFourParts Interval.minorSecond cMaj7FirstInv
+
+                        expected =
+                            1
+                    in
+                    Expect.equal result expected
+            , test "C diminished seven should contain three minor thirds" <|
+                \_ ->
+                    let
+                        cDim7 =
+                            { voiceOne = Pitch.c4
+                            , voiceTwo = Pitch.eFlat4
+                            , voiceThree = Pitch.gFlat4
+                            , voiceFour = Pitch.bDoubleFlat4
+                            }
+
+                        result =
+                            GenerateVoicing.containsIntervalFourParts Interval.minorThird cDim7
+
+                        expected =
+                            3
+                    in
+                    Expect.equal result expected
+            ]
+        , describe "passesMinorNinthRule"
+            [ test "Open voicing of C major seventh should not pass the minor ninth rule" <|
+                \_ ->
+                    let
+                        cMaj7FirstInv =
+                            { voiceOne = Pitch.b3
+                            , voiceTwo = Pitch.e4
+                            , voiceThree = Pitch.g4
+                            , voiceFour = Pitch.c5
+                            }
+
+                        result =
+                            GenerateVoicing.passesMinorNinthRule cMaj7FirstInv
+
+                        expected =
+                            False
+                    in
+                    Expect.equal result expected
+            , test "Close voicing of C major seventh should pass the minor ninth rule" <|
+                \_ ->
+                    let
+                        cMaj7Close =
+                            { voiceOne = Pitch.c4
+                            , voiceTwo = Pitch.e4
+                            , voiceThree = Pitch.g4
+                            , voiceFour = Pitch.b4
+                            }
+
+                        result =
+                            GenerateVoicing.passesMinorNinthRule cMaj7Close
+
+                        expected =
+                            True
+                    in
+                    Expect.equal result expected
+            ]
         ]
