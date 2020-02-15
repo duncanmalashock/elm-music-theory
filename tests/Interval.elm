@@ -1,9 +1,8 @@
 module Interval exposing (all)
 
 import Expect
-import Fuzzers.IntervalFuzzer as Fuzzer
 import MusicTheory.Interval as Interval
-import Test exposing (Test, describe, fuzz, test)
+import Test exposing (Test, describe, test)
 
 
 all : Test
@@ -25,20 +24,9 @@ all =
                 Interval.perfectUnison
                     |> Interval.complementary
                     |> Expect.equal Interval.perfectOctave
-        , test "complementary interval of a diminished third  should be an augmented sixth" <|
+        , test "complementary interval of a diminished third should be an augmented sixth" <|
             \_ ->
                 Interval.diminishedThird
                     |> Interval.complementary
                     |> Expect.equal Interval.augmentedSixth
-        , fuzz Fuzzer.interval "complementary intervals semitones sum should be 12" <|
-            \interval ->
-                interval
-                    |> Interval.semitones
-                    |> Expect.equal
-                        (12
-                            - (interval
-                                |> Interval.complementary
-                                |> Interval.semitones
-                              )
-                        )
         ]

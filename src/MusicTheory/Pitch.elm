@@ -29,16 +29,27 @@ import MusicTheory.Octave as Octave exposing (Octave, OctaveError(..))
 import MusicTheory.PitchClass as PitchClass exposing (Offset, PitchClass)
 
 
+semitonesUpperLimit : Int
+semitonesUpperLimit =
+    120
+
+
+semitonesLowerLimit : Int
+semitonesLowerLimit =
+    0
+
+
 type Pitch
     = Pitch PitchClass Octave
 
 
 type PitchError
     = InvalidOctave OctaveError
+    | OutOfRange
     | InternalError
 
 
-pitch : Letter -> Offset -> Octave -> Pitch
+pitch : Letter -> Offset -> Octave -> Result PitchError Pitch
 pitch l os o =
     fromPitchClass o (PitchClass.pitchClass l os)
 
@@ -88,9 +99,20 @@ octave (Pitch _ o) =
     o
 
 
-fromPitchClass : Octave -> PitchClass -> Pitch
+fromPitchClass : Octave -> PitchClass -> Result PitchError Pitch
 fromPitchClass o p =
-    Pitch p o
+    let
+        newPitch =
+            Pitch p o
+    in
+    if
+        (semitones newPitch > semitonesUpperLimit)
+            || (semitones newPitch < semitonesLowerLimit)
+    then
+        Err <| OutOfRange
+
+    else
+        Ok newPitch
 
 
 semitones : Pitch -> Int
@@ -120,29 +142,48 @@ allForPitchClass thePitchClass =
             (\theOctave ->
                 fromPitchClass theOctave thePitchClass
             )
+        |> List.filterMap Result.toMaybe
 
 
-firstBelow : Pitch -> PitchClass -> Maybe Pitch
-firstBelow startPitch thePitchClass =
-    allForPitchClass thePitchClass
-        |> List.filter
-            (\thePitch ->
-                semitones thePitch < semitones startPitch
-            )
-        |> List.sortBy semitones
-        |> List.reverse
-        |> List.head
+firstBelow : PitchClass -> Pitch -> Result PitchError Pitch
+firstBelow thePitchClass startPitch =
+    let
+        maybePitch =
+            allForPitchClass thePitchClass
+                |> List.filter
+                    (\thePitch ->
+                        semitones thePitch < semitones startPitch
+                    )
+                |> List.sortBy semitones
+                |> List.reverse
+                |> List.head
+    in
+    case maybePitch of
+        Nothing ->
+            Err OutOfRange
+
+        Just thePitch ->
+            Ok thePitch
 
 
-firstAbove : Pitch -> PitchClass -> Maybe Pitch
-firstAbove startPitch thePitchClass =
-    allForPitchClass thePitchClass
-        |> List.filter
-            (\thePitch ->
-                semitones thePitch > semitones startPitch
-            )
-        |> List.sortBy semitones
-        |> List.head
+firstAbove : PitchClass -> Pitch -> Result PitchError Pitch
+firstAbove thePitchClass startPitch =
+    let
+        maybePitch =
+            allForPitchClass thePitchClass
+                |> List.filter
+                    (\thePitch ->
+                        semitones thePitch > semitones startPitch
+                    )
+                |> List.sortBy semitones
+                |> List.head
+    in
+    case maybePitch of
+        Nothing ->
+            Err OutOfRange
+
+        Just thePitch ->
+            Ok thePitch
 
 
 errorToString :
@@ -151,10 +192,17 @@ errorToString :
 errorToString error =
     case error of
         InvalidOctave err ->
-            "Could not transpose pitch. " ++ Octave.errorToString err
+            Octave.errorToString err
+
+        OutOfRange ->
+            "Pitch semitone count is not between the legal range of "
+                ++ String.fromInt semitonesLowerLimit
+                ++ " and "
+                ++ String.fromInt semitonesUpperLimit
+                ++ "."
 
         InternalError ->
-            "Could not transpose pitch. Something went wrong internally."
+            "Something went wrong internally."
 
 
 transposeUp :

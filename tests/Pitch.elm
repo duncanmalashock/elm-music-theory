@@ -18,27 +18,27 @@ all =
                     Pitch.fromPitchClass
                         Octave.four
                         (PitchClass.pitchClass B PitchClass.doubleSharp)
-                        |> Pitch.semitones
-                        |> Expect.equal 61
+                        |> Result.map Pitch.semitones
+                        |> Expect.equal (Ok 61)
             , test "semitones of C#5 should be 61 (5*12 (octave) + 0 (letter C) + 1 (sharp))" <|
                 \_ ->
                     Pitch.fromPitchClass
                         Octave.five
                         (PitchClass.pitchClass C PitchClass.sharp)
-                        |> Pitch.semitones
-                        |> Expect.equal 61
+                        |> Result.map Pitch.semitones
+                        |> Expect.equal (Ok 61)
             ]
         , describe "transposeUp"
             [ test "transpose up perfect 5 from G4 should be D5" <|
                 \_ ->
                     Pitch.pitch G Pitch.natural Octave.four
-                        |> Pitch.transposeUp Interval.perfectFifth
+                        |> Result.andThen (Pitch.transposeUp Interval.perfectFifth)
                         |> Expect.equal
-                            (Ok <| Pitch.pitch D Pitch.natural Octave.five)
+                            (Pitch.pitch D Pitch.natural Octave.five)
             , test "transpose up major 3 from A8 should fail" <|
                 \_ ->
                     Pitch.pitch A Pitch.natural Octave.eight
-                        |> Pitch.transposeUp Interval.majorThird
+                        |> Result.andThen (Pitch.transposeUp Interval.majorThird)
                         |> Expect.equal
                             (Err <| InvalidOctave <| AboveValidRange 9)
             ]
@@ -46,13 +46,13 @@ all =
             [ test "transpose down perfect 5 from D5 should be G4" <|
                 \_ ->
                     Pitch.pitch D Pitch.natural Octave.five
-                        |> Pitch.transposeDown Interval.perfectFifth
+                        |> Result.andThen (Pitch.transposeDown Interval.perfectFifth)
                         |> Expect.equal
-                            (Ok <| Pitch.pitch G Pitch.natural Octave.four)
+                            (Pitch.pitch G Pitch.natural Octave.four)
             , test "transpose down major 3 from D0 should fail" <|
                 \_ ->
                     Pitch.pitch D Pitch.natural Octave.zero
-                        |> Pitch.transposeDown Interval.majorThird
+                        |> Result.andThen (Pitch.transposeDown Interval.majorThird)
                         |> Expect.equal
                             (Err <| InvalidOctave <| BelowValidRange -1)
             ]
@@ -60,40 +60,39 @@ all =
             [ test "should return Pitches in all Octaves" <|
                 \_ ->
                     Pitch.allForPitchClass (PitchClass.pitchClass F Pitch.natural)
-                        |> Expect.equal
-                            [ Pitch.pitch F Pitch.natural Octave.zero
-                            , Pitch.pitch F Pitch.natural Octave.one
-                            , Pitch.pitch F Pitch.natural Octave.two
-                            , Pitch.pitch F Pitch.natural Octave.three
-                            , Pitch.pitch F Pitch.natural Octave.four
-                            , Pitch.pitch F Pitch.natural Octave.five
-                            , Pitch.pitch F Pitch.natural Octave.six
-                            , Pitch.pitch F Pitch.natural Octave.seven
-                            , Pitch.pitch F Pitch.natural Octave.eight
-                            ]
+                        |> List.length
+                        |> Expect.equal 9
             ]
         , describe "firstBelow"
             [ test "should return D4 (first occurence of D below F4)" <|
                 \_ ->
-                    Pitch.firstBelow (Pitch.pitch F Pitch.natural Octave.four) (PitchClass.pitchClass D Pitch.natural)
+                    Pitch.pitch F Pitch.natural Octave.four
+                        |> Result.andThen
+                            (Pitch.firstBelow (PitchClass.pitchClass D Pitch.natural))
                         |> Expect.equal
-                            (Just (Pitch.pitch D Pitch.natural Octave.four))
+                            (Pitch.pitch D Pitch.natural Octave.four)
             , test "should return nothing if no valid pitch exists below" <|
                 \_ ->
-                    Pitch.firstBelow (Pitch.pitch C Pitch.natural Octave.zero) (PitchClass.pitchClass A Pitch.natural)
+                    Pitch.pitch C Pitch.natural Octave.zero
+                        |> Result.andThen
+                            (Pitch.firstBelow (PitchClass.pitchClass A Pitch.natural))
                         |> Expect.equal
-                            Nothing
+                            (Err OutOfRange)
             ]
         , describe "firstAbove"
             [ test "should return D5 (first occurence of D below F4)" <|
                 \_ ->
-                    Pitch.firstAbove (Pitch.pitch F Pitch.natural Octave.four) (PitchClass.pitchClass D Pitch.natural)
+                    Pitch.pitch F Pitch.natural Octave.four
+                        |> Result.andThen
+                            (Pitch.firstAbove (PitchClass.pitchClass D Pitch.natural))
                         |> Expect.equal
-                            (Just (Pitch.pitch D Pitch.natural Octave.five))
+                            (Pitch.pitch D Pitch.natural Octave.five)
             , test "should return nothing if no valid pitch exists above" <|
                 \_ ->
-                    Pitch.firstAbove (Pitch.pitch B Pitch.natural Octave.eight) (PitchClass.pitchClass C Pitch.natural)
+                    Pitch.pitch B Pitch.natural Octave.eight
+                        |> Result.andThen
+                            (Pitch.firstAbove (PitchClass.pitchClass A Pitch.natural))
                         |> Expect.equal
-                            Nothing
+                            (Err OutOfRange)
             ]
         ]

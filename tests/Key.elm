@@ -1,7 +1,6 @@
 module Key exposing (all)
 
 import Expect
-import Fuzz exposing (Fuzzer)
 import MusicTheory.Key as Key
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.PitchClass exposing (natural, pitchClass)
