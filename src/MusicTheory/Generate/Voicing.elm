@@ -18,7 +18,7 @@ import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Interval as Interval
 import MusicTheory.Letter exposing (Letter(..))
 import MusicTheory.Octave as Octave
-import MusicTheory.Pitch as Pitch
+import MusicTheory.Pitch as Pitch exposing (Pitch)
 import MusicTheory.PitchClass as PitchClass
 import MusicTheory.TertianFactors as TertianFactors
 
@@ -53,6 +53,41 @@ type VoicingError
     | MissingVoiceCategory
     | VoiceOutOfRange Pitch.PitchError
     | NoVoicingsFound
+
+
+type alias LowIntervalLimit =
+    { intervalInSemitones : Int
+    , lowestAllowedPitch : Pitch
+    }
+
+
+lowIntervalLimitForInterval : Interval.Interval -> Pitch -> LowIntervalLimit
+lowIntervalLimitForInterval theInterval thePitch =
+    LowIntervalLimit (Interval.semitones theInterval) thePitch
+
+
+lowIntervalLimitForSemitones : Int -> Pitch -> LowIntervalLimit
+lowIntervalLimitForSemitones semitones thePitch =
+    LowIntervalLimit semitones thePitch
+
+
+lowIntervalLimits : List LowIntervalLimit
+lowIntervalLimits =
+    [ lowIntervalLimitForInterval Interval.minorSecond Pitch.e3
+    , lowIntervalLimitForInterval Interval.majorSecond Pitch.eFlat3
+    , lowIntervalLimitForInterval Interval.minorThird Pitch.c3
+    , lowIntervalLimitForInterval Interval.majorThird Pitch.bFlat2
+    , lowIntervalLimitForInterval Interval.augmentedFourth Pitch.bFlat2
+    , lowIntervalLimitForInterval Interval.perfectFifth Pitch.bFlat1
+    , lowIntervalLimitForInterval Interval.minorSixth Pitch.g2
+    , lowIntervalLimitForInterval Interval.majorSixth Pitch.f2
+    , lowIntervalLimitForInterval Interval.minorSeventh Pitch.f2
+    , lowIntervalLimitForInterval Interval.majorSeventh Pitch.f2
+    , lowIntervalLimitForSemitones 13 Pitch.e2
+    , lowIntervalLimitForSemitones 14 Pitch.eFlat2
+    , lowIntervalLimitForSemitones 15 Pitch.c2
+    , lowIntervalLimitForSemitones 16 Pitch.bFlat1
+    ]
 
 
 fourWayClose : Chord.Chord -> Result VoicingError (List FourPartVoicing)
@@ -275,6 +310,7 @@ containsSemitoneDistanceFourParts semitoneDistance voicing =
 
 passesMinorNinthRule : FourPartVoicing -> Bool
 passesMinorNinthRule voicing =
+    -- TODO: This should return True in cases with a root-to-9th interval in dominant 7 b9 chords
     containsSemitoneDistanceFourParts 13 voicing == 0
 
 

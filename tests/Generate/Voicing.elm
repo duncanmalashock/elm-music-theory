@@ -236,13 +236,7 @@ all =
                                 cMaj7Open
 
                         expected =
-                            [ 5
-                            , 8
-                            , 13
-                            , 3
-                            , 8
-                            , 5
-                            ]
+                            [ 5, 8, 13, 3, 8, 5 ]
                     in
                     Expect.equal result expected
             ]
