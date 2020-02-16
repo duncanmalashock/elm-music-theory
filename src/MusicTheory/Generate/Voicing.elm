@@ -4,6 +4,8 @@ module MusicTheory.Generate.Voicing exposing
     , containsIntervalFourParts
     , containsSemitoneDistanceFourParts
     , diffFourParts
+    , drop2
+    , drop2and4
     , fourWayClose
     , passesMinorNinthRule
     , semitoneDistancesContainedFourParts
@@ -61,6 +63,22 @@ fourWayClose chord =
         |> Result.map List.concat
 
 
+drop2 : Chord.Chord -> Result VoicingError (List FourPartVoicing)
+drop2 chord =
+    getFourPartVoicingPlans chord
+        |> Result.map (List.map planToDrop2Voicings)
+        |> Result.map (List.filterMap Result.toMaybe)
+        |> Result.map List.concat
+
+
+drop2and4 : Chord.Chord -> Result VoicingError (List FourPartVoicing)
+drop2and4 chord =
+    getFourPartVoicingPlans chord
+        |> Result.map (List.map planToDrop2and4Voicings)
+        |> Result.map (List.filterMap Result.toMaybe)
+        |> Result.map List.concat
+
+
 getFourPartVoicingPlans :
     Chord.Chord
     -> Result VoicingError (List FourPartVoicingPlan)
@@ -88,6 +106,40 @@ planToFourWayCloseVoicings plan =
             Ok nonEmptyList
 
 
+planToDrop2Voicings :
+    FourPartVoicingPlan
+    -> Result VoicingError (List FourPartVoicing)
+planToDrop2Voicings plan =
+    let
+        voicings =
+            List.map (planToDrop2VoicingForOctave plan) Octave.all
+                |> List.filterMap Result.toMaybe
+    in
+    case voicings of
+        [] ->
+            Err NoVoicingsFound
+
+        nonEmptyList ->
+            Ok nonEmptyList
+
+
+planToDrop2and4Voicings :
+    FourPartVoicingPlan
+    -> Result VoicingError (List FourPartVoicing)
+planToDrop2and4Voicings plan =
+    let
+        voicings =
+            List.map (planToDrop2and4VoicingForOctave plan) Octave.all
+                |> List.filterMap Result.toMaybe
+    in
+    case voicings of
+        [] ->
+            Err NoVoicingsFound
+
+        nonEmptyList ->
+            Ok nonEmptyList
+
+
 planToFourWayCloseVoicingForOctave :
     FourPartVoicingPlan
     -> Octave.Octave
@@ -102,6 +154,50 @@ planToFourWayCloseVoicingForOctave plan octave =
 
         voiceThree =
             Result.andThen (Pitch.firstBelow plan.voiceThree) voiceTwo
+
+        voiceFour =
+            Result.andThen (Pitch.firstBelow plan.voiceFour) voiceThree
+    in
+    Result.map4 FourPartVoicing voiceOne voiceTwo voiceThree voiceFour
+        |> Result.mapError VoiceOutOfRange
+
+
+planToDrop2VoicingForOctave :
+    FourPartVoicingPlan
+    -> Octave.Octave
+    -> Result VoicingError FourPartVoicing
+planToDrop2VoicingForOctave plan octave =
+    let
+        voiceOne =
+            Pitch.fromPitchClass octave plan.voiceOne
+
+        voiceTwo =
+            Result.andThen (Pitch.firstBelow plan.voiceThree) voiceOne
+
+        voiceThree =
+            Result.andThen (Pitch.firstBelow plan.voiceFour) voiceTwo
+
+        voiceFour =
+            Result.andThen (Pitch.firstBelow plan.voiceTwo) voiceThree
+    in
+    Result.map4 FourPartVoicing voiceOne voiceTwo voiceThree voiceFour
+        |> Result.mapError VoiceOutOfRange
+
+
+planToDrop2and4VoicingForOctave :
+    FourPartVoicingPlan
+    -> Octave.Octave
+    -> Result VoicingError FourPartVoicing
+planToDrop2and4VoicingForOctave plan octave =
+    let
+        voiceOne =
+            Pitch.fromPitchClass octave plan.voiceOne
+
+        voiceTwo =
+            Result.andThen (Pitch.firstBelow plan.voiceThree) voiceOne
+
+        voiceThree =
+            Result.andThen (Pitch.firstBelow plan.voiceTwo) voiceTwo
 
         voiceFour =
             Result.andThen (Pitch.firstBelow plan.voiceFour) voiceThree
