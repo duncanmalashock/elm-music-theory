@@ -7,10 +7,13 @@ module MusicTheory.Generate.Voicing exposing
     , drop2
     , drop2and4
     , fourWayClose
+    , isAboveLowIntervalLimits
+    , lowIntervalLimitsDict
     , passesMinorNinthRule
     , semitoneDistancesContainedFourParts
     )
 
+import Dict exposing (Dict)
 import Libs.Permutations
 import MusicTheory.Analyze.ChordClass as AnalyzeChordClass
 import MusicTheory.Chord as Chord
@@ -77,6 +80,7 @@ lowIntervalLimits =
     , lowIntervalLimitForInterval Interval.majorSecond Pitch.eFlat3
     , lowIntervalLimitForInterval Interval.minorThird Pitch.c3
     , lowIntervalLimitForInterval Interval.majorThird Pitch.bFlat2
+    , lowIntervalLimitForInterval Interval.perfectFourth Pitch.bFlat2
     , lowIntervalLimitForInterval Interval.augmentedFourth Pitch.bFlat2
     , lowIntervalLimitForInterval Interval.perfectFifth Pitch.bFlat1
     , lowIntervalLimitForInterval Interval.minorSixth Pitch.g2
@@ -90,12 +94,61 @@ lowIntervalLimits =
     ]
 
 
+lowIntervalLimitsDict : Dict Int Pitch
+lowIntervalLimitsDict =
+    List.map
+        (\{ intervalInSemitones, lowestAllowedPitch } ->
+            ( intervalInSemitones, lowestAllowedPitch )
+        )
+        lowIntervalLimits
+        |> Dict.fromList
+
+
+isAboveLowIntervalLimits : Pitch -> Pitch -> Bool
+isAboveLowIntervalLimits first second =
+    let
+        semitonesBetween =
+            Pitch.semitones second - Pitch.semitones first
+
+        maybeLimit =
+            Dict.get semitonesBetween lowIntervalLimitsDict
+    in
+    case maybeLimit of
+        Nothing ->
+            True
+
+        Just limit ->
+            Pitch.semitones first >= Pitch.semitones limit
+
+
+checkLowIntervalLimitsFourParts : Chord.Chord -> FourPartVoicing -> Bool
+checkLowIntervalLimitsFourParts chord voicing =
+    let
+        rootIsInBass =
+            Chord.root chord == Pitch.pitchClass voicing.voiceFour
+    in
+    if rootIsInBass then
+        isAboveLowIntervalLimits voicing.voiceFour voicing.voiceThree
+
+    else
+        let
+            imaginaryRootVoice =
+                Pitch.firstBelow (Chord.root chord) voicing.voiceFour
+        in
+        case imaginaryRootVoice of
+            Ok rootVoice ->
+                isAboveLowIntervalLimits rootVoice voicing.voiceFour
+
+            Err _ ->
+                False
+
+
 fourWayClose : Chord.Chord -> Result VoicingError (List FourPartVoicing)
 fourWayClose chord =
     getFourPartVoicingPlans chord
         |> Result.map
             (List.map
-                (planToFourPartVoicings planToFourWayCloseVoicing)
+                (planToFourPartVoicings planToFourWayCloseVoicing chord)
             )
         |> Result.map (List.filterMap Result.toMaybe)
         |> Result.map List.concat
@@ -106,7 +159,7 @@ drop2 chord =
     getFourPartVoicingPlans chord
         |> Result.map
             (List.map
-                (planToFourPartVoicings planToDrop2Voicing)
+                (planToFourPartVoicings planToDrop2Voicing chord)
             )
         |> Result.map (List.filterMap Result.toMaybe)
         |> Result.map List.concat
@@ -117,7 +170,7 @@ drop2and4 chord =
     getFourPartVoicingPlans chord
         |> Result.map
             (List.map
-                (planToFourPartVoicings planToDrop2and4Voicing)
+                (planToFourPartVoicings planToDrop2and4Voicing chord)
             )
         |> Result.map (List.filterMap Result.toMaybe)
         |> Result.map List.concat
@@ -134,17 +187,20 @@ getFourPartVoicingPlans chord =
 
 
 planToFourPartVoicings :
-    (FourPartVoicingPlan
+    (Chord.Chord
+     -> FourPartVoicingPlan
      -> Octave.Octave
      -> Result VoicingError FourPartVoicing
     )
+    -> Chord.Chord
     -> FourPartVoicingPlan
     -> Result VoicingError (List FourPartVoicing)
-planToFourPartVoicings voicingStrategy plan =
+planToFourPartVoicings voicingStrategy chord plan =
     let
         voicings =
-            List.map (voicingStrategy plan) Octave.all
+            List.map (voicingStrategy chord plan) Octave.all
                 |> List.filterMap Result.toMaybe
+                |> List.filter (checkLowIntervalLimitsFourParts chord)
     in
     case voicings of
         [] ->
@@ -155,10 +211,11 @@ planToFourPartVoicings voicingStrategy plan =
 
 
 planToFourWayCloseVoicing :
-    FourPartVoicingPlan
+    Chord.Chord
+    -> FourPartVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
-planToFourWayCloseVoicing plan octave =
+planToFourWayCloseVoicing chord plan octave =
     let
         voiceOne =
             Pitch.fromPitchClass octave plan.voiceOne
@@ -177,10 +234,11 @@ planToFourWayCloseVoicing plan octave =
 
 
 planToDrop2Voicing :
-    FourPartVoicingPlan
+    Chord.Chord
+    -> FourPartVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
-planToDrop2Voicing plan octave =
+planToDrop2Voicing chord plan octave =
     let
         voiceOne =
             Pitch.fromPitchClass octave plan.voiceOne
@@ -199,10 +257,11 @@ planToDrop2Voicing plan octave =
 
 
 planToDrop2and4Voicing :
-    FourPartVoicingPlan
+    Chord.Chord
+    -> FourPartVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
-planToDrop2and4Voicing plan octave =
+planToDrop2and4Voicing chord plan octave =
     let
         voiceOne =
             Pitch.fromPitchClass octave plan.voiceOne

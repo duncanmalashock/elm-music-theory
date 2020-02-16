@@ -1,5 +1,6 @@
 module Generate.Voicing exposing (all)
 
+import Dict
 import Expect
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
@@ -22,7 +23,7 @@ all =
                             Chord.chord PitchClass.c ChordClass.majorSixNine
 
                         expected =
-                            Ok 66
+                            Ok 43
 
                         result =
                             GenerateVoicing.fourWayClose cMajorSixNineChord
@@ -74,7 +75,7 @@ all =
                             Chord.chord PitchClass.c ChordClass.majorSixNine
 
                         expected =
-                            Ok 62
+                            Ok 40
 
                         result =
                             GenerateVoicing.drop2 cMajorSixNineChord
@@ -90,7 +91,7 @@ all =
                             Chord.chord PitchClass.c ChordClass.majorSixNine
 
                         expected =
-                            Ok 58
+                            Ok 36
 
                         result =
                             GenerateVoicing.drop2and4 cMajorSixNineChord
@@ -122,7 +123,7 @@ all =
                         expected =
                             12
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             , test "C major six should be 2 semitones different from C major seven" <|
                 \_ ->
                     let
@@ -146,7 +147,7 @@ all =
                         expected =
                             2
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "containsIntervalFourParts"
             [ test "First inversion of C major seventh should contain a minor second" <|
@@ -165,7 +166,7 @@ all =
                         expected =
                             1
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             , test "C diminished seven should contain three minor thirds" <|
                 \_ ->
                     let
@@ -182,7 +183,7 @@ all =
                         expected =
                             3
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "passesMinorNinthRule"
             [ test "Open voicing of C major seventh should not pass the minor ninth rule" <|
@@ -201,7 +202,7 @@ all =
                         expected =
                             False
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             , test "Close voicing of C major seventh should pass the minor ninth rule" <|
                 \_ ->
                     let
@@ -218,7 +219,7 @@ all =
                         expected =
                             True
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "semitoneDistancesContainedFourParts"
             [ test "Semitone distances contained in a voicing of C major seventh" <|
@@ -238,6 +239,38 @@ all =
                         expected =
                             [ 5, 8, 13, 3, 8, 5 ]
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
+            ]
+        , describe "isAboveLowIntervalLimits"
+            [ test "A2 to D3 should not be above the limit for a perfect fourth" <|
+                \_ ->
+                    let
+                        result =
+                            GenerateVoicing.isAboveLowIntervalLimits Pitch.a2 Pitch.d3
+
+                        expected =
+                            False
+                    in
+                    Expect.equal expected result
+            , test "Bb1 to F3 should be within limit for a major ninth" <|
+                \_ ->
+                    let
+                        result =
+                            GenerateVoicing.isAboveLowIntervalLimits Pitch.bFlat1 Pitch.f3
+
+                        expected =
+                            True
+                    in
+                    Expect.equal expected result
+            , test "C4 to D4 should be within limit for a major second" <|
+                \_ ->
+                    let
+                        result =
+                            GenerateVoicing.isAboveLowIntervalLimits Pitch.c4 Pitch.d4
+
+                        expected =
+                            True
+                    in
+                    Expect.equal expected result
             ]
         ]
