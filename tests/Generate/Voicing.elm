@@ -188,4 +188,30 @@ all =
                     in
                     Expect.equal result expected
             ]
+        , describe "semitoneDistancesContainedFourParts"
+            [ test "Semitone distances contained in a voicing of C major seventh" <|
+                \_ ->
+                    let
+                        cMaj7Open =
+                            { voiceOne = Pitch.b3
+                            , voiceTwo = Pitch.e4
+                            , voiceThree = Pitch.g4
+                            , voiceFour = Pitch.c5
+                            }
+
+                        result =
+                            GenerateVoicing.semitoneDistancesContainedFourParts
+                                cMaj7Open
+
+                        expected =
+                            [ 5
+                            , 8
+                            , 13
+                            , 3
+                            , 8
+                            , 5
+                            ]
+                    in
+                    Expect.equal result expected
+            ]
         ]

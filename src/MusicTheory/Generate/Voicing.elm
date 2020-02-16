@@ -6,6 +6,7 @@ module MusicTheory.Generate.Voicing exposing
     , diffFourParts
     , fourWayClose
     , passesMinorNinthRule
+    , semitoneDistancesContainedFourParts
     )
 
 import Libs.Permutations
@@ -200,3 +201,18 @@ containsSemitoneDistanceFourParts semitoneDistance voicing =
 passesMinorNinthRule : FourPartVoicing -> Bool
 passesMinorNinthRule voicing =
     containsSemitoneDistanceFourParts 13 voicing == 0
+
+
+semitoneDistancesContainedFourParts : FourPartVoicing -> List Int
+semitoneDistancesContainedFourParts voicing =
+    let
+        semitoneDistance a b =
+            Pitch.semitones b - Pitch.semitones a
+    in
+    [ semitoneDistance voicing.voiceOne voicing.voiceTwo
+    , semitoneDistance voicing.voiceOne voicing.voiceThree
+    , semitoneDistance voicing.voiceOne voicing.voiceFour
+    , semitoneDistance voicing.voiceTwo voicing.voiceThree
+    , semitoneDistance voicing.voiceTwo voicing.voiceFour
+    , semitoneDistance voicing.voiceThree voicing.voiceFour
+    ]
