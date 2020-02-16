@@ -90,12 +90,11 @@ all =
                             Chord.chord PitchClass.c ChordClass.majorSixNine
 
                         expected =
-                            Ok []
+                            Ok 58
 
                         result =
                             GenerateVoicing.drop2and4 cMajorSixNineChord
-
-                        -- |> Result.map List.length
+                                |> Result.map List.length
                     in
                     Expect.equal expected result
             ]

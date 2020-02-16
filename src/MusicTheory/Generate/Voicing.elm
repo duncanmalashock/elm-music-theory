@@ -58,7 +58,10 @@ type VoicingError
 fourWayClose : Chord.Chord -> Result VoicingError (List FourPartVoicing)
 fourWayClose chord =
     getFourPartVoicingPlans chord
-        |> Result.map (List.map planToFourWayCloseVoicings)
+        |> Result.map
+            (List.map
+                (planToFourPartVoicings planToFourWayCloseVoicing)
+            )
         |> Result.map (List.filterMap Result.toMaybe)
         |> Result.map List.concat
 
@@ -66,7 +69,10 @@ fourWayClose chord =
 drop2 : Chord.Chord -> Result VoicingError (List FourPartVoicing)
 drop2 chord =
     getFourPartVoicingPlans chord
-        |> Result.map (List.map planToDrop2Voicings)
+        |> Result.map
+            (List.map
+                (planToFourPartVoicings planToDrop2Voicing)
+            )
         |> Result.map (List.filterMap Result.toMaybe)
         |> Result.map List.concat
 
@@ -74,7 +80,10 @@ drop2 chord =
 drop2and4 : Chord.Chord -> Result VoicingError (List FourPartVoicing)
 drop2and4 chord =
     getFourPartVoicingPlans chord
-        |> Result.map (List.map planToDrop2and4Voicings)
+        |> Result.map
+            (List.map
+                (planToFourPartVoicings planToDrop2and4Voicing)
+            )
         |> Result.map (List.filterMap Result.toMaybe)
         |> Result.map List.concat
 
@@ -89,13 +98,17 @@ getFourPartVoicingPlans chord =
         |> Result.andThen (fourPartVoicingPlans (Chord.root chord))
 
 
-planToFourWayCloseVoicings :
-    FourPartVoicingPlan
+planToFourPartVoicings :
+    (FourPartVoicingPlan
+     -> Octave.Octave
+     -> Result VoicingError FourPartVoicing
+    )
+    -> FourPartVoicingPlan
     -> Result VoicingError (List FourPartVoicing)
-planToFourWayCloseVoicings plan =
+planToFourPartVoicings voicingStrategy plan =
     let
         voicings =
-            List.map (planToFourWayCloseVoicingForOctave plan) Octave.all
+            List.map (voicingStrategy plan) Octave.all
                 |> List.filterMap Result.toMaybe
     in
     case voicings of
@@ -106,45 +119,11 @@ planToFourWayCloseVoicings plan =
             Ok nonEmptyList
 
 
-planToDrop2Voicings :
-    FourPartVoicingPlan
-    -> Result VoicingError (List FourPartVoicing)
-planToDrop2Voicings plan =
-    let
-        voicings =
-            List.map (planToDrop2VoicingForOctave plan) Octave.all
-                |> List.filterMap Result.toMaybe
-    in
-    case voicings of
-        [] ->
-            Err NoVoicingsFound
-
-        nonEmptyList ->
-            Ok nonEmptyList
-
-
-planToDrop2and4Voicings :
-    FourPartVoicingPlan
-    -> Result VoicingError (List FourPartVoicing)
-planToDrop2and4Voicings plan =
-    let
-        voicings =
-            List.map (planToDrop2and4VoicingForOctave plan) Octave.all
-                |> List.filterMap Result.toMaybe
-    in
-    case voicings of
-        [] ->
-            Err NoVoicingsFound
-
-        nonEmptyList ->
-            Ok nonEmptyList
-
-
-planToFourWayCloseVoicingForOctave :
+planToFourWayCloseVoicing :
     FourPartVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
-planToFourWayCloseVoicingForOctave plan octave =
+planToFourWayCloseVoicing plan octave =
     let
         voiceOne =
             Pitch.fromPitchClass octave plan.voiceOne
@@ -162,11 +141,11 @@ planToFourWayCloseVoicingForOctave plan octave =
         |> Result.mapError VoiceOutOfRange
 
 
-planToDrop2VoicingForOctave :
+planToDrop2Voicing :
     FourPartVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
-planToDrop2VoicingForOctave plan octave =
+planToDrop2Voicing plan octave =
     let
         voiceOne =
             Pitch.fromPitchClass octave plan.voiceOne
@@ -184,11 +163,11 @@ planToDrop2VoicingForOctave plan octave =
         |> Result.mapError VoiceOutOfRange
 
 
-planToDrop2and4VoicingForOctave :
+planToDrop2and4Voicing :
     FourPartVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
-planToDrop2and4VoicingForOctave plan octave =
+planToDrop2and4Voicing plan octave =
     let
         voiceOne =
             Pitch.fromPitchClass octave plan.voiceOne
