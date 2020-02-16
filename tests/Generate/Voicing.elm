@@ -1,6 +1,5 @@
 module Generate.Voicing exposing (all)
 
-import Dict
 import Expect
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
