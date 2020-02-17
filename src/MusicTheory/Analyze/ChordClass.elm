@@ -7,6 +7,7 @@ module MusicTheory.Analyze.ChordClass exposing
 
 import MusicTheory.Analyze.TertianFactors as AnalyzeTertianFactors
 import MusicTheory.ChordClass as ChordClass
+import MusicTheory.Interval as Interval
 import MusicTheory.ScaleClass as ScaleClass
 import MusicTheory.TertianFactors as TertianFactors
 
@@ -16,9 +17,13 @@ isInScaleClass scaleClass chordClass =
     List.all
         (\interval ->
             List.member interval
-                (ScaleClass.toIntervals scaleClass)
+                (ScaleClass.toIntervals scaleClass
+                    |> List.map Interval.semitones
+                )
         )
-        (ChordClass.toIntervals chordClass)
+        (ChordClass.toIntervals chordClass
+            |> List.map Interval.semitones
+        )
 
 
 scaleClassesFor : ChordClass.ChordClass -> List ScaleClass.ScaleClass

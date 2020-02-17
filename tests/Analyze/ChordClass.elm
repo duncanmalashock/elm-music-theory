@@ -16,7 +16,7 @@ all =
                 \_ ->
                     let
                         majorScaleClass =
-                            ScaleClass.major
+                            ScaleClass.ionian
 
                         majorSeventhChordClass =
                             ChordClass.majorSeventh
@@ -71,9 +71,11 @@ all =
                     let
                         expectedScaleClasses =
                             [ ScaleClass.Aeolian
+                            , ScaleClass.DiminishedHalfToneWholeTone
                             , ScaleClass.Dorian
+                            , ScaleClass.LydianDiminished
+                            , ScaleClass.MinorPentatonic
                             , ScaleClass.Phrygian
-                            , ScaleClass.Minor
                             ]
 
                         minorSeventhChordClass =
@@ -98,8 +100,7 @@ all =
                                     [ MajorThird
                                     ]
                                 , fifth =
-                                    [ Fifth
-                                    , FlatThirteenth
+                                    [ FlatThirteenth
                                     ]
                                 , seventh =
                                     [ MinorSeventh

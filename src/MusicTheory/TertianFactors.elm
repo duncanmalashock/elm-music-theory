@@ -551,6 +551,7 @@ withFlatThirteenth : TertianFactors -> TertianFactors
 withFlatThirteenth factors =
     factors
         |> remove Sixth
+        |> remove Fifth
         |> remove Thirteenth
         |> add FlatThirteenth
 

@@ -13,7 +13,7 @@ all =
     describe "Scale Tests"
         [ test "C major scale should have C root" <|
             \_ ->
-                Scale.scale (pitchClass C natural) ScaleClass.major
+                Scale.scale (pitchClass C natural) ScaleClass.ionian
                     |> Scale.root
                     |> Expect.equal (pitchClass C natural)
         , test "C ionian" <|

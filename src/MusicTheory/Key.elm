@@ -61,10 +61,10 @@ scale : Key -> Scale
 scale (Key root majorOrMinor) =
     case majorOrMinor of
         Major ->
-            Scale.scale root ScaleClass.major
+            Scale.scale root ScaleClass.ionian
 
         Minor ->
-            Scale.scale root ScaleClass.minor
+            Scale.scale root ScaleClass.aeolian
 
 
 tonic : Key -> PitchClass

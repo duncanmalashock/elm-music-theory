@@ -16,7 +16,7 @@ all =
             \_ ->
                 let
                     cMajorScale =
-                        Scale.scale (pitchClass C natural) ScaleClass.major
+                        Scale.scale (pitchClass C natural) ScaleClass.ionian
                 in
                 Key.major (pitchClass C natural)
                     |> Key.scale
