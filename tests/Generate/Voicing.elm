@@ -98,6 +98,22 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "fiveWayCloseDoubleLead"
+            [ test "All valid voicings for C major 6/9 chord" <|
+                \_ ->
+                    let
+                        cMajorSixNineChord =
+                            Chord.chord PitchClass.c ChordClass.majorSixNine
+
+                        expected =
+                            Ok 41
+
+                        result =
+                            GenerateVoicing.fiveWayCloseDoubleLead cMajorSixNineChord
+                                |> Result.map List.length
+                    in
+                    Expect.equal expected result
+            ]
         , describe "diffFourParts"
             [ test "First inversion of C major seventh should be 12 semitones different from root position" <|
                 \_ ->

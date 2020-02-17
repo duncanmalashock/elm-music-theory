@@ -6,6 +6,7 @@ module MusicTheory.Generate.Voicing exposing
     , diffFourParts
     , drop2
     , drop2and4
+    , fiveWayCloseDoubleLead
     , fourWayClose
     , isAboveLowIntervalLimits
     , lowIntervalLimitsDict
@@ -34,7 +35,16 @@ type alias FourPartVoicing =
     }
 
 
-type alias FourPartVoicingPlan =
+type alias FivePartVoicing =
+    { voiceOne : Pitch.Pitch
+    , voiceTwo : Pitch.Pitch
+    , voiceThree : Pitch.Pitch
+    , voiceFour : Pitch.Pitch
+    , voiceFive : Pitch.Pitch
+    }
+
+
+type alias FourCategoryVoicingPlan =
     { voiceOne : PitchClass.PitchClass
     , voiceTwo : PitchClass.PitchClass
     , voiceThree : PitchClass.PitchClass
@@ -42,8 +52,8 @@ type alias FourPartVoicingPlan =
     }
 
 
-rotateVoices : FourPartVoicingPlan -> FourPartVoicingPlan
-rotateVoices fourPartVoicingPlan =
+rotateFourVoices : FourCategoryVoicingPlan -> FourCategoryVoicingPlan
+rotateFourVoices fourPartVoicingPlan =
     { voiceOne = fourPartVoicingPlan.voiceTwo
     , voiceTwo = fourPartVoicingPlan.voiceThree
     , voiceThree = fourPartVoicingPlan.voiceFour
@@ -143,9 +153,31 @@ checkLowIntervalLimitsFourParts chord voicing =
                 False
 
 
+checkLowIntervalLimitsFiveParts : Chord.Chord -> FivePartVoicing -> Bool
+checkLowIntervalLimitsFiveParts chord voicing =
+    let
+        rootIsInBass =
+            Chord.root chord == Pitch.pitchClass voicing.voiceFive
+    in
+    if rootIsInBass then
+        isAboveLowIntervalLimits voicing.voiceFive voicing.voiceFour
+
+    else
+        let
+            imaginaryRootVoice =
+                Pitch.firstBelow (Chord.root chord) voicing.voiceFive
+        in
+        case imaginaryRootVoice of
+            Ok rootVoice ->
+                isAboveLowIntervalLimits rootVoice voicing.voiceFive
+
+            Err _ ->
+                False
+
+
 fourWayClose : Chord.Chord -> Result VoicingError (List FourPartVoicing)
 fourWayClose chord =
-    getFourPartVoicingPlans chord
+    getFourCategoryVoicingPlans chord
         |> Result.map
             (List.map
                 (planToFourPartVoicings planToFourWayCloseVoicing chord)
@@ -156,7 +188,7 @@ fourWayClose chord =
 
 drop2 : Chord.Chord -> Result VoicingError (List FourPartVoicing)
 drop2 chord =
-    getFourPartVoicingPlans chord
+    getFourCategoryVoicingPlans chord
         |> Result.map
             (List.map
                 (planToFourPartVoicings planToDrop2Voicing chord)
@@ -167,7 +199,7 @@ drop2 chord =
 
 drop2and4 : Chord.Chord -> Result VoicingError (List FourPartVoicing)
 drop2and4 chord =
-    getFourPartVoicingPlans chord
+    getFourCategoryVoicingPlans chord
         |> Result.map
             (List.map
                 (planToFourPartVoicings planToDrop2and4Voicing chord)
@@ -176,10 +208,21 @@ drop2and4 chord =
         |> Result.map List.concat
 
 
-getFourPartVoicingPlans :
+fiveWayCloseDoubleLead : Chord.Chord -> Result VoicingError (List FivePartVoicing)
+fiveWayCloseDoubleLead chord =
+    getFourCategoryVoicingPlans chord
+        |> Result.map
+            (List.map
+                (planToFivePartVoicings planToFiveWayCloseDoubleLeadVoicing chord)
+            )
+        |> Result.map (List.filterMap Result.toMaybe)
+        |> Result.map List.concat
+
+
+getFourCategoryVoicingPlans :
     Chord.Chord
-    -> Result VoicingError (List FourPartVoicingPlan)
-getFourPartVoicingPlans chord =
+    -> Result VoicingError (List FourCategoryVoicingPlan)
+getFourCategoryVoicingPlans chord =
     AnalyzeChordClass.tertianFactorsByCategory
         (Chord.chordClass chord)
         |> Result.mapError CantVoiceNonTertianChord
@@ -188,12 +231,12 @@ getFourPartVoicingPlans chord =
 
 planToFourPartVoicings :
     (Chord.Chord
-     -> FourPartVoicingPlan
+     -> FourCategoryVoicingPlan
      -> Octave.Octave
      -> Result VoicingError FourPartVoicing
     )
     -> Chord.Chord
-    -> FourPartVoicingPlan
+    -> FourCategoryVoicingPlan
     -> Result VoicingError (List FourPartVoicing)
 planToFourPartVoicings voicingStrategy chord plan =
     let
@@ -210,9 +253,33 @@ planToFourPartVoicings voicingStrategy chord plan =
             Ok nonEmptyList
 
 
+planToFivePartVoicings :
+    (Chord.Chord
+     -> FourCategoryVoicingPlan
+     -> Octave.Octave
+     -> Result VoicingError FivePartVoicing
+    )
+    -> Chord.Chord
+    -> FourCategoryVoicingPlan
+    -> Result VoicingError (List FivePartVoicing)
+planToFivePartVoicings voicingStrategy chord plan =
+    let
+        voicings =
+            List.map (voicingStrategy chord plan) Octave.all
+                |> List.filterMap Result.toMaybe
+                |> List.filter (checkLowIntervalLimitsFiveParts chord)
+    in
+    case voicings of
+        [] ->
+            Err NoVoicingsFound
+
+        nonEmptyList ->
+            Ok nonEmptyList
+
+
 planToFourWayCloseVoicing :
     Chord.Chord
-    -> FourPartVoicingPlan
+    -> FourCategoryVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
 planToFourWayCloseVoicing chord plan octave =
@@ -235,7 +302,7 @@ planToFourWayCloseVoicing chord plan octave =
 
 planToDrop2Voicing :
     Chord.Chord
-    -> FourPartVoicingPlan
+    -> FourCategoryVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
 planToDrop2Voicing chord plan octave =
@@ -258,7 +325,7 @@ planToDrop2Voicing chord plan octave =
 
 planToDrop2and4Voicing :
     Chord.Chord
-    -> FourPartVoicingPlan
+    -> FourCategoryVoicingPlan
     -> Octave.Octave
     -> Result VoicingError FourPartVoicing
 planToDrop2and4Voicing chord plan octave =
@@ -279,10 +346,36 @@ planToDrop2and4Voicing chord plan octave =
         |> Result.mapError VoiceOutOfRange
 
 
+planToFiveWayCloseDoubleLeadVoicing :
+    Chord.Chord
+    -> FourCategoryVoicingPlan
+    -> Octave.Octave
+    -> Result VoicingError FivePartVoicing
+planToFiveWayCloseDoubleLeadVoicing chord plan octave =
+    let
+        voiceOne =
+            Pitch.fromPitchClass octave plan.voiceOne
+
+        voiceTwo =
+            Result.andThen (Pitch.firstBelow plan.voiceTwo) voiceOne
+
+        voiceThree =
+            Result.andThen (Pitch.firstBelow plan.voiceThree) voiceTwo
+
+        voiceFour =
+            Result.andThen (Pitch.firstBelow plan.voiceFour) voiceThree
+
+        voiceFive =
+            Result.andThen (Pitch.firstBelow plan.voiceOne) voiceFour
+    in
+    Result.map5 FivePartVoicing voiceOne voiceTwo voiceThree voiceFour voiceFive
+        |> Result.mapError VoiceOutOfRange
+
+
 fourPartVoicingPlans :
     PitchClass.PitchClass
     -> AnalyzeChordClass.TertianFactorsByCategory
-    -> Result VoicingError (List FourPartVoicingPlan)
+    -> Result VoicingError (List FourCategoryVoicingPlan)
 fourPartVoicingPlans root factorCats =
     let
         factorToPitchClass factor =
@@ -294,16 +387,16 @@ fourPartVoicingPlans root factorCats =
                 (List.map factorToPitchClass factorCats.seventh)
                 (List.map factorToPitchClass factorCats.fifth)
                 (List.map factorToPitchClass factorCats.third)
-                FourPartVoicingPlan
+                FourCategoryVoicingPlan
 
         planRotatedOnce =
-            List.map rotateVoices plans
+            List.map rotateFourVoices plans
 
         planRotatedTwice =
-            List.map rotateVoices planRotatedOnce
+            List.map rotateFourVoices planRotatedOnce
 
         planRotatedThreeTimes =
-            List.map rotateVoices planRotatedTwice
+            List.map rotateFourVoices planRotatedTwice
     in
     case plans of
         [] ->
