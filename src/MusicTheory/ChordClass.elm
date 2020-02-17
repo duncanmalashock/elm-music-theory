@@ -1,6 +1,7 @@
 module MusicTheory.ChordClass exposing
     ( ChordClass(..)
     , ChordClassError(..)
+    , all
     , augmented
     , diminished
     , diminishedSeventh
@@ -24,6 +25,7 @@ module MusicTheory.ChordClass exposing
     , major
     , majorAddNine
     , majorSeventh
+    , majorSeventhSharpEleven
     , majorSix
     , majorSixNine
     , minor
@@ -83,6 +85,45 @@ errorToString error =
     case error of
         ChordClassIsNonTertian chordClass ->
             "Cannot convert non-tertian chord class to tertian chord factors."
+
+
+all : List ChordClass
+all =
+    [ augmented
+    , diminished
+    , diminishedSeventh
+    , diminishedSeventhElevenFlatThirteen
+    , dominantEleventh
+    , dominantNinth
+    , dominantSeventh
+    , dominantSeventhFlatNine
+    , dominantSeventhFlatNineFlatThirteen
+    , dominantSeventhFlatNineSharpNine
+    , dominantSeventhFlatNineSharpNineFlatThirteen
+    , dominantSeventhSharpNine
+    , dominantSeventhSharpNineFlatThirteen
+    , dominantSeventhSus4
+    , dominantThirteenth
+    , dominantThirteenthFlatNine
+    , dominantThirteenthSharpNine
+    , dominantThirteenthSharpNineFlatNine
+    , halfDiminished
+    , major
+    , majorAddNine
+    , majorSeventh
+    , majorSix
+    , majorSixNine
+    , minor
+    , minorAddNine
+    , minorMajorSeventh
+    , minorNinth
+    , minorSeventh
+    , minorSix
+    , minorSixNine
+    , sus2
+    , sus4
+    , majorSeventhSharpEleven
+    ]
 
 
 
@@ -211,6 +252,16 @@ majorSeventh =
         |> TertianFactors.withMajorThird
         |> TertianFactors.withFifth
         |> TertianFactors.withMajorSeventh
+        |> Tertian
+
+
+majorSeventhSharpEleven : ChordClass
+majorSeventhSharpEleven =
+    TertianFactors.tertianFactors
+        |> TertianFactors.withMajorThird
+        |> TertianFactors.withFifth
+        |> TertianFactors.withMajorSeventh
+        |> TertianFactors.withSharpEleventh
         |> Tertian
 
 

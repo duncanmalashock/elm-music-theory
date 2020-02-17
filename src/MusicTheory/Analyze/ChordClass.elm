@@ -1,5 +1,6 @@
 module MusicTheory.Analyze.ChordClass exposing
     ( TertianFactorsByCategory
+    , inScaleClass
     , isInScaleClass
     , scaleClassesFor
     , tertianFactorsByCategory
@@ -24,6 +25,12 @@ isInScaleClass scaleClass chordClass =
         (ChordClass.toIntervals chordClass
             |> List.map Interval.semitones
         )
+
+
+inScaleClass : ScaleClass.ScaleClass -> List ChordClass.ChordClass
+inScaleClass scaleClass =
+    ChordClass.all
+        |> List.filter (isInScaleClass scaleClass)
 
 
 scaleClassesFor : ChordClass.ChordClass -> List ScaleClass.ScaleClass

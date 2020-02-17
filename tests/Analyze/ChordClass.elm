@@ -115,4 +115,23 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "inScaleClass"
+            [ test "Chords contained in lydian scale (from root)" <|
+                \_ ->
+                    let
+                        expected =
+                            [ ChordClass.major
+                            , ChordClass.majorAddNine
+                            , ChordClass.majorSeventh
+                            , ChordClass.majorSix
+                            , ChordClass.majorSixNine
+                            , ChordClass.sus2
+                            , ChordClass.majorSeventhSharpEleven
+                            ]
+
+                        result =
+                            AnalyzeChordClass.inScaleClass ScaleClass.lydian
+                    in
+                    Expect.equal expected result
+            ]
         ]
