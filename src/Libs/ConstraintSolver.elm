@@ -1,4 +1,4 @@
-module Libs.ConstraintSolver exposing (solve, tryAllFor)
+module Libs.ConstraintSolver exposing (combineConstraints, solve, tryAllFor)
 
 import Result.Extra
 
@@ -36,6 +36,20 @@ tryAllFor accessor possibleValues updateValue problemSetups =
                     []
         )
         problemSetups
+
+
+combineConstraints :
+    List (Result error Bool)
+    -> Result error Bool
+combineConstraints constraints =
+    List.foldl
+        (\constraint state ->
+            state
+                |> Result.map always
+                |> Result.Extra.andMap constraint
+        )
+        (Ok True)
+        constraints
 
 
 type alias InProgress problemSetup solution =

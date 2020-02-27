@@ -118,11 +118,11 @@ endsOnAnEvenNumber theProblemSetup =
 
 allNumbersAreSequential : ProblemSetup -> Result String Bool
 allNumbersAreSequential theProblemSetup =
-    areSequential theProblemSetup.a theProblemSetup.b
-        |> Result.map always
-        |> Result.Extra.andMap (areSequential theProblemSetup.b theProblemSetup.c)
-        |> Result.map always
-        |> Result.Extra.andMap (areSequential theProblemSetup.c theProblemSetup.d)
+    ConstraintSolver.combineConstraints
+        [ areSequential theProblemSetup.a theProblemSetup.b
+        , areSequential theProblemSetup.b theProblemSetup.c
+        , areSequential theProblemSetup.c theProblemSetup.d
+        ]
 
 
 areSequential : Maybe Int -> Maybe Int -> Result String Bool
