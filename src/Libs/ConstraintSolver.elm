@@ -1,10 +1,12 @@
-module Libs.ConstraintSolver exposing (solve)
+module Libs.ConstraintSolver exposing (solve, tryAllFor)
+
+import Result.Extra
 
 
 solve :
     { problemSetup : problemSetup
     , getNextSetups : problemSetup -> List problemSetup
-    , constraints : List (problemSetup -> Bool)
+    , constraints : List (problemSetup -> Result error Bool)
     , setupToSolution : problemSetup -> Maybe solution
     }
     -> List solution
@@ -17,6 +19,25 @@ solve { problemSetup, getNextSetups, constraints, setupToSolution } =
         |> .solved
 
 
+tryAllFor :
+    (problemSetup -> Maybe part)
+    -> List part
+    -> (problemSetup -> part -> problemSetup)
+    -> List problemSetup
+    -> List problemSetup
+tryAllFor accessor possibleValues updateValue problemSetups =
+    List.concatMap
+        (\problemSetup ->
+            case accessor problemSetup of
+                Nothing ->
+                    List.map (updateValue problemSetup) possibleValues
+
+                Just value ->
+                    []
+        )
+        problemSetups
+
+
 type alias InProgress problemSetup solution =
     { current : problemSetup
     , backtrack : List problemSetup
@@ -25,7 +46,7 @@ type alias InProgress problemSetup solution =
 
 
 solveHelp :
-    List (problemSetup -> Bool)
+    List (problemSetup -> Result error Bool)
     -> (problemSetup -> List problemSetup)
     -> (problemSetup -> Maybe solution)
     -> InProgress problemSetup solution
@@ -90,7 +111,7 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
 
 extractSolution :
     (problemSetup -> Maybe solution)
-    -> List (problemSetup -> Bool)
+    -> List (problemSetup -> Result error Bool)
     -> problemSetup
     -> Maybe solution
 extractSolution validateSolution constraints theProblemSetup =
@@ -102,10 +123,10 @@ extractSolution validateSolution constraints theProblemSetup =
 
 
 isValidSoFar :
-    List (problemSetup -> Bool)
+    List (problemSetup -> Result error Bool)
     -> problemSetup
     -> Bool
 isValidSoFar constraints theProblemSetup =
     List.all
-        (\constraint -> constraint theProblemSetup)
+        (\constraint -> Result.Extra.isOk (constraint theProblemSetup))
         constraints

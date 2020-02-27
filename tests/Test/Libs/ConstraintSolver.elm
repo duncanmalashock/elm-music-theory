@@ -2,6 +2,7 @@ module Test.Libs.ConstraintSolver exposing (all)
 
 import Expect
 import Libs.ConstraintSolver as ConstraintSolver
+import Result.Extra
 import Test exposing (Test, describe, test)
 
 
@@ -20,10 +21,14 @@ all =
                             }
 
                     expected =
-                        4
+                        [ { a = 1, b = 2, c = 3, d = 4 }
+                        , { a = 3, b = 4, c = 5, d = 6 }
+                        , { a = 5, b = 6, c = 7, d = 8 }
+                        , { a = 7, b = 8, c = 9, d = 10 }
+                        ]
 
                     result =
-                        List.length solutions
+                        solutions
                 in
                 Expect.equal expected result
         ]
@@ -56,58 +61,28 @@ initialSetup =
 
 getNextSetups : ProblemSetup -> List ProblemSetup
 getNextSetups theProblemSetup =
-    case theProblemSetup.a of
-        Nothing ->
-            List.map
-                (\val ->
-                    { theProblemSetup | a = val }
-                )
-                possibleNumberValues
-
-        Just a ->
-            case theProblemSetup.b of
-                Nothing ->
-                    List.map
-                        (\val ->
-                            { theProblemSetup | b = val }
-                        )
-                        possibleNumberValues
-
-                Just b ->
-                    case theProblemSetup.c of
-                        Nothing ->
-                            List.map
-                                (\val ->
-                                    { theProblemSetup | c = val }
-                                )
-                                possibleNumberValues
-
-                        Just c ->
-                            case theProblemSetup.d of
-                                Nothing ->
-                                    List.map
-                                        (\val ->
-                                            { theProblemSetup | d = val }
-                                        )
-                                        possibleNumberValues
-
-                                Just d ->
-                                    []
+    [ theProblemSetup ]
+        |> ConstraintSolver.tryAllFor
+            .a
+            possibleNumberValues
+            (\problemSetup val -> { problemSetup | a = Just val })
+        |> ConstraintSolver.tryAllFor
+            .b
+            possibleNumberValues
+            (\problemSetup val -> { problemSetup | b = Just val })
+        |> ConstraintSolver.tryAllFor
+            .c
+            possibleNumberValues
+            (\problemSetup val -> { problemSetup | c = Just val })
+        |> ConstraintSolver.tryAllFor
+            .d
+            possibleNumberValues
+            (\problemSetup val -> { problemSetup | d = Just val })
 
 
-possibleNumberValues : List (Maybe Int)
+possibleNumberValues : List Int
 possibleNumberValues =
-    [ Just 1
-    , Just 2
-    , Just 3
-    , Just 4
-    , Just 5
-    , Just 6
-    , Just 7
-    , Just 8
-    , Just 9
-    , Just 10
-    ]
+    [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
 
 setupToSolution : ProblemSetup -> Maybe Solution
@@ -120,43 +95,50 @@ setupToSolution theProblemSetup =
         theProblemSetup.d
 
 
-constraints : List (ProblemSetup -> Bool)
+constraints : List (ProblemSetup -> Result String Bool)
 constraints =
     [ endsOnAnEvenNumber
     , allNumbersAreSequential
     ]
 
 
-endsOnAnEvenNumber : ProblemSetup -> Bool
+endsOnAnEvenNumber : ProblemSetup -> Result String Bool
 endsOnAnEvenNumber theProblemSetup =
-    case theProblemSetup.d of
-        Just theNumber ->
-            modBy 2 theNumber == 0
+    Maybe.map
+        (\theNumber ->
+            if modBy 2 theNumber == 0 then
+                Ok True
 
-        Nothing ->
-            True
+            else
+                Err "Last number is not even"
+        )
+        theProblemSetup.d
+        |> Maybe.withDefault (Ok True)
 
 
-allNumbersAreSequential : ProblemSetup -> Bool
+allNumbersAreSequential : ProblemSetup -> Result String Bool
 allNumbersAreSequential theProblemSetup =
-    List.all
-        identity
-        [ areSequential theProblemSetup.a theProblemSetup.b
-        , areSequential theProblemSetup.b theProblemSetup.c
-        , areSequential theProblemSetup.c theProblemSetup.d
-        ]
+    areSequential theProblemSetup.a theProblemSetup.b
+        |> Result.map always
+        |> Result.Extra.andMap (areSequential theProblemSetup.b theProblemSetup.c)
+        |> Result.map always
+        |> Result.Extra.andMap (areSequential theProblemSetup.c theProblemSetup.d)
 
 
-areSequential : Maybe Int -> Maybe Int -> Bool
+areSequential : Maybe Int -> Maybe Int -> Result String Bool
 areSequential maybeA maybeB =
-    case maybeA of
-        Nothing ->
-            True
+    Maybe.map2
+        (\a b ->
+            if b - a == 1 then
+                Ok True
 
-        Just a ->
-            case maybeB of
-                Nothing ->
-                    True
-
-                Just b ->
-                    b - a == 1
+            else
+                Err <|
+                    String.fromInt a
+                        ++ " and "
+                        ++ String.fromInt b
+                        ++ " are not sequential"
+        )
+        maybeA
+        maybeB
+        |> Maybe.withDefault (Ok True)
