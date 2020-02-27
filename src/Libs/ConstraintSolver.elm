@@ -7,15 +7,16 @@ solve :
     { problemSetup : problemSetup
     , getNextSetups : problemSetup -> List problemSetup
     , constraints : List (problemSetup -> Result error Bool)
-    , setupToSolution : problemSetup -> Maybe solution
+    , setupToSolution : problemSetup -> Result error solution
+    , cantConvertError : error
     }
     -> List solution
-solve { problemSetup, getNextSetups, constraints, setupToSolution } =
+solve { problemSetup, getNextSetups, constraints, setupToSolution, cantConvertError } =
     { current = problemSetup
     , backtrack = []
     , solved = []
     }
-        |> solveHelp constraints getNextSetups setupToSolution
+        |> solveHelp constraints getNextSetups setupToSolution cantConvertError
         |> .solved
 
 
@@ -62,12 +63,13 @@ type alias InProgress problemSetup solution =
 solveHelp :
     List (problemSetup -> Result error Bool)
     -> (problemSetup -> List problemSetup)
-    -> (problemSetup -> Maybe solution)
+    -> (problemSetup -> Result error solution)
+    -> error
     -> InProgress problemSetup solution
     -> InProgress problemSetup solution
-solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved } =
-    case extractSolution setupToSolution constraints current of
-        Just solution ->
+solveHelp constraints getNextSetups setupToSolution cantConvertError { current, backtrack, solved } =
+    case extractSolution setupToSolution constraints current cantConvertError of
+        Ok solution ->
             case backtrack of
                 [] ->
                     { current = current
@@ -80,12 +82,13 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                         constraints
                         getNextSetups
                         setupToSolution
+                        cantConvertError
                         { current = head
                         , backtrack = tail
                         , solved = solved ++ [ solution ]
                         }
 
-        Nothing ->
+        Err error ->
             if isValidSoFar constraints current then
                 case getNextSetups current of
                     [] ->
@@ -99,6 +102,7 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                             constraints
                             getNextSetups
                             setupToSolution
+                            cantConvertError
                             { current = head
                             , backtrack = backtrack ++ tail
                             , solved = solved
@@ -117,6 +121,7 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                             constraints
                             getNextSetups
                             setupToSolution
+                            cantConvertError
                             { current = head
                             , backtrack = tail
                             , solved = solved
@@ -124,16 +129,17 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
 
 
 extractSolution :
-    (problemSetup -> Maybe solution)
+    (problemSetup -> Result error solution)
     -> List (problemSetup -> Result error Bool)
     -> problemSetup
-    -> Maybe solution
-extractSolution validateSolution constraints theProblemSetup =
+    -> error
+    -> Result error solution
+extractSolution validateSolution constraints theProblemSetup cantConvertError =
     if isValidSoFar constraints theProblemSetup then
         validateSolution theProblemSetup
 
     else
-        Nothing
+        Err cantConvertError
 
 
 isValidSoFar :

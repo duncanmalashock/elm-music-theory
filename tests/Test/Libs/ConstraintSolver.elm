@@ -2,7 +2,6 @@ module Test.Libs.ConstraintSolver exposing (all)
 
 import Expect
 import Libs.ConstraintSolver as ConstraintSolver
-import Result.Extra
 import Test exposing (Test, describe, test)
 
 
@@ -18,6 +17,7 @@ all =
                             , getNextSetups = getNextSetups
                             , constraints = constraints
                             , setupToSolution = setupToSolution
+                            , cantConvertError = "Couldn't convert to solution"
                             }
 
                     expected =
@@ -85,7 +85,7 @@ possibleNumberValues =
     [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
 
 
-setupToSolution : ProblemSetup -> Maybe Solution
+setupToSolution : ProblemSetup -> Result String Solution
 setupToSolution theProblemSetup =
     Maybe.map4
         Solution
@@ -93,6 +93,8 @@ setupToSolution theProblemSetup =
         theProblemSetup.b
         theProblemSetup.c
         theProblemSetup.d
+        |> Maybe.map Ok
+        |> Maybe.withDefault (Err "Couldn't convert to solution")
 
 
 constraints : List (ProblemSetup -> Result String Bool)
