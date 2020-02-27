@@ -1,4 +1,4 @@
-module PitchClass exposing (all)
+module Test.PitchClass exposing (all)
 
 import Expect
 import MusicTheory.Interval as Interval

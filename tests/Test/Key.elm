@@ -1,4 +1,4 @@
-module Key exposing (all)
+module Test.Key exposing (all)
 
 import Expect
 import MusicTheory.Key as Key

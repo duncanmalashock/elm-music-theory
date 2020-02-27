@@ -1,4 +1,4 @@
-module Generate.Voicing exposing (all)
+module Test.Generate.Voicing exposing (all)
 
 import Expect
 import MusicTheory.Chord as Chord

@@ -1,4 +1,4 @@
-module Analyze.Chord exposing (all)
+module Test.Analyze.Chord exposing (all)
 
 import Expect
 import MusicTheory.Analyze.Chord as AnalyzeChord

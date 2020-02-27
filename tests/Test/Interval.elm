@@ -1,4 +1,4 @@
-module Interval exposing (all)
+module Test.Interval exposing (all)
 
 import Expect
 import MusicTheory.Interval as Interval
