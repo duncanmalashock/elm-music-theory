@@ -79,100 +79,101 @@ solveHelp :
     -> InProgress problemSetup error solution
     -> InProgress problemSetup error solution
 solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved, failed } =
-    case extractSolution setupToSolution constraints current of
-        Ok solution ->
-            -- Converted to solution successfully
+    case checkConstraints constraints current of
+        Ok _ ->
+            -- Constraints are fulfilled.
+            -- Are there next setups?
+            case getNextSetups current of
+                [] ->
+                    -- No next setups, solution should be valid.
+                    case setupToSolution current of
+                        Ok solution ->
+                            -- Converted to solution successfully
+                            case backtrack of
+                                [] ->
+                                    -- No backtrack setups to complete,
+                                    -- add solution to solved list
+                                    { current = current
+                                    , backtrack = backtrack
+                                    , solved = solved ++ [ solution ]
+                                    , failed = failed
+                                    }
+
+                                head :: tail ->
+                                    -- Backtrack setups to complete,
+                                    -- add solution to solved list and solve them
+                                    solveHelp
+                                        constraints
+                                        getNextSetups
+                                        setupToSolution
+                                        { current = head
+                                        , backtrack = tail
+                                        , solved = solved ++ [ solution ]
+                                        , failed = failed
+                                        }
+
+                        Err error ->
+                            -- Couldn't be converted to solution.
+                            case backtrack of
+                                [] ->
+                                    -- No backtrack setups to complete,
+                                    -- add solution to solved list
+                                    { current = current
+                                    , backtrack = backtrack
+                                    , solved = solved
+                                    , failed = failed ++ [ ( error, current ) ]
+                                    }
+
+                                head :: tail ->
+                                    -- Backtrack setups to complete,
+                                    -- add solution to solved list and solve them
+                                    solveHelp
+                                        constraints
+                                        getNextSetups
+                                        setupToSolution
+                                        { current = head
+                                        , backtrack = tail
+                                        , solved = solved
+                                        , failed = failed ++ [ ( error, current ) ]
+                                        }
+
+                head :: tail ->
+                    -- Next setups exist, add them to the backtrack list
+                    -- and attempt to solve first setup
+                    solveHelp
+                        constraints
+                        getNextSetups
+                        setupToSolution
+                        { current = head
+                        , backtrack = backtrack ++ tail
+                        , solved = solved
+                        , failed = failed
+                        }
+
+        Err validationError ->
+            -- Constraints are not fulfilled
             case backtrack of
                 [] ->
-                    -- No backtrack setups to complete,
-                    -- add solution to solved list
+                    -- No backtrack setups to complete
                     { current = current
                     , backtrack = backtrack
-                    , solved = solved ++ [ solution ]
+                    , solved = solved
                     , failed = failed
                     }
 
                 head :: tail ->
                     -- Backtrack setups to complete,
-                    -- add solution to solved list and solve them
+                    -- add errored attempt to failed list and
+                    -- attempt to solve backtracks
                     solveHelp
                         constraints
                         getNextSetups
                         setupToSolution
                         { current = head
                         , backtrack = tail
-                        , solved = solved ++ [ solution ]
-                        , failed = failed
+                        , solved = solved
+                        , failed = failed ++ [ ( validationError, current ) ]
                         }
-
-        Err error ->
-            -- Couldn't convert to solution
-            -- Either constraints are not fulfilled or
-            -- setup is incomplete
-            case checkConstraints constraints current of
-                Ok _ ->
-                    -- Constraints are fulfilled.
-                    -- Are there next setups?
-                    case getNextSetups current of
-                        [] ->
-                            -- No next setups, solution should be valid.
-                            { current = current
-                            , backtrack = backtrack
-                            , solved = solved
-                            , failed = failed
-                            }
-
-                        head :: tail ->
-                            -- Next setups exist, add them to the backtrack list
-                            -- and attempt to solve first setup
-                            solveHelp
-                                constraints
-                                getNextSetups
-                                setupToSolution
-                                { current = head
-                                , backtrack = backtrack ++ tail
-                                , solved = solved
-                                , failed = failed
-                                }
-
-                Err validationError ->
-                    -- Constraints are not fulfilled
-                    case backtrack of
-                        [] ->
-                            -- No backtrack setups to complete
-                            { current = current
-                            , backtrack = backtrack
-                            , solved = solved
-                            , failed = failed
-                            }
-
-                        head :: tail ->
-                            -- Backtrack setups to complete,
-                            -- add errored attempt to failed list and
-                            -- attempt to solve backtracks
-                            solveHelp
-                                constraints
-                                getNextSetups
-                                setupToSolution
-                                { current = head
-                                , backtrack = tail
-                                , solved = solved
-                                , failed = failed ++ [ ( validationError, current ) ]
-                                }
-
-
-extractSolution :
-    (problemSetup -> Result error solution)
-    -> List (problemSetup -> Result error problemSetup)
-    -> problemSetup
-    -> Result error solution
-extractSolution validateSolution constraints theProblemSetup =
-    case checkConstraints constraints theProblemSetup of
-        Ok value ->
-            validateSolution value
-
-        Err error ->
-            Err error
 
 
 checkConstraints :
