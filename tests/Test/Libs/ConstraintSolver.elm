@@ -11,24 +11,39 @@ all =
         [ test "should find all solutions that fit the constraints" <|
             \_ ->
                 let
-                    solutions =
+                    solveResult =
                         ConstraintSolver.solve
                             { problemSetup = initialSetup
                             , getNextSetups = getNextSetups
                             , constraints = constraints
                             , setupToSolution = setupToSolution
-                            , cantConvertError = "Couldn't convert to solution"
                             }
 
                     expected =
-                        [ { a = 1, b = 2, c = 3, d = 4 }
-                        , { a = 3, b = 4, c = 5, d = 6 }
-                        , { a = 5, b = 6, c = 7, d = 8 }
-                        , { a = 7, b = 8, c = 9, d = 10 }
-                        ]
+                        4
 
                     result =
-                        solutions
+                        solveResult.solved
+                            |> List.length
+                in
+                Expect.equal expected result
+        , test "should include failed attempts" <|
+            \_ ->
+                let
+                    solveResult =
+                        ConstraintSolver.solve
+                            { problemSetup = initialSetup
+                            , getNextSetups = getNextSetups
+                            , constraints = constraints
+                            , setupToSolution = setupToSolution
+                            }
+
+                    expected =
+                        9995
+
+                    result =
+                        solveResult.failed
+                            |> List.length
                 in
                 Expect.equal expected result
         ]
@@ -97,42 +112,46 @@ setupToSolution theProblemSetup =
         |> Maybe.withDefault (Err "Couldn't convert to solution")
 
 
-constraints : List (ProblemSetup -> Result String Bool)
+constraints : List (ProblemSetup -> Result String ProblemSetup)
 constraints =
     [ endsOnAnEvenNumber
     , allNumbersAreSequential
     ]
 
 
-endsOnAnEvenNumber : ProblemSetup -> Result String Bool
+endsOnAnEvenNumber : ProblemSetup -> Result String ProblemSetup
 endsOnAnEvenNumber theProblemSetup =
     Maybe.map
         (\theNumber ->
             if modBy 2 theNumber == 0 then
-                Ok True
+                Ok theProblemSetup
 
             else
-                Err "Last number is not even"
+                Err <|
+                    "Last number ( "
+                        ++ String.fromInt theNumber
+                        ++ ") is not even"
         )
         theProblemSetup.d
-        |> Maybe.withDefault (Ok True)
+        |> Maybe.withDefault (Ok theProblemSetup)
 
 
-allNumbersAreSequential : ProblemSetup -> Result String Bool
+allNumbersAreSequential : ProblemSetup -> Result String ProblemSetup
 allNumbersAreSequential theProblemSetup =
     ConstraintSolver.combineConstraints
-        [ areSequential theProblemSetup.a theProblemSetup.b
-        , areSequential theProblemSetup.b theProblemSetup.c
-        , areSequential theProblemSetup.c theProblemSetup.d
+        [ areSequential theProblemSetup.a theProblemSetup.b theProblemSetup
+        , areSequential theProblemSetup.b theProblemSetup.c theProblemSetup
+        , areSequential theProblemSetup.c theProblemSetup.d theProblemSetup
         ]
+        theProblemSetup
 
 
-areSequential : Maybe Int -> Maybe Int -> Result String Bool
-areSequential maybeA maybeB =
+areSequential : Maybe Int -> Maybe Int -> ProblemSetup -> Result String ProblemSetup
+areSequential maybeA maybeB theProblemSetup =
     Maybe.map2
         (\a b ->
             if b - a == 1 then
-                Ok True
+                Ok theProblemSetup
 
             else
                 Err <|
@@ -143,4 +162,4 @@ areSequential maybeA maybeB =
         )
         maybeA
         maybeB
-        |> Maybe.withDefault (Ok True)
+        |> Maybe.withDefault (Ok theProblemSetup)
