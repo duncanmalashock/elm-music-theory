@@ -81,8 +81,11 @@ solveHelp :
 solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved, failed } =
     case extractSolution setupToSolution constraints current of
         Ok solution ->
+            -- Converted to solution successfully
             case backtrack of
                 [] ->
+                    -- No backtrack setups to complete,
+                    -- add solution to solved list
                     { current = current
                     , backtrack = backtrack
                     , solved = solved ++ [ solution ]
@@ -90,6 +93,8 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                     }
 
                 head :: tail ->
+                    -- Backtrack setups to complete,
+                    -- add solution to solved list and solve them
                     solveHelp
                         constraints
                         getNextSetups
@@ -101,10 +106,16 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                         }
 
         Err error ->
+            -- Couldn't convert to solution
+            -- Either constraints are not fulfilled or
+            -- setup is incomplete
             case checkConstraints constraints current of
                 Ok _ ->
+                    -- Constraints are fulfilled.
+                    -- Are there next setups?
                     case getNextSetups current of
                         [] ->
+                            -- No next setups, solution should be valid.
                             { current = current
                             , backtrack = backtrack
                             , solved = solved
@@ -112,6 +123,8 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                             }
 
                         head :: tail ->
+                            -- Next setups exist, add them to the backtrack list
+                            -- and attempt to solve first setup
                             solveHelp
                                 constraints
                                 getNextSetups
@@ -123,8 +136,10 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                                 }
 
                 Err validationError ->
+                    -- Constraints are not fulfilled
                     case backtrack of
                         [] ->
+                            -- No backtrack setups to complete
                             { current = current
                             , backtrack = backtrack
                             , solved = solved
@@ -132,6 +147,9 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                             }
 
                         head :: tail ->
+                            -- Backtrack setups to complete,
+                            -- add errored attempt to failed list and
+                            -- attempt to solve backtracks
                             solveHelp
                                 constraints
                                 getNextSetups
