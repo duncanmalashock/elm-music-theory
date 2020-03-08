@@ -359,7 +359,6 @@ type PitchError
     = InvalidOctave OctaveError
     | SemitonesOutOfRange Int
     | ValidPitchNotFound
-    | InternalError
 
 
 pitch : Letter -> Offset -> Octave -> Result PitchError Pitch
@@ -514,9 +513,6 @@ errorToString error =
         ValidPitchNotFound ->
             "A valid pitch could not be constructed."
 
-        InternalError ->
-            "Something went wrong internally."
-
 
 transposeUp :
     Interval
@@ -554,17 +550,10 @@ transpose trans addIntervalSemitones interval p =
 
         numberOfOctaves =
             targetOctaveSemitones // 12
-
-        remainder =
-            targetOctaveSemitones |> remainderBy 12
     in
-    if remainder == 0 then
-        Octave.octave numberOfOctaves
-            |> Result.map (\o -> Pitch transposedPitchClass o)
-            |> Result.mapError InvalidOctave
-
-    else
-        Err InternalError
+    Octave.octave numberOfOctaves
+        |> Result.map (\o -> Pitch transposedPitchClass o)
+        |> Result.mapError InvalidOctave
 
 
 c0 : Pitch
