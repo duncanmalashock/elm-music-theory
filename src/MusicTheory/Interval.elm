@@ -2,6 +2,7 @@ module MusicTheory.Interval exposing
     ( Interval
     , IntervalNumber(..)
     , IntervalQuality(..)
+    , addOctave
     , all
     , augmentedFifth
     , augmentedFourth
@@ -10,7 +11,7 @@ module MusicTheory.Interval exposing
     , augmentedSixth
     , augmentedThird
     , augmentedUnison
-    , complementary
+    , complement
     , diminishedFifth
     , diminishedFourth
     , diminishedOctave
@@ -47,19 +48,55 @@ type IntervalNumber
     | Fifth
     | Sixth
     | Seventh
-    | Octave
+    | Octave IntervalNumber
 
 
 type IntervalQuality
-    = Diminished
-    | Minor
-    | Perfect
-    | Major
-    | Augmented
+    = Perfect Offset
+    | Imperfect Offset
+
+
+type Offset
+    = Offset Int
 
 
 type Interval
     = Interval IntervalQuality IntervalNumber
+
+
+major : IntervalQuality
+major =
+    Imperfect (Offset 0)
+
+
+minor : IntervalQuality
+minor =
+    Imperfect (Offset -1)
+
+
+perfect : IntervalQuality
+perfect =
+    Perfect (Offset 0)
+
+
+perfectAugmented : IntervalQuality
+perfectAugmented =
+    Perfect (Offset 1)
+
+
+perfectDiminished : IntervalQuality
+perfectDiminished =
+    Perfect (Offset -1)
+
+
+imperfectAugmented : IntervalQuality
+imperfectAugmented =
+    Imperfect (Offset 1)
+
+
+imperfectDiminished : IntervalQuality
+imperfectDiminished =
+    Imperfect (Offset -2)
 
 
 
@@ -113,27 +150,14 @@ all =
 
 semitones : Interval -> Int
 semitones (Interval intervalQuality intervalNumber) =
-    let
-        isPerfectIntervalNumber =
-            case intervalNumber of
-                Fourth ->
-                    True
-
-                Fifth ->
-                    True
-
-                Octave ->
-                    True
-
-                _ ->
-                    False
-    in
-    intervalNumberSemitones intervalNumber + intervalQualitySemitones isPerfectIntervalNumber intervalQuality
+    intervalNumberSemitones
+        intervalNumber
+        + intervalQualitySemitones intervalQuality
 
 
-complementary : Interval -> Interval
-complementary (Interval intervalQuality intervalNumber) =
-    Interval (complementaryIntervalQuality intervalQuality) (complementaryIntervalNumber intervalNumber)
+addOctave : Interval -> Interval
+addOctave (Interval intervalQuality intervalNumber) =
+    Interval intervalQuality (Octave intervalNumber)
 
 
 
@@ -142,132 +166,139 @@ complementary (Interval intervalQuality intervalNumber) =
 
 perfectUnison : Interval
 perfectUnison =
-    Interval Perfect Unison
+    Interval perfect Unison
 
 
 diminishedSecond : Interval
 diminishedSecond =
-    Interval Diminished Second
+    Interval imperfectDiminished Second
 
 
 minorSecond : Interval
 minorSecond =
-    Interval Minor Second
+    Interval minor Second
 
 
 augmentedUnison : Interval
 augmentedUnison =
-    Interval Augmented Unison
+    Interval perfectAugmented Unison
 
 
 majorSecond : Interval
 majorSecond =
-    Interval Major Second
+    Interval major Second
 
 
 diminishedThird : Interval
 diminishedThird =
-    Interval Diminished Third
+    Interval imperfectDiminished Third
 
 
 minorThird : Interval
 minorThird =
-    Interval Minor Third
+    Interval minor Third
 
 
 augmentedSecond : Interval
 augmentedSecond =
-    Interval Augmented Second
+    Interval imperfectAugmented Second
 
 
 majorThird : Interval
 majorThird =
-    Interval Major Third
+    Interval major Third
 
 
 diminishedFourth : Interval
 diminishedFourth =
-    Interval Diminished Fourth
+    Interval perfectDiminished Fourth
 
 
 perfectFourth : Interval
 perfectFourth =
-    Interval Perfect Fourth
+    Interval perfect Fourth
 
 
 augmentedThird : Interval
 augmentedThird =
-    Interval Augmented Third
+    Interval imperfectAugmented Third
 
 
 augmentedFourth : Interval
 augmentedFourth =
-    Interval Augmented Fourth
+    Interval perfectAugmented Fourth
 
 
 diminishedFifth : Interval
 diminishedFifth =
-    Interval Diminished Fifth
+    Interval perfectDiminished Fifth
 
 
 perfectFifth : Interval
 perfectFifth =
-    Interval Perfect Fifth
+    Interval perfect Fifth
 
 
 diminishedSixth : Interval
 diminishedSixth =
-    Interval Diminished Sixth
+    Interval imperfectDiminished Sixth
 
 
 augmentedFifth : Interval
 augmentedFifth =
-    Interval Augmented Fifth
+    Interval perfectAugmented Fifth
 
 
 minorSixth : Interval
 minorSixth =
-    Interval Minor Sixth
+    Interval minor Sixth
 
 
 majorSixth : Interval
 majorSixth =
-    Interval Major Sixth
+    Interval major Sixth
 
 
 diminishedSeventh : Interval
 diminishedSeventh =
-    Interval Diminished Seventh
+    Interval imperfectDiminished Seventh
 
 
 minorSeventh : Interval
 minorSeventh =
-    Interval Minor Seventh
+    Interval minor Seventh
 
 
 augmentedSixth : Interval
 augmentedSixth =
-    Interval Augmented Sixth
+    Interval imperfectAugmented Sixth
 
 
 majorSeventh : Interval
 majorSeventh =
-    Interval Major Seventh
+    Interval major Seventh
 
 
 diminishedOctave : Interval
 diminishedOctave =
-    Interval Diminished Octave
+    Interval perfectDiminished (Octave Unison)
 
 
 perfectOctave : Interval
 perfectOctave =
-    Interval Perfect Octave
+    Interval perfect (Octave Unison)
 
 
 augmentedSeventh : Interval
 augmentedSeventh =
-    Interval Augmented Seventh
+    Interval imperfectAugmented Seventh
+
+
+complement : Interval -> Interval
+complement (Interval intervalQuality intervalNumber) =
+    Interval
+        (complementaryIntervalQuality intervalQuality)
+        (complementaryIntervalNumber intervalNumber)
 
 
 
@@ -298,38 +329,25 @@ intervalNumberSemitones intervalNumber =
         Seventh ->
             11
 
-        Octave ->
-            12
+        Octave anotherIntervalNumber ->
+            12 + intervalNumberSemitones anotherIntervalNumber
 
 
-intervalQualitySemitones : Bool -> IntervalQuality -> Int
-intervalQualitySemitones isPerfectIntervalNumber intervalQuality =
+intervalQualitySemitones : IntervalQuality -> Int
+intervalQualitySemitones intervalQuality =
     case intervalQuality of
-        Diminished ->
-            if isPerfectIntervalNumber then
-                -1
+        Perfect (Offset offset) ->
+            offset
 
-            else
-                -2
-
-        Minor ->
-            -1
-
-        Perfect ->
-            0
-
-        Major ->
-            0
-
-        Augmented ->
-            1
+        Imperfect (Offset offset) ->
+            offset
 
 
 complementaryIntervalNumber : IntervalNumber -> IntervalNumber
 complementaryIntervalNumber interval =
     case interval of
         Unison ->
-            Octave
+            Octave Unison
 
         Second ->
             Seventh
@@ -349,27 +367,18 @@ complementaryIntervalNumber interval =
         Seventh ->
             Second
 
-        Octave ->
-            Unison
+        Octave intervalNumber ->
+            intervalNumber
 
 
 complementaryIntervalQuality : IntervalQuality -> IntervalQuality
 complementaryIntervalQuality intervalQuality =
     case intervalQuality of
-        Diminished ->
-            Augmented
+        Perfect (Offset offset) ->
+            Perfect (Offset <| offset * -1)
 
-        Minor ->
-            Major
-
-        Perfect ->
-            Perfect
-
-        Major ->
-            Minor
-
-        Augmented ->
-            Diminished
+        Imperfect (Offset offset) ->
+            Imperfect (Offset <| (offset * -1) - 1)
 
 
 intervalNumberIndex : IntervalNumber -> Int
@@ -396,5 +405,5 @@ intervalNumberIndex intervalNumber =
         Seventh ->
             6
 
-        Octave ->
-            7
+        Octave anotherIntervalNumber ->
+            7 + intervalNumberIndex anotherIntervalNumber

@@ -331,7 +331,7 @@ transposeUp interval pc =
 transposeDown : Interval -> PitchClass -> PitchClass
 transposeDown interval pc =
     interval
-        |> Interval.complementary
+        |> Interval.complement
         |> (\i -> transposeUp i pc)
 
 
