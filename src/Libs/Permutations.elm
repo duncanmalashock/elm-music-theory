@@ -1,4 +1,48 @@
-module Libs.Permutations exposing (permutations4)
+module Libs.Permutations exposing
+    ( permutations2
+    , permutations3
+    , permutations4
+    , permutations5
+    )
+
+
+permutations2 :
+    List a
+    -> List b
+    -> (a -> b -> final)
+    -> List final
+permutations2 listA listB construct =
+    List.concatMap
+        (\a ->
+            List.map
+                (\b ->
+                    construct a b
+                )
+                listB
+        )
+        listA
+
+
+permutations3 :
+    List a
+    -> List b
+    -> List c
+    -> (a -> b -> c -> final)
+    -> List final
+permutations3 listA listB listC construct =
+    List.concatMap
+        (\a ->
+            List.concatMap
+                (\b ->
+                    List.map
+                        (\c ->
+                            construct a b c
+                        )
+                        listC
+                )
+                listB
+        )
+        listA
 
 
 permutations4 :
@@ -6,18 +50,18 @@ permutations4 :
     -> List b
     -> List c
     -> List d
-    -> (a -> b -> c -> d -> record)
-    -> List record
-permutations4 listA listB listC listD constructRecord =
-    List.map
+    -> (a -> b -> c -> d -> final)
+    -> List final
+permutations4 listA listB listC listD construct =
+    List.concatMap
         (\a ->
-            List.map
+            List.concatMap
                 (\b ->
-                    List.map
+                    List.concatMap
                         (\c ->
                             List.map
                                 (\d ->
-                                    constructRecord a b c d
+                                    construct a b c d
                                 )
                                 listD
                         )
@@ -26,6 +70,35 @@ permutations4 listA listB listC listD constructRecord =
                 listB
         )
         listA
-        |> List.concat
-        |> List.concat
-        |> List.concat
+
+
+permutations5 :
+    List a
+    -> List b
+    -> List c
+    -> List d
+    -> List e
+    -> (a -> b -> c -> d -> e -> final)
+    -> List final
+permutations5 listA listB listC listD listE construct =
+    List.concatMap
+        (\a ->
+            List.concatMap
+                (\b ->
+                    List.concatMap
+                        (\c ->
+                            List.concatMap
+                                (\d ->
+                                    List.map
+                                        (\e ->
+                                            construct a b c d e
+                                        )
+                                        listE
+                                )
+                                listD
+                        )
+                        listC
+                )
+                listB
+        )
+        listA

@@ -10,7 +10,7 @@ all =
     describe "Interval Tests"
         [ test "sum of semitones of an interval and its complementary interval should be 12" <|
             \_ ->
-                Interval.all
+                Interval.allSimple
                     |> List.map
                         (\interval ->
                             Interval.semitones interval
@@ -18,7 +18,7 @@ all =
                                     |> Interval.semitones
                                   )
                         )
-                    |> Expect.equal (List.repeat (List.length Interval.all) 12)
+                    |> Expect.equal (List.repeat (List.length Interval.allSimple) 12)
         , test "complementary interval of a perfect unison should be a perfect octave" <|
             \_ ->
                 Interval.perfectUnison
@@ -29,10 +29,10 @@ all =
                 Interval.diminishedThird
                     |> Interval.complement
                     |> Expect.equal Interval.augmentedSixth
-        , test "minor third plus octave should contain 15 semitones" <|
+        , test "major third plus octave should contain 16 semitones" <|
             \_ ->
-                Interval.minorThird
+                Interval.majorThird
                     |> Interval.addOctave
                     |> Interval.semitones
-                    |> Expect.equal 15
+                    |> Expect.equal 16
         ]

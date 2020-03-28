@@ -3,9 +3,11 @@ module MusicTheory.Interval exposing
     , IntervalNumber(..)
     , IntervalQuality(..)
     , addOctave
-    , all
+    , allSimple
+    , augmentedEleventh
     , augmentedFifth
     , augmentedFourth
+    , augmentedNinth
     , augmentedSecond
     , augmentedSeventh
     , augmentedSixth
@@ -20,15 +22,22 @@ module MusicTheory.Interval exposing
     , diminishedSixth
     , diminishedThird
     , intervalNumberIndex
+    , majorNinth
     , majorSecond
     , majorSeventh
     , majorSixth
+    , majorTenth
     , majorThird
+    , majorThirteenth
+    , minorNinth
     , minorSecond
     , minorSeventh
     , minorSixth
+    , minorTenth
     , minorThird
+    , minorThirteenth
     , number
+    , perfectEleventh
     , perfectFifth
     , perfectFourth
     , perfectOctave
@@ -113,8 +122,8 @@ number (Interval _ n) =
     n
 
 
-all : List Interval
-all =
+allSimple : List Interval
+allSimple =
     [ augmentedFifth
     , augmentedFourth
     , augmentedUnison
@@ -158,6 +167,13 @@ semitones (Interval intervalQuality intervalNumber) =
 addOctave : Interval -> Interval
 addOctave (Interval intervalQuality intervalNumber) =
     Interval intervalQuality (Octave intervalNumber)
+
+
+complement : Interval -> Interval
+complement (Interval intervalQuality intervalNumber) =
+    Interval
+        (complementaryIntervalQuality intervalQuality)
+        (complementaryIntervalNumber intervalNumber)
 
 
 
@@ -294,11 +310,49 @@ augmentedSeventh =
     Interval imperfectAugmented Seventh
 
 
-complement : Interval -> Interval
-complement (Interval intervalQuality intervalNumber) =
-    Interval
-        (complementaryIntervalQuality intervalQuality)
-        (complementaryIntervalNumber intervalNumber)
+minorNinth : Interval
+minorNinth =
+    Interval minor (Octave Second)
+
+
+majorNinth : Interval
+majorNinth =
+    Interval major (Octave Second)
+
+
+augmentedNinth : Interval
+augmentedNinth =
+    Interval imperfectAugmented (Octave Second)
+
+
+minorTenth : Interval
+minorTenth =
+    Interval minor (Octave Third)
+
+
+majorTenth : Interval
+majorTenth =
+    Interval major (Octave Third)
+
+
+perfectEleventh : Interval
+perfectEleventh =
+    Interval perfect (Octave Fourth)
+
+
+augmentedEleventh : Interval
+augmentedEleventh =
+    Interval perfectAugmented (Octave Fourth)
+
+
+minorThirteenth : Interval
+minorThirteenth =
+    Interval minor (Octave Sixth)
+
+
+majorThirteenth : Interval
+majorThirteenth =
+    Interval major (Octave Sixth)
 
 
 

@@ -1,6 +1,5 @@
 module MusicTheory.ChordClass exposing
     ( ChordClass(..)
-    , ChordClassError(..)
     , all
     , augmented
     , diminished
@@ -20,7 +19,6 @@ module MusicTheory.ChordClass exposing
     , dominantThirteenthFlatNine
     , dominantThirteenthSharpNine
     , dominantThirteenthSharpNineFlatNine
-    , errorToString
     , halfDiminished
     , major
     , majorAddNine
@@ -35,56 +33,23 @@ module MusicTheory.ChordClass exposing
     , minorSeventh
     , minorSix
     , minorSixNine
-    , nonTertian
     , sus2
     , sus4
     , toIntervals
-    , toTertianFactors
     )
 
-import MusicTheory.Interval exposing (Interval)
-import MusicTheory.TertianFactors as TertianFactors
-    exposing
-        ( Alteration(..)
-        , Extension(..)
-        , TertianFactors
-        )
+import MusicTheory.Interval as Interval exposing (Interval)
 
 
 type ChordClass
-    = Tertian TertianFactors
-    | NonTertian (List Interval)
+    = ChordClass (List Interval)
 
 
 toIntervals : ChordClass -> List Interval
-toIntervals chordClass =
-    case chordClass of
-        Tertian tertianFactors ->
-            TertianFactors.toIntervals tertianFactors
-
-        NonTertian intervals ->
-            intervals
-
-
-toTertianFactors : ChordClass -> Result ChordClassError TertianFactors.TertianFactors
-toTertianFactors chordClass =
-    case chordClass of
-        NonTertian _ ->
-            Err (ChordClassIsNonTertian chordClass)
-
-        Tertian tertianFactors ->
-            Ok tertianFactors
-
-
-type ChordClassError
-    = ChordClassIsNonTertian ChordClass
-
-
-errorToString : ChordClassError -> String
-errorToString error =
-    case error of
-        ChordClassIsNonTertian chordClass ->
-            "Cannot convert non-tertian chord class to tertian chord factors."
+toIntervals theChordClass =
+    case theChordClass of
+        ChordClass chordFactors ->
+            chordFactors
 
 
 all : List ChordClass
@@ -132,50 +97,44 @@ all =
 
 major : ChordClass
 major =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
 
 
 minor : ChordClass
 minor =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFifth
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFifth
 
 
 augmented : ChordClass
 augmented =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withSharpFifth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withSharpFifth
 
 
 diminished : ChordClass
 diminished =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFlatFifth
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFlatFifth
 
 
 sus2 : ChordClass
 sus2 =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withSuspendedSecond
-        |> TertianFactors.withFifth
-        |> Tertian
+    chordClass
+        |> withSuspendedSecond
+        |> withFifth
 
 
 sus4 : ChordClass
 sus4 =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withSuspendedFourth
-        |> TertianFactors.withFifth
-        |> Tertian
+    chordClass
+        |> withSuspendedFourth
+        |> withFifth
 
 
 
@@ -184,20 +143,18 @@ sus4 =
 
 majorAddNine : ChordClass
 majorAddNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withNinth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withNinth
 
 
 minorAddNine : ChordClass
 minorAddNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withNinth
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFifth
+        |> withNinth
 
 
 
@@ -206,40 +163,36 @@ minorAddNine =
 
 majorSix : ChordClass
 majorSix =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withSixth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withSixth
 
 
 minorSix : ChordClass
 minorSix =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withSixth
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFifth
+        |> withSixth
 
 
 majorSixNine : ChordClass
 majorSixNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withSixth
-        |> TertianFactors.withNinth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withSixth
+        |> withNinth
 
 
 minorSixNine : ChordClass
 minorSixNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withSixth
-        |> TertianFactors.withNinth
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFifth
+        |> withSixth
+        |> withNinth
 
 
 
@@ -248,95 +201,85 @@ minorSixNine =
 
 majorSeventh : ChordClass
 majorSeventh =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMajorSeventh
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMajorSeventh
 
 
 majorSeventhSharpEleven : ChordClass
 majorSeventhSharpEleven =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMajorSeventh
-        |> TertianFactors.withSharpEleventh
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMajorSeventh
+        |> withSharpEleventh
 
 
 minorSeventh : ChordClass
 minorSeventh =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFifth
+        |> withMinorSeventh
 
 
 minorNinth : ChordClass
 minorNinth =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withNinth
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withNinth
 
 
 dominantSeventh : ChordClass
 dominantSeventh =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
 
 
 dominantSeventhSus4 : ChordClass
 dominantSeventhSus4 =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withSuspendedFourth
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> Tertian
+    chordClass
+        |> withSuspendedFourth
+        |> withFifth
+        |> withMinorSeventh
 
 
 minorMajorSeventh : ChordClass
 minorMajorSeventh =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMajorSeventh
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFifth
+        |> withMajorSeventh
 
 
 halfDiminished : ChordClass
 halfDiminished =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFlatFifth
-        |> TertianFactors.withMinorSeventh
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFlatFifth
+        |> withMinorSeventh
 
 
 diminishedSeventh : ChordClass
 diminishedSeventh =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFlatFifth
-        |> TertianFactors.withDiminishedSeventh
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFlatFifth
+        |> withDiminishedSeventh
 
 
 diminishedSeventhElevenFlatThirteen : ChordClass
 diminishedSeventhElevenFlatThirteen =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMinorThird
-        |> TertianFactors.withFlatFifth
-        |> TertianFactors.withDiminishedSeventh
-        |> TertianFactors.withFlatThirteenth
-        |> Tertian
+    chordClass
+        |> withMinorThird
+        |> withFlatFifth
+        |> withDiminishedSeventh
+        |> withFlatThirteenth
 
 
 
@@ -345,35 +288,32 @@ diminishedSeventhElevenFlatThirteen =
 
 dominantNinth : ChordClass
 dominantNinth =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withNinth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withNinth
 
 
 dominantEleventh : ChordClass
 dominantEleventh =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withNinth
-        |> TertianFactors.withEleventh
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withNinth
+        |> withEleventh
 
 
 dominantThirteenth : ChordClass
 dominantThirteenth =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withNinth
-        |> TertianFactors.withEleventh
-        |> TertianFactors.withThirteenth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withNinth
+        |> withEleventh
+        |> withThirteenth
 
 
 
@@ -382,103 +322,257 @@ dominantThirteenth =
 
 dominantSeventhSharpNine : ChordClass
 dominantSeventhSharpNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withSharpNinth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withSharpNinth
 
 
 dominantSeventhFlatNine : ChordClass
 dominantSeventhFlatNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withFlatNinth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withFlatNinth
 
 
 dominantSeventhFlatNineSharpNine : ChordClass
 dominantSeventhFlatNineSharpNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withFlatNinth
-        |> TertianFactors.withSharpNinth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withFlatNinth
+        |> withSharpNinth
 
 
 dominantSeventhSharpNineFlatThirteen : ChordClass
 dominantSeventhSharpNineFlatThirteen =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withSharpNinth
-        |> TertianFactors.withFlatThirteenth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withSharpNinth
+        |> withFlatThirteenth
 
 
 dominantSeventhFlatNineFlatThirteen : ChordClass
 dominantSeventhFlatNineFlatThirteen =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withFlatNinth
-        |> TertianFactors.withFlatThirteenth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withFlatNinth
+        |> withFlatThirteenth
 
 
 dominantSeventhFlatNineSharpNineFlatThirteen : ChordClass
 dominantSeventhFlatNineSharpNineFlatThirteen =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withFlatNinth
-        |> TertianFactors.withSharpNinth
-        |> TertianFactors.withFlatThirteenth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withFlatNinth
+        |> withSharpNinth
+        |> withFlatThirteenth
 
 
 dominantThirteenthFlatNine : ChordClass
 dominantThirteenthFlatNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withFlatNinth
-        |> TertianFactors.withThirteenth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withFlatNinth
+        |> withThirteenth
 
 
 dominantThirteenthSharpNine : ChordClass
 dominantThirteenthSharpNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withSharpNinth
-        |> TertianFactors.withThirteenth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withSharpNinth
+        |> withThirteenth
 
 
 dominantThirteenthSharpNineFlatNine : ChordClass
 dominantThirteenthSharpNineFlatNine =
-    TertianFactors.tertianFactors
-        |> TertianFactors.withMajorThird
-        |> TertianFactors.withFifth
-        |> TertianFactors.withMinorSeventh
-        |> TertianFactors.withFlatNinth
-        |> TertianFactors.withSharpNinth
-        |> TertianFactors.withThirteenth
-        |> Tertian
+    chordClass
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withFlatNinth
+        |> withSharpNinth
+        |> withThirteenth
 
 
-nonTertian : List Interval -> ChordClass
-nonTertian intervals =
-    NonTertian intervals
+
+-- Builder functions for chord factors
+
+
+withMajorThird : ChordClass -> ChordClass
+withMajorThird factors =
+    factors
+        |> remove Interval.minorThird
+        |> remove Interval.majorSecond
+        |> remove Interval.perfectFourth
+        |> add Interval.majorThird
+
+
+withMinorThird : ChordClass -> ChordClass
+withMinorThird factors =
+    factors
+        |> remove Interval.majorThird
+        |> remove Interval.majorSecond
+        |> remove Interval.perfectFourth
+        |> add Interval.minorThird
+
+
+withSuspendedSecond : ChordClass -> ChordClass
+withSuspendedSecond factors =
+    factors
+        |> remove Interval.majorThird
+        |> remove Interval.minorThird
+        |> remove Interval.perfectFourth
+        |> add Interval.majorSecond
+
+
+withSuspendedFourth : ChordClass -> ChordClass
+withSuspendedFourth factors =
+    factors
+        |> remove Interval.majorThird
+        |> remove Interval.minorThird
+        |> remove Interval.majorSecond
+        |> add Interval.perfectFourth
+
+
+withFifth : ChordClass -> ChordClass
+withFifth factors =
+    factors
+        |> remove Interval.diminishedFifth
+        |> remove Interval.augmentedFifth
+        |> add Interval.perfectFifth
+
+
+withFlatFifth : ChordClass -> ChordClass
+withFlatFifth factors =
+    factors
+        |> remove Interval.perfectFifth
+        |> add Interval.diminishedFifth
+
+
+withSharpFifth : ChordClass -> ChordClass
+withSharpFifth factors =
+    factors
+        |> remove Interval.perfectFifth
+        |> add Interval.augmentedFifth
+
+
+withSixth : ChordClass -> ChordClass
+withSixth factors =
+    factors
+        |> remove Interval.minorThirteenth
+        |> remove Interval.majorThirteenth
+        |> add Interval.majorSixth
+
+
+withDiminishedSeventh : ChordClass -> ChordClass
+withDiminishedSeventh factors =
+    factors
+        |> remove Interval.majorSeventh
+        |> remove Interval.minorSeventh
+        |> remove Interval.majorSixth
+        |> add Interval.diminishedSeventh
+
+
+withMinorSeventh : ChordClass -> ChordClass
+withMinorSeventh factors =
+    factors
+        |> remove Interval.majorSeventh
+        |> remove Interval.diminishedSeventh
+        |> remove Interval.majorSixth
+        |> add Interval.minorSeventh
+
+
+withMajorSeventh : ChordClass -> ChordClass
+withMajorSeventh factors =
+    factors
+        |> remove Interval.minorSeventh
+        |> remove Interval.diminishedSeventh
+        |> remove Interval.majorSixth
+        |> add Interval.majorSeventh
+
+
+withNinth : ChordClass -> ChordClass
+withNinth factors =
+    factors
+        |> remove Interval.augmentedNinth
+        |> remove Interval.minorNinth
+        |> add Interval.majorNinth
+
+
+withFlatNinth : ChordClass -> ChordClass
+withFlatNinth factors =
+    factors
+        |> remove Interval.majorNinth
+        |> add Interval.minorNinth
+
+
+withSharpNinth : ChordClass -> ChordClass
+withSharpNinth factors =
+    factors
+        |> remove Interval.majorNinth
+        |> add Interval.augmentedNinth
+
+
+withEleventh : ChordClass -> ChordClass
+withEleventh factors =
+    factors
+        |> remove Interval.augmentedEleventh
+        |> add Interval.perfectEleventh
+
+
+withSharpEleventh : ChordClass -> ChordClass
+withSharpEleventh factors =
+    factors
+        |> remove Interval.perfectEleventh
+        |> add Interval.augmentedEleventh
+
+
+withThirteenth : ChordClass -> ChordClass
+withThirteenth factors =
+    factors
+        |> remove Interval.majorSixth
+        |> remove Interval.minorThirteenth
+        |> add Interval.majorThirteenth
+
+
+withFlatThirteenth : ChordClass -> ChordClass
+withFlatThirteenth factors =
+    factors
+        |> remove Interval.majorSixth
+        |> remove Interval.perfectFifth
+        |> remove Interval.majorThirteenth
+        |> add Interval.minorThirteenth
+
+
+chordClass : ChordClass
+chordClass =
+    ChordClass [ Interval.perfectUnison ]
+
+
+remove : Interval -> ChordClass -> ChordClass
+remove factorToRemove (ChordClass factorList) =
+    List.filter ((==) factorToRemove >> not) factorList
+        |> ChordClass
+
+
+add : Interval -> ChordClass -> ChordClass
+add factorToAdd (ChordClass factorList) =
+    factorToAdd
+        :: factorList
+        |> ChordClass

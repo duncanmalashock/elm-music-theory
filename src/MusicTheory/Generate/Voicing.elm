@@ -1,30 +1,26 @@
 module MusicTheory.Generate.Voicing exposing
-    ( FourPartVoicing
-    , VoicingError(..)
-    , containsIntervalFourParts
-    , containsSemitoneDistanceFourParts
-    , diffFourParts
-    , drop2
-    , drop2and4
-    , fiveWayCloseDoubleLead
+    ( Error(..)
+    , FivePartVoicing
+    , FourPartVoicing
+    , ThreePartVoicing
     , fourWayClose
-    , isAboveLowIntervalLimits
-    , lowIntervalLimitsDict
-    , passesMinorNinthRule
-    , semitoneDistancesContainedFourParts
     )
 
-import Dict exposing (Dict)
-import Libs.Permutations
-import MusicTheory.Analyze.ChordClass as AnalyzeChordClass
-import MusicTheory.Chord as Chord
-import MusicTheory.ChordClass as ChordClass
+import MusicTheory.Analyze.Chord as AnalyzeChord
+    exposing
+        ( AvailablePitchClasses
+        , VoiceCategory(..)
+        )
 import MusicTheory.Interval as Interval
-import MusicTheory.Letter exposing (Letter(..))
-import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch exposing (Pitch)
 import MusicTheory.PitchClass as PitchClass
-import MusicTheory.TertianFactors as TertianFactors
+
+
+type alias ThreePartVoicing =
+    { voiceOne : Pitch.Pitch
+    , voiceTwo : Pitch.Pitch
+    , voiceThree : Pitch.Pitch
+    }
 
 
 type alias FourPartVoicing =
@@ -44,44 +40,15 @@ type alias FivePartVoicing =
     }
 
 
-type alias FourCategoryVoicingPlan =
-    { voiceOne : PitchClass.PitchClass
-    , voiceTwo : PitchClass.PitchClass
-    , voiceThree : PitchClass.PitchClass
-    , voiceFour : PitchClass.PitchClass
-    }
-
-
-rotateFourVoices : FourCategoryVoicingPlan -> FourCategoryVoicingPlan
-rotateFourVoices fourPartVoicingPlan =
-    { voiceOne = fourPartVoicingPlan.voiceTwo
-    , voiceTwo = fourPartVoicingPlan.voiceThree
-    , voiceThree = fourPartVoicingPlan.voiceFour
-    , voiceFour = fourPartVoicingPlan.voiceOne
-    }
-
-
-type VoicingError
-    = CantVoiceNonTertianChord ChordClass.ChordClassError
-    | MissingVoiceCategory
-    | VoiceOutOfRange Pitch.PitchError
-    | NoVoicingsFound
-
-
 type alias LowIntervalLimit =
-    { intervalInSemitones : Int
+    { intervalInSemitones : Interval.Interval
     , lowestAllowedPitch : Pitch
     }
 
 
 lowIntervalLimitForInterval : Interval.Interval -> Pitch -> LowIntervalLimit
 lowIntervalLimitForInterval theInterval thePitch =
-    LowIntervalLimit (Interval.semitones theInterval) thePitch
-
-
-lowIntervalLimitForSemitones : Int -> Pitch -> LowIntervalLimit
-lowIntervalLimitForSemitones semitones thePitch =
-    LowIntervalLimit semitones thePitch
+    LowIntervalLimit theInterval thePitch
 
 
 lowIntervalLimits : List LowIntervalLimit
@@ -97,385 +64,361 @@ lowIntervalLimits =
     , lowIntervalLimitForInterval Interval.majorSixth Pitch.f2
     , lowIntervalLimitForInterval Interval.minorSeventh Pitch.f2
     , lowIntervalLimitForInterval Interval.majorSeventh Pitch.f2
-    , lowIntervalLimitForSemitones 13 Pitch.e2
-    , lowIntervalLimitForSemitones 14 Pitch.eFlat2
-    , lowIntervalLimitForSemitones 15 Pitch.c2
-    , lowIntervalLimitForSemitones 16 Pitch.bFlat1
+    , lowIntervalLimitForInterval Interval.minorNinth Pitch.e2
+    , lowIntervalLimitForInterval Interval.majorNinth Pitch.eFlat2
+    , lowIntervalLimitForInterval Interval.minorTenth Pitch.c2
+    , lowIntervalLimitForInterval Interval.majorTenth Pitch.bFlat1
     ]
 
 
-lowIntervalLimitsDict : Dict Int Pitch
-lowIntervalLimitsDict =
-    List.map
-        (\{ intervalInSemitones, lowestAllowedPitch } ->
-            ( intervalInSemitones, lowestAllowedPitch )
-        )
-        lowIntervalLimits
-        |> Dict.fromList
+type Step
+    = AssignToVoice Int Pitch.Pitch
+    | AssignFirstBelow Int VoiceSelection
+    | AssignFirstAbove Int VoiceSelection
+    | CopyVoice Int Int
+    | DropVoiceByOctave Int
+    | RaiseVoiceByOctave Int
 
 
-isAboveLowIntervalLimits : Pitch -> Pitch -> Bool
-isAboveLowIntervalLimits first second =
+type VoiceSelection
+    = VoiceSelection VoiceCategory VoiceSpecificity
+
+
+type VoiceSpecificity
+    = ChordTone
+    | SubstituteTone
+    | ChordToneOrSubstitute
+
+
+chordToneOnly : VoiceCategory -> VoiceSelection
+chordToneOnly voiceCategory =
+    VoiceSelection voiceCategory ChordTone
+
+
+substituteToneOnly : VoiceCategory -> VoiceSelection
+substituteToneOnly voiceCategory =
+    VoiceSelection voiceCategory SubstituteTone
+
+
+chordToneOrSubstitute : VoiceCategory -> VoiceSelection
+chordToneOrSubstitute voiceCategory =
+    VoiceSelection voiceCategory ChordToneOrSubstitute
+
+
+usePitchClassFromVoiceSelection : VoiceSelection -> FourPartVoicingInProgress -> Maybe PitchClass.PitchClass
+usePitchClassFromVoiceSelection (VoiceSelection voiceCategory voiceSpecificity) voicingInProgress =
+    -- TODO Choosing tones is not parameterized, we just take the head of the list
     let
-        semitonesBetween =
-            Pitch.semitones second - Pitch.semitones first
+        chooseFirstUnused list =
+            List.filter (\item -> List.member item voicingInProgress.used |> not) list
+                |> List.head
 
-        maybeLimit =
-            Dict.get semitonesBetween lowIntervalLimitsDict
+        availables =
+            voicingInProgress.availablePitchClasses
     in
-    case maybeLimit of
-        Nothing ->
-            True
+    case voiceSpecificity of
+        ChordTone ->
+            case voiceCategory of
+                Root ->
+                    [ availables.root.true ]
+                        |> chooseFirstUnused
 
-        Just limit ->
-            Pitch.semitones first >= Pitch.semitones limit
+                Seventh ->
+                    [ availables.seventh.true ]
+                        |> chooseFirstUnused
+
+                Fifth ->
+                    [ availables.fifth.true ]
+                        |> chooseFirstUnused
+
+                Third ->
+                    [ availables.third.true ]
+                        |> chooseFirstUnused
+
+        SubstituteTone ->
+            case voiceCategory of
+                Root ->
+                    availables.root.substitutes
+                        |> chooseFirstUnused
+
+                Seventh ->
+                    availables.seventh.substitutes
+                        |> chooseFirstUnused
+
+                Fifth ->
+                    availables.fifth.substitutes
+                        |> chooseFirstUnused
+
+                Third ->
+                    availables.third.substitutes
+                        |> chooseFirstUnused
+
+        ChordToneOrSubstitute ->
+            case voiceCategory of
+                Root ->
+                    availables.root.true
+                        :: availables.root.substitutes
+                        |> chooseFirstUnused
+
+                Seventh ->
+                    availables.seventh.true
+                        :: availables.seventh.substitutes
+                        |> chooseFirstUnused
+
+                Fifth ->
+                    availables.fifth.true
+                        :: availables.fifth.substitutes
+                        |> chooseFirstUnused
+
+                Third ->
+                    availables.third.true
+                        :: availables.third.substitutes
+                        |> chooseFirstUnused
 
 
-checkLowIntervalLimitsFourParts : Chord.Chord -> FourPartVoicing -> Bool
-checkLowIntervalLimitsFourParts chord voicing =
+determineVoiceCategory : PitchClass.PitchClass -> AvailablePitchClasses -> Maybe VoiceCategory
+determineVoiceCategory pitchClass availablePitchClasses =
     let
-        rootIsInBass =
-            Chord.root chord == Pitch.pitchClass voicing.voiceFour
+        rootPitchClasses =
+            availablePitchClasses.root.true
+                :: availablePitchClasses.root.substitutes
+
+        thirdPitchClasses =
+            availablePitchClasses.third.true
+                :: availablePitchClasses.third.substitutes
+
+        fifthPitchClasses =
+            availablePitchClasses.fifth.true
+                :: availablePitchClasses.fifth.substitutes
+
+        seventhPitchClasses =
+            availablePitchClasses.seventh.true
+                :: availablePitchClasses.seventh.substitutes
     in
-    if rootIsInBass then
-        isAboveLowIntervalLimits voicing.voiceFour voicing.voiceThree
+    if List.member pitchClass rootPitchClasses then
+        Just Root
+
+    else if List.member pitchClass thirdPitchClasses then
+        Just Third
+
+    else if List.member pitchClass fifthPitchClasses then
+        Just Fifth
+
+    else if List.member pitchClass seventhPitchClasses then
+        Just Seventh
 
     else
-        let
-            imaginaryRootVoice =
-                Pitch.firstBelow (Chord.root chord) voicing.voiceFour
-        in
-        case imaginaryRootVoice of
-            Ok rootVoice ->
-                isAboveLowIntervalLimits rootVoice voicing.voiceFour
-
-            Err _ ->
-                False
+        Nothing
 
 
-checkLowIntervalLimitsFiveParts : Chord.Chord -> FivePartVoicing -> Bool
-checkLowIntervalLimitsFiveParts chord voicing =
+nextVoiceCategory : VoiceCategory -> VoiceCategory
+nextVoiceCategory voiceCategory =
+    case voiceCategory of
+        Root ->
+            Seventh
+
+        Seventh ->
+            Fifth
+
+        Fifth ->
+            Third
+
+        Third ->
+            Root
+
+
+fourWayClose : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
+fourWayClose leadVoice availablePitchClasses =
     let
-        rootIsInBass =
-            Chord.root chord == Pitch.pitchClass voicing.voiceFive
-    in
-    if rootIsInBass then
-        isAboveLowIntervalLimits voicing.voiceFive voicing.voiceFour
+        maybeFirstVoiceCategory =
+            determineVoiceCategory
+                (Pitch.pitchClass leadVoice)
+                availablePitchClasses
 
-    else
-        let
-            imaginaryRootVoice =
-                Pitch.firstBelow (Chord.root chord) voicing.voiceFive
-        in
-        case imaginaryRootVoice of
-            Ok rootVoice ->
-                isAboveLowIntervalLimits rootVoice voicing.voiceFive
+        maybeSecondVoiceCategory =
+            Maybe.map nextVoiceCategory maybeFirstVoiceCategory
 
-            Err _ ->
-                False
+        maybeThirdVoiceCategory =
+            Maybe.map nextVoiceCategory maybeSecondVoiceCategory
 
+        maybeFourthVoiceCategory =
+            Maybe.map nextVoiceCategory maybeThirdVoiceCategory
 
-fourWayClose : Chord.Chord -> Result VoicingError (List FourPartVoicing)
-fourWayClose chord =
-    getFourCategoryVoicingPlans chord
-        |> Result.map
-            (List.map
-                (planToFourPartVoicings planToFourWayCloseVoicing chord)
-            )
-        |> Result.map (List.filterMap Result.toMaybe)
-        |> Result.map List.concat
-
-
-drop2 : Chord.Chord -> Result VoicingError (List FourPartVoicing)
-drop2 chord =
-    getFourCategoryVoicingPlans chord
-        |> Result.map
-            (List.map
-                (planToFourPartVoicings planToDrop2Voicing chord)
-            )
-        |> Result.map (List.filterMap Result.toMaybe)
-        |> Result.map List.concat
-
-
-drop2and4 : Chord.Chord -> Result VoicingError (List FourPartVoicing)
-drop2and4 chord =
-    getFourCategoryVoicingPlans chord
-        |> Result.map
-            (List.map
-                (planToFourPartVoicings planToDrop2and4Voicing chord)
-            )
-        |> Result.map (List.filterMap Result.toMaybe)
-        |> Result.map List.concat
-
-
-fiveWayCloseDoubleLead : Chord.Chord -> Result VoicingError (List FivePartVoicing)
-fiveWayCloseDoubleLead chord =
-    getFourCategoryVoicingPlans chord
-        |> Result.map
-            (List.map
-                (planToFivePartVoicings planToFiveWayCloseDoubleLeadVoicing chord)
-            )
-        |> Result.map (List.filterMap Result.toMaybe)
-        |> Result.map List.concat
-
-
-getFourCategoryVoicingPlans :
-    Chord.Chord
-    -> Result VoicingError (List FourCategoryVoicingPlan)
-getFourCategoryVoicingPlans chord =
-    AnalyzeChordClass.tertianFactorsByCategory
-        (Chord.chordClass chord)
-        |> Result.mapError CantVoiceNonTertianChord
-        |> Result.andThen (fourPartVoicingPlans (Chord.root chord))
-
-
-planToFourPartVoicings :
-    (Chord.Chord
-     -> FourCategoryVoicingPlan
-     -> Octave.Octave
-     -> Result VoicingError FourPartVoicing
-    )
-    -> Chord.Chord
-    -> FourCategoryVoicingPlan
-    -> Result VoicingError (List FourPartVoicing)
-planToFourPartVoicings voicingStrategy chord plan =
-    let
-        voicings =
-            List.map (voicingStrategy chord plan) Octave.all
-                |> List.filterMap Result.toMaybe
-                |> List.filter (checkLowIntervalLimitsFourParts chord)
-    in
-    case voicings of
-        [] ->
-            Err NoVoicingsFound
-
-        nonEmptyList ->
-            Ok nonEmptyList
-
-
-planToFivePartVoicings :
-    (Chord.Chord
-     -> FourCategoryVoicingPlan
-     -> Octave.Octave
-     -> Result VoicingError FivePartVoicing
-    )
-    -> Chord.Chord
-    -> FourCategoryVoicingPlan
-    -> Result VoicingError (List FivePartVoicing)
-planToFivePartVoicings voicingStrategy chord plan =
-    let
-        voicings =
-            List.map (voicingStrategy chord plan) Octave.all
-                |> List.filterMap Result.toMaybe
-                |> List.filter (checkLowIntervalLimitsFiveParts chord)
-    in
-    case voicings of
-        [] ->
-            Err NoVoicingsFound
-
-        nonEmptyList ->
-            Ok nonEmptyList
-
-
-planToFourWayCloseVoicing :
-    Chord.Chord
-    -> FourCategoryVoicingPlan
-    -> Octave.Octave
-    -> Result VoicingError FourPartVoicing
-planToFourWayCloseVoicing chord plan octave =
-    let
-        voiceOne =
-            Pitch.fromPitchClass octave plan.voiceOne
-
-        voiceTwo =
-            Result.andThen (Pitch.firstBelow plan.voiceTwo) voiceOne
-
-        voiceThree =
-            Result.andThen (Pitch.firstBelow plan.voiceThree) voiceTwo
-
-        voiceFour =
-            Result.andThen (Pitch.firstBelow plan.voiceFour) voiceThree
-    in
-    Result.map4 FourPartVoicing voiceOne voiceTwo voiceThree voiceFour
-        |> Result.mapError VoiceOutOfRange
-
-
-planToDrop2Voicing :
-    Chord.Chord
-    -> FourCategoryVoicingPlan
-    -> Octave.Octave
-    -> Result VoicingError FourPartVoicing
-planToDrop2Voicing chord plan octave =
-    let
-        voiceOne =
-            Pitch.fromPitchClass octave plan.voiceOne
-
-        voiceTwo =
-            Result.andThen (Pitch.firstBelow plan.voiceThree) voiceOne
-
-        voiceThree =
-            Result.andThen (Pitch.firstBelow plan.voiceFour) voiceTwo
-
-        voiceFour =
-            Result.andThen (Pitch.firstBelow plan.voiceTwo) voiceThree
-    in
-    Result.map4 FourPartVoicing voiceOne voiceTwo voiceThree voiceFour
-        |> Result.mapError VoiceOutOfRange
-
-
-planToDrop2and4Voicing :
-    Chord.Chord
-    -> FourCategoryVoicingPlan
-    -> Octave.Octave
-    -> Result VoicingError FourPartVoicing
-planToDrop2and4Voicing chord plan octave =
-    let
-        voiceOne =
-            Pitch.fromPitchClass octave plan.voiceOne
-
-        voiceTwo =
-            Result.andThen (Pitch.firstBelow plan.voiceThree) voiceOne
-
-        voiceThree =
-            Result.andThen (Pitch.firstBelow plan.voiceTwo) voiceTwo
-
-        voiceFour =
-            Result.andThen (Pitch.firstBelow plan.voiceFour) voiceThree
-    in
-    Result.map4 FourPartVoicing voiceOne voiceTwo voiceThree voiceFour
-        |> Result.mapError VoiceOutOfRange
-
-
-planToFiveWayCloseDoubleLeadVoicing :
-    Chord.Chord
-    -> FourCategoryVoicingPlan
-    -> Octave.Octave
-    -> Result VoicingError FivePartVoicing
-planToFiveWayCloseDoubleLeadVoicing chord plan octave =
-    let
-        voiceOne =
-            Pitch.fromPitchClass octave plan.voiceOne
-
-        voiceTwo =
-            Result.andThen (Pitch.firstBelow plan.voiceTwo) voiceOne
-
-        voiceThree =
-            Result.andThen (Pitch.firstBelow plan.voiceThree) voiceTwo
-
-        voiceFour =
-            Result.andThen (Pitch.firstBelow plan.voiceFour) voiceThree
-
-        voiceFive =
-            Result.andThen (Pitch.firstBelow plan.voiceOne) voiceFour
-    in
-    Result.map5 FivePartVoicing voiceOne voiceTwo voiceThree voiceFour voiceFive
-        |> Result.mapError VoiceOutOfRange
-
-
-fourPartVoicingPlans :
-    PitchClass.PitchClass
-    -> AnalyzeChordClass.TertianFactorsByCategory
-    -> Result VoicingError (List FourCategoryVoicingPlan)
-fourPartVoicingPlans root factorCats =
-    let
-        factorToPitchClass factor =
-            PitchClass.transposeUp (TertianFactors.toInterval factor) root
-
-        plans =
-            Libs.Permutations.permutations4
-                (List.map factorToPitchClass factorCats.root)
-                (List.map factorToPitchClass factorCats.seventh)
-                (List.map factorToPitchClass factorCats.fifth)
-                (List.map factorToPitchClass factorCats.third)
-                FourCategoryVoicingPlan
-
-        planRotatedOnce =
-            List.map rotateFourVoices plans
-
-        planRotatedTwice =
-            List.map rotateFourVoices planRotatedOnce
-
-        planRotatedThreeTimes =
-            List.map rotateFourVoices planRotatedTwice
-    in
-    case plans of
-        [] ->
-            Err MissingVoiceCategory
-
-        nonEmptyPlans ->
-            Ok
-                (nonEmptyPlans
-                    ++ planRotatedOnce
-                    ++ planRotatedTwice
-                    ++ planRotatedThreeTimes
+        maybeVoicing =
+            Maybe.map3
+                (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
+                    List.foldl
+                        applyStepFourPart
+                        (fourPartInit availablePitchClasses)
+                        [ AssignToVoice 1 leadVoice
+                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
+                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
+                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        ]
                 )
-
-
-diffFourParts : FourPartVoicing -> FourPartVoicing -> Int
-diffFourParts firstVoicing secondVoicing =
-    let
-        diff a b =
-            Basics.abs (Pitch.semitones a - Pitch.semitones b)
+                maybeSecondVoiceCategory
+                maybeThirdVoiceCategory
+                maybeFourthVoiceCategory
     in
-    diff firstVoicing.voiceOne secondVoicing.voiceOne
-        + diff firstVoicing.voiceTwo secondVoicing.voiceTwo
-        + diff firstVoicing.voiceThree secondVoicing.voiceThree
-        + diff firstVoicing.voiceFour secondVoicing.voiceFour
+    case maybeVoicing of
+        Just voicing ->
+            voicing
+                |> completeFourPart
+
+        Nothing ->
+            Err <|
+                VoiceCategoriesWereUndefined
+                    [ maybeFirstVoiceCategory
+                    , maybeSecondVoiceCategory
+                    , maybeThirdVoiceCategory
+                    , maybeFourthVoiceCategory
+                    ]
 
 
-containsIntervalFourParts : Interval.Interval -> FourPartVoicing -> Int
-containsIntervalFourParts theInterval voicing =
+type alias FourPartVoicingInProgress =
+    { voiceOne : Maybe Pitch.Pitch
+    , voiceTwo : Maybe Pitch.Pitch
+    , voiceThree : Maybe Pitch.Pitch
+    , voiceFour : Maybe Pitch.Pitch
+    , availablePitchClasses : AvailablePitchClasses
+    , used : List PitchClass.PitchClass
+    }
+
+
+getAtFourPartVoicing : Int -> FourPartVoicingInProgress -> Maybe Pitch.Pitch
+getAtFourPartVoicing index voicingInProgress =
+    case index of
+        1 ->
+            voicingInProgress.voiceOne
+
+        2 ->
+            voicingInProgress.voiceTwo
+
+        3 ->
+            voicingInProgress.voiceThree
+
+        4 ->
+            voicingInProgress.voiceFour
+
+        _ ->
+            Nothing
+
+
+setAtFourPartVoicing : Int -> FourPartVoicingInProgress -> Maybe Pitch.Pitch -> FourPartVoicingInProgress
+setAtFourPartVoicing index voicingInProgress pitchToSet =
     let
-        intervalSemitones =
-            Interval.semitones theInterval
-
-        checkForInterval a b =
-            Basics.abs (Pitch.semitones a - Pitch.semitones b) == intervalSemitones
+        updateUsed currentUsed usedPitch =
+            currentUsed
+                ++ List.filterMap identity
+                    [ Maybe.map Pitch.pitchClass usedPitch
+                    ]
     in
-    [ checkForInterval voicing.voiceOne voicing.voiceTwo
-    , checkForInterval voicing.voiceOne voicing.voiceThree
-    , checkForInterval voicing.voiceOne voicing.voiceFour
-    , checkForInterval voicing.voiceTwo voicing.voiceThree
-    , checkForInterval voicing.voiceTwo voicing.voiceFour
-    , checkForInterval voicing.voiceThree voicing.voiceFour
-    ]
-        |> List.filter identity
-        |> List.length
+    case index of
+        1 ->
+            { voicingInProgress
+                | voiceOne = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        2 ->
+            { voicingInProgress
+                | voiceTwo = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        3 ->
+            { voicingInProgress
+                | voiceThree = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        4 ->
+            { voicingInProgress
+                | voiceFour = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        _ ->
+            voicingInProgress
 
 
-containsSemitoneDistanceFourParts : Int -> FourPartVoicing -> Int
-containsSemitoneDistanceFourParts semitoneDistance voicing =
-    let
-        checkForSemitoneDistance a b =
-            Basics.abs (Pitch.semitones a - Pitch.semitones b) == semitoneDistance
-    in
-    [ checkForSemitoneDistance voicing.voiceOne voicing.voiceTwo
-    , checkForSemitoneDistance voicing.voiceOne voicing.voiceThree
-    , checkForSemitoneDistance voicing.voiceOne voicing.voiceFour
-    , checkForSemitoneDistance voicing.voiceTwo voicing.voiceThree
-    , checkForSemitoneDistance voicing.voiceTwo voicing.voiceFour
-    , checkForSemitoneDistance voicing.voiceThree voicing.voiceFour
-    ]
-        |> List.filter identity
-        |> List.length
+fourPartInit : AvailablePitchClasses -> FourPartVoicingInProgress
+fourPartInit availablePitchClasses =
+    { voiceOne = Nothing
+    , voiceTwo = Nothing
+    , voiceThree = Nothing
+    , voiceFour = Nothing
+    , availablePitchClasses = availablePitchClasses
+    , used = []
+    }
 
 
-passesMinorNinthRule : FourPartVoicing -> Bool
-passesMinorNinthRule voicing =
-    -- TODO: This should return True in cases with a root-to-9th interval in dominant 7 b9 chords
-    containsSemitoneDistanceFourParts 13 voicing == 0
+completeFourPart : FourPartVoicingInProgress -> Result Error FourPartVoicing
+completeFourPart { voiceOne, voiceTwo, voiceThree, voiceFour } =
+    Maybe.map4 FourPartVoicing voiceOne voiceTwo voiceThree voiceFour
+        |> Result.fromMaybe
+            (CouldNotCompleteVoicing
+                [ voiceOne
+                , voiceTwo
+                , voiceThree
+                , voiceFour
+                ]
+            )
 
 
-semitoneDistancesContainedFourParts : FourPartVoicing -> List Int
-semitoneDistancesContainedFourParts voicing =
-    let
-        semitoneDistance a b =
-            Pitch.semitones b - Pitch.semitones a
-    in
-    [ semitoneDistance voicing.voiceOne voicing.voiceTwo
-    , semitoneDistance voicing.voiceOne voicing.voiceThree
-    , semitoneDistance voicing.voiceOne voicing.voiceFour
-    , semitoneDistance voicing.voiceTwo voicing.voiceThree
-    , semitoneDistance voicing.voiceTwo voicing.voiceFour
-    , semitoneDistance voicing.voiceThree voicing.voiceFour
-    ]
+type Error
+    = CouldNotCompleteVoicing (List (Maybe Pitch.Pitch))
+    | VoiceCategoriesWereUndefined (List (Maybe VoiceCategory))
+    | AnalyzeChordError AnalyzeChord.Error
+
+
+applyStepFourPart : Step -> FourPartVoicingInProgress -> FourPartVoicingInProgress
+applyStepFourPart step voicingInProgress =
+    case step of
+        AssignToVoice voice pitch ->
+            setAtFourPartVoicing voice voicingInProgress (Just pitch)
+
+        AssignFirstBelow voice voiceSelection ->
+            getAtFourPartVoicing voice voicingInProgress
+                |> Maybe.map2
+                    Pitch.firstBelow
+                    (usePitchClassFromVoiceSelection
+                        voiceSelection
+                        voicingInProgress
+                    )
+                |> Maybe.andThen Result.toMaybe
+                |> setAtFourPartVoicing (voice + 1) voicingInProgress
+
+        AssignFirstAbove voice voiceSelection ->
+            getAtFourPartVoicing voice voicingInProgress
+                |> Maybe.map2
+                    Pitch.firstAbove
+                    (usePitchClassFromVoiceSelection
+                        voiceSelection
+                        voicingInProgress
+                    )
+                |> Maybe.andThen Result.toMaybe
+                |> setAtFourPartVoicing (voice - 1) voicingInProgress
+
+        CopyVoice fromVoice toVoice ->
+            let
+                voiceToGet =
+                    getAtFourPartVoicing fromVoice voicingInProgress
+            in
+            setAtFourPartVoicing toVoice voicingInProgress voiceToGet
+
+        DropVoiceByOctave voice ->
+            getAtFourPartVoicing voice voicingInProgress
+                |> Maybe.map (Pitch.transposeDown Interval.perfectOctave)
+                |> Maybe.andThen Result.toMaybe
+                |> setAtFourPartVoicing voice voicingInProgress
+
+        RaiseVoiceByOctave voice ->
+            getAtFourPartVoicing voice voicingInProgress
+                |> Maybe.map (Pitch.transposeUp Interval.perfectOctave)
+                |> Maybe.andThen Result.toMaybe
+                |> setAtFourPartVoicing voice voicingInProgress
