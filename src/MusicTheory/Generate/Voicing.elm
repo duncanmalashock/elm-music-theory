@@ -90,11 +90,16 @@ chordToneOrSubstitute voiceCategory =
     VoiceSelection voiceCategory ChordToneOrSubstitute
 
 
-intervalsFromVoiceSelections : List VoiceSelection -> AvailablePitchClasses -> List PitchClass.PitchClass
-intervalsFromVoiceSelections voiceSelections availables =
+pitchClassesFromVoiceSelections :
+    List VoiceSelection
+    -> AvailablePitchClasses
+    -> List PitchClass.PitchClass
+pitchClassesFromVoiceSelections voiceSelections availables =
     let
-        intervalsFromVoiceSelection : VoiceSelection -> List PitchClass.PitchClass
-        intervalsFromVoiceSelection (VoiceSelection voiceCategory voiceSpecificity) =
+        pitchClassesFromVoiceSelection :
+            VoiceSelection
+            -> List PitchClass.PitchClass
+        pitchClassesFromVoiceSelection (VoiceSelection voiceCategory voiceSpecificity) =
             case voiceSpecificity of
                 ChordTone ->
                     case voiceCategory of
@@ -142,7 +147,7 @@ intervalsFromVoiceSelections voiceSelections availables =
                             availables.third.true
                                 :: availables.third.substitutes
     in
-    List.concatMap intervalsFromVoiceSelection voiceSelections
+    List.concatMap pitchClassesFromVoiceSelection voiceSelections
 
 
 usePitchClassFromVoiceSelections :
@@ -157,7 +162,7 @@ usePitchClassFromVoiceSelections voiceSelections availables used =
                 |> List.head
     in
     -- TODO Choosing tones is not parameterized, we just take the head of the list
-    intervalsFromVoiceSelections voiceSelections availables
+    pitchClassesFromVoiceSelections voiceSelections availables
         |> chooseFirstUnused
 
 
