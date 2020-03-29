@@ -37,4 +37,101 @@ all =
                     in
                     Expect.equal result expected
             ]
+        , describe "drop2"
+            [ test "four-way drop-2 voicing of Cmaj6 should include correct chord tones" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                { voiceOne = Pitch.e5
+                                , voiceTwo = Pitch.a4
+                                , voiceThree = Pitch.g4
+                                , voiceFour = Pitch.c4
+                                }
+
+                        availablePitchClasses =
+                            AnalyzeChord.availablePitchClassesFor
+                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                |> Result.mapError GenerateVoicing.AnalyzeChordError
+
+                        result =
+                            Result.andThen
+                                (GenerateVoicing.drop2 Pitch.e5)
+                                availablePitchClasses
+                    in
+                    Expect.equal result expected
+            ]
+        , describe "drop3"
+            [ test "four-way drop-3 voicing of Cmaj6 should include correct chord tones" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                { voiceOne = Pitch.e5
+                                , voiceTwo = Pitch.c5
+                                , voiceThree = Pitch.g4
+                                , voiceFour = Pitch.a3
+                                }
+
+                        availablePitchClasses =
+                            AnalyzeChord.availablePitchClassesFor
+                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                |> Result.mapError GenerateVoicing.AnalyzeChordError
+
+                        result =
+                            Result.andThen
+                                (GenerateVoicing.drop3 Pitch.e5)
+                                availablePitchClasses
+                    in
+                    Expect.equal result expected
+            ]
+        , describe "drop2and4"
+            [ test "four-way drop-2-and-4 voicing of Cmaj6 should include correct chord tones" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                { voiceOne = Pitch.e5
+                                , voiceTwo = Pitch.a4
+                                , voiceThree = Pitch.c4
+                                , voiceFour = Pitch.g3
+                                }
+
+                        availablePitchClasses =
+                            AnalyzeChord.availablePitchClassesFor
+                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                |> Result.mapError GenerateVoicing.AnalyzeChordError
+
+                        result =
+                            Result.andThen
+                                (GenerateVoicing.drop2and4 Pitch.e5)
+                                availablePitchClasses
+                    in
+                    Expect.equal result expected
+            ]
+        , describe "fourWayCloseDoubleLead"
+            [ test "four-way close double-lead voicing of Cmaj6 should include correct chord tones" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                { voiceOne = Pitch.e5
+                                , voiceTwo = Pitch.c5
+                                , voiceThree = Pitch.a4
+                                , voiceFour = Pitch.g4
+                                , voiceFive = Pitch.e4
+                                }
+
+                        availablePitchClasses =
+                            AnalyzeChord.availablePitchClassesFor
+                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                |> Result.mapError GenerateVoicing.AnalyzeChordError
+
+                        result =
+                            Result.andThen
+                                (GenerateVoicing.fourWayCloseDoubleLead Pitch.e5)
+                                availablePitchClasses
+                    in
+                    Expect.equal result expected
+            ]
         ]

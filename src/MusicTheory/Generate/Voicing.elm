@@ -3,7 +3,12 @@ module MusicTheory.Generate.Voicing exposing
     , FivePartVoicing
     , FourPartVoicing
     , ThreePartVoicing
+    , drop2
+    , drop2and4
+    , drop3
     , fourWayClose
+    , fourWayCloseDoubleLead
+    , nextVoiceCategory
     )
 
 import MusicTheory.Analyze.Chord as AnalyzeChord
@@ -14,6 +19,12 @@ import MusicTheory.Analyze.Chord as AnalyzeChord
 import MusicTheory.Interval as Interval
 import MusicTheory.Pitch as Pitch exposing (Pitch)
 import MusicTheory.PitchClass as PitchClass
+
+
+type Error
+    = CouldNotCompleteVoicing (List (Maybe Pitch.Pitch))
+    | VoiceCategoriesWereUndefined (List (Maybe VoiceCategory))
+    | AnalyzeChordError AnalyzeChord.Error
 
 
 type alias ThreePartVoicing =
@@ -105,16 +116,13 @@ chordToneOrSubstitute voiceCategory =
     VoiceSelection voiceCategory ChordToneOrSubstitute
 
 
-usePitchClassFromVoiceSelection : VoiceSelection -> FourPartVoicingInProgress -> Maybe PitchClass.PitchClass
-usePitchClassFromVoiceSelection (VoiceSelection voiceCategory voiceSpecificity) voicingInProgress =
+usePitchClassFromVoiceSelection : VoiceSelection -> AvailablePitchClasses -> List PitchClass.PitchClass -> Maybe PitchClass.PitchClass
+usePitchClassFromVoiceSelection (VoiceSelection voiceCategory voiceSpecificity) availables used =
     -- TODO Choosing tones is not parameterized, we just take the head of the list
     let
         chooseFirstUnused list =
-            List.filter (\item -> List.member item voicingInProgress.used |> not) list
+            List.filter (\item -> List.member item used |> not) list
                 |> List.head
-
-        availables =
-            voicingInProgress.availablePitchClasses
     in
     case voiceSpecificity of
         ChordTone ->
@@ -211,20 +219,24 @@ determineVoiceCategory pitchClass availablePitchClasses =
         Nothing
 
 
-nextVoiceCategory : VoiceCategory -> VoiceCategory
-nextVoiceCategory voiceCategory =
-    case voiceCategory of
-        Root ->
-            Seventh
+nextVoiceCategory : Int -> VoiceCategory -> VoiceCategory
+nextVoiceCategory numberOfSteps voiceCategory =
+    let
+        pickNext cat =
+            case cat of
+                Root ->
+                    Seventh
 
-        Seventh ->
-            Fifth
+                Seventh ->
+                    Fifth
 
-        Fifth ->
-            Third
+                Fifth ->
+                    Third
 
-        Third ->
-            Root
+                Third ->
+                    Root
+    in
+    List.foldl identity voiceCategory (List.repeat numberOfSteps pickNext)
 
 
 fourWayClose : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
@@ -236,13 +248,13 @@ fourWayClose leadVoice availablePitchClasses =
                 availablePitchClasses
 
         maybeSecondVoiceCategory =
-            Maybe.map nextVoiceCategory maybeFirstVoiceCategory
+            Maybe.map (nextVoiceCategory 1) maybeFirstVoiceCategory
 
         maybeThirdVoiceCategory =
-            Maybe.map nextVoiceCategory maybeSecondVoiceCategory
+            Maybe.map (nextVoiceCategory 1) maybeSecondVoiceCategory
 
         maybeFourthVoiceCategory =
-            Maybe.map nextVoiceCategory maybeThirdVoiceCategory
+            Maybe.map (nextVoiceCategory 1) maybeThirdVoiceCategory
 
         maybeVoicing =
             Maybe.map3
@@ -273,6 +285,204 @@ fourWayClose leadVoice availablePitchClasses =
                     , maybeThirdVoiceCategory
                     , maybeFourthVoiceCategory
                     ]
+
+
+fourWayCloseDoubleLead : Pitch.Pitch -> AvailablePitchClasses -> Result Error FivePartVoicing
+fourWayCloseDoubleLead leadVoice availablePitchClasses =
+    let
+        maybeFirstVoiceCategory =
+            determineVoiceCategory
+                (Pitch.pitchClass leadVoice)
+                availablePitchClasses
+
+        maybeSecondVoiceCategory =
+            Maybe.map (nextVoiceCategory 1) maybeFirstVoiceCategory
+
+        maybeThirdVoiceCategory =
+            Maybe.map (nextVoiceCategory 1) maybeSecondVoiceCategory
+
+        maybeFourthVoiceCategory =
+            Maybe.map (nextVoiceCategory 1) maybeThirdVoiceCategory
+
+        maybeVoicing =
+            Maybe.map3
+                (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
+                    List.foldl
+                        applyStepFivePart
+                        (fivePartInit availablePitchClasses)
+                        [ AssignToVoice 1 leadVoice
+                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
+                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
+                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        , CopyVoice 1 5
+                        , DropVoiceByOctave 5
+                        ]
+                )
+                maybeSecondVoiceCategory
+                maybeThirdVoiceCategory
+                maybeFourthVoiceCategory
+    in
+    case maybeVoicing of
+        Just voicing ->
+            voicing
+                |> completeFivePart
+
+        Nothing ->
+            Err <|
+                VoiceCategoriesWereUndefined
+                    [ maybeFirstVoiceCategory
+                    , maybeSecondVoiceCategory
+                    , maybeThirdVoiceCategory
+                    , maybeFourthVoiceCategory
+                    ]
+
+
+drop2 : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
+drop2 leadVoice availablePitchClasses =
+    let
+        maybeFirstVoiceCategory =
+            determineVoiceCategory
+                (Pitch.pitchClass leadVoice)
+                availablePitchClasses
+
+        maybeSecondVoiceCategory =
+            Maybe.map (nextVoiceCategory 2) maybeFirstVoiceCategory
+
+        maybeThirdVoiceCategory =
+            Maybe.map (nextVoiceCategory 1) maybeSecondVoiceCategory
+
+        maybeFourthVoiceCategory =
+            Maybe.map (nextVoiceCategory 2) maybeThirdVoiceCategory
+
+        maybeVoicing =
+            Maybe.map3
+                (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
+                    List.foldl
+                        applyStepFourPart
+                        (fourPartInit availablePitchClasses)
+                        [ AssignToVoice 1 leadVoice
+                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
+                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
+                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        ]
+                )
+                maybeSecondVoiceCategory
+                maybeThirdVoiceCategory
+                maybeFourthVoiceCategory
+    in
+    case maybeVoicing of
+        Just voicing ->
+            voicing
+                |> completeFourPart
+
+        Nothing ->
+            Err <|
+                VoiceCategoriesWereUndefined
+                    [ maybeFirstVoiceCategory
+                    , maybeSecondVoiceCategory
+                    , maybeThirdVoiceCategory
+                    , maybeFourthVoiceCategory
+                    ]
+
+
+drop3 : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
+drop3 leadVoice availablePitchClasses =
+    let
+        maybeFirstVoiceCategory =
+            determineVoiceCategory
+                (Pitch.pitchClass leadVoice)
+                availablePitchClasses
+
+        maybeSecondVoiceCategory =
+            Maybe.map (nextVoiceCategory 1) maybeFirstVoiceCategory
+
+        maybeThirdVoiceCategory =
+            Maybe.map (nextVoiceCategory 2) maybeSecondVoiceCategory
+
+        maybeFourthVoiceCategory =
+            Maybe.map (nextVoiceCategory 3) maybeThirdVoiceCategory
+
+        maybeVoicing =
+            Maybe.map3
+                (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
+                    List.foldl
+                        applyStepFourPart
+                        (fourPartInit availablePitchClasses)
+                        [ AssignToVoice 1 leadVoice
+                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
+                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
+                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        ]
+                )
+                maybeSecondVoiceCategory
+                maybeThirdVoiceCategory
+                maybeFourthVoiceCategory
+    in
+    case maybeVoicing of
+        Just voicing ->
+            voicing
+                |> completeFourPart
+
+        Nothing ->
+            Err <|
+                VoiceCategoriesWereUndefined
+                    [ maybeFirstVoiceCategory
+                    , maybeSecondVoiceCategory
+                    , maybeThirdVoiceCategory
+                    , maybeFourthVoiceCategory
+                    ]
+
+
+drop2and4 : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
+drop2and4 leadVoice availablePitchClasses =
+    let
+        maybeFirstVoiceCategory =
+            determineVoiceCategory
+                (Pitch.pitchClass leadVoice)
+                availablePitchClasses
+
+        maybeSecondVoiceCategory =
+            Maybe.map (nextVoiceCategory 2) maybeFirstVoiceCategory
+
+        maybeThirdVoiceCategory =
+            Maybe.map (nextVoiceCategory 3) maybeSecondVoiceCategory
+
+        maybeFourthVoiceCategory =
+            Maybe.map (nextVoiceCategory 2) maybeThirdVoiceCategory
+
+        maybeVoicing =
+            Maybe.map3
+                (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
+                    List.foldl
+                        applyStepFourPart
+                        (fourPartInit availablePitchClasses)
+                        [ AssignToVoice 1 leadVoice
+                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
+                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
+                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        ]
+                )
+                maybeSecondVoiceCategory
+                maybeThirdVoiceCategory
+                maybeFourthVoiceCategory
+    in
+    case maybeVoicing of
+        Just voicing ->
+            voicing
+                |> completeFourPart
+
+        Nothing ->
+            Err <|
+                VoiceCategoriesWereUndefined
+                    [ maybeFirstVoiceCategory
+                    , maybeSecondVoiceCategory
+                    , maybeThirdVoiceCategory
+                    , maybeFourthVoiceCategory
+                    ]
+
+
+
+-- Four-part voicing utils
 
 
 type alias FourPartVoicingInProgress =
@@ -370,12 +580,6 @@ completeFourPart { voiceOne, voiceTwo, voiceThree, voiceFour } =
             )
 
 
-type Error
-    = CouldNotCompleteVoicing (List (Maybe Pitch.Pitch))
-    | VoiceCategoriesWereUndefined (List (Maybe VoiceCategory))
-    | AnalyzeChordError AnalyzeChord.Error
-
-
 applyStepFourPart : Step -> FourPartVoicingInProgress -> FourPartVoicingInProgress
 applyStepFourPart step voicingInProgress =
     case step of
@@ -388,7 +592,8 @@ applyStepFourPart step voicingInProgress =
                     Pitch.firstBelow
                     (usePitchClassFromVoiceSelection
                         voiceSelection
-                        voicingInProgress
+                        voicingInProgress.availablePitchClasses
+                        voicingInProgress.used
                     )
                 |> Maybe.andThen Result.toMaybe
                 |> setAtFourPartVoicing (voice + 1) voicingInProgress
@@ -399,7 +604,8 @@ applyStepFourPart step voicingInProgress =
                     Pitch.firstAbove
                     (usePitchClassFromVoiceSelection
                         voiceSelection
-                        voicingInProgress
+                        voicingInProgress.availablePitchClasses
+                        voicingInProgress.used
                     )
                 |> Maybe.andThen Result.toMaybe
                 |> setAtFourPartVoicing (voice - 1) voicingInProgress
@@ -422,3 +628,164 @@ applyStepFourPart step voicingInProgress =
                 |> Maybe.map (Pitch.transposeUp Interval.perfectOctave)
                 |> Maybe.andThen Result.toMaybe
                 |> setAtFourPartVoicing voice voicingInProgress
+
+
+
+-- Five-part voicing utils
+
+
+type alias FivePartVoicingInProgress =
+    { voiceOne : Maybe Pitch.Pitch
+    , voiceTwo : Maybe Pitch.Pitch
+    , voiceThree : Maybe Pitch.Pitch
+    , voiceFour : Maybe Pitch.Pitch
+    , voiceFive : Maybe Pitch.Pitch
+    , availablePitchClasses : AvailablePitchClasses
+    , used : List PitchClass.PitchClass
+    }
+
+
+getAtFivePartVoicing : Int -> FivePartVoicingInProgress -> Maybe Pitch.Pitch
+getAtFivePartVoicing index voicingInProgress =
+    case index of
+        1 ->
+            voicingInProgress.voiceOne
+
+        2 ->
+            voicingInProgress.voiceTwo
+
+        3 ->
+            voicingInProgress.voiceThree
+
+        4 ->
+            voicingInProgress.voiceFour
+
+        5 ->
+            voicingInProgress.voiceFive
+
+        _ ->
+            Nothing
+
+
+setAtFivePartVoicing : Int -> FivePartVoicingInProgress -> Maybe Pitch.Pitch -> FivePartVoicingInProgress
+setAtFivePartVoicing index voicingInProgress pitchToSet =
+    let
+        updateUsed currentUsed usedPitch =
+            currentUsed
+                ++ List.filterMap identity
+                    [ Maybe.map Pitch.pitchClass usedPitch
+                    ]
+    in
+    case index of
+        1 ->
+            { voicingInProgress
+                | voiceOne = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        2 ->
+            { voicingInProgress
+                | voiceTwo = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        3 ->
+            { voicingInProgress
+                | voiceThree = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        4 ->
+            { voicingInProgress
+                | voiceFour = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        5 ->
+            { voicingInProgress
+                | voiceFive = pitchToSet
+                , used =
+                    updateUsed voicingInProgress.used pitchToSet
+            }
+
+        _ ->
+            voicingInProgress
+
+
+fivePartInit : AvailablePitchClasses -> FivePartVoicingInProgress
+fivePartInit availablePitchClasses =
+    { voiceOne = Nothing
+    , voiceTwo = Nothing
+    , voiceThree = Nothing
+    , voiceFour = Nothing
+    , voiceFive = Nothing
+    , availablePitchClasses = availablePitchClasses
+    , used = []
+    }
+
+
+completeFivePart : FivePartVoicingInProgress -> Result Error FivePartVoicing
+completeFivePart { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
+    Maybe.map5 FivePartVoicing voiceOne voiceTwo voiceThree voiceFour voiceFive
+        |> Result.fromMaybe
+            (CouldNotCompleteVoicing
+                [ voiceOne
+                , voiceTwo
+                , voiceThree
+                , voiceFour
+                ]
+            )
+
+
+applyStepFivePart : Step -> FivePartVoicingInProgress -> FivePartVoicingInProgress
+applyStepFivePart step voicingInProgress =
+    case step of
+        AssignToVoice voice pitch ->
+            setAtFivePartVoicing voice voicingInProgress (Just pitch)
+
+        AssignFirstBelow voice voiceSelection ->
+            getAtFivePartVoicing voice voicingInProgress
+                |> Maybe.map2
+                    Pitch.firstBelow
+                    (usePitchClassFromVoiceSelection
+                        voiceSelection
+                        voicingInProgress.availablePitchClasses
+                        voicingInProgress.used
+                    )
+                |> Maybe.andThen Result.toMaybe
+                |> setAtFivePartVoicing (voice + 1) voicingInProgress
+
+        AssignFirstAbove voice voiceSelection ->
+            getAtFivePartVoicing voice voicingInProgress
+                |> Maybe.map2
+                    Pitch.firstAbove
+                    (usePitchClassFromVoiceSelection
+                        voiceSelection
+                        voicingInProgress.availablePitchClasses
+                        voicingInProgress.used
+                    )
+                |> Maybe.andThen Result.toMaybe
+                |> setAtFivePartVoicing (voice - 1) voicingInProgress
+
+        CopyVoice fromVoice toVoice ->
+            let
+                voiceToGet =
+                    getAtFivePartVoicing fromVoice voicingInProgress
+            in
+            setAtFivePartVoicing toVoice voicingInProgress voiceToGet
+
+        DropVoiceByOctave voice ->
+            getAtFivePartVoicing voice voicingInProgress
+                |> Maybe.map (Pitch.transposeDown Interval.perfectOctave)
+                |> Maybe.andThen Result.toMaybe
+                |> setAtFivePartVoicing voice voicingInProgress
+
+        RaiseVoiceByOctave voice ->
+            getAtFivePartVoicing voice voicingInProgress
+                |> Maybe.map (Pitch.transposeUp Interval.perfectOctave)
+                |> Maybe.andThen Result.toMaybe
+                |> setAtFivePartVoicing voice voicingInProgress
