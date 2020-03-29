@@ -7,6 +7,7 @@ import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Generate.Voicing as GenerateVoicing
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
+import Result.Extra
 import Test exposing (..)
 
 
@@ -37,7 +38,7 @@ all =
                     in
                     Expect.equal result expected
             ]
-        , describe "drop2"
+        , describe "fourWayDrop2"
             [ test "four-way drop-2 voicing of Cmaj6 should include correct chord tones" <|
                 \_ ->
                     let
@@ -56,12 +57,16 @@ all =
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.drop2 Pitch.e5)
+                                (GenerateVoicing.fourWayClose Pitch.e5)
                                 availablePitchClasses
+                                |> Result.map2
+                                    GenerateVoicing.fourWayDrop2
+                                    availablePitchClasses
+                                |> Result.Extra.join
                     in
                     Expect.equal result expected
             ]
-        , describe "drop3"
+        , describe "fourWayDrop3"
             [ test "four-way drop-3 voicing of Cmaj6 should include correct chord tones" <|
                 \_ ->
                     let
@@ -80,12 +85,16 @@ all =
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.drop3 Pitch.e5)
+                                (GenerateVoicing.fourWayClose Pitch.e5)
                                 availablePitchClasses
+                                |> Result.map2
+                                    GenerateVoicing.fourWayDrop3
+                                    availablePitchClasses
+                                |> Result.Extra.join
                     in
                     Expect.equal result expected
             ]
-        , describe "drop2and4"
+        , describe "fourWayDrop2and4"
             [ test "four-way drop-2-and-4 voicing of Cmaj6 should include correct chord tones" <|
                 \_ ->
                     let
@@ -104,8 +113,12 @@ all =
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.drop2and4 Pitch.e5)
+                                (GenerateVoicing.fourWayClose Pitch.e5)
                                 availablePitchClasses
+                                |> Result.map2
+                                    GenerateVoicing.fourWayDrop2and4
+                                    availablePitchClasses
+                                |> Result.Extra.join
                     in
                     Expect.equal result expected
             ]

@@ -3,12 +3,12 @@ module MusicTheory.Generate.Voicing exposing
     , FivePartVoicing
     , FourPartVoicing
     , ThreePartVoicing
-    , drop2
-    , drop2and4
-    , drop3
     , fiveWaySpread
     , fourWayClose
     , fourWayCloseDoubleLead
+    , fourWayDrop2
+    , fourWayDrop2and4
+    , fourWayDrop3
     , fourWaySpread
     , nextVoiceCategory
     )
@@ -393,157 +393,48 @@ fiveWaySpread bass availablePitchClasses =
         |> completeFivePart
 
 
-drop2 : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
-drop2 leadVoice availablePitchClasses =
-    let
-        maybeFirstVoiceCategory =
-            determineVoiceCategory
-                (Pitch.pitchClass leadVoice)
-                availablePitchClasses
-
-        maybeSecondVoiceCategory =
-            Maybe.map (nextVoiceCategory 2) maybeFirstVoiceCategory
-
-        maybeThirdVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeSecondVoiceCategory
-
-        maybeFourthVoiceCategory =
-            Maybe.map (nextVoiceCategory 2) maybeThirdVoiceCategory
-
-        maybeVoicing =
-            Maybe.map3
-                (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
-                    List.foldl
-                        applyStepFourPart
-                        (fourPartInit availablePitchClasses)
-                        [ AssignToVoice 1 leadVoice
-                        , AssignFirstBelow 1
-                            [ chordToneOrSubstitute secondVoiceCategory ]
-                        , AssignFirstBelow 2
-                            [ chordToneOrSubstitute thirdVoiceCategory ]
-                        , AssignFirstBelow 3
-                            [ chordToneOrSubstitute fourthVoiceCategory ]
-                        ]
-                )
-                maybeSecondVoiceCategory
-                maybeThirdVoiceCategory
-                maybeFourthVoiceCategory
-    in
-    case maybeVoicing of
-        Just voicing ->
-            voicing
-                |> completeFourPart
-
-        Nothing ->
-            Err <|
-                VoiceCategoriesWereUndefined
-                    [ maybeFirstVoiceCategory
-                    , maybeSecondVoiceCategory
-                    , maybeThirdVoiceCategory
-                    , maybeFourthVoiceCategory
-                    ]
+fourWayDrop2 : AvailablePitchClasses -> FourPartVoicing -> Result Error FourPartVoicing
+fourWayDrop2 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour } =
+    { voiceOne = Just voiceOne
+    , voiceTwo = Just voiceThree
+    , voiceThree = Just voiceFour
+    , voiceFour =
+        Pitch.transposeDown Interval.perfectOctave voiceTwo
+            |> Result.toMaybe
+    , used = []
+    , availablePitchClasses = availablePitchClasses
+    }
+        |> completeFourPart
 
 
-drop3 : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
-drop3 leadVoice availablePitchClasses =
-    let
-        maybeFirstVoiceCategory =
-            determineVoiceCategory
-                (Pitch.pitchClass leadVoice)
-                availablePitchClasses
-
-        maybeSecondVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeFirstVoiceCategory
-
-        maybeThirdVoiceCategory =
-            Maybe.map (nextVoiceCategory 2) maybeSecondVoiceCategory
-
-        maybeFourthVoiceCategory =
-            Maybe.map (nextVoiceCategory 3) maybeThirdVoiceCategory
-
-        maybeVoicing =
-            Maybe.map3
-                (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
-                    List.foldl
-                        applyStepFourPart
-                        (fourPartInit availablePitchClasses)
-                        [ AssignToVoice 1 leadVoice
-                        , AssignFirstBelow 1
-                            [ chordToneOrSubstitute secondVoiceCategory ]
-                        , AssignFirstBelow 2
-                            [ chordToneOrSubstitute thirdVoiceCategory ]
-                        , AssignFirstBelow 3
-                            [ chordToneOrSubstitute fourthVoiceCategory ]
-                        ]
-                )
-                maybeSecondVoiceCategory
-                maybeThirdVoiceCategory
-                maybeFourthVoiceCategory
-    in
-    case maybeVoicing of
-        Just voicing ->
-            voicing
-                |> completeFourPart
-
-        Nothing ->
-            Err <|
-                VoiceCategoriesWereUndefined
-                    [ maybeFirstVoiceCategory
-                    , maybeSecondVoiceCategory
-                    , maybeThirdVoiceCategory
-                    , maybeFourthVoiceCategory
-                    ]
+fourWayDrop3 : AvailablePitchClasses -> FourPartVoicing -> Result Error FourPartVoicing
+fourWayDrop3 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour } =
+    { voiceOne = Just voiceOne
+    , voiceTwo = Just voiceTwo
+    , voiceThree = Just voiceFour
+    , voiceFour =
+        Pitch.transposeDown Interval.perfectOctave voiceThree
+            |> Result.toMaybe
+    , used = []
+    , availablePitchClasses = availablePitchClasses
+    }
+        |> completeFourPart
 
 
-drop2and4 : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
-drop2and4 leadVoice availablePitchClasses =
-    let
-        maybeFirstVoiceCategory =
-            determineVoiceCategory
-                (Pitch.pitchClass leadVoice)
-                availablePitchClasses
-
-        maybeSecondVoiceCategory =
-            Maybe.map (nextVoiceCategory 2) maybeFirstVoiceCategory
-
-        maybeThirdVoiceCategory =
-            Maybe.map (nextVoiceCategory 3) maybeSecondVoiceCategory
-
-        maybeFourthVoiceCategory =
-            Maybe.map (nextVoiceCategory 2) maybeThirdVoiceCategory
-
-        maybeVoicing =
-            Maybe.map3
-                (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
-                    List.foldl
-                        applyStepFourPart
-                        (fourPartInit availablePitchClasses)
-                        [ AssignToVoice 1 leadVoice
-                        , AssignFirstBelow 1
-                            [ chordToneOrSubstitute secondVoiceCategory ]
-                        , AssignFirstBelow 2
-                            [ chordToneOrSubstitute thirdVoiceCategory ]
-                        , AssignFirstBelow 3
-                            [ chordToneOrSubstitute fourthVoiceCategory ]
-                        ]
-                )
-                maybeSecondVoiceCategory
-                maybeThirdVoiceCategory
-                maybeFourthVoiceCategory
-    in
-    case maybeVoicing of
-        Just voicing ->
-            voicing
-                |> completeFourPart
-
-        Nothing ->
-            Err <|
-                VoiceCategoriesWereUndefined
-                    [ maybeFirstVoiceCategory
-                    , maybeSecondVoiceCategory
-                    , maybeThirdVoiceCategory
-                    , maybeFourthVoiceCategory
-                    ]
+fourWayDrop2and4 : AvailablePitchClasses -> FourPartVoicing -> Result Error FourPartVoicing
+fourWayDrop2and4 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour } =
+    { voiceOne = Just voiceOne
+    , voiceTwo = Just voiceThree
+    , voiceThree =
+        Pitch.transposeDown Interval.perfectOctave voiceTwo
+            |> Result.toMaybe
+    , voiceFour =
+        Pitch.transposeDown Interval.perfectOctave voiceFour
+            |> Result.toMaybe
+    , used = []
+    , availablePitchClasses = availablePitchClasses
+    }
+        |> completeFourPart
 
 
 
