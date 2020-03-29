@@ -199,24 +199,20 @@ determineVoiceCategory pitchClass availablePitchClasses =
         Nothing
 
 
-nextVoiceCategory : Int -> VoiceCategory -> VoiceCategory
-nextVoiceCategory numberOfSteps voiceCategory =
-    let
-        pickNext cat =
-            case cat of
-                Root ->
-                    Seventh
+nextVoiceCategory : VoiceCategory -> VoiceCategory
+nextVoiceCategory voiceCategory =
+    case voiceCategory of
+        Root ->
+            Seventh
 
-                Seventh ->
-                    Fifth
+        Seventh ->
+            Fifth
 
-                Fifth ->
-                    Third
+        Fifth ->
+            Third
 
-                Third ->
-                    Root
-    in
-    List.foldl identity voiceCategory (List.repeat numberOfSteps pickNext)
+        Third ->
+            Root
 
 
 fourWayClose :
@@ -231,13 +227,13 @@ fourWayClose leadVoice availablePitchClasses =
                 availablePitchClasses
 
         maybeSecondVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeFirstVoiceCategory
+            Maybe.map nextVoiceCategory maybeFirstVoiceCategory
 
         maybeThirdVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeSecondVoiceCategory
+            Maybe.map nextVoiceCategory maybeSecondVoiceCategory
 
         maybeFourthVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeThirdVoiceCategory
+            Maybe.map nextVoiceCategory maybeThirdVoiceCategory
 
         maybeVoicing =
             Maybe.map3
@@ -285,13 +281,13 @@ fourWayCloseDoubleLead leadVoice availablePitchClasses =
                 availablePitchClasses
 
         maybeSecondVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeFirstVoiceCategory
+            Maybe.map nextVoiceCategory maybeFirstVoiceCategory
 
         maybeThirdVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeSecondVoiceCategory
+            Maybe.map nextVoiceCategory maybeSecondVoiceCategory
 
         maybeFourthVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeThirdVoiceCategory
+            Maybe.map nextVoiceCategory maybeThirdVoiceCategory
 
         maybeVoicing =
             Maybe.map3
@@ -453,13 +449,13 @@ substituteDoubleLead leadVoice availablePitchClasses =
                 availablePitchClasses
 
         maybeSecondVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeFirstVoiceCategory
+            Maybe.map nextVoiceCategory maybeFirstVoiceCategory
 
         maybeThirdVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeSecondVoiceCategory
+            Maybe.map nextVoiceCategory maybeSecondVoiceCategory
 
         maybeFourthVoiceCategory =
-            Maybe.map (nextVoiceCategory 1) maybeThirdVoiceCategory
+            Maybe.map nextVoiceCategory maybeThirdVoiceCategory
 
         maybeVoicing =
             Maybe.map4
