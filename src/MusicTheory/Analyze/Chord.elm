@@ -51,7 +51,7 @@ availablePitchClassesFor chord =
         chordToneWithSubstitutes voiceCategory chordTone chordQuality =
             { true = PitchClass.transposeUp chordTone chordRoot
             , substitutes =
-                availableTensions voiceCategory chordQuality
+                availableTensions chordClass voiceCategory chordQuality
                     |> List.filter ((==) chordTone >> not)
                     |> List.map
                         (\interval ->
@@ -111,11 +111,21 @@ chordToneForClass chordClass voiceCategory jazzChordQuality =
             List.filter (\item -> List.member item intervals) available
                 |> List.head
     in
-    takeFirst (availableTensions voiceCategory jazzChordQuality)
+    takeFirst (availableTensions chordClass voiceCategory jazzChordQuality)
 
 
-availableTensions : VoiceCategory -> JazzChordQuality -> List Interval.Interval
-availableTensions voiceCategory jazzChordQuality =
+availableTensions : ChordClass.ChordClass -> VoiceCategory -> JazzChordQuality -> List Interval.Interval
+availableTensions chordClass voiceCategory jazzChordQuality =
+    let
+        chordIntervals =
+            ChordClass.toIntervals chordClass
+
+        includesAll intervals =
+            List.map
+                (\interval -> List.member interval chordIntervals)
+                intervals
+                |> List.all identity
+    in
     case jazzChordQuality of
         Major6 ->
             case voiceCategory of
@@ -224,11 +234,22 @@ availableTensions voiceCategory jazzChordQuality =
         Dominant7 ->
             case voiceCategory of
                 Root ->
-                    [ Interval.perfectUnison
-                    , Interval.majorNinth
-                    , Interval.minorNinth
-                    , Interval.augmentedNinth
-                    ]
+                    Interval.perfectUnison
+                        :: (if includesAll [ Interval.majorNinth ] then
+                                [ Interval.majorNinth
+                                ]
+
+                            else if includesAll [ Interval.minorNinth ] then
+                                [ Interval.minorNinth
+                                ]
+
+                            else if includesAll [ Interval.augmentedNinth ] then
+                                [ Interval.augmentedNinth
+                                ]
+
+                            else
+                                [ Interval.majorNinth ]
+                           )
 
                 Third ->
                     [ Interval.majorThird
@@ -236,11 +257,30 @@ availableTensions voiceCategory jazzChordQuality =
                     ]
 
                 Fifth ->
-                    [ Interval.perfectFifth
-                    , Interval.augmentedEleventh
-                    , Interval.majorThirteenth
-                    , Interval.minorThirteenth
-                    ]
+                    if includesAll [ Interval.augmentedEleventh, Interval.minorThirteenth ] then
+                        [ Interval.augmentedEleventh
+                        , Interval.minorThirteenth
+                        ]
+
+                    else if includesAll [ Interval.augmentedEleventh, Interval.majorThirteenth ] then
+                        [ Interval.augmentedEleventh
+                        , Interval.majorThirteenth
+                        ]
+
+                    else if includesAll [ Interval.augmentedEleventh ] then
+                        [ Interval.augmentedEleventh
+                        , Interval.minorThirteenth
+                        ]
+
+                    else if includesAll [ Interval.minorThirteenth ] then
+                        [ Interval.minorThirteenth
+                        , Interval.augmentedEleventh
+                        ]
+
+                    else
+                        [ Interval.perfectFifth
+                        , Interval.majorThirteenth
+                        ]
 
                 Seventh ->
                     [ Interval.minorSeventh

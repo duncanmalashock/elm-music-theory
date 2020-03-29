@@ -159,21 +159,21 @@ all =
                     Expect.equal result expected
             ]
         , describe "fiveWaySpread"
-            [ test "five-way spread voicing of Cmaj6 should include correct chord tones" <|
+            [ test "five-way spread voicing of C7b9b13 should include correct chord tones" <|
                 \_ ->
                     let
                         expected =
                             Ok
-                                { voiceOne = Pitch.fSharp4
-                                , voiceTwo = Pitch.d4
-                                , voiceThree = Pitch.a3
+                                { voiceOne = Pitch.aFlat4
+                                , voiceTwo = Pitch.dFlat4
+                                , voiceThree = Pitch.bFlat3
                                 , voiceFour = Pitch.e3
                                 , voiceFive = Pitch.c3
                                 }
 
                         availablePitchClasses =
                             AnalyzeChord.availablePitchClassesFor
-                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                (Chord.chord PitchClass.c ChordClass.dominantSeventhFlatNineFlatThirteen)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =

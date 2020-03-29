@@ -346,7 +346,7 @@ fourWaySpread bass availablePitchClasses =
                     ]
                 , AssignFirstAbove 2
                     [ substituteToneOnly Root
-                    , substituteToneOnly Fifth
+                    , chordToneOrSubstitute Fifth
                     , substituteToneOnly Seventh
                     , substituteToneOnly Third
                     ]
@@ -377,13 +377,13 @@ fiveWaySpread bass availablePitchClasses =
                     ]
                 , AssignFirstAbove 3
                     [ substituteToneOnly Root
-                    , substituteToneOnly Fifth
+                    , chordToneOrSubstitute Fifth
                     , substituteToneOnly Seventh
                     , substituteToneOnly Third
                     ]
                 , AssignFirstAbove 2
-                    [ substituteToneOnly Root
-                    , substituteToneOnly Fifth
+                    [ chordToneOrSubstitute Fifth
+                    , substituteToneOnly Root
                     , substituteToneOnly Seventh
                     , substituteToneOnly Third
                     ]
