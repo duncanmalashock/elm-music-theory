@@ -3,6 +3,9 @@ module MusicTheory.Generate.Voicing exposing
     , FivePartVoicing
     , FourPartVoicing
     , ThreePartVoicing
+    , fiveWayDrop2
+    , fiveWayDrop2and4
+    , fiveWayDrop3
     , fiveWaySpread
     , fourWayClose
     , fourWayCloseDoubleLead
@@ -497,6 +500,53 @@ substituteDoubleLead leadVoice availablePitchClasses =
                     , maybeThirdVoiceCategory
                     , maybeFourthVoiceCategory
                     ]
+
+
+fiveWayDrop2 : AvailablePitchClasses -> FivePartVoicing -> Result Error FivePartVoicing
+fiveWayDrop2 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
+    { voiceOne = Just voiceOne
+    , voiceTwo = Just voiceThree
+    , voiceThree = Just voiceFour
+    , voiceFour =
+        Pitch.transposeDown Interval.perfectOctave voiceTwo
+            |> Result.toMaybe
+    , voiceFive = Just voiceFive
+    , used = []
+    , availablePitchClasses = availablePitchClasses
+    }
+        |> completeFivePart
+
+
+fiveWayDrop3 : AvailablePitchClasses -> FivePartVoicing -> Result Error FivePartVoicing
+fiveWayDrop3 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
+    { voiceOne = Just voiceOne
+    , voiceTwo = Just voiceTwo
+    , voiceThree = Just voiceFour
+    , voiceFour =
+        Pitch.transposeDown Interval.perfectOctave voiceThree
+            |> Result.toMaybe
+    , voiceFive = Just voiceFive
+    , used = []
+    , availablePitchClasses = availablePitchClasses
+    }
+        |> completeFivePart
+
+
+fiveWayDrop2and4 : AvailablePitchClasses -> FivePartVoicing -> Result Error FivePartVoicing
+fiveWayDrop2and4 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
+    { voiceOne = Just voiceOne
+    , voiceTwo = Just voiceThree
+    , voiceThree =
+        Pitch.transposeDown Interval.perfectOctave voiceTwo
+            |> Result.toMaybe
+    , voiceFour =
+        Pitch.transposeDown Interval.perfectOctave voiceFour
+            |> Result.toMaybe
+    , voiceFive = Just voiceFive
+    , used = []
+    , availablePitchClasses = availablePitchClasses
+    }
+        |> completeFivePart
 
 
 
