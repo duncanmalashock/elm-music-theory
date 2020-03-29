@@ -198,7 +198,7 @@ availableTensions chordClass voiceCategory jazzChordQuality =
                     ]
 
                 Third ->
-                    [ Interval.majorThird
+                    [ Interval.minorThird
                     ]
 
                 Fifth ->

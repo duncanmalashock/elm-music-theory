@@ -11,6 +11,7 @@ module MusicTheory.Generate.Voicing exposing
     , fourWayDrop3
     , fourWaySpread
     , nextVoiceCategory
+    , substituteDoubleLead
     )
 
 import MusicTheory.Analyze.Chord as AnalyzeChord
@@ -435,6 +436,67 @@ fourWayDrop2and4 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFo
     , availablePitchClasses = availablePitchClasses
     }
         |> completeFourPart
+
+
+substituteDoubleLead :
+    Pitch.Pitch
+    -> AvailablePitchClasses
+    -> Result Error FivePartVoicing
+substituteDoubleLead leadVoice availablePitchClasses =
+    let
+        maybeFirstVoiceCategory =
+            determineVoiceCategory
+                (Pitch.pitchClass leadVoice)
+                availablePitchClasses
+
+        maybeSecondVoiceCategory =
+            Maybe.map (nextVoiceCategory 1) maybeFirstVoiceCategory
+
+        maybeThirdVoiceCategory =
+            Maybe.map (nextVoiceCategory 1) maybeSecondVoiceCategory
+
+        maybeFourthVoiceCategory =
+            Maybe.map (nextVoiceCategory 1) maybeThirdVoiceCategory
+
+        maybeVoicing =
+            Maybe.map4
+                (\firstVoiceCategory secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
+                    List.foldl
+                        applyStepFivePart
+                        (fivePartInit availablePitchClasses)
+                        [ AssignToVoice 1 leadVoice
+                        , AssignFirstBelow 1
+                            [ chordToneOrSubstitute secondVoiceCategory ]
+                        , AssignFirstBelow 2
+                            [ chordToneOrSubstitute thirdVoiceCategory ]
+                        , AssignFirstBelow 3
+                            [ chordToneOrSubstitute fourthVoiceCategory ]
+                        , AssignFirstBelow 4
+                            [ chordToneOrSubstitute firstVoiceCategory
+                            , chordToneOrSubstitute secondVoiceCategory
+                            , chordToneOrSubstitute thirdVoiceCategory
+                            , chordToneOrSubstitute fourthVoiceCategory
+                            ]
+                        ]
+                )
+                maybeFirstVoiceCategory
+                maybeSecondVoiceCategory
+                maybeThirdVoiceCategory
+                maybeFourthVoiceCategory
+    in
+    case maybeVoicing of
+        Just voicing ->
+            voicing
+                |> completeFivePart
+
+        Nothing ->
+            Err <|
+                VoiceCategoriesWereUndefined
+                    [ maybeFirstVoiceCategory
+                    , maybeSecondVoiceCategory
+                    , maybeThirdVoiceCategory
+                    , maybeFourthVoiceCategory
+                    ]
 
 
 

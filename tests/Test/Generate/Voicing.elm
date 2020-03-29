@@ -196,4 +196,29 @@ all =
                     in
                     Expect.equal result expected
             ]
+        , describe "substituteDoubleLead"
+            [ test "substitute double lead voicing of Cm7 should include correct chord tones" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                { voiceOne = Pitch.d5
+                                , voiceTwo = Pitch.bFlat4
+                                , voiceThree = Pitch.g4
+                                , voiceFour = Pitch.eFlat4
+                                , voiceFive = Pitch.c4
+                                }
+
+                        availablePitchClasses =
+                            AnalyzeChord.availablePitchClassesFor
+                                (Chord.chord PitchClass.c ChordClass.minorSeventh)
+                                |> Result.mapError GenerateVoicing.AnalyzeChordError
+
+                        result =
+                            Result.andThen
+                                (GenerateVoicing.substituteDoubleLead Pitch.d5)
+                                availablePitchClasses
+                    in
+                    Expect.equal result expected
+            ]
         ]
