@@ -52,6 +52,7 @@ availablePitchClassesFor chord =
             { true = PitchClass.transposeUp chordTone chordRoot
             , substitutes =
                 availableTensions voiceCategory chordQuality
+                    |> List.filter ((==) chordTone >> not)
                     |> List.map
                         (\interval ->
                             PitchClass.transposeUp interval chordRoot

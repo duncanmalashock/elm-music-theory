@@ -6,8 +6,10 @@ module MusicTheory.Generate.Voicing exposing
     , drop2
     , drop2and4
     , drop3
+    , fiveWaySpread
     , fourWayClose
     , fourWayCloseDoubleLead
+    , fourWaySpread
     , nextVoiceCategory
     )
 
@@ -51,44 +53,12 @@ type alias FivePartVoicing =
     }
 
 
-type alias LowIntervalLimit =
-    { intervalInSemitones : Interval.Interval
-    , lowestAllowedPitch : Pitch
-    }
-
-
-lowIntervalLimitForInterval : Interval.Interval -> Pitch -> LowIntervalLimit
-lowIntervalLimitForInterval theInterval thePitch =
-    LowIntervalLimit theInterval thePitch
-
-
-lowIntervalLimits : List LowIntervalLimit
-lowIntervalLimits =
-    [ lowIntervalLimitForInterval Interval.minorSecond Pitch.e3
-    , lowIntervalLimitForInterval Interval.majorSecond Pitch.eFlat3
-    , lowIntervalLimitForInterval Interval.minorThird Pitch.c3
-    , lowIntervalLimitForInterval Interval.majorThird Pitch.bFlat2
-    , lowIntervalLimitForInterval Interval.perfectFourth Pitch.bFlat2
-    , lowIntervalLimitForInterval Interval.augmentedFourth Pitch.bFlat2
-    , lowIntervalLimitForInterval Interval.perfectFifth Pitch.bFlat1
-    , lowIntervalLimitForInterval Interval.minorSixth Pitch.g2
-    , lowIntervalLimitForInterval Interval.majorSixth Pitch.f2
-    , lowIntervalLimitForInterval Interval.minorSeventh Pitch.f2
-    , lowIntervalLimitForInterval Interval.majorSeventh Pitch.f2
-    , lowIntervalLimitForInterval Interval.minorNinth Pitch.e2
-    , lowIntervalLimitForInterval Interval.majorNinth Pitch.eFlat2
-    , lowIntervalLimitForInterval Interval.minorTenth Pitch.c2
-    , lowIntervalLimitForInterval Interval.majorTenth Pitch.bFlat1
-    ]
-
-
 type Step
     = AssignToVoice Int Pitch.Pitch
-    | AssignFirstBelow Int VoiceSelection
-    | AssignFirstAbove Int VoiceSelection
+    | AssignFirstBelow Int (List VoiceSelection)
+    | AssignFirstAbove Int (List VoiceSelection)
     | CopyVoice Int Int
     | DropVoiceByOctave Int
-    | RaiseVoiceByOctave Int
 
 
 type VoiceSelection
@@ -116,75 +86,81 @@ chordToneOrSubstitute voiceCategory =
     VoiceSelection voiceCategory ChordToneOrSubstitute
 
 
-usePitchClassFromVoiceSelection : VoiceSelection -> AvailablePitchClasses -> List PitchClass.PitchClass -> Maybe PitchClass.PitchClass
-usePitchClassFromVoiceSelection (VoiceSelection voiceCategory voiceSpecificity) availables used =
-    -- TODO Choosing tones is not parameterized, we just take the head of the list
+intervalsFromVoiceSelections : List VoiceSelection -> AvailablePitchClasses -> List PitchClass.PitchClass
+intervalsFromVoiceSelections voiceSelections availables =
+    let
+        intervalsFromVoiceSelection : VoiceSelection -> List PitchClass.PitchClass
+        intervalsFromVoiceSelection (VoiceSelection voiceCategory voiceSpecificity) =
+            case voiceSpecificity of
+                ChordTone ->
+                    case voiceCategory of
+                        Root ->
+                            [ availables.root.true ]
+
+                        Seventh ->
+                            [ availables.seventh.true ]
+
+                        Fifth ->
+                            [ availables.fifth.true ]
+
+                        Third ->
+                            [ availables.third.true ]
+
+                SubstituteTone ->
+                    case voiceCategory of
+                        Root ->
+                            availables.root.substitutes
+
+                        Seventh ->
+                            availables.seventh.substitutes
+
+                        Fifth ->
+                            availables.fifth.substitutes
+
+                        Third ->
+                            availables.third.substitutes
+
+                ChordToneOrSubstitute ->
+                    case voiceCategory of
+                        Root ->
+                            availables.root.true
+                                :: availables.root.substitutes
+
+                        Seventh ->
+                            availables.seventh.true
+                                :: availables.seventh.substitutes
+
+                        Fifth ->
+                            availables.fifth.true
+                                :: availables.fifth.substitutes
+
+                        Third ->
+                            availables.third.true
+                                :: availables.third.substitutes
+    in
+    List.concatMap intervalsFromVoiceSelection voiceSelections
+
+
+usePitchClassFromVoiceSelections :
+    List VoiceSelection
+    -> AvailablePitchClasses
+    -> List PitchClass.PitchClass
+    -> Maybe PitchClass.PitchClass
+usePitchClassFromVoiceSelections voiceSelections availables used =
     let
         chooseFirstUnused list =
             List.filter (\item -> List.member item used |> not) list
                 |> List.head
     in
-    case voiceSpecificity of
-        ChordTone ->
-            case voiceCategory of
-                Root ->
-                    [ availables.root.true ]
-                        |> chooseFirstUnused
-
-                Seventh ->
-                    [ availables.seventh.true ]
-                        |> chooseFirstUnused
-
-                Fifth ->
-                    [ availables.fifth.true ]
-                        |> chooseFirstUnused
-
-                Third ->
-                    [ availables.third.true ]
-                        |> chooseFirstUnused
-
-        SubstituteTone ->
-            case voiceCategory of
-                Root ->
-                    availables.root.substitutes
-                        |> chooseFirstUnused
-
-                Seventh ->
-                    availables.seventh.substitutes
-                        |> chooseFirstUnused
-
-                Fifth ->
-                    availables.fifth.substitutes
-                        |> chooseFirstUnused
-
-                Third ->
-                    availables.third.substitutes
-                        |> chooseFirstUnused
-
-        ChordToneOrSubstitute ->
-            case voiceCategory of
-                Root ->
-                    availables.root.true
-                        :: availables.root.substitutes
-                        |> chooseFirstUnused
-
-                Seventh ->
-                    availables.seventh.true
-                        :: availables.seventh.substitutes
-                        |> chooseFirstUnused
-
-                Fifth ->
-                    availables.fifth.true
-                        :: availables.fifth.substitutes
-                        |> chooseFirstUnused
-
-                Third ->
-                    availables.third.true
-                        :: availables.third.substitutes
-                        |> chooseFirstUnused
+    -- TODO Choosing tones is not parameterized, we just take the head of the list
+    intervalsFromVoiceSelections voiceSelections availables
+        |> chooseFirstUnused
 
 
-determineVoiceCategory : PitchClass.PitchClass -> AvailablePitchClasses -> Maybe VoiceCategory
+determineVoiceCategory :
+    PitchClass.PitchClass
+    -> AvailablePitchClasses
+    -> Maybe VoiceCategory
 determineVoiceCategory pitchClass availablePitchClasses =
     let
         rootPitchClasses =
@@ -239,7 +215,10 @@ nextVoiceCategory numberOfSteps voiceCategory =
     List.foldl identity voiceCategory (List.repeat numberOfSteps pickNext)
 
 
-fourWayClose : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
+fourWayClose :
+    Pitch.Pitch
+    -> AvailablePitchClasses
+    -> Result Error FourPartVoicing
 fourWayClose leadVoice availablePitchClasses =
     let
         maybeFirstVoiceCategory =
@@ -263,9 +242,12 @@ fourWayClose leadVoice availablePitchClasses =
                         applyStepFourPart
                         (fourPartInit availablePitchClasses)
                         [ AssignToVoice 1 leadVoice
-                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
-                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
-                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        , AssignFirstBelow 1
+                            [ chordToneOrSubstitute secondVoiceCategory ]
+                        , AssignFirstBelow 2
+                            [ chordToneOrSubstitute thirdVoiceCategory ]
+                        , AssignFirstBelow 3
+                            [ chordToneOrSubstitute fourthVoiceCategory ]
                         ]
                 )
                 maybeSecondVoiceCategory
@@ -287,7 +269,10 @@ fourWayClose leadVoice availablePitchClasses =
                     ]
 
 
-fourWayCloseDoubleLead : Pitch.Pitch -> AvailablePitchClasses -> Result Error FivePartVoicing
+fourWayCloseDoubleLead :
+    Pitch.Pitch
+    -> AvailablePitchClasses
+    -> Result Error FivePartVoicing
 fourWayCloseDoubleLead leadVoice availablePitchClasses =
     let
         maybeFirstVoiceCategory =
@@ -311,9 +296,12 @@ fourWayCloseDoubleLead leadVoice availablePitchClasses =
                         applyStepFivePart
                         (fivePartInit availablePitchClasses)
                         [ AssignToVoice 1 leadVoice
-                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
-                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
-                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        , AssignFirstBelow 1
+                            [ chordToneOrSubstitute secondVoiceCategory ]
+                        , AssignFirstBelow 2
+                            [ chordToneOrSubstitute thirdVoiceCategory ]
+                        , AssignFirstBelow 3
+                            [ chordToneOrSubstitute fourthVoiceCategory ]
                         , CopyVoice 1 5
                         , DropVoiceByOctave 5
                         ]
@@ -335,6 +323,74 @@ fourWayCloseDoubleLead leadVoice availablePitchClasses =
                     , maybeThirdVoiceCategory
                     , maybeFourthVoiceCategory
                     ]
+
+
+fourWaySpread :
+    Pitch.Pitch
+    -> AvailablePitchClasses
+    -> Result Error FourPartVoicing
+fourWaySpread bass availablePitchClasses =
+    let
+        voicing =
+            List.foldl
+                applyStepFourPart
+                (fourPartInit availablePitchClasses)
+                [ AssignToVoice 4 bass
+                , AssignFirstAbove 4
+                    [ chordToneOnly Third
+                    , chordToneOnly Seventh
+                    ]
+                , AssignFirstAbove 3
+                    [ chordToneOnly Third
+                    , chordToneOnly Seventh
+                    ]
+                , AssignFirstAbove 2
+                    [ substituteToneOnly Root
+                    , substituteToneOnly Fifth
+                    , substituteToneOnly Seventh
+                    , substituteToneOnly Third
+                    ]
+                ]
+    in
+    voicing
+        |> completeFourPart
+
+
+fiveWaySpread :
+    Pitch.Pitch
+    -> AvailablePitchClasses
+    -> Result Error FivePartVoicing
+fiveWaySpread bass availablePitchClasses =
+    let
+        voicing =
+            List.foldl
+                applyStepFivePart
+                (fivePartInit availablePitchClasses)
+                [ AssignToVoice 5 bass
+                , AssignFirstAbove 5
+                    [ chordToneOnly Third
+                    , chordToneOnly Seventh
+                    ]
+                , AssignFirstAbove 4
+                    [ chordToneOnly Third
+                    , chordToneOnly Seventh
+                    ]
+                , AssignFirstAbove 3
+                    [ substituteToneOnly Root
+                    , substituteToneOnly Fifth
+                    , substituteToneOnly Seventh
+                    , substituteToneOnly Third
+                    ]
+                , AssignFirstAbove 2
+                    [ substituteToneOnly Root
+                    , substituteToneOnly Fifth
+                    , substituteToneOnly Seventh
+                    , substituteToneOnly Third
+                    ]
+                ]
+    in
+    voicing
+        |> completeFivePart
 
 
 drop2 : Pitch.Pitch -> AvailablePitchClasses -> Result Error FourPartVoicing
@@ -361,9 +417,12 @@ drop2 leadVoice availablePitchClasses =
                         applyStepFourPart
                         (fourPartInit availablePitchClasses)
                         [ AssignToVoice 1 leadVoice
-                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
-                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
-                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        , AssignFirstBelow 1
+                            [ chordToneOrSubstitute secondVoiceCategory ]
+                        , AssignFirstBelow 2
+                            [ chordToneOrSubstitute thirdVoiceCategory ]
+                        , AssignFirstBelow 3
+                            [ chordToneOrSubstitute fourthVoiceCategory ]
                         ]
                 )
                 maybeSecondVoiceCategory
@@ -409,9 +468,12 @@ drop3 leadVoice availablePitchClasses =
                         applyStepFourPart
                         (fourPartInit availablePitchClasses)
                         [ AssignToVoice 1 leadVoice
-                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
-                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
-                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        , AssignFirstBelow 1
+                            [ chordToneOrSubstitute secondVoiceCategory ]
+                        , AssignFirstBelow 2
+                            [ chordToneOrSubstitute thirdVoiceCategory ]
+                        , AssignFirstBelow 3
+                            [ chordToneOrSubstitute fourthVoiceCategory ]
                         ]
                 )
                 maybeSecondVoiceCategory
@@ -457,9 +519,12 @@ drop2and4 leadVoice availablePitchClasses =
                         applyStepFourPart
                         (fourPartInit availablePitchClasses)
                         [ AssignToVoice 1 leadVoice
-                        , AssignFirstBelow 1 (chordToneOrSubstitute secondVoiceCategory)
-                        , AssignFirstBelow 2 (chordToneOrSubstitute thirdVoiceCategory)
-                        , AssignFirstBelow 3 (chordToneOrSubstitute fourthVoiceCategory)
+                        , AssignFirstBelow 1
+                            [ chordToneOrSubstitute secondVoiceCategory ]
+                        , AssignFirstBelow 2
+                            [ chordToneOrSubstitute thirdVoiceCategory ]
+                        , AssignFirstBelow 3
+                            [ chordToneOrSubstitute fourthVoiceCategory ]
                         ]
                 )
                 maybeSecondVoiceCategory
@@ -514,7 +579,11 @@ getAtFourPartVoicing index voicingInProgress =
             Nothing
 
 
-setAtFourPartVoicing : Int -> FourPartVoicingInProgress -> Maybe Pitch.Pitch -> FourPartVoicingInProgress
+setAtFourPartVoicing :
+    Int
+    -> FourPartVoicingInProgress
+    -> Maybe Pitch.Pitch
+    -> FourPartVoicingInProgress
 setAtFourPartVoicing index voicingInProgress pitchToSet =
     let
         updateUsed currentUsed usedPitch =
@@ -586,24 +655,24 @@ applyStepFourPart step voicingInProgress =
         AssignToVoice voice pitch ->
             setAtFourPartVoicing voice voicingInProgress (Just pitch)
 
-        AssignFirstBelow voice voiceSelection ->
+        AssignFirstBelow voice voiceSelections ->
             getAtFourPartVoicing voice voicingInProgress
                 |> Maybe.map2
                     Pitch.firstBelow
-                    (usePitchClassFromVoiceSelection
-                        voiceSelection
+                    (usePitchClassFromVoiceSelections
+                        voiceSelections
                         voicingInProgress.availablePitchClasses
                         voicingInProgress.used
                     )
                 |> Maybe.andThen Result.toMaybe
                 |> setAtFourPartVoicing (voice + 1) voicingInProgress
 
-        AssignFirstAbove voice voiceSelection ->
+        AssignFirstAbove voice voiceSelections ->
             getAtFourPartVoicing voice voicingInProgress
                 |> Maybe.map2
                     Pitch.firstAbove
-                    (usePitchClassFromVoiceSelection
-                        voiceSelection
+                    (usePitchClassFromVoiceSelections
+                        voiceSelections
                         voicingInProgress.availablePitchClasses
                         voicingInProgress.used
                     )
@@ -620,12 +689,6 @@ applyStepFourPart step voicingInProgress =
         DropVoiceByOctave voice ->
             getAtFourPartVoicing voice voicingInProgress
                 |> Maybe.map (Pitch.transposeDown Interval.perfectOctave)
-                |> Maybe.andThen Result.toMaybe
-                |> setAtFourPartVoicing voice voicingInProgress
-
-        RaiseVoiceByOctave voice ->
-            getAtFourPartVoicing voice voicingInProgress
-                |> Maybe.map (Pitch.transposeUp Interval.perfectOctave)
                 |> Maybe.andThen Result.toMaybe
                 |> setAtFourPartVoicing voice voicingInProgress
 
@@ -667,7 +730,11 @@ getAtFivePartVoicing index voicingInProgress =
             Nothing
 
 
-setAtFivePartVoicing : Int -> FivePartVoicingInProgress -> Maybe Pitch.Pitch -> FivePartVoicingInProgress
+setAtFivePartVoicing :
+    Int
+    -> FivePartVoicingInProgress
+    -> Maybe Pitch.Pitch
+    -> FivePartVoicingInProgress
 setAtFivePartVoicing index voicingInProgress pitchToSet =
     let
         updateUsed currentUsed usedPitch =
@@ -747,24 +814,24 @@ applyStepFivePart step voicingInProgress =
         AssignToVoice voice pitch ->
             setAtFivePartVoicing voice voicingInProgress (Just pitch)
 
-        AssignFirstBelow voice voiceSelection ->
+        AssignFirstBelow voice voiceSelections ->
             getAtFivePartVoicing voice voicingInProgress
                 |> Maybe.map2
                     Pitch.firstBelow
-                    (usePitchClassFromVoiceSelection
-                        voiceSelection
+                    (usePitchClassFromVoiceSelections
+                        voiceSelections
                         voicingInProgress.availablePitchClasses
                         voicingInProgress.used
                     )
                 |> Maybe.andThen Result.toMaybe
                 |> setAtFivePartVoicing (voice + 1) voicingInProgress
 
-        AssignFirstAbove voice voiceSelection ->
+        AssignFirstAbove voice voiceSelections ->
             getAtFivePartVoicing voice voicingInProgress
                 |> Maybe.map2
                     Pitch.firstAbove
-                    (usePitchClassFromVoiceSelection
-                        voiceSelection
+                    (usePitchClassFromVoiceSelections
+                        voiceSelections
                         voicingInProgress.availablePitchClasses
                         voicingInProgress.used
                     )
@@ -784,8 +851,37 @@ applyStepFivePart step voicingInProgress =
                 |> Maybe.andThen Result.toMaybe
                 |> setAtFivePartVoicing voice voicingInProgress
 
-        RaiseVoiceByOctave voice ->
-            getAtFivePartVoicing voice voicingInProgress
-                |> Maybe.map (Pitch.transposeUp Interval.perfectOctave)
-                |> Maybe.andThen Result.toMaybe
-                |> setAtFivePartVoicing voice voicingInProgress
+
+
+-- Low interval limit utils
+
+
+type alias LowIntervalLimit =
+    { intervalInSemitones : Interval.Interval
+    , lowestAllowedPitch : Pitch
+    }
+
+
+lowIntervalLimitForInterval : Interval.Interval -> Pitch -> LowIntervalLimit
+lowIntervalLimitForInterval theInterval thePitch =
+    LowIntervalLimit theInterval thePitch
+
+
+lowIntervalLimits : List LowIntervalLimit
+lowIntervalLimits =
+    [ lowIntervalLimitForInterval Interval.minorSecond Pitch.e3
+    , lowIntervalLimitForInterval Interval.majorSecond Pitch.eFlat3
+    , lowIntervalLimitForInterval Interval.minorThird Pitch.c3
+    , lowIntervalLimitForInterval Interval.majorThird Pitch.bFlat2
+    , lowIntervalLimitForInterval Interval.perfectFourth Pitch.bFlat2
+    , lowIntervalLimitForInterval Interval.augmentedFourth Pitch.bFlat2
+    , lowIntervalLimitForInterval Interval.perfectFifth Pitch.bFlat1
+    , lowIntervalLimitForInterval Interval.minorSixth Pitch.g2
+    , lowIntervalLimitForInterval Interval.majorSixth Pitch.f2
+    , lowIntervalLimitForInterval Interval.minorSeventh Pitch.f2
+    , lowIntervalLimitForInterval Interval.majorSeventh Pitch.f2
+    , lowIntervalLimitForInterval Interval.minorNinth Pitch.e2
+    , lowIntervalLimitForInterval Interval.majorNinth Pitch.eFlat2
+    , lowIntervalLimitForInterval Interval.minorTenth Pitch.c2
+    , lowIntervalLimitForInterval Interval.majorTenth Pitch.bFlat1
+    ]

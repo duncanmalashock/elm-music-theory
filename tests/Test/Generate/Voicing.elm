@@ -134,4 +134,53 @@ all =
                     in
                     Expect.equal result expected
             ]
+        , describe "fourWaySpread"
+            [ test "four-way spread voicing of Cmaj6 should include correct chord tones" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                { voiceOne = Pitch.d4
+                                , voiceTwo = Pitch.a3
+                                , voiceThree = Pitch.e3
+                                , voiceFour = Pitch.c3
+                                }
+
+                        availablePitchClasses =
+                            AnalyzeChord.availablePitchClassesFor
+                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                |> Result.mapError GenerateVoicing.AnalyzeChordError
+
+                        result =
+                            Result.andThen
+                                (GenerateVoicing.fourWaySpread Pitch.c3)
+                                availablePitchClasses
+                    in
+                    Expect.equal result expected
+            ]
+        , describe "fiveWaySpread"
+            [ test "five-way spread voicing of Cmaj6 should include correct chord tones" <|
+                \_ ->
+                    let
+                        expected =
+                            Ok
+                                { voiceOne = Pitch.fSharp4
+                                , voiceTwo = Pitch.d4
+                                , voiceThree = Pitch.a3
+                                , voiceFour = Pitch.e3
+                                , voiceFive = Pitch.c3
+                                }
+
+                        availablePitchClasses =
+                            AnalyzeChord.availablePitchClassesFor
+                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                |> Result.mapError GenerateVoicing.AnalyzeChordError
+
+                        result =
+                            Result.andThen
+                                (GenerateVoicing.fiveWaySpread Pitch.c3)
+                                availablePitchClasses
+                    in
+                    Expect.equal result expected
+            ]
         ]
