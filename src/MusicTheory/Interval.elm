@@ -1,5 +1,6 @@
 module MusicTheory.Interval exposing
-    ( Interval
+    ( Direction(..)
+    , Interval
     , IntervalNumber(..)
     , IntervalQuality(..)
     , addOctave
@@ -23,6 +24,7 @@ module MusicTheory.Interval exposing
     , diminishedSeventh
     , diminishedSixth
     , diminishedThird
+    , direction
     , directionToInteger
     , down
     , indexToIntervalNumber
@@ -228,13 +230,18 @@ allSimple =
 -- TRANSFORM
 
 
+direction : Interval -> Direction
+direction (Interval dir intervalQuality intervalNumber) =
+    dir
+
+
 semitones : Interval -> Int
-semitones (Interval direction intervalQuality intervalNumber) =
+semitones (Interval dir intervalQuality intervalNumber) =
     (intervalNumberSemitones
         intervalNumber
         + intervalQualitySemitones intervalQuality
     )
-        * directionToInteger direction
+        * directionToInteger dir
 
 
 directionToInteger : Direction -> Int
@@ -248,13 +255,13 @@ directionToInteger dir =
 
 
 addOctave : Interval -> Interval
-addOctave (Interval direction intervalQuality intervalNumber) =
-    Interval direction intervalQuality (Octave intervalNumber)
+addOctave (Interval dir intervalQuality intervalNumber) =
+    Interval dir intervalQuality (Octave intervalNumber)
 
 
 reverseDirection : Interval -> Interval
-reverseDirection (Interval direction intervalQuality intervalNumber) =
-    case direction of
+reverseDirection (Interval dir intervalQuality intervalNumber) =
+    case dir of
         Up ->
             Interval Down intervalQuality intervalNumber
 
@@ -263,8 +270,8 @@ reverseDirection (Interval direction intervalQuality intervalNumber) =
 
 
 complement : Interval -> Interval
-complement (Interval direction intervalQuality intervalNumber) =
-    Interval direction
+complement (Interval dir intervalQuality intervalNumber) =
+    Interval dir
         (complementaryIntervalQuality intervalQuality)
         (complementaryIntervalNumber intervalNumber)
 
