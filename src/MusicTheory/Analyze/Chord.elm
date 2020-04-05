@@ -47,7 +47,14 @@ availablePitchClassesFor chord =
         maybeSeventh =
             Maybe.andThen (chordToneForClass chordClass Seventh) maybeQuality
 
-        chordToneWithSubstitutes : VoiceCategory -> Interval.Interval -> JazzChordQuality -> { true : PitchClass.PitchClass, substitutes : List PitchClass.PitchClass }
+        chordToneWithSubstitutes :
+            VoiceCategory
+            -> Interval.Interval
+            -> JazzChordQuality
+            ->
+                { true : PitchClass.PitchClass
+                , substitutes : List PitchClass.PitchClass
+                }
         chordToneWithSubstitutes voiceCategory chordTone chordQuality =
             { true = PitchClass.transposeUp chordTone chordRoot
             , substitutes =
@@ -101,7 +108,11 @@ type VoiceCategory
     | Seventh
 
 
-chordToneForClass : ChordClass.ChordClass -> VoiceCategory -> JazzChordQuality -> Maybe Interval.Interval
+chordToneForClass :
+    ChordClass.ChordClass
+    -> VoiceCategory
+    -> JazzChordQuality
+    -> Maybe Interval.Interval
 chordToneForClass chordClass voiceCategory jazzChordQuality =
     let
         intervals =
@@ -114,7 +125,11 @@ chordToneForClass chordClass voiceCategory jazzChordQuality =
     takeFirst (availableTensions chordClass voiceCategory jazzChordQuality)
 
 
-availableTensions : ChordClass.ChordClass -> VoiceCategory -> JazzChordQuality -> List Interval.Interval
+availableTensions :
+    ChordClass.ChordClass
+    -> VoiceCategory
+    -> JazzChordQuality
+    -> List Interval.Interval
 availableTensions chordClass voiceCategory jazzChordQuality =
     let
         chordIntervals =
