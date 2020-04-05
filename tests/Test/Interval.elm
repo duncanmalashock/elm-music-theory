@@ -35,4 +35,10 @@ all =
                     |> Interval.addOctave
                     |> Interval.semitones
                     |> Expect.equal 16
+        , test "Major third down should contain -4 semitones" <|
+            \_ ->
+                Interval.majorThird
+                    |> Interval.reverseDirection
+                    |> Interval.semitones
+                    |> Expect.equal -4
         ]

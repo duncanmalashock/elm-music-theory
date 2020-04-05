@@ -322,6 +322,7 @@ module MusicTheory.Pitch exposing
     , gSharp6
     , gSharp7
     , gSharp8
+    , intervalBetween
     , natural
     , octave
     , pitch
@@ -336,7 +337,7 @@ module MusicTheory.Pitch exposing
     )
 
 import MusicTheory.Interval as Interval exposing (Interval)
-import MusicTheory.Letter exposing (Letter(..))
+import MusicTheory.Letter as Letter exposing (Letter(..))
 import MusicTheory.Octave as Octave exposing (Octave, OctaveError(..))
 import MusicTheory.PitchClass as PitchClass exposing (Offset, PitchClass)
 
@@ -364,6 +365,74 @@ type PitchError
 pitch : Letter -> Offset -> Octave -> Result PitchError Pitch
 pitch l os o =
     fromPitchClass o (PitchClass.pitchClass l os)
+
+
+letter : Pitch -> Letter
+letter (Pitch l o) =
+    PitchClass.letter l
+
+
+
+--
+
+
+intervalBetween : Pitch -> Pitch -> Interval
+intervalBetween pitchA pitchB =
+    let
+        shouldReverse =
+            semitones pitchB < semitones pitchA
+
+        semitoneDistance =
+            if shouldReverse then
+                semitones pitchA - semitones pitchB
+
+            else
+                semitones pitchB - semitones pitchA
+
+        letterAIndex =
+            Letter.index (letter pitchA)
+                + (Octave.number (octave pitchA) * 7)
+
+        letterBIndex =
+            Letter.index (letter pitchB)
+                + (Octave.number (octave pitchB) * 7)
+
+        letterIndexDistance =
+            if shouldReverse then
+                letterAIndex - letterBIndex
+
+            else
+                letterBIndex - letterAIndex
+
+        letterDistance =
+            Interval.indexToIntervalNumber letterIndexDistance
+
+        quality =
+            Interval.numberToQuality letterDistance
+
+        direction =
+            if shouldReverse then
+                Interval.down
+
+            else
+                Interval.up
+
+        initialInterval =
+            Interval.interval direction quality letterDistance
+
+        initialIntervalSemitones =
+            Interval.semitones initialInterval
+                * Interval.directionToInteger direction
+
+        semitoneError =
+            semitoneDistance - initialIntervalSemitones
+    in
+    initialInterval
+        |> Interval.addOffset semitoneError
+
+
+
+--
 
 
 tripleFlat : Offset

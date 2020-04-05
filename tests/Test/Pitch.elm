@@ -91,4 +91,98 @@ all =
                         |> Expect.equal
                             (Err ValidPitchNotFound)
             ]
+        , describe "intervalBetween"
+            [ test "interval between C4 and E4 should be a major third" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.majorThird
+
+                        result =
+                            Pitch.intervalBetween Pitch.c4 Pitch.e4
+                    in
+                    Expect.equal expected result
+            , test "interval between C4 and F4 should be a perfect fourth" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.perfectFourth
+
+                        result =
+                            Pitch.intervalBetween Pitch.c4 Pitch.f4
+                    in
+                    Expect.equal expected result
+            , test "interval between G4 and C5 should be a perfect fourth" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.perfectFourth
+
+                        result =
+                            Pitch.intervalBetween Pitch.g4 Pitch.c5
+                    in
+                    Expect.equal expected result
+            , test "interval between C4 and Db4 should be a minor second" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.minorSecond
+
+                        result =
+                            Pitch.intervalBetween Pitch.c4 Pitch.dFlat4
+                    in
+                    Expect.equal expected result
+            , test "interval between G4 and G5 should be a perfect octave" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.perfectOctave
+
+                        result =
+                            Pitch.intervalBetween Pitch.g4 Pitch.g5
+                    in
+                    Expect.equal expected result
+            , test "interval between G4 and B5 should be a major tenth" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.majorTenth
+
+                        result =
+                            Pitch.intervalBetween Pitch.g4 Pitch.b5
+                    in
+                    Expect.equal expected result
+            , test "interval between G4 and G#5 should be an augmented octave" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.augmentedOctave
+
+                        result =
+                            Pitch.intervalBetween Pitch.g4 Pitch.gSharp5
+                    in
+                    Expect.equal expected result
+            , test "interval between C4 and Bb3 should be a major second (down)" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.majorSecond
+                                |> Interval.reverseDirection
+
+                        result =
+                            Pitch.intervalBetween Pitch.c4 Pitch.bFlat3
+                    in
+                    Expect.equal expected result
+            , test "interval between G4 and E3 should be a minor tenth (down)" <|
+                \_ ->
+                    let
+                        expected =
+                            Interval.minorTenth
+                                |> Interval.reverseDirection
+
+                        result =
+                            Pitch.intervalBetween Pitch.g4 Pitch.e3
+                    in
+                    Expect.equal expected result
+            ]
         ]

@@ -3,11 +3,13 @@ module MusicTheory.Interval exposing
     , IntervalNumber(..)
     , IntervalQuality(..)
     , addOctave
+    , addOffset
     , allSimple
     , augmentedEleventh
     , augmentedFifth
     , augmentedFourth
     , augmentedNinth
+    , augmentedOctave
     , augmentedSecond
     , augmentedSeventh
     , augmentedSixth
@@ -21,6 +23,10 @@ module MusicTheory.Interval exposing
     , diminishedSeventh
     , diminishedSixth
     , diminishedThird
+    , directionToInteger
+    , down
+    , indexToIntervalNumber
+    , interval
     , intervalNumberIndex
     , majorNinth
     , majorSecond
@@ -37,13 +43,16 @@ module MusicTheory.Interval exposing
     , minorThird
     , minorThirteenth
     , number
+    , numberToQuality
     , perfectEleventh
     , perfectFifth
     , perfectFourth
     , perfectOctave
     , perfectUnison
     , quality
+    , reverseDirection
     , semitones
+    , up
     )
 
 -- DEFINITION
@@ -70,7 +79,37 @@ type Offset
 
 
 type Interval
-    = Interval IntervalQuality IntervalNumber
+    = Interval Direction IntervalQuality IntervalNumber
+
+
+type Direction
+    = Up
+    | Down
+
+
+interval : Direction -> IntervalQuality -> IntervalNumber -> Interval
+interval dir qual num =
+    Interval dir qual num
+
+
+addOffset : Int -> Interval -> Interval
+addOffset int (Interval dir qual num) =
+    case qual of
+        Perfect (Offset offsetInt) ->
+            Interval dir (Perfect (Offset (offsetInt + int))) num
+
+        Imperfect (Offset offsetInt) ->
+            Interval dir (Imperfect (Offset (offsetInt + int))) num
+
+
+up : Direction
+up =
+    Up
+
+
+down : Direction
+down =
+    Down
 
 
 major : IntervalQuality
@@ -113,13 +152,45 @@ imperfectDiminished =
 
 
 quality : Interval -> IntervalQuality
-quality (Interval q _) =
+quality (Interval _ q _) =
     q
 
 
 number : Interval -> IntervalNumber
-number (Interval _ n) =
+number (Interval _ _ n) =
     n
+
+
+numberToQuality : IntervalNumber -> IntervalQuality
+numberToQuality num =
+    let
+        imperfect =
+            major
+    in
+    case num of
+        Unison ->
+            perfect
+
+        Second ->
+            imperfect
+
+        Third ->
+            imperfect
+
+        Fourth ->
+            perfect
+
+        Fifth ->
+            perfect
+
+        Sixth ->
+            imperfect
+
+        Seventh ->
+            imperfect
+
+        Octave remainingNum ->
+            numberToQuality remainingNum
 
 
 allSimple : List Interval
@@ -158,20 +229,42 @@ allSimple =
 
 
 semitones : Interval -> Int
-semitones (Interval intervalQuality intervalNumber) =
-    intervalNumberSemitones
+semitones (Interval direction intervalQuality intervalNumber) =
+    (intervalNumberSemitones
         intervalNumber
         + intervalQualitySemitones intervalQuality
+    )
+        * directionToInteger direction
+
+
+directionToInteger : Direction -> Int
+directionToInteger dir =
+    case dir of
+        Up ->
+            1
+
+        Down ->
+            -1
 
 
 addOctave : Interval -> Interval
-addOctave (Interval intervalQuality intervalNumber) =
-    Interval intervalQuality (Octave intervalNumber)
+addOctave (Interval direction intervalQuality intervalNumber) =
+    Interval direction intervalQuality (Octave intervalNumber)
+
+
+reverseDirection : Interval -> Interval
+reverseDirection (Interval direction intervalQuality intervalNumber) =
+    case direction of
+        Up ->
+            Interval Down intervalQuality intervalNumber
+
+        Down ->
+            Interval Up intervalQuality intervalNumber
 
 
 complement : Interval -> Interval
-complement (Interval intervalQuality intervalNumber) =
-    Interval
+complement (Interval direction intervalQuality intervalNumber) =
+    Interval direction
         (complementaryIntervalQuality intervalQuality)
         (complementaryIntervalNumber intervalNumber)
 
@@ -182,177 +275,182 @@ complement (Interval intervalQuality intervalNumber) =
 
 perfectUnison : Interval
 perfectUnison =
-    Interval perfect Unison
+    Interval up perfect Unison
 
 
 diminishedSecond : Interval
 diminishedSecond =
-    Interval imperfectDiminished Second
+    Interval up imperfectDiminished Second
 
 
 minorSecond : Interval
 minorSecond =
-    Interval minor Second
+    Interval up minor Second
 
 
 augmentedUnison : Interval
 augmentedUnison =
-    Interval perfectAugmented Unison
+    Interval up perfectAugmented Unison
 
 
 majorSecond : Interval
 majorSecond =
-    Interval major Second
+    Interval up major Second
 
 
 diminishedThird : Interval
 diminishedThird =
-    Interval imperfectDiminished Third
+    Interval up imperfectDiminished Third
 
 
 minorThird : Interval
 minorThird =
-    Interval minor Third
+    Interval up minor Third
 
 
 augmentedSecond : Interval
 augmentedSecond =
-    Interval imperfectAugmented Second
+    Interval up imperfectAugmented Second
 
 
 majorThird : Interval
 majorThird =
-    Interval major Third
+    Interval up major Third
 
 
 diminishedFourth : Interval
 diminishedFourth =
-    Interval perfectDiminished Fourth
+    Interval up perfectDiminished Fourth
 
 
 perfectFourth : Interval
 perfectFourth =
-    Interval perfect Fourth
+    Interval up perfect Fourth
 
 
 augmentedThird : Interval
 augmentedThird =
-    Interval imperfectAugmented Third
+    Interval up imperfectAugmented Third
 
 
 augmentedFourth : Interval
 augmentedFourth =
-    Interval perfectAugmented Fourth
+    Interval up perfectAugmented Fourth
 
 
 diminishedFifth : Interval
 diminishedFifth =
-    Interval perfectDiminished Fifth
+    Interval up perfectDiminished Fifth
 
 
 perfectFifth : Interval
 perfectFifth =
-    Interval perfect Fifth
+    Interval up perfect Fifth
 
 
 diminishedSixth : Interval
 diminishedSixth =
-    Interval imperfectDiminished Sixth
+    Interval up imperfectDiminished Sixth
 
 
 augmentedFifth : Interval
 augmentedFifth =
-    Interval perfectAugmented Fifth
+    Interval up perfectAugmented Fifth
 
 
 minorSixth : Interval
 minorSixth =
-    Interval minor Sixth
+    Interval up minor Sixth
 
 
 majorSixth : Interval
 majorSixth =
-    Interval major Sixth
+    Interval up major Sixth
 
 
 diminishedSeventh : Interval
 diminishedSeventh =
-    Interval imperfectDiminished Seventh
+    Interval up imperfectDiminished Seventh
 
 
 minorSeventh : Interval
 minorSeventh =
-    Interval minor Seventh
+    Interval up minor Seventh
 
 
 augmentedSixth : Interval
 augmentedSixth =
-    Interval imperfectAugmented Sixth
+    Interval up imperfectAugmented Sixth
 
 
 majorSeventh : Interval
 majorSeventh =
-    Interval major Seventh
+    Interval up major Seventh
+
+
+augmentedOctave : Interval
+augmentedOctave =
+    Interval up perfectAugmented (Octave Unison)
 
 
 diminishedOctave : Interval
 diminishedOctave =
-    Interval perfectDiminished (Octave Unison)
+    Interval up perfectDiminished (Octave Unison)
 
 
 perfectOctave : Interval
 perfectOctave =
-    Interval perfect (Octave Unison)
+    Interval up perfect (Octave Unison)
 
 
 augmentedSeventh : Interval
 augmentedSeventh =
-    Interval imperfectAugmented Seventh
+    Interval up imperfectAugmented Seventh
 
 
 minorNinth : Interval
 minorNinth =
-    Interval minor (Octave Second)
+    Interval up minor (Octave Second)
 
 
 majorNinth : Interval
 majorNinth =
-    Interval major (Octave Second)
+    Interval up major (Octave Second)
 
 
 augmentedNinth : Interval
 augmentedNinth =
-    Interval imperfectAugmented (Octave Second)
+    Interval up imperfectAugmented (Octave Second)
 
 
 minorTenth : Interval
 minorTenth =
-    Interval minor (Octave Third)
+    Interval up minor (Octave Third)
 
 
 majorTenth : Interval
 majorTenth =
-    Interval major (Octave Third)
+    Interval up major (Octave Third)
 
 
 perfectEleventh : Interval
 perfectEleventh =
-    Interval perfect (Octave Fourth)
+    Interval up perfect (Octave Fourth)
 
 
 augmentedEleventh : Interval
 augmentedEleventh =
-    Interval perfectAugmented (Octave Fourth)
+    Interval up perfectAugmented (Octave Fourth)
 
 
 minorThirteenth : Interval
 minorThirteenth =
-    Interval minor (Octave Sixth)
+    Interval up minor (Octave Sixth)
 
 
 majorThirteenth : Interval
 majorThirteenth =
-    Interval major (Octave Sixth)
+    Interval up major (Octave Sixth)
 
 
 
@@ -398,8 +496,8 @@ intervalQualitySemitones intervalQuality =
 
 
 complementaryIntervalNumber : IntervalNumber -> IntervalNumber
-complementaryIntervalNumber interval =
-    case interval of
+complementaryIntervalNumber i =
+    case i of
         Unison ->
             Octave Unison
 
@@ -461,3 +559,39 @@ intervalNumberIndex intervalNumber =
 
         Octave anotherIntervalNumber ->
             7 + intervalNumberIndex anotherIntervalNumber
+
+
+indexToIntervalNumber : Int -> IntervalNumber
+indexToIntervalNumber int =
+    case int of
+        0 ->
+            Unison
+
+        1 ->
+            Second
+
+        2 ->
+            Third
+
+        3 ->
+            Fourth
+
+        4 ->
+            Fifth
+
+        5 ->
+            Sixth
+
+        6 ->
+            Seventh
+
+        _ ->
+            if int >= 0 then
+                Octave (indexToIntervalNumber (int - 7))
+
+            else
+                Unison
+
+
+
+--indexToIntervalNumber (int + 7)

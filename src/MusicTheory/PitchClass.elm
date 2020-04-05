@@ -40,6 +40,7 @@ module MusicTheory.PitchClass exposing
     , gDoubleSharp
     , gFlat
     , gSharp
+    , letter
     , natural
     , pitchClass
     , semitones
