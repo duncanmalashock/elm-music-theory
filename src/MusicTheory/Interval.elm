@@ -3,6 +3,7 @@ module MusicTheory.Interval exposing
     , Interval
     , IntervalNumber(..)
     , IntervalQuality(..)
+    , add
     , addOctave
     , addOffset
     , allSimple
@@ -16,7 +17,6 @@ module MusicTheory.Interval exposing
     , augmentedSixth
     , augmentedThird
     , augmentedUnison
-    , complement
     , diminishedFifth
     , diminishedFourth
     , diminishedOctave
@@ -52,12 +52,10 @@ module MusicTheory.Interval exposing
     , perfectOctave
     , perfectUnison
     , quality
-    , reverseDirection
+    , reverse
     , semitones
     , up
     )
-
--- DEFINITION
 
 
 type IntervalNumber
@@ -92,6 +90,16 @@ type Direction
 interval : Direction -> IntervalQuality -> IntervalNumber -> Interval
 interval dir qual num =
     Interval dir qual num
+
+
+offset : Interval -> Int
+offset (Interval dir qual num) =
+    case qual of
+        Perfect (Offset int) ->
+            int
+
+        Imperfect (Offset int) ->
+            int
 
 
 addOffset : Int -> Interval -> Interval
@@ -147,10 +155,6 @@ imperfectAugmented =
 imperfectDiminished : IntervalQuality
 imperfectDiminished =
     Imperfect (Offset -2)
-
-
-
--- ACCESSORS
 
 
 quality : Interval -> IntervalQuality
@@ -226,10 +230,6 @@ allSimple =
     ]
 
 
-
--- TRANSFORM
-
-
 direction : Interval -> Direction
 direction (Interval dir intervalQuality intervalNumber) =
     dir
@@ -259,25 +259,55 @@ addOctave (Interval dir intervalQuality intervalNumber) =
     Interval dir intervalQuality (Octave intervalNumber)
 
 
-reverseDirection : Interval -> Interval
-reverseDirection (Interval dir intervalQuality intervalNumber) =
+add : Interval -> Interval -> Interval
+add ((Interval directionA qualityA numberA) as intA) ((Interval directionB qualityB numberB) as intB) =
+    let
+        indexA =
+            intervalNumberIndex numberA * directionToInteger directionA
+
+        indexB =
+            intervalNumberIndex numberB * directionToInteger directionB
+
+        indexSum =
+            indexA + indexB
+
+        dir =
+            if indexSum >= 0 then
+                Up
+
+            else
+                Down
+
+        finalNumber =
+            indexToIntervalNumber indexSum
+
+        initialQuality =
+            numberToQuality finalNumber
+
+        initialResult =
+            Interval dir initialQuality finalNumber
+
+        semitoneTarget =
+            semitones intA + semitones intB
+
+        semitonesActual =
+            semitones initialResult
+
+        semitonesError =
+            semitoneTarget - semitonesActual
+    in
+    initialResult
+        |> addOffset semitonesError
+
+
+reverse : Interval -> Interval
+reverse (Interval dir intervalQuality intervalNumber) =
     case dir of
         Up ->
             Interval Down intervalQuality intervalNumber
 
         Down ->
             Interval Up intervalQuality intervalNumber
-
-
-complement : Interval -> Interval
-complement (Interval dir intervalQuality intervalNumber) =
-    Interval dir
-        (complementaryIntervalQuality intervalQuality)
-        (complementaryIntervalNumber intervalNumber)
-
-
-
--- INTERVALS
 
 
 perfectUnison : Interval
@@ -460,10 +490,6 @@ majorThirteenth =
     Interval up major (Octave Sixth)
 
 
-
--- HELPERS
-
-
 intervalNumberSemitones : IntervalNumber -> Int
 intervalNumberSemitones intervalNumber =
     case intervalNumber of
@@ -495,49 +521,11 @@ intervalNumberSemitones intervalNumber =
 intervalQualitySemitones : IntervalQuality -> Int
 intervalQualitySemitones intervalQuality =
     case intervalQuality of
-        Perfect (Offset offset) ->
-            offset
+        Perfect (Offset off) ->
+            off
 
-        Imperfect (Offset offset) ->
-            offset
-
-
-complementaryIntervalNumber : IntervalNumber -> IntervalNumber
-complementaryIntervalNumber i =
-    case i of
-        Unison ->
-            Octave Unison
-
-        Second ->
-            Seventh
-
-        Third ->
-            Sixth
-
-        Fourth ->
-            Fifth
-
-        Fifth ->
-            Fourth
-
-        Sixth ->
-            Third
-
-        Seventh ->
-            Second
-
-        Octave intervalNumber ->
-            intervalNumber
-
-
-complementaryIntervalQuality : IntervalQuality -> IntervalQuality
-complementaryIntervalQuality intervalQuality =
-    case intervalQuality of
-        Perfect (Offset offset) ->
-            Perfect (Offset <| offset * -1)
-
-        Imperfect (Offset offset) ->
-            Imperfect (Offset <| (offset * -1) - 1)
+        Imperfect (Offset off) ->
+            off
 
 
 intervalNumberIndex : IntervalNumber -> Int
@@ -593,12 +581,12 @@ indexToIntervalNumber int =
             Seventh
 
         _ ->
-            if int >= 0 then
-                Octave (indexToIntervalNumber (int - 7))
+            let
+                absoluteInt =
+                    abs int
+            in
+            if absoluteInt >= 7 then
+                Octave (indexToIntervalNumber (absoluteInt - 7))
 
             else
-                Unison
-
-
-
---indexToIntervalNumber (int + 7)
+                indexToIntervalNumber absoluteInt

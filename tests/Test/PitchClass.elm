@@ -61,7 +61,7 @@ all =
                         result =
                             PitchClass.transpose
                                 (Interval.augmentedFourth
-                                    |> Interval.reverseDirection
+                                    |> Interval.reverse
                                 )
                                 PitchClass.c
 

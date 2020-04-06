@@ -598,7 +598,7 @@ transposeDown :
 transposeDown theInterval thePitch =
     transpose
         (theInterval
-            |> Interval.reverseDirection
+            |> Interval.reverse
         )
         thePitch
 

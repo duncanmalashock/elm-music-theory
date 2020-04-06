@@ -51,6 +51,13 @@ all =
                             Interval.perfectFifth
                         |> Expect.equal
                             (Ok Pitch.g4)
+            , test "transpose down augmented 11th from D5 should be Ab3" <|
+                \_ ->
+                    Pitch.d5
+                        |> Pitch.transposeDown
+                            Interval.augmentedEleventh
+                        |> Expect.equal
+                            (Ok Pitch.aFlat3)
             , test "transpose down major 3 from D0 should fail" <|
                 \_ ->
                     Pitch.d0
@@ -170,7 +177,7 @@ all =
                     let
                         expected =
                             Interval.majorSecond
-                                |> Interval.reverseDirection
+                                |> Interval.reverse
 
                         result =
                             Pitch.intervalBetween Pitch.c4 Pitch.bFlat3
@@ -181,7 +188,7 @@ all =
                     let
                         expected =
                             Interval.minorTenth
-                                |> Interval.reverseDirection
+                                |> Interval.reverse
 
                         result =
                             Pitch.intervalBetween Pitch.g4 Pitch.e3

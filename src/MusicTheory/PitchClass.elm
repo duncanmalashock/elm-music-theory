@@ -329,11 +329,15 @@ transpose interval pc =
             case Interval.direction interval of
                 Up ->
                     ( startingLetter, 0 )
-                        |> applyNTimes 0 numberOfIntervalSteps Letter.nextWithSemitoneCount
+                        |> applyNTimes 0
+                            numberOfIntervalSteps
+                            Letter.nextWithSemitoneCount
 
                 Down ->
                     ( startingLetter, 0 )
-                        |> applyNTimes 0 numberOfIntervalSteps Letter.prevWithSemitoneCount
+                        |> applyNTimes 0
+                            numberOfIntervalSteps
+                            Letter.prevWithSemitoneCount
     in
     PitchClass
         targetLetter
