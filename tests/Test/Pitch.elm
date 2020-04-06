@@ -42,17 +42,20 @@ all =
                         |> Expect.equal
                             (Err <| InvalidOctave <| AboveValidRange 9)
             ]
-        , describe "transposeDown"
+        , describe
+            "transposeDown"
             [ test "transpose down perfect 5 from D5 should be G4" <|
                 \_ ->
                     Pitch.d5
-                        |> Pitch.transposeDown Interval.perfectFifth
+                        |> Pitch.transposeDown
+                            Interval.perfectFifth
                         |> Expect.equal
                             (Ok Pitch.g4)
             , test "transpose down major 3 from D0 should fail" <|
                 \_ ->
                     Pitch.d0
-                        |> Pitch.transposeDown Interval.majorThird
+                        |> Pitch.transposeDown
+                            Interval.majorThird
                         |> Expect.equal
                             (Err <| InvalidOctave <| BelowValidRange -1)
             ]
@@ -64,7 +67,7 @@ all =
                         |> Expect.equal 9
             ]
         , describe "firstBelow"
-            [ test "should return D4 (first occurence of D below F4)" <|
+            [ test "should return D4 (first occurrence of D below F4)" <|
                 \_ ->
                     Pitch.f4
                         |> Pitch.firstBelow (PitchClass.pitchClass D Pitch.natural)
@@ -78,7 +81,7 @@ all =
                             (Err ValidPitchNotFound)
             ]
         , describe "firstAbove"
-            [ test "should return D5 (first occurence of D below F4)" <|
+            [ test "should return D5 (first occurrence of D below F4)" <|
                 \_ ->
                     Pitch.f4
                         |> Pitch.firstAbove (PitchClass.pitchClass D Pitch.natural)

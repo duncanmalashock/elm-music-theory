@@ -1,7 +1,8 @@
 module MusicTheory.Letter exposing
     ( Letter(..)
     , index
-    , indexToLetterAndSteps
+    , nextWithSemitoneCount
+    , prevWithSemitoneCount
     , semitones
     , toString
     )
@@ -95,33 +96,51 @@ index letter =
             6
 
 
-indexToLetterAndSteps : Int -> ( Letter, Int )
-indexToLetterAndSteps n =
-    case n of
-        0 ->
-            ( C, 1 )
+nextWithSemitoneCount : ( Letter, Int ) -> ( Letter, Int )
+nextWithSemitoneCount ( letter, semis ) =
+    case letter of
+        C ->
+            ( D, semis + 2 )
 
-        1 ->
-            ( D, 2 )
+        D ->
+            ( E, semis + 2 )
 
-        2 ->
-            ( E, 2 )
+        E ->
+            ( F, semis + 1 )
 
-        3 ->
-            ( F, 1 )
+        F ->
+            ( G, semis + 2 )
 
-        4 ->
-            ( G, 2 )
+        G ->
+            ( A, semis + 2 )
 
-        5 ->
-            ( A, 2 )
+        A ->
+            ( B, semis + 2 )
 
-        6 ->
-            ( B, 2 )
+        B ->
+            ( C, semis + 1 )
 
-        other ->
-            if other < 0 then
-                indexToLetterAndSteps (other + 7)
 
-            else
-                indexToLetterAndSteps (other - 7)
+prevWithSemitoneCount : ( Letter, Int ) -> ( Letter, Int )
+prevWithSemitoneCount ( letter, semis ) =
+    case letter of
+        C ->
+            ( B, semis - 1 )
+
+        B ->
+            ( A, semis - 2 )
+
+        A ->
+            ( G, semis - 2 )
+
+        G ->
+            ( F, semis - 2 )
+
+        F ->
+            ( E, semis - 1 )
+
+        E ->
+            ( D, semis - 2 )
+
+        D ->
+            ( C, semis - 2 )

@@ -47,7 +47,7 @@ all =
                 \_ ->
                     let
                         result =
-                            PitchClass.transposeUp Interval.majorSixth PitchClass.c
+                            PitchClass.transpose Interval.majorSixth PitchClass.c
 
                         expected =
                             PitchClass.a
@@ -59,7 +59,11 @@ all =
                 \_ ->
                     let
                         result =
-                            PitchClass.transposeDown Interval.augmentedFourth PitchClass.c
+                            PitchClass.transpose
+                                (Interval.augmentedFourth
+                                    |> Interval.reverseDirection
+                                )
+                                PitchClass.c
 
                         expected =
                             PitchClass.gFlat

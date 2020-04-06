@@ -46,13 +46,12 @@ module MusicTheory.PitchClass exposing
     , semitones
     , sharp
     , toString
-    , transposeDown
-    , transposeUp
+    , transpose
     , tripleFlat
     , tripleSharp
     )
 
-import MusicTheory.Interval as Interval exposing (Interval(..))
+import MusicTheory.Interval as Interval exposing (Direction(..), Interval(..))
 import MusicTheory.Letter as Letter exposing (Letter(..))
 
 
@@ -308,56 +307,44 @@ toString pc =
                 Letter.toString l ++ (List.repeat (abs o) "♯" |> String.join "")
 
 
-transposeUp : Interval -> PitchClass -> PitchClass
-transposeUp interval pc =
+transpose : Interval -> PitchClass -> PitchClass
+transpose interval pc =
     let
-        ( targetLetter, letterToLetterDistance ) =
-            targetLetterWithSemitoneDistance
-                (Letter.index (letter pc))
-                (Interval.intervalNumberIndex
-                    (Interval.number interval)
-                )
-                ( letter pc, 0 )
+        numberOfIntervalSteps =
+            Interval.intervalNumberIndex
+                (Interval.number interval)
+
+        startingLetter =
+            letter pc
+
+        applyNTimes : Int -> Int -> (a -> a) -> a -> a
+        applyNTimes i n fn v =
+            if i < n then
+                applyNTimes (i + 1) n fn (fn v)
+
+            else
+                v
+
+        ( targetLetter, semitoneDistance ) =
+            case Interval.direction interval of
+                Up ->
+                    ( startingLetter, 0 )
+                        |> applyNTimes 0 numberOfIntervalSteps Letter.nextWithSemitoneCount
+
+                Down ->
+                    ( startingLetter, 0 )
+                        |> applyNTimes 0 numberOfIntervalSteps Letter.prevWithSemitoneCount
     in
     PitchClass
         targetLetter
         (Offset
             (Interval.semitones interval
-                - letterToLetterDistance
+                - semitoneDistance
                 + offset pc
             )
         )
 
 
-transposeDown : Interval -> PitchClass -> PitchClass
-transposeDown interval pc =
-    interval
-        |> Interval.complement
-        |> (\i -> transposeUp i pc)
-
-
 areEnharmonicEquivalents : PitchClass -> PitchClass -> Bool
 areEnharmonicEquivalents lhs rhs =
     semitones lhs == semitones rhs
-
-
-
--- INTERNALS
-
-
-targetLetterWithSemitoneDistance : Int -> Int -> ( Letter, Int ) -> ( Letter, Int )
-targetLetterWithSemitoneDistance currentIndex steps ( currentLetter, totalSemitones ) =
-    if steps <= 0 then
-        ( currentLetter, totalSemitones )
-
-    else
-        let
-            ( currentTargetLetter, stepSemitones ) =
-                Letter.indexToLetterAndSteps (currentIndex + 1)
-        in
-        targetLetterWithSemitoneDistance
-            (currentIndex + 1)
-            (steps - 1)
-            ( currentTargetLetter
-            , totalSemitones + stepSemitones
-            )

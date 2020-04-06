@@ -120,41 +120,41 @@ toScaleDegrees (Scale scaleRoot scaleClass) =
         ScaleClass.Pentatonic scaleClassIntervals ->
             Pentatonic
                 { root = scaleRoot
-                , second = PitchClass.transposeUp scaleClassIntervals.rootToSecond scaleRoot
-                , third = PitchClass.transposeUp scaleClassIntervals.rootToThird scaleRoot
-                , fourth = PitchClass.transposeUp scaleClassIntervals.rootToFourth scaleRoot
-                , fifth = PitchClass.transposeUp scaleClassIntervals.rootToFifth scaleRoot
+                , second = PitchClass.transpose scaleClassIntervals.rootToSecond scaleRoot
+                , third = PitchClass.transpose scaleClassIntervals.rootToThird scaleRoot
+                , fourth = PitchClass.transpose scaleClassIntervals.rootToFourth scaleRoot
+                , fifth = PitchClass.transpose scaleClassIntervals.rootToFifth scaleRoot
                 }
 
         ScaleClass.Hexatonic scaleClassIntervals ->
             Hexatonic
                 { root = scaleRoot
-                , second = PitchClass.transposeUp scaleClassIntervals.rootToSecond scaleRoot
-                , third = PitchClass.transposeUp scaleClassIntervals.rootToThird scaleRoot
-                , fourth = PitchClass.transposeUp scaleClassIntervals.rootToFourth scaleRoot
-                , fifth = PitchClass.transposeUp scaleClassIntervals.rootToFifth scaleRoot
-                , sixth = PitchClass.transposeUp scaleClassIntervals.rootToSixth scaleRoot
+                , second = PitchClass.transpose scaleClassIntervals.rootToSecond scaleRoot
+                , third = PitchClass.transpose scaleClassIntervals.rootToThird scaleRoot
+                , fourth = PitchClass.transpose scaleClassIntervals.rootToFourth scaleRoot
+                , fifth = PitchClass.transpose scaleClassIntervals.rootToFifth scaleRoot
+                , sixth = PitchClass.transpose scaleClassIntervals.rootToSixth scaleRoot
                 }
 
         ScaleClass.Heptatonic scaleClassIntervals ->
             Heptatonic
                 { root = scaleRoot
-                , second = PitchClass.transposeUp scaleClassIntervals.rootToSecond scaleRoot
-                , third = PitchClass.transposeUp scaleClassIntervals.rootToThird scaleRoot
-                , fourth = PitchClass.transposeUp scaleClassIntervals.rootToFourth scaleRoot
-                , fifth = PitchClass.transposeUp scaleClassIntervals.rootToFifth scaleRoot
-                , sixth = PitchClass.transposeUp scaleClassIntervals.rootToSixth scaleRoot
-                , seventh = PitchClass.transposeUp scaleClassIntervals.rootToSeventh scaleRoot
+                , second = PitchClass.transpose scaleClassIntervals.rootToSecond scaleRoot
+                , third = PitchClass.transpose scaleClassIntervals.rootToThird scaleRoot
+                , fourth = PitchClass.transpose scaleClassIntervals.rootToFourth scaleRoot
+                , fifth = PitchClass.transpose scaleClassIntervals.rootToFifth scaleRoot
+                , sixth = PitchClass.transpose scaleClassIntervals.rootToSixth scaleRoot
+                , seventh = PitchClass.transpose scaleClassIntervals.rootToSeventh scaleRoot
                 }
 
         ScaleClass.Octatonic scaleClassIntervals ->
             Octatonic
                 { root = scaleRoot
-                , second = PitchClass.transposeUp scaleClassIntervals.rootToSecond scaleRoot
-                , third = PitchClass.transposeUp scaleClassIntervals.rootToThird scaleRoot
-                , fourth = PitchClass.transposeUp scaleClassIntervals.rootToFourth scaleRoot
-                , fifth = PitchClass.transposeUp scaleClassIntervals.rootToFifth scaleRoot
-                , sixth = PitchClass.transposeUp scaleClassIntervals.rootToSixth scaleRoot
-                , seventh = PitchClass.transposeUp scaleClassIntervals.rootToSeventh scaleRoot
-                , eighth = PitchClass.transposeUp scaleClassIntervals.rootToEighth scaleRoot
+                , second = PitchClass.transpose scaleClassIntervals.rootToSecond scaleRoot
+                , third = PitchClass.transpose scaleClassIntervals.rootToThird scaleRoot
+                , fourth = PitchClass.transpose scaleClassIntervals.rootToFourth scaleRoot
+                , fifth = PitchClass.transpose scaleClassIntervals.rootToFifth scaleRoot
+                , sixth = PitchClass.transpose scaleClassIntervals.rootToSixth scaleRoot
+                , seventh = PitchClass.transpose scaleClassIntervals.rootToSeventh scaleRoot
+                , eighth = PitchClass.transpose scaleClassIntervals.rootToEighth scaleRoot
                 }

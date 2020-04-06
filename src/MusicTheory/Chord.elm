@@ -33,6 +33,6 @@ toPitchClasses : Chord -> List PitchClass.PitchClass
 toPitchClasses (Chord rootPitchClass theChordClass) =
     List.map
         (\interval ->
-            PitchClass.transposeUp interval rootPitchClass
+            PitchClass.transpose interval rootPitchClass
         )
         (ChordClass.toIntervals theChordClass)

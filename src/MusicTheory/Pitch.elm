@@ -587,35 +587,46 @@ transposeUp :
     Interval
     -> Pitch
     -> Result PitchError Pitch
-transposeUp =
-    transpose PitchClass.transposeUp (+)
+transposeUp theInterval thePitch =
+    transpose theInterval thePitch
 
 
 transposeDown :
     Interval
     -> Pitch
     -> Result PitchError Pitch
-transposeDown =
-    transpose PitchClass.transposeDown (-)
+transposeDown theInterval thePitch =
+    transpose
+        (theInterval
+            |> Interval.reverseDirection
+        )
+        thePitch
 
 
 transpose :
-    (Interval -> PitchClass -> PitchClass)
-    -> (Int -> Int -> Int)
-    -> Interval
+    Interval
     -> Pitch
     -> Result PitchError Pitch
-transpose trans addIntervalSemitones interval p =
+transpose interval p =
     let
         transposedPitchClass =
             pitchClass p
-                |> trans interval
+                |> PitchClass.transpose interval
+
+        initialSemitones =
+            semitones p
+
+        intervalSemitoneTarget =
+            Interval.semitones interval
+
+        transposedSemitones =
+            PitchClass.semitones transposedPitchClass
+
+        semitoneError =
+            intervalSemitoneTarget - transposedSemitones
 
         targetOctaveSemitones =
-            addIntervalSemitones
-                (semitones p)
-                (Interval.semitones interval)
-                - PitchClass.semitones transposedPitchClass
+            initialSemitones + semitoneError
 
         numberOfOctaves =
             targetOctaveSemitones // 12
