@@ -1,8 +1,5 @@
-module MusicTheory.Generate.Voicing exposing
+module MusicTheory.Generate.JazzVoicing exposing
     ( Error(..)
-    , FivePartVoicing
-    , FourPartVoicing
-    , ThreePartVoicing
     , fiveWayDrop2
     , fiveWayDrop2and4
     , fiveWayDrop3
@@ -25,36 +22,13 @@ import MusicTheory.Analyze.Chord as AnalyzeChord
 import MusicTheory.Interval as Interval
 import MusicTheory.Pitch as Pitch exposing (Pitch)
 import MusicTheory.PitchClass as PitchClass
+import MusicTheory.Voicing exposing (FivePartVoicing, FourPartVoicing, ThreePartVoicing)
 
 
 type Error
     = CouldNotCompleteVoicing (List (Maybe Pitch.Pitch))
     | VoiceCategoriesWereUndefined (List (Maybe VoiceCategory))
     | AnalyzeChordError AnalyzeChord.Error
-
-
-type alias ThreePartVoicing =
-    { voiceOne : Pitch.Pitch
-    , voiceTwo : Pitch.Pitch
-    , voiceThree : Pitch.Pitch
-    }
-
-
-type alias FourPartVoicing =
-    { voiceOne : Pitch.Pitch
-    , voiceTwo : Pitch.Pitch
-    , voiceThree : Pitch.Pitch
-    , voiceFour : Pitch.Pitch
-    }
-
-
-type alias FivePartVoicing =
-    { voiceOne : Pitch.Pitch
-    , voiceTwo : Pitch.Pitch
-    , voiceThree : Pitch.Pitch
-    , voiceFour : Pitch.Pitch
-    , voiceFive : Pitch.Pitch
-    }
 
 
 type Step

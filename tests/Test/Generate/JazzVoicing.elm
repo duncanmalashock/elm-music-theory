@@ -1,10 +1,10 @@
-module Test.Generate.Voicing exposing (all)
+module Test.Generate.JazzVoicing exposing (all)
 
 import Expect
 import MusicTheory.Analyze.Chord as AnalyzeChord
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
-import MusicTheory.Generate.Voicing as GenerateVoicing
+import MusicTheory.Generate.JazzVoicing as GenerateVoicing
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
 import Result.Extra
