@@ -116,7 +116,7 @@ toList theScale =
 
 toScaleDegrees : Scale -> ScaleDegrees
 toScaleDegrees (Scale scaleRoot scaleClass) =
-    case ScaleClass.toScaleClassIntervals scaleClass of
+    case scaleClass of
         ScaleClass.Pentatonic scaleClassIntervals ->
             Pentatonic
                 { root = scaleRoot

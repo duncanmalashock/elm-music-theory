@@ -19,7 +19,7 @@ all =
         , test "C ionian" <|
             \_ ->
                 let
-                    pitchClassesInCAeolian =
+                    pitchClassesInCIonian =
                         [ pitchClass C natural
                         , pitchClass D natural
                         , pitchClass E natural
@@ -31,7 +31,7 @@ all =
                 in
                 Scale.scale (pitchClass C natural) ScaleClass.ionian
                     |> Scale.toList
-                    |> Expect.equal pitchClassesInCAeolian
+                    |> Expect.equal pitchClassesInCIonian
         , test "D dorian" <|
             \_ ->
                 let
