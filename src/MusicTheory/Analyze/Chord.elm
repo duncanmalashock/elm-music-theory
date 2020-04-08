@@ -1,8 +1,8 @@
 module MusicTheory.Analyze.Chord exposing
-    ( AvailablePitchClasses
+    ( Availables
     , Error
     , VoiceCategory(..)
-    , availablePitchClassesFor
+    , availables
     , containsPitchClass
     )
 
@@ -23,12 +23,9 @@ type Error
     | CouldNotDetermineChordQuality
 
 
-availablePitchClassesFor : Chord.Chord -> Result Error AvailablePitchClasses
-availablePitchClassesFor chord =
+availables : Chord.Chord -> Result Error Availables
+availables chord =
     let
-        chordRoot =
-            Chord.root chord
-
         chordClass =
             Chord.chordClass chord
 
@@ -52,28 +49,24 @@ availablePitchClassesFor chord =
             -> Interval.Interval
             -> JazzChordQuality
             ->
-                { true : PitchClass.PitchClass
-                , substitutes : List PitchClass.PitchClass
+                { true : Interval.Interval
+                , substitutes : List Interval.Interval
                 }
         chordToneWithSubstitutes voiceCategory chordTone chordQuality =
-            { true = PitchClass.transpose chordTone chordRoot
+            { true = chordTone
             , substitutes =
                 availableTensions chordClass voiceCategory chordQuality
                     |> List.filter ((==) chordTone >> not)
-                    |> List.map
-                        (\interval ->
-                            PitchClass.transpose interval chordRoot
-                        )
             }
 
-        toAvailablePitchClasses :
+        toAvailables :
             JazzChordQuality
             -> Interval.Interval
             -> Interval.Interval
             -> Interval.Interval
             -> Interval.Interval
-            -> AvailablePitchClasses
-        toAvailablePitchClasses chordQuality root third fifth seventh =
+            -> Availables
+        toAvailables chordQuality root third fifth seventh =
             { root = chordToneWithSubstitutes Root root chordQuality
             , third = chordToneWithSubstitutes Third third chordQuality
             , fifth = chordToneWithSubstitutes Fifth fifth chordQuality
@@ -86,7 +79,7 @@ availablePitchClassesFor chord =
 
         Just quality ->
             Maybe.map4
-                (toAvailablePitchClasses quality)
+                (toAvailables quality)
                 maybeRoot
                 maybeThird
                 maybeFifth
@@ -452,21 +445,21 @@ type JazzChordQuality
     | Diminished7
 
 
-type alias AvailablePitchClasses =
+type alias Availables =
     { root :
-        { true : PitchClass.PitchClass
-        , substitutes : List PitchClass.PitchClass
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
         }
     , third :
-        { true : PitchClass.PitchClass
-        , substitutes : List PitchClass.PitchClass
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
         }
     , fifth :
-        { true : PitchClass.PitchClass
-        , substitutes : List PitchClass.PitchClass
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
         }
     , seventh :
-        { true : PitchClass.PitchClass
-        , substitutes : List PitchClass.PitchClass
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
         }
     }

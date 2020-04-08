@@ -1,10 +1,8 @@
 module MusicTheory.Octave exposing
     ( Octave
-    , OctaveError(..)
     , add
-    , all
+    , allValid
     , eight
-    , errorToString
     , five
     , four
     , number
@@ -19,157 +17,84 @@ module MusicTheory.Octave exposing
     )
 
 
-type OctaveError
-    = AboveValidRange Int
-    | BelowValidRange Int
-
-
-errorToString : OctaveError -> String
-errorToString error =
-    case error of
-        AboveValidRange n ->
-            "Octave number " ++ String.fromInt n ++ " is above the valid octave range of [0,8]."
-
-        BelowValidRange n ->
-            "Octave number " ++ String.fromInt n ++ " is below the valid octave range of [0,8]."
-
-
 type Octave
-    = Zero
-    | One
-    | Two
-    | Three
-    | Four
-    | Five
-    | Six
-    | Seven
-    | Eight
+    = Octave Int
 
 
-octave : Int -> Result OctaveError Octave
+octave : Int -> Octave
 octave n =
-    case n of
-        0 ->
-            Ok Zero
-
-        1 ->
-            Ok One
-
-        2 ->
-            Ok Two
-
-        3 ->
-            Ok Three
-
-        4 ->
-            Ok Four
-
-        5 ->
-            Ok Five
-
-        6 ->
-            Ok Six
-
-        7 ->
-            Ok Seven
-
-        8 ->
-            Ok Eight
-
-        other ->
-            if other > 8 then
-                Err <| AboveValidRange other
-
-            else
-                Err <| BelowValidRange other
+    Octave n
 
 
-add : Int -> Octave -> Result OctaveError Octave
-add n o =
-    octave (number o + n)
-
-
-semitones : Octave -> Int
-semitones o =
-    number o * 12
+add : Int -> Octave -> Octave
+add n (Octave o) =
+    octave (o + n)
 
 
 number : Octave -> Int
-number o =
-    case o of
-        Zero ->
-            0
-
-        One ->
-            1
-
-        Two ->
-            2
-
-        Three ->
-            3
-
-        Four ->
-            4
-
-        Five ->
-            5
-
-        Six ->
-            6
-
-        Seven ->
-            7
-
-        Eight ->
-            8
+number (Octave o) =
+    o
 
 
-all : List Octave
-all =
-    [ Zero, One, Two, Three, Four, Five, Six, Seven, Eight ]
+allValid : List Octave
+allValid =
+    [ octave 0
+    , octave 1
+    , octave 2
+    , octave 3
+    , octave 4
+    , octave 5
+    , octave 6
+    , octave 7
+    , octave 8
+    ]
+
+
+semitones : Octave -> Int
+semitones (Octave o) =
+    o * 12
 
 
 zero : Octave
 zero =
-    Zero
+    Octave 0
 
 
 one : Octave
 one =
-    One
+    Octave 1
 
 
 two : Octave
 two =
-    Two
+    Octave 2
 
 
 three : Octave
 three =
-    Three
+    Octave 3
 
 
 four : Octave
 four =
-    Four
+    Octave 4
 
 
 five : Octave
 five =
-    Five
+    Octave 5
 
 
 six : Octave
 six =
-    Six
+    Octave 6
 
 
 seven : Octave
 seven =
-    Seven
+    Octave 7
 
 
 eight : Octave
 eight =
-    Eight
+    Octave 8

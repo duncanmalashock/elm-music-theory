@@ -16,23 +16,27 @@ module MusicTheory.Generate.JazzVoicing exposing
 
 import MusicTheory.Analyze.Chord as AnalyzeChord
     exposing
-        ( AvailablePitchClasses
+        ( Availables
         , VoiceCategory(..)
         )
 import MusicTheory.Interval as Interval
 import MusicTheory.Pitch as Pitch exposing (Pitch)
-import MusicTheory.PitchClass as PitchClass
-import MusicTheory.Voicing exposing (FivePartVoicing, FourPartVoicing, ThreePartVoicing)
+import MusicTheory.VoicingClass
+    exposing
+        ( FivePartVoicingClass
+        , FourPartVoicingClass
+        , ThreePartVoicingClass
+        )
 
 
 type Error
-    = CouldNotCompleteVoicing (List (Maybe Pitch.Pitch))
+    = CouldNotCompleteVoicing
     | VoiceCategoriesWereUndefined (List (Maybe VoiceCategory))
     | AnalyzeChordError AnalyzeChord.Error
 
 
 type Step
-    = AssignToVoice Int Pitch.Pitch
+    = AssignToVoice Int Interval.Interval
     | AssignFirstBelow Int (List VoiceSelection)
     | AssignFirstAbove Int (List VoiceSelection)
     | CopyVoice Int Int
@@ -66,13 +70,13 @@ chordToneOrSubstitute voiceCategory =
 
 pitchClassesFromVoiceSelections :
     List VoiceSelection
-    -> AvailablePitchClasses
-    -> List PitchClass.PitchClass
+    -> Availables
+    -> List Interval.Interval
 pitchClassesFromVoiceSelections voiceSelections availables =
     let
         pitchClassesFromVoiceSelection :
             VoiceSelection
-            -> List PitchClass.PitchClass
+            -> List Interval.Interval
         pitchClassesFromVoiceSelection (VoiceSelection voiceCategory voiceSpecificity) =
             case voiceSpecificity of
                 ChordTone ->
@@ -124,12 +128,12 @@ pitchClassesFromVoiceSelections voiceSelections availables =
     List.concatMap pitchClassesFromVoiceSelection voiceSelections
 
 
-usePitchClassFromVoiceSelections :
+useFromVoiceSelections :
     List VoiceSelection
-    -> AvailablePitchClasses
-    -> List PitchClass.PitchClass
-    -> Maybe PitchClass.PitchClass
-usePitchClassFromVoiceSelections voiceSelections availables used =
+    -> Availables
+    -> List Interval.Interval
+    -> Maybe Interval.Interval
+useFromVoiceSelections voiceSelections availables used =
     let
         chooseFirstUnused list =
             List.filter (\item -> List.member item used |> not) list
@@ -141,37 +145,37 @@ usePitchClassFromVoiceSelections voiceSelections availables used =
 
 
 determineVoiceCategory :
-    PitchClass.PitchClass
-    -> AvailablePitchClasses
+    Interval.Interval
+    -> Availables
     -> Maybe VoiceCategory
-determineVoiceCategory pitchClass availablePitchClasses =
+determineVoiceCategory interval availables =
     let
         rootPitchClasses =
-            availablePitchClasses.root.true
-                :: availablePitchClasses.root.substitutes
+            availables.root.true
+                :: availables.root.substitutes
 
         thirdPitchClasses =
-            availablePitchClasses.third.true
-                :: availablePitchClasses.third.substitutes
+            availables.third.true
+                :: availables.third.substitutes
 
         fifthPitchClasses =
-            availablePitchClasses.fifth.true
-                :: availablePitchClasses.fifth.substitutes
+            availables.fifth.true
+                :: availables.fifth.substitutes
 
         seventhPitchClasses =
-            availablePitchClasses.seventh.true
-                :: availablePitchClasses.seventh.substitutes
+            availables.seventh.true
+                :: availables.seventh.substitutes
     in
-    if List.member pitchClass rootPitchClasses then
+    if List.member interval rootPitchClasses then
         Just Root
 
-    else if List.member pitchClass thirdPitchClasses then
+    else if List.member interval thirdPitchClasses then
         Just Third
 
-    else if List.member pitchClass fifthPitchClasses then
+    else if List.member interval fifthPitchClasses then
         Just Fifth
 
-    else if List.member pitchClass seventhPitchClasses then
+    else if List.member interval seventhPitchClasses then
         Just Seventh
 
     else
@@ -195,15 +199,13 @@ nextVoiceCategory voiceCategory =
 
 
 fourWayClose :
-    Pitch.Pitch
-    -> AvailablePitchClasses
-    -> Result Error FourPartVoicing
-fourWayClose leadVoice availablePitchClasses =
+    Interval.Interval
+    -> Availables
+    -> Result Error FourPartVoicingClass
+fourWayClose leadVoice availables =
     let
         maybeFirstVoiceCategory =
-            determineVoiceCategory
-                (Pitch.pitchClass leadVoice)
-                availablePitchClasses
+            determineVoiceCategory leadVoice availables
 
         maybeSecondVoiceCategory =
             Maybe.map nextVoiceCategory maybeFirstVoiceCategory
@@ -219,7 +221,7 @@ fourWayClose leadVoice availablePitchClasses =
                 (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
                     List.foldl
                         applyStepFourPart
-                        (fourPartInit availablePitchClasses)
+                        (fourPartInit availables)
                         [ AssignToVoice 1 leadVoice
                         , AssignFirstBelow 1
                             [ chordToneOrSubstitute secondVoiceCategory ]
@@ -237,6 +239,7 @@ fourWayClose leadVoice availablePitchClasses =
         Just voicing ->
             voicing
                 |> completeFourPart
+                |> Result.fromMaybe CouldNotCompleteVoicing
 
         Nothing ->
             Err <|
@@ -249,15 +252,13 @@ fourWayClose leadVoice availablePitchClasses =
 
 
 fourWayCloseDoubleLead :
-    Pitch.Pitch
-    -> AvailablePitchClasses
-    -> Result Error FivePartVoicing
-fourWayCloseDoubleLead leadVoice availablePitchClasses =
+    Interval.Interval
+    -> Availables
+    -> Result Error FivePartVoicingClass
+fourWayCloseDoubleLead leadVoice availables =
     let
         maybeFirstVoiceCategory =
-            determineVoiceCategory
-                (Pitch.pitchClass leadVoice)
-                availablePitchClasses
+            determineVoiceCategory leadVoice availables
 
         maybeSecondVoiceCategory =
             Maybe.map nextVoiceCategory maybeFirstVoiceCategory
@@ -273,7 +274,7 @@ fourWayCloseDoubleLead leadVoice availablePitchClasses =
                 (\secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
                     List.foldl
                         applyStepFivePart
-                        (fivePartInit availablePitchClasses)
+                        (fivePartInit availables)
                         [ AssignToVoice 1 leadVoice
                         , AssignFirstBelow 1
                             [ chordToneOrSubstitute secondVoiceCategory ]
@@ -293,6 +294,7 @@ fourWayCloseDoubleLead leadVoice availablePitchClasses =
         Just voicing ->
             voicing
                 |> completeFivePart
+                |> Result.fromMaybe CouldNotCompleteVoicing
 
         Nothing ->
             Err <|
@@ -305,15 +307,15 @@ fourWayCloseDoubleLead leadVoice availablePitchClasses =
 
 
 fourWaySpread :
-    Pitch.Pitch
-    -> AvailablePitchClasses
-    -> Result Error FourPartVoicing
-fourWaySpread bass availablePitchClasses =
+    Interval.Interval
+    -> Availables
+    -> Result Error FourPartVoicingClass
+fourWaySpread bass availables =
     let
         voicing =
             List.foldl
                 applyStepFourPart
-                (fourPartInit availablePitchClasses)
+                (fourPartInit availables)
                 [ AssignToVoice 4 bass
                 , AssignFirstAbove 4
                     [ chordToneOnly Third
@@ -333,18 +335,19 @@ fourWaySpread bass availablePitchClasses =
     in
     voicing
         |> completeFourPart
+        |> Result.fromMaybe CouldNotCompleteVoicing
 
 
 fiveWaySpread :
-    Pitch.Pitch
-    -> AvailablePitchClasses
-    -> Result Error FivePartVoicing
-fiveWaySpread bass availablePitchClasses =
+    Interval.Interval
+    -> Availables
+    -> Result Error FivePartVoicingClass
+fiveWaySpread bass availables =
     let
         voicing =
             List.foldl
                 applyStepFivePart
-                (fivePartInit availablePitchClasses)
+                (fivePartInit availables)
                 [ AssignToVoice 5 bass
                 , AssignFirstAbove 5
                     [ chordToneOnly Third
@@ -370,62 +373,73 @@ fiveWaySpread bass availablePitchClasses =
     in
     voicing
         |> completeFivePart
+        |> Result.fromMaybe CouldNotCompleteVoicing
 
 
-fourWayDrop2 : AvailablePitchClasses -> FourPartVoicing -> Result Error FourPartVoicing
-fourWayDrop2 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour } =
+fourWayDrop2 :
+    Availables
+    -> FourPartVoicingClass
+    -> Result Error FourPartVoicingClass
+fourWayDrop2 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceThree
     , voiceThree = Just voiceFour
     , voiceFour =
-        Pitch.transposeDown Interval.perfectOctave voiceTwo
-            |> Result.toMaybe
+        Interval.subtract Interval.perfectOctave voiceTwo
+            |> Just
     , used = []
-    , availablePitchClasses = availablePitchClasses
+    , availables = availables
     }
         |> completeFourPart
+        |> Result.fromMaybe CouldNotCompleteVoicing
 
 
-fourWayDrop3 : AvailablePitchClasses -> FourPartVoicing -> Result Error FourPartVoicing
-fourWayDrop3 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour } =
+fourWayDrop3 :
+    Availables
+    -> FourPartVoicingClass
+    -> Result Error FourPartVoicingClass
+fourWayDrop3 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceTwo
     , voiceThree = Just voiceFour
     , voiceFour =
-        Pitch.transposeDown Interval.perfectOctave voiceThree
-            |> Result.toMaybe
+        Interval.subtract Interval.perfectOctave voiceThree
+            |> Just
     , used = []
-    , availablePitchClasses = availablePitchClasses
+    , availables = availables
     }
         |> completeFourPart
+        |> Result.fromMaybe CouldNotCompleteVoicing
 
 
-fourWayDrop2and4 : AvailablePitchClasses -> FourPartVoicing -> Result Error FourPartVoicing
-fourWayDrop2and4 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour } =
+fourWayDrop2and4 :
+    Availables
+    -> FourPartVoicingClass
+    -> Result Error FourPartVoicingClass
+fourWayDrop2and4 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceThree
     , voiceThree =
-        Pitch.transposeDown Interval.perfectOctave voiceTwo
-            |> Result.toMaybe
+        Interval.subtract Interval.perfectOctave voiceTwo
+            |> Just
     , voiceFour =
-        Pitch.transposeDown Interval.perfectOctave voiceFour
-            |> Result.toMaybe
+        Interval.subtract Interval.perfectOctave voiceFour
+            |> Just
     , used = []
-    , availablePitchClasses = availablePitchClasses
+    , availables = availables
     }
         |> completeFourPart
+        |> Result.fromMaybe CouldNotCompleteVoicing
 
 
 substituteDoubleLead :
-    Pitch.Pitch
-    -> AvailablePitchClasses
-    -> Result Error FivePartVoicing
-substituteDoubleLead leadVoice availablePitchClasses =
+    Interval.Interval
+    -> Availables
+    -> Result Error FivePartVoicingClass
+substituteDoubleLead leadVoice availables =
     let
         maybeFirstVoiceCategory =
-            determineVoiceCategory
-                (Pitch.pitchClass leadVoice)
-                availablePitchClasses
+            determineVoiceCategory leadVoice availables
 
         maybeSecondVoiceCategory =
             Maybe.map nextVoiceCategory maybeFirstVoiceCategory
@@ -441,7 +455,7 @@ substituteDoubleLead leadVoice availablePitchClasses =
                 (\firstVoiceCategory secondVoiceCategory thirdVoiceCategory fourthVoiceCategory ->
                     List.foldl
                         applyStepFivePart
-                        (fivePartInit availablePitchClasses)
+                        (fivePartInit availables)
                         [ AssignToVoice 1 leadVoice
                         , AssignFirstBelow 1
                             [ chordToneOrSubstitute secondVoiceCategory ]
@@ -466,6 +480,7 @@ substituteDoubleLead leadVoice availablePitchClasses =
         Just voicing ->
             voicing
                 |> completeFivePart
+                |> Result.fromMaybe CouldNotCompleteVoicing
 
         Nothing ->
             Err <|
@@ -477,69 +492,78 @@ substituteDoubleLead leadVoice availablePitchClasses =
                     ]
 
 
-fiveWayDrop2 : AvailablePitchClasses -> FivePartVoicing -> Result Error FivePartVoicing
-fiveWayDrop2 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
+fiveWayDrop2 :
+    Availables
+    -> FivePartVoicingClass
+    -> Result Error FivePartVoicingClass
+fiveWayDrop2 availables { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceThree
     , voiceThree = Just voiceFour
     , voiceFour =
-        Pitch.transposeDown Interval.perfectOctave voiceTwo
-            |> Result.toMaybe
+        Interval.subtract Interval.perfectOctave voiceTwo
+            |> Just
     , voiceFive = Just voiceFive
     , used = []
-    , availablePitchClasses = availablePitchClasses
+    , availables = availables
     }
         |> completeFivePart
+        |> Result.fromMaybe CouldNotCompleteVoicing
 
 
-fiveWayDrop3 : AvailablePitchClasses -> FivePartVoicing -> Result Error FivePartVoicing
-fiveWayDrop3 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
+fiveWayDrop3 :
+    Availables
+    -> FivePartVoicingClass
+    -> Result Error FivePartVoicingClass
+fiveWayDrop3 availables { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceTwo
     , voiceThree = Just voiceFour
     , voiceFour =
-        Pitch.transposeDown Interval.perfectOctave voiceThree
-            |> Result.toMaybe
+        Interval.subtract Interval.perfectOctave voiceThree
+            |> Just
     , voiceFive = Just voiceFive
     , used = []
-    , availablePitchClasses = availablePitchClasses
+    , availables = availables
     }
         |> completeFivePart
+        |> Result.fromMaybe CouldNotCompleteVoicing
 
 
-fiveWayDrop2and4 : AvailablePitchClasses -> FivePartVoicing -> Result Error FivePartVoicing
-fiveWayDrop2and4 availablePitchClasses { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
+fiveWayDrop2and4 : Availables -> FivePartVoicingClass -> Result Error FivePartVoicingClass
+fiveWayDrop2and4 availables { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceThree
     , voiceThree =
-        Pitch.transposeDown Interval.perfectOctave voiceTwo
-            |> Result.toMaybe
+        Interval.subtract Interval.perfectOctave voiceTwo
+            |> Just
     , voiceFour =
-        Pitch.transposeDown Interval.perfectOctave voiceFour
-            |> Result.toMaybe
+        Interval.subtract Interval.perfectOctave voiceFour
+            |> Just
     , voiceFive = Just voiceFive
     , used = []
-    , availablePitchClasses = availablePitchClasses
+    , availables = availables
     }
         |> completeFivePart
+        |> Result.fromMaybe CouldNotCompleteVoicing
 
 
 
 -- Four-part voicing utils
 
 
-type alias FourPartVoicingInProgress =
-    { voiceOne : Maybe Pitch.Pitch
-    , voiceTwo : Maybe Pitch.Pitch
-    , voiceThree : Maybe Pitch.Pitch
-    , voiceFour : Maybe Pitch.Pitch
-    , availablePitchClasses : AvailablePitchClasses
-    , used : List PitchClass.PitchClass
+type alias FourPartVoicingClassInProgress =
+    { voiceOne : Maybe Interval.Interval
+    , voiceTwo : Maybe Interval.Interval
+    , voiceThree : Maybe Interval.Interval
+    , voiceFour : Maybe Interval.Interval
+    , availables : Availables
+    , used : List Interval.Interval
     }
 
 
-getAtFourPartVoicing : Int -> FourPartVoicingInProgress -> Maybe Pitch.Pitch
-getAtFourPartVoicing index voicingInProgress =
+getAtFourPartVoicingClass : Int -> FourPartVoicingClassInProgress -> Maybe Interval.Interval
+getAtFourPartVoicingClass index voicingInProgress =
     case index of
         1 ->
             voicingInProgress.voiceOne
@@ -557,137 +581,135 @@ getAtFourPartVoicing index voicingInProgress =
             Nothing
 
 
-setAtFourPartVoicing :
+setAtFourPartVoicingClass :
     Int
-    -> FourPartVoicingInProgress
-    -> Maybe Pitch.Pitch
-    -> FourPartVoicingInProgress
-setAtFourPartVoicing index voicingInProgress pitchToSet =
+    -> FourPartVoicingClassInProgress
+    -> Maybe Interval.Interval
+    -> FourPartVoicingClassInProgress
+setAtFourPartVoicingClass index voicingInProgress toSet =
     let
-        updateUsed currentUsed usedPitch =
+        updateUsed currentUsed used =
             currentUsed
                 ++ List.filterMap identity
-                    [ Maybe.map Pitch.pitchClass usedPitch
+                    [ used
                     ]
     in
     case index of
         1 ->
             { voicingInProgress
-                | voiceOne = pitchToSet
+                | voiceOne = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         2 ->
             { voicingInProgress
-                | voiceTwo = pitchToSet
+                | voiceTwo = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         3 ->
             { voicingInProgress
-                | voiceThree = pitchToSet
+                | voiceThree = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         4 ->
             { voicingInProgress
-                | voiceFour = pitchToSet
+                | voiceFour = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         _ ->
             voicingInProgress
 
 
-fourPartInit : AvailablePitchClasses -> FourPartVoicingInProgress
-fourPartInit availablePitchClasses =
+fourPartInit : Availables -> FourPartVoicingClassInProgress
+fourPartInit availables =
     { voiceOne = Nothing
     , voiceTwo = Nothing
     , voiceThree = Nothing
     , voiceFour = Nothing
-    , availablePitchClasses = availablePitchClasses
+    , availables = availables
     , used = []
     }
 
 
-completeFourPart : FourPartVoicingInProgress -> Result Error FourPartVoicing
+completeFourPart :
+    FourPartVoicingClassInProgress
+    -> Maybe FourPartVoicingClass
 completeFourPart { voiceOne, voiceTwo, voiceThree, voiceFour } =
-    Maybe.map4 FourPartVoicing voiceOne voiceTwo voiceThree voiceFour
-        |> Result.fromMaybe
-            (CouldNotCompleteVoicing
-                [ voiceOne
-                , voiceTwo
-                , voiceThree
-                , voiceFour
-                ]
-            )
+    Maybe.map4 FourPartVoicingClass voiceOne voiceTwo voiceThree voiceFour
 
 
-applyStepFourPart : Step -> FourPartVoicingInProgress -> FourPartVoicingInProgress
+applyStepFourPart :
+    Step
+    -> FourPartVoicingClassInProgress
+    -> FourPartVoicingClassInProgress
 applyStepFourPart step voicingInProgress =
     case step of
         AssignToVoice voice pitch ->
-            setAtFourPartVoicing voice voicingInProgress (Just pitch)
+            setAtFourPartVoicingClass voice voicingInProgress (Just pitch)
 
         AssignFirstBelow voice voiceSelections ->
-            getAtFourPartVoicing voice voicingInProgress
+            getAtFourPartVoicingClass voice voicingInProgress
                 |> Maybe.map2
-                    Pitch.firstBelow
-                    (usePitchClassFromVoiceSelections
+                    Interval.firstBelow
+                    (useFromVoiceSelections
                         voiceSelections
-                        voicingInProgress.availablePitchClasses
+                        voicingInProgress.availables
                         voicingInProgress.used
                     )
-                |> Maybe.andThen Result.toMaybe
-                |> setAtFourPartVoicing (voice + 1) voicingInProgress
+                |> setAtFourPartVoicingClass (voice + 1) voicingInProgress
 
         AssignFirstAbove voice voiceSelections ->
-            getAtFourPartVoicing voice voicingInProgress
+            getAtFourPartVoicingClass voice voicingInProgress
                 |> Maybe.map2
-                    Pitch.firstAbove
-                    (usePitchClassFromVoiceSelections
+                    Interval.firstAbove
+                    (useFromVoiceSelections
                         voiceSelections
-                        voicingInProgress.availablePitchClasses
+                        voicingInProgress.availables
                         voicingInProgress.used
                     )
-                |> Maybe.andThen Result.toMaybe
-                |> setAtFourPartVoicing (voice - 1) voicingInProgress
+                |> setAtFourPartVoicingClass (voice - 1) voicingInProgress
 
         CopyVoice fromVoice toVoice ->
             let
                 voiceToGet =
-                    getAtFourPartVoicing fromVoice voicingInProgress
+                    getAtFourPartVoicingClass fromVoice voicingInProgress
             in
-            setAtFourPartVoicing toVoice voicingInProgress voiceToGet
+            setAtFourPartVoicingClass toVoice voicingInProgress voiceToGet
 
         DropVoiceByOctave voice ->
-            getAtFourPartVoicing voice voicingInProgress
-                |> Maybe.map (Pitch.transposeDown Interval.perfectOctave)
-                |> Maybe.andThen Result.toMaybe
-                |> setAtFourPartVoicing voice voicingInProgress
+            getAtFourPartVoicingClass voice voicingInProgress
+                |> Maybe.map
+                    (Interval.subtract Interval.perfectOctave)
+                |> setAtFourPartVoicingClass voice voicingInProgress
 
 
 
 -- Five-part voicing utils
 
 
-type alias FivePartVoicingInProgress =
-    { voiceOne : Maybe Pitch.Pitch
-    , voiceTwo : Maybe Pitch.Pitch
-    , voiceThree : Maybe Pitch.Pitch
-    , voiceFour : Maybe Pitch.Pitch
-    , voiceFive : Maybe Pitch.Pitch
-    , availablePitchClasses : AvailablePitchClasses
-    , used : List PitchClass.PitchClass
+type alias FivePartVoicingClassInProgress =
+    { voiceOne : Maybe Interval.Interval
+    , voiceTwo : Maybe Interval.Interval
+    , voiceThree : Maybe Interval.Interval
+    , voiceFour : Maybe Interval.Interval
+    , voiceFive : Maybe Interval.Interval
+    , availables : Availables
+    , used : List Interval.Interval
     }
 
 
-getAtFivePartVoicing : Int -> FivePartVoicingInProgress -> Maybe Pitch.Pitch
-getAtFivePartVoicing index voicingInProgress =
+getAtFivePartVoicingClass :
+    Int
+    -> FivePartVoicingClassInProgress
+    -> Maybe Interval.Interval
+getAtFivePartVoicingClass index voicingInProgress =
     case index of
         1 ->
             voicingInProgress.voiceOne
@@ -708,158 +730,118 @@ getAtFivePartVoicing index voicingInProgress =
             Nothing
 
 
-setAtFivePartVoicing :
+setAtFivePartVoicingClass :
     Int
-    -> FivePartVoicingInProgress
-    -> Maybe Pitch.Pitch
-    -> FivePartVoicingInProgress
-setAtFivePartVoicing index voicingInProgress pitchToSet =
+    -> FivePartVoicingClassInProgress
+    -> Maybe Interval.Interval
+    -> FivePartVoicingClassInProgress
+setAtFivePartVoicingClass index voicingInProgress toSet =
     let
-        updateUsed currentUsed usedPitch =
+        updateUsed currentUsed used =
             currentUsed
                 ++ List.filterMap identity
-                    [ Maybe.map Pitch.pitchClass usedPitch
+                    [ used
                     ]
     in
     case index of
         1 ->
             { voicingInProgress
-                | voiceOne = pitchToSet
+                | voiceOne = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         2 ->
             { voicingInProgress
-                | voiceTwo = pitchToSet
+                | voiceTwo = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         3 ->
             { voicingInProgress
-                | voiceThree = pitchToSet
+                | voiceThree = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         4 ->
             { voicingInProgress
-                | voiceFour = pitchToSet
+                | voiceFour = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         5 ->
             { voicingInProgress
-                | voiceFive = pitchToSet
+                | voiceFive = toSet
                 , used =
-                    updateUsed voicingInProgress.used pitchToSet
+                    updateUsed voicingInProgress.used toSet
             }
 
         _ ->
             voicingInProgress
 
 
-fivePartInit : AvailablePitchClasses -> FivePartVoicingInProgress
-fivePartInit availablePitchClasses =
+fivePartInit : Availables -> FivePartVoicingClassInProgress
+fivePartInit availables =
     { voiceOne = Nothing
     , voiceTwo = Nothing
     , voiceThree = Nothing
     , voiceFour = Nothing
     , voiceFive = Nothing
-    , availablePitchClasses = availablePitchClasses
+    , availables = availables
     , used = []
     }
 
 
-completeFivePart : FivePartVoicingInProgress -> Result Error FivePartVoicing
+completeFivePart :
+    FivePartVoicingClassInProgress
+    -> Maybe FivePartVoicingClass
 completeFivePart { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
-    Maybe.map5 FivePartVoicing voiceOne voiceTwo voiceThree voiceFour voiceFive
-        |> Result.fromMaybe
-            (CouldNotCompleteVoicing
-                [ voiceOne
-                , voiceTwo
-                , voiceThree
-                , voiceFour
-                ]
-            )
+    Maybe.map5 FivePartVoicingClass voiceOne voiceTwo voiceThree voiceFour voiceFive
 
 
-applyStepFivePart : Step -> FivePartVoicingInProgress -> FivePartVoicingInProgress
+applyStepFivePart :
+    Step
+    -> FivePartVoicingClassInProgress
+    -> FivePartVoicingClassInProgress
 applyStepFivePart step voicingInProgress =
     case step of
         AssignToVoice voice pitch ->
-            setAtFivePartVoicing voice voicingInProgress (Just pitch)
+            setAtFivePartVoicingClass voice voicingInProgress (Just pitch)
 
         AssignFirstBelow voice voiceSelections ->
-            getAtFivePartVoicing voice voicingInProgress
+            getAtFivePartVoicingClass voice voicingInProgress
                 |> Maybe.map2
-                    Pitch.firstBelow
-                    (usePitchClassFromVoiceSelections
+                    Interval.firstBelow
+                    (useFromVoiceSelections
                         voiceSelections
-                        voicingInProgress.availablePitchClasses
+                        voicingInProgress.availables
                         voicingInProgress.used
                     )
-                |> Maybe.andThen Result.toMaybe
-                |> setAtFivePartVoicing (voice + 1) voicingInProgress
+                |> setAtFivePartVoicingClass (voice + 1) voicingInProgress
 
         AssignFirstAbove voice voiceSelections ->
-            getAtFivePartVoicing voice voicingInProgress
+            getAtFivePartVoicingClass voice voicingInProgress
                 |> Maybe.map2
-                    Pitch.firstAbove
-                    (usePitchClassFromVoiceSelections
+                    Interval.firstAbove
+                    (useFromVoiceSelections
                         voiceSelections
-                        voicingInProgress.availablePitchClasses
+                        voicingInProgress.availables
                         voicingInProgress.used
                     )
-                |> Maybe.andThen Result.toMaybe
-                |> setAtFivePartVoicing (voice - 1) voicingInProgress
+                |> setAtFivePartVoicingClass (voice - 1) voicingInProgress
 
         CopyVoice fromVoice toVoice ->
             let
                 voiceToGet =
-                    getAtFivePartVoicing fromVoice voicingInProgress
+                    getAtFivePartVoicingClass fromVoice voicingInProgress
             in
-            setAtFivePartVoicing toVoice voicingInProgress voiceToGet
+            setAtFivePartVoicingClass toVoice voicingInProgress voiceToGet
 
         DropVoiceByOctave voice ->
-            getAtFivePartVoicing voice voicingInProgress
-                |> Maybe.map (Pitch.transposeDown Interval.perfectOctave)
-                |> Maybe.andThen Result.toMaybe
-                |> setAtFivePartVoicing voice voicingInProgress
-
-
-
--- Low interval limit utils
-
-
-type alias LowIntervalLimit =
-    { intervalInSemitones : Interval.Interval
-    , lowestAllowedPitch : Pitch
-    }
-
-
-lowIntervalLimitForInterval : Interval.Interval -> Pitch -> LowIntervalLimit
-lowIntervalLimitForInterval theInterval thePitch =
-    LowIntervalLimit theInterval thePitch
-
-
-lowIntervalLimits : List LowIntervalLimit
-lowIntervalLimits =
-    [ lowIntervalLimitForInterval Interval.minorSecond Pitch.e3
-    , lowIntervalLimitForInterval Interval.majorSecond Pitch.eFlat3
-    , lowIntervalLimitForInterval Interval.minorThird Pitch.c3
-    , lowIntervalLimitForInterval Interval.majorThird Pitch.bFlat2
-    , lowIntervalLimitForInterval Interval.perfectFourth Pitch.bFlat2
-    , lowIntervalLimitForInterval Interval.augmentedFourth Pitch.bFlat2
-    , lowIntervalLimitForInterval Interval.perfectFifth Pitch.bFlat1
-    , lowIntervalLimitForInterval Interval.minorSixth Pitch.g2
-    , lowIntervalLimitForInterval Interval.majorSixth Pitch.f2
-    , lowIntervalLimitForInterval Interval.minorSeventh Pitch.f2
-    , lowIntervalLimitForInterval Interval.majorSeventh Pitch.f2
-    , lowIntervalLimitForInterval Interval.minorNinth Pitch.e2
-    , lowIntervalLimitForInterval Interval.majorNinth Pitch.eFlat2
-    , lowIntervalLimitForInterval Interval.minorTenth Pitch.c2
-    , lowIntervalLimitForInterval Interval.majorTenth Pitch.bFlat1
-    ]
+            getAtFivePartVoicingClass voice voicingInProgress
+                |> Maybe.map
+                    (Interval.subtract Interval.perfectOctave)
+                |> setAtFivePartVoicingClass voice voicingInProgress

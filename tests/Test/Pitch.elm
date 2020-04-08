@@ -3,7 +3,7 @@ module Test.Pitch exposing (all)
 import Expect
 import MusicTheory.Interval as Interval
 import MusicTheory.Letter exposing (Letter(..))
-import MusicTheory.Octave as Octave exposing (OctaveError(..))
+import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch exposing (PitchError(..))
 import MusicTheory.PitchClass as PitchClass
 import Test exposing (Test, describe, test)
@@ -34,13 +34,7 @@ all =
                     Pitch.g4
                         |> Pitch.transposeUp Interval.perfectFifth
                         |> Expect.equal
-                            (Ok Pitch.d5)
-            , test "transpose up major 3 from A8 should fail" <|
-                \_ ->
-                    Pitch.a8
-                        |> Pitch.transposeUp Interval.majorThird
-                        |> Expect.equal
-                            (Err <| InvalidOctave <| AboveValidRange 9)
+                            Pitch.d5
             ]
         , describe
             "transposeDown"
@@ -50,21 +44,14 @@ all =
                         |> Pitch.transposeDown
                             Interval.perfectFifth
                         |> Expect.equal
-                            (Ok Pitch.g4)
+                            Pitch.g4
             , test "transpose down augmented 11th from D5 should be Ab3" <|
                 \_ ->
                     Pitch.d5
                         |> Pitch.transposeDown
                             Interval.augmentedEleventh
                         |> Expect.equal
-                            (Ok Pitch.aFlat3)
-            , test "transpose down major 3 from D0 should fail" <|
-                \_ ->
-                    Pitch.d0
-                        |> Pitch.transposeDown
-                            Interval.majorThird
-                        |> Expect.equal
-                            (Err <| InvalidOctave <| BelowValidRange -1)
+                            Pitch.aFlat3
             ]
         , describe "allForPitchClass"
             [ test "should return Pitches in all Octaves" <|

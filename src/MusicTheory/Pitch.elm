@@ -338,7 +338,7 @@ module MusicTheory.Pitch exposing
 
 import MusicTheory.Interval as Interval exposing (Interval)
 import MusicTheory.Letter as Letter exposing (Letter(..))
-import MusicTheory.Octave as Octave exposing (Octave, OctaveError(..))
+import MusicTheory.Octave as Octave exposing (Octave)
 import MusicTheory.PitchClass as PitchClass exposing (Offset, PitchClass)
 
 
@@ -357,8 +357,7 @@ type Pitch
 
 
 type PitchError
-    = InvalidOctave OctaveError
-    | SemitonesOutOfRange Int
+    = SemitonesOutOfRange Int
     | ValidPitchNotFound
 
 
@@ -513,7 +512,7 @@ areEnharmonicEquivalents lhs rhs =
 
 allForPitchClass : PitchClass -> List Pitch
 allForPitchClass thePitchClass =
-    Octave.all
+    Octave.allValid
         |> List.map
             (\theOctave ->
                 fromPitchClass theOctave thePitchClass
@@ -567,9 +566,6 @@ errorToString :
     -> String
 errorToString error =
     case error of
-        InvalidOctave err ->
-            Octave.errorToString err
-
         SemitonesOutOfRange semis ->
             "Pitch semitone count"
                 ++ String.fromInt semis
@@ -586,7 +582,7 @@ errorToString error =
 transposeUp :
     Interval
     -> Pitch
-    -> Result PitchError Pitch
+    -> Pitch
 transposeUp theInterval thePitch =
     transpose theInterval thePitch
 
@@ -594,7 +590,7 @@ transposeUp theInterval thePitch =
 transposeDown :
     Interval
     -> Pitch
-    -> Result PitchError Pitch
+    -> Pitch
 transposeDown theInterval thePitch =
     transpose
         (theInterval
@@ -606,7 +602,7 @@ transposeDown theInterval thePitch =
 transpose :
     Interval
     -> Pitch
-    -> Result PitchError Pitch
+    -> Pitch
 transpose interval p =
     let
         transposedPitchClass =
@@ -632,8 +628,7 @@ transpose interval p =
             targetOctaveSemitones // 12
     in
     Octave.octave numberOfOctaves
-        |> Result.map (\o -> Pitch transposedPitchClass o)
-        |> Result.mapError InvalidOctave
+        |> Pitch transposedPitchClass
 
 
 c0 : Pitch

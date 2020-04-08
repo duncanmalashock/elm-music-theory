@@ -5,8 +5,10 @@ import MusicTheory.Analyze.Chord as AnalyzeChord
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Generate.JazzVoicing as GenerateVoicing
+import MusicTheory.Interval as Interval
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
+import MusicTheory.Voicing as Voicing
 import Result.Extra
 import Test exposing (..)
 
@@ -26,17 +28,18 @@ all =
                                 , voiceFour = Pitch.g4
                                 }
 
-                        availablePitchClasses =
-                            AnalyzeChord.availablePitchClassesFor
+                        availables =
+                            AnalyzeChord.availables
                                 (Chord.chord PitchClass.c ChordClass.majorSix)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.fourWayClose Pitch.e5)
-                                availablePitchClasses
+                                (GenerateVoicing.fourWayClose Interval.majorThird)
+                                availables
+                                |> Result.map (Voicing.fourPart Pitch.c5)
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "fourWayDrop2"
             [ test "four-way drop-2 voicing of Cmaj6 should include correct chord tones" <|
@@ -50,21 +53,22 @@ all =
                                 , voiceFour = Pitch.c4
                                 }
 
-                        availablePitchClasses =
-                            AnalyzeChord.availablePitchClassesFor
+                        availables =
+                            AnalyzeChord.availables
                                 (Chord.chord PitchClass.c ChordClass.majorSix)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.fourWayClose Pitch.e5)
-                                availablePitchClasses
+                                (GenerateVoicing.fourWayClose Interval.majorThird)
+                                availables
                                 |> Result.map2
                                     GenerateVoicing.fourWayDrop2
-                                    availablePitchClasses
+                                    availables
                                 |> Result.Extra.join
+                                |> Result.map (Voicing.fourPart Pitch.c5)
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "fourWayDrop3"
             [ test "four-way drop-3 voicing of Cmaj6 should include correct chord tones" <|
@@ -78,21 +82,22 @@ all =
                                 , voiceFour = Pitch.a3
                                 }
 
-                        availablePitchClasses =
-                            AnalyzeChord.availablePitchClassesFor
+                        availables =
+                            AnalyzeChord.availables
                                 (Chord.chord PitchClass.c ChordClass.majorSix)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.fourWayClose Pitch.e5)
-                                availablePitchClasses
+                                (GenerateVoicing.fourWayClose Interval.majorThird)
+                                availables
                                 |> Result.map2
                                     GenerateVoicing.fourWayDrop3
-                                    availablePitchClasses
+                                    availables
                                 |> Result.Extra.join
+                                |> Result.map (Voicing.fourPart Pitch.c5)
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "fourWayDrop2and4"
             [ test "four-way drop-2-and-4 voicing of Cmaj6 should include correct chord tones" <|
@@ -106,21 +111,22 @@ all =
                                 , voiceFour = Pitch.g3
                                 }
 
-                        availablePitchClasses =
-                            AnalyzeChord.availablePitchClassesFor
+                        availables =
+                            AnalyzeChord.availables
                                 (Chord.chord PitchClass.c ChordClass.majorSix)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.fourWayClose Pitch.e5)
-                                availablePitchClasses
+                                (GenerateVoicing.fourWayClose Interval.majorThird)
+                                availables
                                 |> Result.map2
                                     GenerateVoicing.fourWayDrop2and4
-                                    availablePitchClasses
+                                    availables
                                 |> Result.Extra.join
+                                |> Result.map (Voicing.fourPart Pitch.c5)
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "fourWayCloseDoubleLead"
             [ test "four-way close double-lead voicing of Cmaj6 should include correct chord tones" <|
@@ -135,17 +141,18 @@ all =
                                 , voiceFive = Pitch.e4
                                 }
 
-                        availablePitchClasses =
-                            AnalyzeChord.availablePitchClassesFor
+                        availables =
+                            AnalyzeChord.availables
                                 (Chord.chord PitchClass.c ChordClass.majorSix)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.fourWayCloseDoubleLead Pitch.e5)
-                                availablePitchClasses
+                                (GenerateVoicing.fourWayCloseDoubleLead Interval.majorThird)
+                                availables
+                                |> Result.map (Voicing.fivePart Pitch.c5)
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "fourWaySpread"
             [ test "four-way spread voicing of Cmaj6 should include correct chord tones" <|
@@ -159,17 +166,18 @@ all =
                                 , voiceFour = Pitch.c3
                                 }
 
-                        availablePitchClasses =
-                            AnalyzeChord.availablePitchClassesFor
+                        availables =
+                            AnalyzeChord.availables
                                 (Chord.chord PitchClass.c ChordClass.majorSix)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.fourWaySpread Pitch.c3)
-                                availablePitchClasses
+                                (GenerateVoicing.fourWaySpread Interval.perfectUnison)
+                                availables
+                                |> Result.map (Voicing.fourPart Pitch.c3)
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "fiveWaySpread"
             [ test "five-way spread voicing of C7b9b13 should include correct chord tones" <|
@@ -184,17 +192,18 @@ all =
                                 , voiceFive = Pitch.c3
                                 }
 
-                        availablePitchClasses =
-                            AnalyzeChord.availablePitchClassesFor
+                        availables =
+                            AnalyzeChord.availables
                                 (Chord.chord PitchClass.c ChordClass.dominantSeventhFlatNineFlatThirteen)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
-                            Result.andThen
-                                (GenerateVoicing.fiveWaySpread Pitch.c3)
-                                availablePitchClasses
+                            availables
+                                |> Result.andThen
+                                    (GenerateVoicing.fiveWaySpread Interval.perfectUnison)
+                                |> Result.map (Voicing.fivePart Pitch.c3)
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         , describe "substituteDoubleLead"
             [ test "substitute double lead voicing of Cm7 should include correct chord tones" <|
@@ -209,16 +218,17 @@ all =
                                 , voiceFive = Pitch.c4
                                 }
 
-                        availablePitchClasses =
-                            AnalyzeChord.availablePitchClassesFor
+                        availables =
+                            AnalyzeChord.availables
                                 (Chord.chord PitchClass.c ChordClass.minorSeventh)
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
-                                (GenerateVoicing.substituteDoubleLead Pitch.d5)
-                                availablePitchClasses
+                                (GenerateVoicing.substituteDoubleLead Interval.majorNinth)
+                                availables
+                                |> Result.map (Voicing.fivePart Pitch.c4)
                     in
-                    Expect.equal result expected
+                    Expect.equal expected result
             ]
         ]
