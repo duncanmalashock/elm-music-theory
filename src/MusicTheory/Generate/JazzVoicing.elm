@@ -14,7 +14,7 @@ module MusicTheory.Generate.JazzVoicing exposing
     , substituteDoubleLead
     )
 
-import MusicTheory.Analyze.Chord as AnalyzeChord
+import MusicTheory.Analyze.JazzChord as AnalyzeChord
     exposing
         ( Availables
         , VoiceCategory(..)

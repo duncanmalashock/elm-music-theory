@@ -1,7 +1,7 @@
-module Test.Analyze.Chord exposing (all)
+module Test.Analyze.JazzChord exposing (all)
 
 import Expect
-import MusicTheory.Analyze.Chord as AnalyzeChord
+import MusicTheory.Analyze.JazzChord as AnalyzeChord
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Letter exposing (Letter(..))

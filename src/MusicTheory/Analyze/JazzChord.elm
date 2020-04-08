@@ -1,4 +1,4 @@
-module MusicTheory.Analyze.Chord exposing
+module MusicTheory.Analyze.JazzChord exposing
     ( Availables
     , Error
     , VoiceCategory(..)

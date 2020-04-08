@@ -1,7 +1,7 @@
 module Test.VoicingClass exposing (..)
 
 import Expect
-import MusicTheory.Analyze.Chord as AnalyzeChord
+import MusicTheory.Analyze.JazzChord as AnalyzeChord
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Generate.JazzVoicing as GenerateVoicing
