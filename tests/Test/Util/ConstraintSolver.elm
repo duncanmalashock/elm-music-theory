@@ -1,8 +1,8 @@
-module Test.Libs.ConstraintSolver exposing (all)
+module Test.Util.ConstraintSolver exposing (all)
 
 import Expect
-import Libs.ConstraintSolver as ConstraintSolver
 import Test exposing (Test, describe, test)
+import Util.ConstraintSolver as ConstraintSolver
 
 
 all : Test

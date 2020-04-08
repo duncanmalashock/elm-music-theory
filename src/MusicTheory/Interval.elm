@@ -60,6 +60,8 @@ module MusicTheory.Interval exposing
     , up
     )
 
+import Util.Basic
+
 
 type IntervalNumber
     = Unison
@@ -119,14 +121,7 @@ firstBelow : Interval -> Interval -> Interval
 firstBelow toFind reference =
     firstBelowHelp
         (toFind
-            |> add perfectOctave
-            |> add perfectOctave
-            |> add perfectOctave
-            |> add perfectOctave
-            |> add perfectOctave
-            |> add perfectOctave
-            |> add perfectOctave
-            |> add perfectOctave
+            |> Util.Basic.applyNTimes 10 (add perfectOctave)
         )
         reference
 
@@ -151,14 +146,7 @@ firstAbove : Interval -> Interval -> Interval
 firstAbove toFind reference =
     firstAboveHelp
         (toFind
-            |> add (perfectOctave |> reverse)
-            |> add (perfectOctave |> reverse)
-            |> add (perfectOctave |> reverse)
-            |> add (perfectOctave |> reverse)
-            |> add (perfectOctave |> reverse)
-            |> add (perfectOctave |> reverse)
-            |> add (perfectOctave |> reverse)
-            |> add (perfectOctave |> reverse)
+            |> Util.Basic.applyNTimes 10 (subtract perfectOctave)
         )
         reference
 

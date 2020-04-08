@@ -1,4 +1,4 @@
-module Libs.Ratio exposing
+module Util.Ratio exposing
     ( Rational
     , over, fromInt
     , eq, ne, gt, lt, ge, le, max, min, compare

@@ -1,4 +1,4 @@
-module Libs.Permutations exposing
+module Util.Permutations exposing
     ( permutations2
     , permutations3
     , permutations4

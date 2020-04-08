@@ -1,4 +1,4 @@
-module Libs.ConstraintSolver exposing (combineConstraints, solve, tryAllFor)
+module Util.ConstraintSolver exposing (combineConstraints, solve, tryAllFor)
 
 import Result.Extra
 

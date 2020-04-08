@@ -53,6 +53,7 @@ module MusicTheory.PitchClass exposing
 
 import MusicTheory.Interval as Interval exposing (Direction(..), Interval(..))
 import MusicTheory.Letter as Letter exposing (Letter(..))
+import Util.Basic
 
 
 a : PitchClass
@@ -317,25 +318,17 @@ transpose interval pc =
         startingLetter =
             letter pc
 
-        applyNTimes : Int -> Int -> (a -> a) -> a -> a
-        applyNTimes i n fn v =
-            if i < n then
-                applyNTimes (i + 1) n fn (fn v)
-
-            else
-                v
-
         ( targetLetter, semitoneDistance ) =
             case Interval.direction interval of
                 Up ->
                     ( startingLetter, 0 )
-                        |> applyNTimes 0
+                        |> Util.Basic.applyNTimes
                             numberOfIntervalSteps
                             Letter.nextWithSemitoneCount
 
                 Down ->
                     ( startingLetter, 0 )
-                        |> applyNTimes 0
+                        |> Util.Basic.applyNTimes
                             numberOfIntervalSteps
                             Letter.prevWithSemitoneCount
     in

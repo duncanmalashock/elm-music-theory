@@ -12,7 +12,7 @@ module MusicTheory.Tuplet exposing
     , triplet
     )
 
-import Libs.Ratio as Ratio exposing (Rational)
+import Util.Ratio as Ratio exposing (Rational)
 
 
 type Tuplet

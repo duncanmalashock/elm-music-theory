@@ -19,7 +19,7 @@ module MusicTheory.Duration exposing
     , wholeNote
     )
 
-import Libs.Ratio as Ratio exposing (Rational)
+import Util.Ratio as Ratio exposing (Rational)
 
 
 type Division

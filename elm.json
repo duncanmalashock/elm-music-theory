@@ -7,7 +7,6 @@
     "exposed-modules": [
         "MusicTheory.Chord",
         "MusicTheory.ChordClass",
-        "MusicTheory.Duration",
         "MusicTheory.Interval",
         "MusicTheory.Key",
         "MusicTheory.Letter",
@@ -15,8 +14,7 @@
         "MusicTheory.Pitch",
         "MusicTheory.PitchClass",
         "MusicTheory.Scale",
-        "MusicTheory.ScaleClass",
-        "MusicTheory.Tuplet"
+        "MusicTheory.ScaleClass"
     ],
     "elm-version": "0.19.1 <= v < 0.20.0",
     "dependencies": {
