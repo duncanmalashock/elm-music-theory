@@ -18,15 +18,15 @@ all =
                     Pitch.fromPitchClass
                         Octave.four
                         (PitchClass.pitchClass B PitchClass.doubleSharp)
-                        |> Result.map Pitch.semitones
-                        |> Expect.equal (Ok 61)
+                        |> Pitch.semitones
+                        |> Expect.equal 61
             , test "semitones of C#5 should be 61 (5*12 (octave) + 0 (letter C) + 1 (sharp))" <|
                 \_ ->
                     Pitch.fromPitchClass
                         Octave.five
                         (PitchClass.pitchClass C PitchClass.sharp)
-                        |> Result.map Pitch.semitones
-                        |> Expect.equal (Ok 61)
+                        |> Pitch.semitones
+                        |> Expect.equal 61
             ]
         , describe "transposeUp"
             [ test "transpose up perfect 5 from G4 should be D5" <|

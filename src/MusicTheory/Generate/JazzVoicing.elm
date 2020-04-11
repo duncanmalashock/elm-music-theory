@@ -10,7 +10,6 @@ module MusicTheory.Generate.JazzVoicing exposing
     , fourWayDrop2and4
     , fourWayDrop3
     , fourWaySpread
-    , nextVoiceCategory
     , substituteDoubleLead
     )
 
@@ -20,7 +19,6 @@ import MusicTheory.Analyze.JazzChord as AnalyzeChord
         , VoiceCategory(..)
         )
 import MusicTheory.Interval as Interval
-import MusicTheory.Pitch as Pitch exposing (Pitch)
 import MusicTheory.VoicingClass
     exposing
         ( FivePartVoicingClass

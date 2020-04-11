@@ -10,24 +10,6 @@ module MusicTheory.Pitch exposing
     , a6
     , a7
     , a8
-    , aDoubleFlat0
-    , aDoubleFlat1
-    , aDoubleFlat2
-    , aDoubleFlat3
-    , aDoubleFlat4
-    , aDoubleFlat5
-    , aDoubleFlat6
-    , aDoubleFlat7
-    , aDoubleFlat8
-    , aDoubleSharp0
-    , aDoubleSharp1
-    , aDoubleSharp2
-    , aDoubleSharp3
-    , aDoubleSharp4
-    , aDoubleSharp5
-    , aDoubleSharp6
-    , aDoubleSharp7
-    , aDoubleSharp8
     , aFlat0
     , aFlat1
     , aFlat2
@@ -57,23 +39,6 @@ module MusicTheory.Pitch exposing
     , b6
     , b7
     , b8
-    , bDoubleFlat0
-    , bDoubleFlat1
-    , bDoubleFlat2
-    , bDoubleFlat3
-    , bDoubleFlat4
-    , bDoubleFlat5
-    , bDoubleFlat6
-    , bDoubleFlat7
-    , bDoubleFlat8
-    , bDoubleSharp0
-    , bDoubleSharp1
-    , bDoubleSharp2
-    , bDoubleSharp3
-    , bDoubleSharp4
-    , bDoubleSharp5
-    , bDoubleSharp6
-    , bDoubleSharp7
     , bFlat0
     , bFlat1
     , bFlat2
@@ -101,23 +66,6 @@ module MusicTheory.Pitch exposing
     , c6
     , c7
     , c8
-    , cDoubleFlat1
-    , cDoubleFlat2
-    , cDoubleFlat3
-    , cDoubleFlat4
-    , cDoubleFlat5
-    , cDoubleFlat6
-    , cDoubleFlat7
-    , cDoubleFlat8
-    , cDoubleSharp0
-    , cDoubleSharp1
-    , cDoubleSharp2
-    , cDoubleSharp3
-    , cDoubleSharp4
-    , cDoubleSharp5
-    , cDoubleSharp6
-    , cDoubleSharp7
-    , cDoubleSharp8
     , cFlat1
     , cFlat2
     , cFlat3
@@ -144,24 +92,6 @@ module MusicTheory.Pitch exposing
     , d6
     , d7
     , d8
-    , dDoubleFlat0
-    , dDoubleFlat1
-    , dDoubleFlat2
-    , dDoubleFlat3
-    , dDoubleFlat4
-    , dDoubleFlat5
-    , dDoubleFlat6
-    , dDoubleFlat7
-    , dDoubleFlat8
-    , dDoubleSharp0
-    , dDoubleSharp1
-    , dDoubleSharp2
-    , dDoubleSharp3
-    , dDoubleSharp4
-    , dDoubleSharp5
-    , dDoubleSharp6
-    , dDoubleSharp7
-    , dDoubleSharp8
     , dFlat0
     , dFlat1
     , dFlat2
@@ -191,24 +121,6 @@ module MusicTheory.Pitch exposing
     , e6
     , e7
     , e8
-    , eDoubleFlat0
-    , eDoubleFlat1
-    , eDoubleFlat2
-    , eDoubleFlat3
-    , eDoubleFlat4
-    , eDoubleFlat5
-    , eDoubleFlat6
-    , eDoubleFlat7
-    , eDoubleFlat8
-    , eDoubleSharp0
-    , eDoubleSharp1
-    , eDoubleSharp2
-    , eDoubleSharp3
-    , eDoubleSharp4
-    , eDoubleSharp5
-    , eDoubleSharp6
-    , eDoubleSharp7
-    , eDoubleSharp8
     , eFlat0
     , eFlat1
     , eFlat2
@@ -227,7 +139,6 @@ module MusicTheory.Pitch exposing
     , eSharp6
     , eSharp7
     , eSharp8
-    , errorToString
     , f0
     , f1
     , f2
@@ -237,24 +148,6 @@ module MusicTheory.Pitch exposing
     , f6
     , f7
     , f8
-    , fDoubleFlat0
-    , fDoubleFlat1
-    , fDoubleFlat2
-    , fDoubleFlat3
-    , fDoubleFlat4
-    , fDoubleFlat5
-    , fDoubleFlat6
-    , fDoubleFlat7
-    , fDoubleFlat8
-    , fDoubleSharp0
-    , fDoubleSharp1
-    , fDoubleSharp2
-    , fDoubleSharp3
-    , fDoubleSharp4
-    , fDoubleSharp5
-    , fDoubleSharp6
-    , fDoubleSharp7
-    , fDoubleSharp8
     , fFlat0
     , fFlat1
     , fFlat2
@@ -286,24 +179,6 @@ module MusicTheory.Pitch exposing
     , g6
     , g7
     , g8
-    , gDoubleFlat0
-    , gDoubleFlat1
-    , gDoubleFlat2
-    , gDoubleFlat3
-    , gDoubleFlat4
-    , gDoubleFlat5
-    , gDoubleFlat6
-    , gDoubleFlat7
-    , gDoubleFlat8
-    , gDoubleSharp0
-    , gDoubleSharp1
-    , gDoubleSharp2
-    , gDoubleSharp3
-    , gDoubleSharp4
-    , gDoubleSharp5
-    , gDoubleSharp6
-    , gDoubleSharp7
-    , gDoubleSharp8
     , gFlat0
     , gFlat1
     , gFlat2
@@ -332,8 +207,6 @@ module MusicTheory.Pitch exposing
     , sort
     , transposeDown
     , transposeUp
-    , tripleFlat
-    , tripleSharp
     )
 
 import MusicTheory.Interval as Interval exposing (Interval)
@@ -361,7 +234,7 @@ type PitchError
     | ValidPitchNotFound
 
 
-pitch : Letter -> Offset -> Octave -> Result PitchError Pitch
+pitch : Letter -> Offset -> Octave -> Pitch
 pitch l os o =
     fromPitchClass o (PitchClass.pitchClass l os)
 
@@ -434,11 +307,6 @@ intervalBetween pitchA pitchB =
 --
 
 
-tripleFlat : Offset
-tripleFlat =
-    PitchClass.tripleFlat
-
-
 doubleFlat : Offset
 doubleFlat =
     PitchClass.doubleFlat
@@ -464,11 +332,6 @@ doubleSharp =
     PitchClass.doubleSharp
 
 
-tripleSharp : Offset
-tripleSharp =
-    PitchClass.tripleSharp
-
-
 pitchClass : Pitch -> PitchClass
 pitchClass (Pitch pc _) =
     pc
@@ -479,20 +342,9 @@ octave (Pitch _ o) =
     o
 
 
-fromPitchClass : Octave -> PitchClass -> Result PitchError Pitch
+fromPitchClass : Octave -> PitchClass -> Pitch
 fromPitchClass o p =
-    let
-        newPitch =
-            Pitch p o
-    in
-    if
-        (semitones newPitch > semitonesUpperLimit)
-            || (semitones newPitch < semitonesLowerLimit)
-    then
-        Err <| SemitonesOutOfRange (semitones newPitch)
-
-    else
-        Ok newPitch
+    Pitch p o
 
 
 sort : List Pitch -> List Pitch
@@ -506,8 +358,8 @@ semitones (Pitch pc o) =
 
 
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool
-areEnharmonicEquivalents lhs rhs =
-    semitones lhs == semitones rhs
+areEnharmonicEquivalents a b =
+    semitones a == semitones b
 
 
 allForPitchClass : PitchClass -> List Pitch
@@ -517,7 +369,6 @@ allForPitchClass thePitchClass =
             (\theOctave ->
                 fromPitchClass theOctave thePitchClass
             )
-        |> List.filterMap Result.toMaybe
 
 
 firstBelow : PitchClass -> Pitch -> Result PitchError Pitch
@@ -559,24 +410,6 @@ firstAbove thePitchClass startPitch =
 
         Just thePitch ->
             Ok thePitch
-
-
-errorToString :
-    PitchError
-    -> String
-errorToString error =
-    case error of
-        SemitonesOutOfRange semis ->
-            "Pitch semitone count"
-                ++ String.fromInt semis
-                ++ " is not between the legal range of "
-                ++ String.fromInt semitonesLowerLimit
-                ++ " and "
-                ++ String.fromInt semitonesUpperLimit
-                ++ "."
-
-        ValidPitchNotFound ->
-            "A valid pitch could not be constructed."
 
 
 transposeUp :
@@ -631,6 +464,10 @@ transpose interval p =
         |> Pitch transposedPitchClass
 
 
+
+-- Pitch constructors
+
+
 c0 : Pitch
 c0 =
     Pitch PitchClass.c Octave.zero
@@ -639,626 +476,6 @@ c0 =
 cSharp0 : Pitch
 cSharp0 =
     Pitch PitchClass.cSharp Octave.zero
-
-
-cDoubleSharp0 : Pitch
-cDoubleSharp0 =
-    Pitch PitchClass.cDoubleSharp Octave.zero
-
-
-dDoubleSharp0 : Pitch
-dDoubleSharp0 =
-    Pitch PitchClass.dDoubleSharp Octave.zero
-
-
-eDoubleSharp0 : Pitch
-eDoubleSharp0 =
-    Pitch PitchClass.eDoubleSharp Octave.zero
-
-
-fDoubleSharp0 : Pitch
-fDoubleSharp0 =
-    Pitch PitchClass.fDoubleSharp Octave.zero
-
-
-gDoubleSharp0 : Pitch
-gDoubleSharp0 =
-    Pitch PitchClass.gDoubleSharp Octave.zero
-
-
-aDoubleSharp0 : Pitch
-aDoubleSharp0 =
-    Pitch PitchClass.aDoubleSharp Octave.zero
-
-
-bDoubleSharp0 : Pitch
-bDoubleSharp0 =
-    Pitch PitchClass.bDoubleSharp Octave.zero
-
-
-cDoubleSharp1 : Pitch
-cDoubleSharp1 =
-    Pitch PitchClass.cDoubleSharp Octave.one
-
-
-dDoubleSharp1 : Pitch
-dDoubleSharp1 =
-    Pitch PitchClass.dDoubleSharp Octave.one
-
-
-eDoubleSharp1 : Pitch
-eDoubleSharp1 =
-    Pitch PitchClass.eDoubleSharp Octave.one
-
-
-fDoubleSharp1 : Pitch
-fDoubleSharp1 =
-    Pitch PitchClass.fDoubleSharp Octave.one
-
-
-gDoubleSharp1 : Pitch
-gDoubleSharp1 =
-    Pitch PitchClass.gDoubleSharp Octave.one
-
-
-aDoubleSharp1 : Pitch
-aDoubleSharp1 =
-    Pitch PitchClass.aDoubleSharp Octave.one
-
-
-bDoubleSharp1 : Pitch
-bDoubleSharp1 =
-    Pitch PitchClass.bDoubleSharp Octave.one
-
-
-cDoubleSharp2 : Pitch
-cDoubleSharp2 =
-    Pitch PitchClass.cDoubleSharp Octave.two
-
-
-dDoubleSharp2 : Pitch
-dDoubleSharp2 =
-    Pitch PitchClass.dDoubleSharp Octave.two
-
-
-eDoubleSharp2 : Pitch
-eDoubleSharp2 =
-    Pitch PitchClass.eDoubleSharp Octave.two
-
-
-fDoubleSharp2 : Pitch
-fDoubleSharp2 =
-    Pitch PitchClass.fDoubleSharp Octave.two
-
-
-gDoubleSharp2 : Pitch
-gDoubleSharp2 =
-    Pitch PitchClass.gDoubleSharp Octave.two
-
-
-aDoubleSharp2 : Pitch
-aDoubleSharp2 =
-    Pitch PitchClass.aDoubleSharp Octave.two
-
-
-bDoubleSharp2 : Pitch
-bDoubleSharp2 =
-    Pitch PitchClass.bDoubleSharp Octave.two
-
-
-cDoubleSharp3 : Pitch
-cDoubleSharp3 =
-    Pitch PitchClass.cDoubleSharp Octave.three
-
-
-dDoubleSharp3 : Pitch
-dDoubleSharp3 =
-    Pitch PitchClass.dDoubleSharp Octave.three
-
-
-eDoubleSharp3 : Pitch
-eDoubleSharp3 =
-    Pitch PitchClass.eDoubleSharp Octave.three
-
-
-fDoubleSharp3 : Pitch
-fDoubleSharp3 =
-    Pitch PitchClass.fDoubleSharp Octave.three
-
-
-gDoubleSharp3 : Pitch
-gDoubleSharp3 =
-    Pitch PitchClass.gDoubleSharp Octave.three
-
-
-aDoubleSharp3 : Pitch
-aDoubleSharp3 =
-    Pitch PitchClass.aDoubleSharp Octave.three
-
-
-bDoubleSharp3 : Pitch
-bDoubleSharp3 =
-    Pitch PitchClass.bDoubleSharp Octave.three
-
-
-cDoubleSharp4 : Pitch
-cDoubleSharp4 =
-    Pitch PitchClass.cDoubleSharp Octave.four
-
-
-dDoubleSharp4 : Pitch
-dDoubleSharp4 =
-    Pitch PitchClass.dDoubleSharp Octave.four
-
-
-eDoubleSharp4 : Pitch
-eDoubleSharp4 =
-    Pitch PitchClass.eDoubleSharp Octave.four
-
-
-fDoubleSharp4 : Pitch
-fDoubleSharp4 =
-    Pitch PitchClass.fDoubleSharp Octave.four
-
-
-gDoubleSharp4 : Pitch
-gDoubleSharp4 =
-    Pitch PitchClass.gDoubleSharp Octave.four
-
-
-aDoubleSharp4 : Pitch
-aDoubleSharp4 =
-    Pitch PitchClass.aDoubleSharp Octave.four
-
-
-bDoubleSharp4 : Pitch
-bDoubleSharp4 =
-    Pitch PitchClass.bDoubleSharp Octave.four
-
-
-cDoubleSharp5 : Pitch
-cDoubleSharp5 =
-    Pitch PitchClass.cDoubleSharp Octave.five
-
-
-dDoubleSharp5 : Pitch
-dDoubleSharp5 =
-    Pitch PitchClass.dDoubleSharp Octave.five
-
-
-eDoubleSharp5 : Pitch
-eDoubleSharp5 =
-    Pitch PitchClass.eDoubleSharp Octave.five
-
-
-fDoubleSharp5 : Pitch
-fDoubleSharp5 =
-    Pitch PitchClass.fDoubleSharp Octave.five
-
-
-gDoubleSharp5 : Pitch
-gDoubleSharp5 =
-    Pitch PitchClass.gDoubleSharp Octave.five
-
-
-aDoubleSharp5 : Pitch
-aDoubleSharp5 =
-    Pitch PitchClass.aDoubleSharp Octave.five
-
-
-bDoubleSharp5 : Pitch
-bDoubleSharp5 =
-    Pitch PitchClass.bDoubleSharp Octave.five
-
-
-cDoubleSharp6 : Pitch
-cDoubleSharp6 =
-    Pitch PitchClass.cDoubleSharp Octave.six
-
-
-dDoubleSharp6 : Pitch
-dDoubleSharp6 =
-    Pitch PitchClass.dDoubleSharp Octave.six
-
-
-eDoubleSharp6 : Pitch
-eDoubleSharp6 =
-    Pitch PitchClass.eDoubleSharp Octave.six
-
-
-fDoubleSharp6 : Pitch
-fDoubleSharp6 =
-    Pitch PitchClass.fDoubleSharp Octave.six
-
-
-gDoubleSharp6 : Pitch
-gDoubleSharp6 =
-    Pitch PitchClass.gDoubleSharp Octave.six
-
-
-aDoubleSharp6 : Pitch
-aDoubleSharp6 =
-    Pitch PitchClass.aDoubleSharp Octave.six
-
-
-bDoubleSharp6 : Pitch
-bDoubleSharp6 =
-    Pitch PitchClass.bDoubleSharp Octave.six
-
-
-cDoubleSharp7 : Pitch
-cDoubleSharp7 =
-    Pitch PitchClass.cDoubleSharp Octave.seven
-
-
-dDoubleSharp7 : Pitch
-dDoubleSharp7 =
-    Pitch PitchClass.dDoubleSharp Octave.seven
-
-
-eDoubleSharp7 : Pitch
-eDoubleSharp7 =
-    Pitch PitchClass.eDoubleSharp Octave.seven
-
-
-fDoubleSharp7 : Pitch
-fDoubleSharp7 =
-    Pitch PitchClass.fDoubleSharp Octave.seven
-
-
-gDoubleSharp7 : Pitch
-gDoubleSharp7 =
-    Pitch PitchClass.gDoubleSharp Octave.seven
-
-
-aDoubleSharp7 : Pitch
-aDoubleSharp7 =
-    Pitch PitchClass.aDoubleSharp Octave.seven
-
-
-bDoubleSharp7 : Pitch
-bDoubleSharp7 =
-    Pitch PitchClass.bDoubleSharp Octave.seven
-
-
-cDoubleSharp8 : Pitch
-cDoubleSharp8 =
-    Pitch PitchClass.cDoubleSharp Octave.eight
-
-
-dDoubleSharp8 : Pitch
-dDoubleSharp8 =
-    Pitch PitchClass.dDoubleSharp Octave.eight
-
-
-eDoubleSharp8 : Pitch
-eDoubleSharp8 =
-    Pitch PitchClass.eDoubleSharp Octave.eight
-
-
-fDoubleSharp8 : Pitch
-fDoubleSharp8 =
-    Pitch PitchClass.fDoubleSharp Octave.eight
-
-
-gDoubleSharp8 : Pitch
-gDoubleSharp8 =
-    Pitch PitchClass.gDoubleSharp Octave.eight
-
-
-aDoubleSharp8 : Pitch
-aDoubleSharp8 =
-    Pitch PitchClass.aDoubleSharp Octave.eight
-
-
-dDoubleFlat0 : Pitch
-dDoubleFlat0 =
-    Pitch PitchClass.dDoubleFlat Octave.zero
-
-
-eDoubleFlat0 : Pitch
-eDoubleFlat0 =
-    Pitch PitchClass.eDoubleFlat Octave.zero
-
-
-fDoubleFlat0 : Pitch
-fDoubleFlat0 =
-    Pitch PitchClass.fDoubleFlat Octave.zero
-
-
-gDoubleFlat0 : Pitch
-gDoubleFlat0 =
-    Pitch PitchClass.gDoubleFlat Octave.zero
-
-
-aDoubleFlat0 : Pitch
-aDoubleFlat0 =
-    Pitch PitchClass.aDoubleFlat Octave.zero
-
-
-bDoubleFlat0 : Pitch
-bDoubleFlat0 =
-    Pitch PitchClass.bDoubleFlat Octave.zero
-
-
-cDoubleFlat1 : Pitch
-cDoubleFlat1 =
-    Pitch PitchClass.cDoubleFlat Octave.one
-
-
-dDoubleFlat1 : Pitch
-dDoubleFlat1 =
-    Pitch PitchClass.dDoubleFlat Octave.one
-
-
-eDoubleFlat1 : Pitch
-eDoubleFlat1 =
-    Pitch PitchClass.eDoubleFlat Octave.one
-
-
-fDoubleFlat1 : Pitch
-fDoubleFlat1 =
-    Pitch PitchClass.fDoubleFlat Octave.one
-
-
-gDoubleFlat1 : Pitch
-gDoubleFlat1 =
-    Pitch PitchClass.gDoubleFlat Octave.one
-
-
-aDoubleFlat1 : Pitch
-aDoubleFlat1 =
-    Pitch PitchClass.aDoubleFlat Octave.one
-
-
-bDoubleFlat1 : Pitch
-bDoubleFlat1 =
-    Pitch PitchClass.bDoubleFlat Octave.one
-
-
-cDoubleFlat2 : Pitch
-cDoubleFlat2 =
-    Pitch PitchClass.cDoubleFlat Octave.two
-
-
-dDoubleFlat2 : Pitch
-dDoubleFlat2 =
-    Pitch PitchClass.dDoubleFlat Octave.two
-
-
-eDoubleFlat2 : Pitch
-eDoubleFlat2 =
-    Pitch PitchClass.eDoubleFlat Octave.two
-
-
-fDoubleFlat2 : Pitch
-fDoubleFlat2 =
-    Pitch PitchClass.fDoubleFlat Octave.two
-
-
-gDoubleFlat2 : Pitch
-gDoubleFlat2 =
-    Pitch PitchClass.gDoubleFlat Octave.two
-
-
-aDoubleFlat2 : Pitch
-aDoubleFlat2 =
-    Pitch PitchClass.aDoubleFlat Octave.two
-
-
-bDoubleFlat2 : Pitch
-bDoubleFlat2 =
-    Pitch PitchClass.bDoubleFlat Octave.two
-
-
-cDoubleFlat3 : Pitch
-cDoubleFlat3 =
-    Pitch PitchClass.cDoubleFlat Octave.three
-
-
-dDoubleFlat3 : Pitch
-dDoubleFlat3 =
-    Pitch PitchClass.dDoubleFlat Octave.three
-
-
-eDoubleFlat3 : Pitch
-eDoubleFlat3 =
-    Pitch PitchClass.eDoubleFlat Octave.three
-
-
-fDoubleFlat3 : Pitch
-fDoubleFlat3 =
-    Pitch PitchClass.fDoubleFlat Octave.three
-
-
-gDoubleFlat3 : Pitch
-gDoubleFlat3 =
-    Pitch PitchClass.gDoubleFlat Octave.three
-
-
-aDoubleFlat3 : Pitch
-aDoubleFlat3 =
-    Pitch PitchClass.aDoubleFlat Octave.three
-
-
-bDoubleFlat3 : Pitch
-bDoubleFlat3 =
-    Pitch PitchClass.bDoubleFlat Octave.three
-
-
-cDoubleFlat4 : Pitch
-cDoubleFlat4 =
-    Pitch PitchClass.cDoubleFlat Octave.four
-
-
-dDoubleFlat4 : Pitch
-dDoubleFlat4 =
-    Pitch PitchClass.dDoubleFlat Octave.four
-
-
-eDoubleFlat4 : Pitch
-eDoubleFlat4 =
-    Pitch PitchClass.eDoubleFlat Octave.four
-
-
-fDoubleFlat4 : Pitch
-fDoubleFlat4 =
-    Pitch PitchClass.fDoubleFlat Octave.four
-
-
-gDoubleFlat4 : Pitch
-gDoubleFlat4 =
-    Pitch PitchClass.gDoubleFlat Octave.four
-
-
-aDoubleFlat4 : Pitch
-aDoubleFlat4 =
-    Pitch PitchClass.aDoubleFlat Octave.four
-
-
-bDoubleFlat4 : Pitch
-bDoubleFlat4 =
-    Pitch PitchClass.bDoubleFlat Octave.four
-
-
-cDoubleFlat5 : Pitch
-cDoubleFlat5 =
-    Pitch PitchClass.cDoubleFlat Octave.five
-
-
-dDoubleFlat5 : Pitch
-dDoubleFlat5 =
-    Pitch PitchClass.dDoubleFlat Octave.five
-
-
-eDoubleFlat5 : Pitch
-eDoubleFlat5 =
-    Pitch PitchClass.eDoubleFlat Octave.five
-
-
-fDoubleFlat5 : Pitch
-fDoubleFlat5 =
-    Pitch PitchClass.fDoubleFlat Octave.five
-
-
-gDoubleFlat5 : Pitch
-gDoubleFlat5 =
-    Pitch PitchClass.gDoubleFlat Octave.five
-
-
-aDoubleFlat5 : Pitch
-aDoubleFlat5 =
-    Pitch PitchClass.aDoubleFlat Octave.five
-
-
-bDoubleFlat5 : Pitch
-bDoubleFlat5 =
-    Pitch PitchClass.bDoubleFlat Octave.five
-
-
-cDoubleFlat6 : Pitch
-cDoubleFlat6 =
-    Pitch PitchClass.cDoubleFlat Octave.six
-
-
-dDoubleFlat6 : Pitch
-dDoubleFlat6 =
-    Pitch PitchClass.dDoubleFlat Octave.six
-
-
-eDoubleFlat6 : Pitch
-eDoubleFlat6 =
-    Pitch PitchClass.eDoubleFlat Octave.six
-
-
-fDoubleFlat6 : Pitch
-fDoubleFlat6 =
-    Pitch PitchClass.fDoubleFlat Octave.six
-
-
-gDoubleFlat6 : Pitch
-gDoubleFlat6 =
-    Pitch PitchClass.gDoubleFlat Octave.six
-
-
-aDoubleFlat6 : Pitch
-aDoubleFlat6 =
-    Pitch PitchClass.aDoubleFlat Octave.six
-
-
-bDoubleFlat6 : Pitch
-bDoubleFlat6 =
-    Pitch PitchClass.bDoubleFlat Octave.six
-
-
-cDoubleFlat7 : Pitch
-cDoubleFlat7 =
-    Pitch PitchClass.cDoubleFlat Octave.seven
-
-
-dDoubleFlat7 : Pitch
-dDoubleFlat7 =
-    Pitch PitchClass.dDoubleFlat Octave.seven
-
-
-eDoubleFlat7 : Pitch
-eDoubleFlat7 =
-    Pitch PitchClass.eDoubleFlat Octave.seven
-
-
-fDoubleFlat7 : Pitch
-fDoubleFlat7 =
-    Pitch PitchClass.fDoubleFlat Octave.seven
-
-
-gDoubleFlat7 : Pitch
-gDoubleFlat7 =
-    Pitch PitchClass.gDoubleFlat Octave.seven
-
-
-aDoubleFlat7 : Pitch
-aDoubleFlat7 =
-    Pitch PitchClass.aDoubleFlat Octave.seven
-
-
-bDoubleFlat7 : Pitch
-bDoubleFlat7 =
-    Pitch PitchClass.bDoubleFlat Octave.seven
-
-
-cDoubleFlat8 : Pitch
-cDoubleFlat8 =
-    Pitch PitchClass.cDoubleFlat Octave.eight
-
-
-dDoubleFlat8 : Pitch
-dDoubleFlat8 =
-    Pitch PitchClass.dDoubleFlat Octave.eight
-
-
-eDoubleFlat8 : Pitch
-eDoubleFlat8 =
-    Pitch PitchClass.eDoubleFlat Octave.eight
-
-
-fDoubleFlat8 : Pitch
-fDoubleFlat8 =
-    Pitch PitchClass.fDoubleFlat Octave.eight
-
-
-gDoubleFlat8 : Pitch
-gDoubleFlat8 =
-    Pitch PitchClass.gDoubleFlat Octave.eight
-
-
-aDoubleFlat8 : Pitch
-aDoubleFlat8 =
-    Pitch PitchClass.aDoubleFlat Octave.eight
-
-
-bDoubleFlat8 : Pitch
-bDoubleFlat8 =
-    Pitch PitchClass.bDoubleFlat Octave.eight
 
 
 d0 : Pitch

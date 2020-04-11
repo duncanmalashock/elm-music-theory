@@ -12,15 +12,53 @@ import MusicTheory.Interval as Interval
 import MusicTheory.PitchClass as PitchClass
 
 
-containsPitchClass : PitchClass.PitchClass -> Chord.Chord -> Bool
-containsPitchClass pitchClass chord =
-    List.member pitchClass
-        (Chord.toPitchClasses chord)
+type VoiceCategory
+    = Root
+    | Third
+    | Fifth
+    | Seventh
+
+
+type JazzChordQuality
+    = Major6
+    | Major7
+    | Minor6
+    | Minor7
+    | HalfDiminished
+    | Dominant7
+    | Dominant7Sus
+    | Diminished7
+
+
+type alias Availables =
+    { root :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , third :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , fifth :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , seventh :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    }
 
 
 type Error
     = CouldNotFindAllVoiceCategories (List (Maybe Interval.Interval))
     | CouldNotDetermineChordQuality
+
+
+containsPitchClass : PitchClass.PitchClass -> Chord.Chord -> Bool
+containsPitchClass pitchClass chord =
+    List.member pitchClass
+        (Chord.toPitchClasses chord)
 
 
 availables : Chord.Chord -> Result Error Availables
@@ -92,13 +130,6 @@ availables chord =
                         , maybeSeventh
                         ]
                     )
-
-
-type VoiceCategory
-    = Root
-    | Third
-    | Fifth
-    | Seventh
 
 
 chordToneForClass :
@@ -432,34 +463,3 @@ minimumIntervalsForJazzChordQuality jazzChordQuality =
             , Interval.diminishedFifth
             , Interval.diminishedSeventh
             ]
-
-
-type JazzChordQuality
-    = Major6
-    | Major7
-    | Minor6
-    | Minor7
-    | HalfDiminished
-    | Dominant7
-    | Dominant7Sus
-    | Diminished7
-
-
-type alias Availables =
-    { root :
-        { true : Interval.Interval
-        , substitutes : List Interval.Interval
-        }
-    , third :
-        { true : Interval.Interval
-        , substitutes : List Interval.Interval
-        }
-    , fifth :
-        { true : Interval.Interval
-        , substitutes : List Interval.Interval
-        }
-    , seventh :
-        { true : Interval.Interval
-        , substitutes : List Interval.Interval
-        }
-    }
