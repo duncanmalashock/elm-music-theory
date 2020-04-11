@@ -4,6 +4,7 @@ module MusicTheory.Note exposing
     , dotted
     , eighth
     , half
+    , join
     , oneHundredTwentyEighth
     , quarter
     , setDuration
@@ -35,6 +36,13 @@ setDuration (Note pitch duration) durationToSet =
 dotted : Note -> Note
 dotted (Note pitch duration) =
     Note pitch (Duration.add duration (Duration.subdivide duration))
+
+
+join : Note -> Note -> Note
+join (Note pitchA durationA) (Note pitchB durationB) =
+    -- This uses only the pitch of the first Note.
+    -- Make sure client code checks that the two pitches are the same before joining
+    Note pitchA (Duration.add durationA durationB)
 
 
 whole : Pitch.Pitch -> Note
