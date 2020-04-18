@@ -7,10 +7,10 @@
     "start": "yarn install && yarn build && yarn dev",
     "build": "yarn build:elm-spa && yarn build:elm",
     "build:elm-spa": "elm-spa build .",
-    "build:elm": "elm make src/Main.elm --optimize  --output js/app.js",
+    "build:elm": "yarn parcel build index.html",
     "dev": "concurrently --raw --kill-others \"yarn dev:elm-spa\" \"yarn dev:elm\"",
     "dev:elm-spa": "chokidar src/Pages -c \"yarn build:elm-spa\"",
-    "dev:elm": "elm-live src/Main.elm -u -d public -- --debug --output public/dist/elm.js"
+    "dev:elm": "yarn parcel index.html"
   },
   "keywords": [
     "elm",
