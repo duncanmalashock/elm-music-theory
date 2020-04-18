@@ -1,4 +1,4 @@
-export {playNotesInit}
+export { playNotesInit }
 
 import WebAudioFontPlayer from "webaudiofont"
 
