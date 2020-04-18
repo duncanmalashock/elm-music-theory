@@ -7,8 +7,8 @@ const midiDevicePlaybackInit = function(app) {
     if (err) {
       console.log("WebMidi could not be enabled.", err);
     } else {
-      console.log(WebMidi.inputs);
-      console.log(WebMidi.outputs);
+      // console.log(WebMidi.inputs);
+      // console.log(WebMidi.outputs);
     }
   });
 };

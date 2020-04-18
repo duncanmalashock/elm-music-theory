@@ -1,9 +1,10 @@
 module Global exposing
     ( Flags
     , Model
-    , Msg
+    , Msg(..)
     , init
     , navigate
+    , send
     , subscriptions
     , update
     , view
@@ -12,6 +13,7 @@ module Global exposing
 import Browser.Navigation as Nav
 import Document exposing (Document)
 import Generated.Route as Route exposing (Route)
+import Ports
 import Task
 import UI
 import Url exposing (Url)
@@ -48,6 +50,7 @@ init flags url key =
 
 type Msg
     = Navigate Route
+    | PlayInBrowser
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -56,6 +59,11 @@ update msg model =
         Navigate route ->
             ( model
             , Nav.pushUrl model.key (Route.toHref route)
+            )
+
+        PlayInBrowser ->
+            ( model
+            , Ports.playback
             )
 
 

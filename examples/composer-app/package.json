@@ -5,7 +5,7 @@
   "main": "public/index.html",
   "scripts": {
     "start": "yarn install && yarn build && yarn dev",
-    "build": "yarn build:elm-spa && yarn build:elm",
+    "build": "yarn build:elm",
     "build:elm-spa": "elm-spa build .",
     "build:elm": "yarn parcel build index.html",
     "dev": "concurrently --raw --kill-others \"yarn dev:elm-spa\" \"yarn dev:elm\"",

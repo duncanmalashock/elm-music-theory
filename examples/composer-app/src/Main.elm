@@ -6,7 +6,6 @@ import Document exposing (Document)
 import Generated.Pages as Pages
 import Generated.Route as Route exposing (Route)
 import Global
-import Ports
 import Url exposing (Url)
 
 
@@ -81,7 +80,6 @@ update msg model =
             , Cmd.batch
                 [ Cmd.map Page pageCmd
                 , Cmd.map Global globalCmd
-                , Ports.playback
                 ]
             )
 
