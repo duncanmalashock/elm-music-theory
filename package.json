@@ -1,0 +1,11 @@
+{
+  "name": "music-theory",
+  "version": "1.0.0",
+  "repository": "https://github.com/duncanmalashock/music-theory.git",
+  "author": "Duncan Malashock <duncanmalashock@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "elm-test": "^0.19.1-revision2",
+    "minimist": "1.2.3"
+  }
+}

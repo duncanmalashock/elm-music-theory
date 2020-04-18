@@ -6,7 +6,6 @@ import Document exposing (Document)
 import Generated.Pages as Pages
 import Generated.Route as Route exposing (Route)
 import Global
-import Html
 import Ports
 import Url exposing (Url)
 
@@ -124,12 +123,15 @@ view : Model -> Browser.Document Msg
 view model =
     Document.toBrowserDocument <|
         Global.view
-            { page = Pages.view model.page model.global |> Document.map Page
+            { page =
+                Pages.view model.page model.global
+                    |> Document.map Page
             , global = model.global
             , toMsg = Global
             }
 
 
 fromUrl : Url -> Route
-fromUrl =
-    Route.fromUrl >> Maybe.withDefault Route.NotFound
+fromUrl url =
+    Route.fromUrl url
+        |> Maybe.withDefault Route.NotFound

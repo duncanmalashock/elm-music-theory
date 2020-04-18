@@ -1,8 +1,8 @@
-export { playNotesInit }
+export { browserPlaybackInit }
 
-import WebAudioFontPlayer from "webaudiofont"
+import WebAudioFontPlayer from "webaudiofont";
 
-const playNotesInit = function(app) {
+const browserPlaybackInit = function(app) {
   const AudioContextFunc = window.AudioContext || window.webkitAudioContext;
   const audioContext = new AudioContextFunc();
   const player = new WebAudioFontPlayer();

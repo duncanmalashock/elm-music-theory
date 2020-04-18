@@ -6,7 +6,6 @@ module Document exposing
 
 import Browser
 import Element exposing (..)
-import Element.Font as Font
 
 
 type alias Document msg =
@@ -26,7 +25,7 @@ toBrowserDocument : Document msg -> Browser.Document msg
 toBrowserDocument document =
     { title = document.title
     , body =
-        [ Element.layout [ Font.size 16 ]
+        [ Element.layout []
             (column
                 [ width fill
                 , height fill
