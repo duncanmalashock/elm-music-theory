@@ -15,76 +15,76 @@ module MusicTheory.Note exposing
     , whole
     )
 
-import MusicTheory.Duration as Duration
 import MusicTheory.Pitch as Pitch
+import MusicTheory.Time as Time
 
 
 type Note
-    = Note Pitch.Pitch Duration.Duration
+    = Note Pitch.Pitch Time.Time
 
 
-addDuration : Note -> Duration.Duration -> Note
+addDuration : Note -> Time.Time -> Note
 addDuration (Note pitch duration) durationToAdd =
-    Note pitch (Duration.add duration durationToAdd)
+    Note pitch (Time.add duration durationToAdd)
 
 
-setDuration : Note -> Duration.Duration -> Note
+setDuration : Note -> Time.Time -> Note
 setDuration (Note pitch duration) durationToSet =
     Note pitch durationToSet
 
 
 dotted : Note -> Note
 dotted (Note pitch duration) =
-    Note pitch (Duration.add duration (Duration.subdivide duration))
+    Note pitch (Time.add duration (Time.subdivide duration))
 
 
 join : Note -> Note -> Note
 join (Note pitchA durationA) (Note pitchB durationB) =
     -- This uses only the pitch of the first Note.
     -- Make sure client code checks that the two pitches are the same before joining
-    Note pitchA (Duration.add durationA durationB)
+    Note pitchA (Time.add durationA durationB)
 
 
 whole : Pitch.Pitch -> Note
 whole pitch =
-    Note pitch Duration.whole
+    Note pitch Time.whole
 
 
 half : Pitch.Pitch -> Note
 half pitch =
-    Note pitch Duration.half
+    Note pitch Time.half
 
 
 quarter : Pitch.Pitch -> Note
 quarter pitch =
-    Note pitch Duration.quarter
+    Note pitch Time.quarter
 
 
 eighth : Pitch.Pitch -> Note
 eighth pitch =
-    Note pitch Duration.eighth
+    Note pitch Time.eighth
 
 
 sixteenth : Pitch.Pitch -> Note
 sixteenth pitch =
-    Note pitch Duration.sixteenth
+    Note pitch Time.sixteenth
 
 
 thirtySecond : Pitch.Pitch -> Note
 thirtySecond pitch =
-    Note pitch Duration.thirtySecond
+    Note pitch Time.thirtySecond
 
 
 sixtyFourth : Pitch.Pitch -> Note
 sixtyFourth pitch =
-    Note pitch Duration.sixtyFourth
+    Note pitch Time.sixtyFourth
 
 
 oneHundredTwentyEighth : Pitch.Pitch -> Note
 oneHundredTwentyEighth pitch =
-    Note pitch Duration.oneHundredTwentyEighth
+    Note pitch Time.oneHundredTwentyEighth
 
 
 twoHundredFiftySixth : Pitch.Pitch -> Note
 twoHundredFiftySixth pitch =
-    Note pitch Duration.twoHundredFiftySixth
+    Note pitch Time.twoHundredFiftySixth

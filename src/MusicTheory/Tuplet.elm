@@ -3,14 +3,14 @@ module MusicTheory.Tuplet exposing
     , tuplet
     )
 
-import MusicTheory.Duration as Duration
 import MusicTheory.Note as Note
+import MusicTheory.Time as Time
 
 
 type Tuplet
-    = Tuplet Duration.Duration (List (Maybe Note.Note))
+    = Tuplet Time.Time (List (Maybe Note.Note))
 
 
-tuplet : Duration.Duration -> List (Maybe Note.Note) -> Tuplet
+tuplet : Time.Time -> List (Maybe Note.Note) -> Tuplet
 tuplet totalDuration notes =
     Tuplet totalDuration notes

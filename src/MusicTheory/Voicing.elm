@@ -1,10 +1,16 @@
 module MusicTheory.Voicing exposing
     ( FivePartVoicing
     , FourPartVoicing
+    , PitchesFivePart
+    , PitchesFourPart
+    , PitchesThreePart
     , ThreePartVoicing
     , fivePart
     , fourPart
     , threePart
+    , toPitchesFivePart
+    , toPitchesFourPart
+    , toPitchesThreePart
     )
 
 import MusicTheory.Interval as Interval
@@ -12,14 +18,41 @@ import MusicTheory.Pitch as Pitch
 import MusicTheory.VoicingClass as VoicingClass
 
 
-type alias ThreePartVoicing =
+type ThreePartVoicing
+    = ThreePartVoicing Pitch.Pitch VoicingClass.ThreePartVoicingClass
+
+
+threePart : Pitch.Pitch -> VoicingClass.ThreePartVoicingClass -> ThreePartVoicing
+threePart root voicingClass =
+    ThreePartVoicing root voicingClass
+
+
+fourPart : Pitch.Pitch -> VoicingClass.FourPartVoicingClass -> FourPartVoicing
+fourPart root voicingClass =
+    FourPartVoicing root voicingClass
+
+
+fivePart : Pitch.Pitch -> VoicingClass.FivePartVoicingClass -> FivePartVoicing
+fivePart root voicingClass =
+    FivePartVoicing root voicingClass
+
+
+type FourPartVoicing
+    = FourPartVoicing Pitch.Pitch VoicingClass.FourPartVoicingClass
+
+
+type FivePartVoicing
+    = FivePartVoicing Pitch.Pitch VoicingClass.FivePartVoicingClass
+
+
+type alias PitchesThreePart =
     { voiceOne : Pitch.Pitch
     , voiceTwo : Pitch.Pitch
     , voiceThree : Pitch.Pitch
     }
 
 
-type alias FourPartVoicing =
+type alias PitchesFourPart =
     { voiceOne : Pitch.Pitch
     , voiceTwo : Pitch.Pitch
     , voiceThree : Pitch.Pitch
@@ -27,7 +60,7 @@ type alias FourPartVoicing =
     }
 
 
-type alias FivePartVoicing =
+type alias PitchesFivePart =
     { voiceOne : Pitch.Pitch
     , voiceTwo : Pitch.Pitch
     , voiceThree : Pitch.Pitch
@@ -36,16 +69,16 @@ type alias FivePartVoicing =
     }
 
 
-threePart : Pitch.Pitch -> VoicingClass.ThreePartVoicingClass -> ThreePartVoicing
-threePart root voicingClass =
+toPitchesThreePart : ThreePartVoicing -> PitchesThreePart
+toPitchesThreePart (ThreePartVoicing root voicingClass) =
     { voiceOne = Pitch.transposeUp voicingClass.voiceOne root
     , voiceTwo = Pitch.transposeUp voicingClass.voiceTwo root
     , voiceThree = Pitch.transposeUp voicingClass.voiceThree root
     }
 
 
-fourPart : Pitch.Pitch -> VoicingClass.FourPartVoicingClass -> FourPartVoicing
-fourPart root voicingClass =
+toPitchesFourPart : FourPartVoicing -> PitchesFourPart
+toPitchesFourPart (FourPartVoicing root voicingClass) =
     { voiceOne = Pitch.transposeUp voicingClass.voiceOne root
     , voiceTwo = Pitch.transposeUp voicingClass.voiceTwo root
     , voiceThree = Pitch.transposeUp voicingClass.voiceThree root
@@ -53,8 +86,8 @@ fourPart root voicingClass =
     }
 
 
-fivePart : Pitch.Pitch -> VoicingClass.FivePartVoicingClass -> FivePartVoicing
-fivePart root voicingClass =
+toPitchesFivePart : FivePartVoicing -> PitchesFivePart
+toPitchesFivePart (FivePartVoicing root voicingClass) =
     { voiceOne = Pitch.transposeUp voicingClass.voiceOne root
     , voiceTwo = Pitch.transposeUp voicingClass.voiceTwo root
     , voiceThree = Pitch.transposeUp voicingClass.voiceThree root

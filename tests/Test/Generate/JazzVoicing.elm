@@ -38,6 +38,7 @@ all =
                                 (GenerateVoicing.fourWayClose Interval.majorThird)
                                 availables
                                 |> Result.map (Voicing.fourPart Pitch.c5)
+                                |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
             ]
@@ -67,6 +68,7 @@ all =
                                     availables
                                 |> Result.Extra.join
                                 |> Result.map (Voicing.fourPart Pitch.c5)
+                                |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
             ]
@@ -96,6 +98,7 @@ all =
                                     availables
                                 |> Result.Extra.join
                                 |> Result.map (Voicing.fourPart Pitch.c5)
+                                |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
             ]
@@ -125,6 +128,7 @@ all =
                                     availables
                                 |> Result.Extra.join
                                 |> Result.map (Voicing.fourPart Pitch.c5)
+                                |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
             ]
@@ -151,6 +155,7 @@ all =
                                 (GenerateVoicing.fourWayCloseDoubleLead Interval.majorThird)
                                 availables
                                 |> Result.map (Voicing.fivePart Pitch.c5)
+                                |> Result.map Voicing.toPitchesFivePart
                     in
                     Expect.equal expected result
             ]
@@ -176,6 +181,7 @@ all =
                                 (GenerateVoicing.fourWaySpread Interval.perfectUnison)
                                 availables
                                 |> Result.map (Voicing.fourPart Pitch.c3)
+                                |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
             ]
@@ -202,6 +208,7 @@ all =
                                 |> Result.andThen
                                     (GenerateVoicing.fiveWaySpread Interval.perfectUnison)
                                 |> Result.map (Voicing.fivePart Pitch.c3)
+                                |> Result.map Voicing.toPitchesFivePart
                     in
                     Expect.equal expected result
             ]
@@ -228,6 +235,7 @@ all =
                                 (GenerateVoicing.substituteDoubleLead Interval.majorNinth)
                                 availables
                                 |> Result.map (Voicing.fivePart Pitch.c4)
+                                |> Result.map Voicing.toPitchesFivePart
                     in
                     Expect.equal expected result
             ]
