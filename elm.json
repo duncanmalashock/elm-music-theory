@@ -10,6 +10,7 @@
         "MusicTheory.Interval",
         "MusicTheory.Key",
         "MusicTheory.Letter",
+        "MusicTheory.Note",
         "MusicTheory.Octave",
         "MusicTheory.Pitch",
         "MusicTheory.PitchClass",

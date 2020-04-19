@@ -205,6 +205,7 @@ module MusicTheory.Pitch exposing
     , semitones
     , sharp
     , sort
+    , toMidiNote
     , transposeDown
     , transposeUp
     )
@@ -301,6 +302,11 @@ intervalBetween pitchA pitchB =
     in
     initialInterval
         |> Interval.addOffset semitoneError
+
+
+toMidiNote : Pitch -> Int
+toMidiNote thePitch =
+    semitones thePitch
 
 
 

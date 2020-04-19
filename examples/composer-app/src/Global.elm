@@ -13,6 +13,8 @@ module Global exposing
 import Browser.Navigation as Nav
 import Document exposing (Document)
 import Generated.Route as Route exposing (Route)
+import MusicTheory.Note
+import MusicTheory.Pitch
 import Ports
 import Task
 import UI
@@ -31,15 +33,23 @@ type alias Model =
     { flags : Flags
     , url : Url
     , key : Nav.Key
+    , notes : List MusicTheory.Note.Note
     }
 
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( Model
-        flags
-        url
-        key
+    ( { flags = flags
+      , url = url
+      , key = key
+      , notes =
+            [ MusicTheory.Note.quarter MusicTheory.Pitch.a3
+            , MusicTheory.Note.quarter MusicTheory.Pitch.g4
+            , MusicTheory.Note.quarter MusicTheory.Pitch.c5
+            , MusicTheory.Note.quarter MusicTheory.Pitch.d5
+            , MusicTheory.Note.quarter MusicTheory.Pitch.fSharp5
+            ]
+      }
     , Cmd.none
     )
 
@@ -63,7 +73,7 @@ update msg model =
 
         PlayInBrowser ->
             ( model
-            , Ports.playback
+            , Ports.playInBrowser model.notes
             )
 
 

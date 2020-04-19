@@ -3,13 +3,18 @@ export { browserPlaybackInit }
 import WebAudioFontPlayer from "webaudiofont";
 
 const browserPlaybackInit = function(app) {
+  // Initialize player object
   const AudioContextFunc = window.AudioContext || window.webkitAudioContext;
   const audioContext = new AudioContextFunc();
   const player = new WebAudioFontPlayer();
+
   app.ports.play.subscribe(function (events) {
+    // Configure instrument
     const audioFontId = 47;
-    const volume = 50 / 127;
+    const volume = 40 / 127;
     const instrumentInfo = player.loader.instrumentInfo(audioFontId);
+
+    //
     player.loader.startLoad(audioContext, instrumentInfo.url, instrumentInfo.variable);
     player.loader.waitLoad(function () {
       player.cancelQueue(audioContext);

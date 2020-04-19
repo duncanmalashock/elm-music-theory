@@ -11,6 +11,7 @@ module MusicTheory.Note exposing
     , sixteenth
     , sixtyFourth
     , thirtySecond
+    , toMidiNote
     , twoHundredFiftySixth
     , whole
     )
@@ -21,6 +22,11 @@ import MusicTheory.Time as Time
 
 type Note
     = Note Pitch.Pitch Time.Time
+
+
+toMidiNote : Note -> Int
+toMidiNote (Note pitch duration) =
+    Pitch.toMidiNote pitch
 
 
 addDuration : Note -> Time.Time -> Note
