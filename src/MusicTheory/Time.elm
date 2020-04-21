@@ -9,78 +9,91 @@ module MusicTheory.Time exposing
     , sixtyFourth
     , subdivide
     , thirtySecond
+    , toFloat
     , twoHundredFiftySixth
     , whole
+    , zero
     )
 
 import Fraction
 
 
 type Time
-    = Duration Fraction.Fraction
+    = Time Fraction.Fraction
+
+
+toFloat : Time -> Float
+toFloat (Time fraction) =
+    Fraction.toFloat fraction
+
+
+zero : Time
+zero =
+    Fraction.createUnsafe 0 1
+        |> Time
 
 
 subdivide : Time -> Time
-subdivide (Duration fraction) =
+subdivide (Time fraction) =
     Fraction.multiply fraction (Fraction.createUnsafe 1 2)
-        |> Duration
+        |> Time
 
 
 add : Time -> Time -> Time
-add (Duration fractionA) (Duration fractionB) =
+add (Time fractionA) (Time fractionB) =
     Fraction.add fractionA fractionB
-        |> Duration
+        |> Time
 
 
 whole : Time
 whole =
     Fraction.createUnsafe 1 1
-        |> Duration
+        |> Time
 
 
 half : Time
 half =
     Fraction.createUnsafe 1 2
-        |> Duration
+        |> Time
 
 
 quarter : Time
 quarter =
     Fraction.createUnsafe 1 4
-        |> Duration
+        |> Time
 
 
 eighth : Time
 eighth =
     Fraction.createUnsafe 1 8
-        |> Duration
+        |> Time
 
 
 sixteenth : Time
 sixteenth =
     Fraction.createUnsafe 1 16
-        |> Duration
+        |> Time
 
 
 thirtySecond : Time
 thirtySecond =
     Fraction.createUnsafe 1 32
-        |> Duration
+        |> Time
 
 
 sixtyFourth : Time
 sixtyFourth =
     Fraction.createUnsafe 1 64
-        |> Duration
+        |> Time
 
 
 oneHundredTwentyEighth : Time
 oneHundredTwentyEighth =
     Fraction.createUnsafe 1 128
-        |> Duration
+        |> Time
 
 
 twoHundredFiftySixth : Time
 twoHundredFiftySixth =
     Fraction.createUnsafe 1 256
-        |> Duration
+        |> Time

@@ -14,6 +14,7 @@ import Browser.Navigation as Nav
 import Document exposing (Document)
 import Generated.Route as Route exposing (Route)
 import MusicTheory.Note
+import MusicTheory.NoteSequence
 import MusicTheory.Pitch
 import Ports
 import Task
@@ -33,7 +34,7 @@ type alias Model =
     { flags : Flags
     , url : Url
     , key : Nav.Key
-    , notes : List MusicTheory.Note.Note
+    , notes : MusicTheory.NoteSequence.NoteSequence
     }
 
 
@@ -43,12 +44,14 @@ init flags url key =
       , url = url
       , key = key
       , notes =
-            [ MusicTheory.Note.quarter MusicTheory.Pitch.a3
-            , MusicTheory.Note.quarter MusicTheory.Pitch.g4
-            , MusicTheory.Note.quarter MusicTheory.Pitch.c5
-            , MusicTheory.Note.quarter MusicTheory.Pitch.d5
-            , MusicTheory.Note.quarter MusicTheory.Pitch.fSharp5
-            ]
+            MusicTheory.NoteSequence.init
+                |> MusicTheory.NoteSequence.appendNotes
+                    [ MusicTheory.Note.quarter MusicTheory.Pitch.a3
+                    , MusicTheory.Note.eighth MusicTheory.Pitch.g4
+                    , MusicTheory.Note.sixteenth MusicTheory.Pitch.c5
+                    , MusicTheory.Note.sixteenth MusicTheory.Pitch.d5
+                    , MusicTheory.Note.quarter MusicTheory.Pitch.fSharp5
+                    ]
       }
     , Cmd.none
     )
@@ -73,7 +76,7 @@ update msg model =
 
         PlayInBrowser ->
             ( model
-            , Ports.playInBrowser model.notes
+            , Ports.playInBrowser (MusicTheory.NoteSequence.toEvents 120 model.notes)
             )
 
 

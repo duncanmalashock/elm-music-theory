@@ -2,6 +2,7 @@ module MusicTheory.Note exposing
     ( Note
     , addDuration
     , dotted
+    , duration
     , eighth
     , half
     , join
@@ -25,23 +26,28 @@ type Note
 
 
 toMidiNote : Note -> Int
-toMidiNote (Note pitch duration) =
+toMidiNote (Note pitch dur) =
     Pitch.toMidiNote pitch
 
 
+duration : Note -> Time.Time
+duration (Note pitch dur) =
+    dur
+
+
 addDuration : Note -> Time.Time -> Note
-addDuration (Note pitch duration) durationToAdd =
-    Note pitch (Time.add duration durationToAdd)
+addDuration (Note pitch dur) durationToAdd =
+    Note pitch (Time.add dur durationToAdd)
 
 
 setDuration : Note -> Time.Time -> Note
-setDuration (Note pitch duration) durationToSet =
+setDuration (Note pitch dur) durationToSet =
     Note pitch durationToSet
 
 
 dotted : Note -> Note
-dotted (Note pitch duration) =
-    Note pitch (Time.add duration (Time.subdivide duration))
+dotted (Note pitch dur) =
+    Note pitch (Time.add dur (Time.subdivide dur))
 
 
 join : Note -> Note -> Note

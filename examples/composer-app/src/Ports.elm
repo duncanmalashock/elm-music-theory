@@ -2,19 +2,13 @@ port module Ports exposing (..)
 
 import Json.Encode
 import MusicTheory.Note
+import MusicTheory.NoteSequence
 
 
 port play : List Json.Encode.Value -> Cmd msg
 
 
-type alias NoteEvent =
-    { time : Float
-    , pitch : Int
-    , duration : Float
-    }
-
-
-encode : NoteEvent -> Json.Encode.Value
+encode : MusicTheory.NoteSequence.NoteEvent -> Json.Encode.Value
 encode noteEvent =
     Json.Encode.object
         [ ( "time", Json.Encode.float noteEvent.time )
@@ -23,15 +17,8 @@ encode noteEvent =
         ]
 
 
-playInBrowser : List MusicTheory.Note.Note -> Cmd msg
-playInBrowser notes =
-    notes
-        |> List.map
-            (\theNote ->
-                { time = 0
-                , pitch = MusicTheory.Note.toMidiNote theNote
-                , duration = 4
-                }
-            )
+playInBrowser : List MusicTheory.NoteSequence.NoteEvent -> Cmd msg
+playInBrowser events =
+    events
         |> List.map encode
         |> play
