@@ -1,8 +1,10 @@
 module MusicTheory.Time exposing
     ( Time
     , add
+    , divide
     , eighth
     , half
+    , multiply
     , oneHundredTwentyEighth
     , quarter
     , sixteenth
@@ -42,6 +44,19 @@ subdivide (Time fraction) =
 add : Time -> Time -> Time
 add (Time fractionA) (Time fractionB) =
     Fraction.add fractionA fractionB
+        |> Time
+
+
+multiply : Time -> Time -> Time
+multiply (Time fractionA) (Time fractionB) =
+    Fraction.multiply fractionA fractionB
+        |> Time
+
+
+divide : Time -> Time -> Time
+divide (Time fractionA) (Time fractionB) =
+    Fraction.divide fractionA fractionB
+        |> Maybe.withDefault (Fraction.createUnsafe 0 1)
         |> Time
 
 

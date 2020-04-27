@@ -34,7 +34,7 @@ type alias Model =
     { flags : Flags
     , url : Url
     , key : Nav.Key
-    , notes : MusicTheory.NoteSequence.NoteSequence
+    , notes : List MusicTheory.NoteSequence.NoteSequence
     }
 
 
@@ -44,14 +44,8 @@ init flags url key =
       , url = url
       , key = key
       , notes =
-            MusicTheory.NoteSequence.init
-                |> MusicTheory.NoteSequence.appendNotes
-                    [ MusicTheory.Note.quarter MusicTheory.Pitch.a3
-                    , MusicTheory.Note.eighth MusicTheory.Pitch.g4
-                    , MusicTheory.Note.sixteenth MusicTheory.Pitch.c5
-                    , MusicTheory.Note.sixteenth MusicTheory.Pitch.d5
-                    , MusicTheory.Note.quarter MusicTheory.Pitch.fSharp5
-                    ]
+            [ MusicTheory.NoteSequence.sequenceWithTriplets
+            ]
       }
     , Cmd.none
     )
@@ -76,7 +70,11 @@ update msg model =
 
         PlayInBrowser ->
             ( model
-            , Ports.playInBrowser (MusicTheory.NoteSequence.toEvents 120 model.notes)
+            , Ports.playInBrowser
+                (List.concatMap
+                    (MusicTheory.NoteSequence.toEvents 100)
+                    model.notes
+                )
             )
 
 

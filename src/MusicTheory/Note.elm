@@ -6,6 +6,7 @@ module MusicTheory.Note exposing
     , eighth
     , half
     , join
+    , multiplyDuration
     , oneHundredTwentyEighth
     , quarter
     , setDuration
@@ -38,6 +39,11 @@ duration (Note pitch dur) =
 addDuration : Note -> Time.Time -> Note
 addDuration (Note pitch dur) durationToAdd =
     Note pitch (Time.add dur durationToAdd)
+
+
+multiplyDuration : Note -> Time.Time -> Note
+multiplyDuration (Note pitch dur) durationToMultiply =
+    Note pitch (Time.multiply dur durationToMultiply)
 
 
 setDuration : Note -> Time.Time -> Note

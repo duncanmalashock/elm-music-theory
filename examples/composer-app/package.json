@@ -4,13 +4,10 @@
   "description": "music application",
   "main": "public/index.html",
   "scripts": {
-    "start": "yarn install && yarn build && yarn dev",
-    "build": "yarn build:elm",
-    "build:elm-spa": "elm-spa build .",
-    "build:elm": "yarn parcel build index.html",
-    "dev": "concurrently --raw --kill-others \"yarn dev:elm-spa\" \"yarn dev:elm\"",
-    "dev:elm-spa": "chokidar src/Pages -c \"yarn build:elm-spa\"",
-    "dev:elm": "yarn parcel index.html"
+    "up": "yarn install && yarn build && yarn dev",
+    "build": "yarn parcel build index.html",
+    "dev": "concurrently --raw --kill-others \"yarn dev:elm-spa\" \"yarn parcel index.html\"",
+    "dev:elm-spa": "chokidar src/Pages -c \"elm-spa build .\""
   },
   "keywords": [
     "elm",
