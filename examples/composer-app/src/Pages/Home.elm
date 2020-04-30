@@ -16,6 +16,7 @@ type alias Model =
 
 type Msg
     = ClickedPlay
+    | ClickedLoad Int
 
 
 init : Global.Model -> Flags -> ( Model, Cmd Msg, Cmd Global.Msg )
@@ -30,6 +31,12 @@ update globalModel msg model =
             ( ()
             , Cmd.none
             , Global.send Global.PlayInBrowser
+            )
+
+        ClickedLoad instId ->
+            ( ()
+            , Cmd.none
+            , Global.send (Global.LoadInstrument instId)
             )
 
 
@@ -53,6 +60,14 @@ view globalModel model =
     { title = "Home"
     , body =
         [ Input.button []
+            { onPress = Just (ClickedLoad 20)
+            , label = Element.text "Load 20"
+            }
+        , Input.button []
+            { onPress = Just (ClickedLoad 60)
+            , label = Element.text "Load 60"
+            }
+        , Input.button []
             { onPress = Just ClickedPlay
             , label = Element.text "Play"
             }

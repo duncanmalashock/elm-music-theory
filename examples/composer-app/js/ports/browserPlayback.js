@@ -8,23 +8,26 @@ const browserPlaybackInit = function(app) {
   const audioContext = new AudioContextFunc();
   const player = new WebAudioFontPlayer();
 
-  app.ports.play.subscribe(function (events) {
-    // Configure instrument
-    const audioFontId = 47;
-    const volume = 40 / 127;
-    const instrumentInfo = player.loader.instrumentInfo(audioFontId);
+  let instrumentsDict = {};
 
-    //
+  app.ports.loadInstrumentById.subscribe(function(instrumentId) {
+    const instrumentInfo = player.loader.instrumentInfo(instrumentId);
+    instrumentsDict[instrumentId] = instrumentInfo
     player.loader.startLoad(audioContext, instrumentInfo.url, instrumentInfo.variable);
+    console.log(instrumentsDict);
+  })
+
+  app.ports.play.subscribe(function(events) {
+    const volume = 40 / 127;
     player.loader.waitLoad(function () {
       player.cancelQueue(audioContext);
       const startTime = audioContext.currentTime;
-      events.forEach(function (event) {
+      events.forEach(function(event) {
         const time = startTime + event.time;
         player.queueWaveTable(
           audioContext,
           audioContext.destination,
-          window[instrumentInfo.variable],
+          window[instrumentsDict[event.instrumentId].variable],
           time,
           event.pitch,
           event.duration,

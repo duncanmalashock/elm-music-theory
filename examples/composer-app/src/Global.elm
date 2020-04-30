@@ -13,9 +13,7 @@ module Global exposing
 import Browser.Navigation as Nav
 import Document exposing (Document)
 import Generated.Route as Route exposing (Route)
-import MusicTheory.Note
 import MusicTheory.NoteSequence
-import MusicTheory.Pitch
 import Ports
 import Task
 import UI
@@ -35,19 +33,25 @@ type alias Model =
     , url : Url
     , key : Nav.Key
     , notes : List MusicTheory.NoteSequence.NoteSequence
+    , instrumentId : Int
     }
 
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
-    ( { flags = flags
-      , url = url
-      , key = key
-      , notes =
-            [ MusicTheory.NoteSequence.sequenceWithTriplets
-            ]
-      }
-    , Cmd.none
+    let
+        model =
+            { flags = flags
+            , url = url
+            , key = key
+            , notes =
+                [ MusicTheory.NoteSequence.sequenceWithTriplets
+                ]
+            , instrumentId = 10
+            }
+    in
+    ( model
+    , Ports.loadInstrument model.instrumentId
     )
 
 
@@ -58,6 +62,7 @@ init flags url key =
 type Msg
     = Navigate Route
     | PlayInBrowser
+    | LoadInstrument Int
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -68,9 +73,17 @@ update msg model =
             , Nav.pushUrl model.key (Route.toHref route)
             )
 
+        LoadInstrument instrumentId ->
+            ( { model
+                | instrumentId = instrumentId
+              }
+            , Ports.loadInstrument instrumentId
+            )
+
         PlayInBrowser ->
             ( model
             , Ports.playInBrowser
+                model.instrumentId
                 (List.concatMap
                     (MusicTheory.NoteSequence.toEvents 100)
                     model.notes
