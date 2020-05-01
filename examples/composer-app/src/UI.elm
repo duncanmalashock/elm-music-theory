@@ -30,7 +30,7 @@ layout { page } =
 navbar : Element msg
 navbar =
     row [ width fill ]
-        [ link ( "Home", Route.Home )
+        [ link ( "Home", Route.Top )
         ]
 
 

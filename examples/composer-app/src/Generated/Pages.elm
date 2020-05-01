@@ -10,7 +10,7 @@ module Generated.Pages exposing
 import Generated.Route as Route exposing (Route)
 import Global
 import Page exposing (Bundle, Document)
-import Pages.Home
+import Pages.Top
 import Pages.NotFound
 
 
@@ -19,12 +19,12 @@ import Pages.NotFound
 
 
 type Model
-    = Home_Model Pages.Home.Model
+    = Top_Model Pages.Top.Model
     | NotFound_Model Pages.NotFound.Model
 
 
 type Msg
-    = Home_Msg Pages.Home.Msg
+    = Top_Msg Pages.Top.Msg
     | NotFound_Msg Pages.NotFound.Msg
 
 
@@ -40,14 +40,14 @@ type alias UpgradedPage flags model msg =
 
 
 type alias UpgradedPages =
-    { home : UpgradedPage Pages.Home.Flags Pages.Home.Model Pages.Home.Msg
+    { top : UpgradedPage Pages.Top.Flags Pages.Top.Model Pages.Top.Msg
     , notFound : UpgradedPage Pages.NotFound.Flags Pages.NotFound.Model Pages.NotFound.Msg
     }
 
 
 pages : UpgradedPages
 pages =
-    { home = Pages.Home.page |> Page.upgrade Home_Model Home_Msg
+    { top = Pages.Top.page |> Page.upgrade Top_Model Top_Msg
     , notFound = Pages.NotFound.page |> Page.upgrade NotFound_Model NotFound_Msg
     }
 
@@ -59,8 +59,8 @@ pages =
 init : Route -> Global.Model -> ( Model, Cmd Msg, Cmd Global.Msg )
 init route =
     case route of
-        Route.Home ->
-            pages.home.init ()
+        Route.Top ->
+            pages.top.init ()
         
         Route.NotFound ->
             pages.notFound.init ()
@@ -73,8 +73,8 @@ init route =
 update : Msg -> Model -> Global.Model -> ( Model, Cmd Msg, Cmd Global.Msg )
 update bigMsg bigModel =
     case ( bigMsg, bigModel ) of
-        ( Home_Msg msg, Home_Model model ) ->
-            pages.home.update msg model
+        ( Top_Msg msg, Top_Model model ) ->
+            pages.top.update msg model
         
         ( NotFound_Msg msg, NotFound_Model model ) ->
             pages.notFound.update msg model
@@ -90,8 +90,8 @@ update bigMsg bigModel =
 bundle : Model -> Global.Model -> Bundle Msg
 bundle bigModel =
     case bigModel of
-        Home_Model model ->
-            pages.home.bundle model
+        Top_Model model ->
+            pages.top.bundle model
         
         NotFound_Model model ->
             pages.notFound.bundle model

@@ -15,6 +15,7 @@ import Document exposing (Document)
 import Generated.Route as Route exposing (Route)
 import MusicTheory.NoteSequence
 import Ports
+import SequenceOnInstrument exposing (SequenceOnInstrument)
 import Task
 import UI
 import Url exposing (Url)
@@ -32,26 +33,52 @@ type alias Model =
     { flags : Flags
     , url : Url
     , key : Nav.Key
-    , notes : List MusicTheory.NoteSequence.NoteSequence
-    , instrumentId : Int
+    , sequences : List SequenceOnInstrument
+    , tempo : Int
+    , instrumentIds : List Int
     }
 
 
 init : Flags -> Url -> Nav.Key -> ( Model, Cmd Msg )
 init flags url key =
     let
+        inst1 =
+            72
+
+        inst2 =
+            33
+
+        inst3 =
+            127
+
+        firstInstrumentIds : List Int
+        firstInstrumentIds =
+            [ inst1, inst2, inst3 ]
+
+        model : Model
         model =
             { flags = flags
             , url = url
             , key = key
-            , notes =
-                [ MusicTheory.NoteSequence.sequenceWithTriplets
+            , sequences =
+                [ { sequence = MusicTheory.NoteSequence.sequence1
+                  , instrumentId = inst2
+                  }
+                , { sequence = MusicTheory.NoteSequence.sequence2
+                  , instrumentId = inst2
+                  }
+                , { sequence = MusicTheory.NoteSequence.sequence3
+                  , instrumentId = inst2
+                  }
                 ]
-            , instrumentId = 10
+            , tempo = 100
+            , instrumentIds = firstInstrumentIds
             }
     in
     ( model
-    , Ports.loadInstrument model.instrumentId
+    , firstInstrumentIds
+        |> List.map Ports.loadInstrument
+        |> Cmd.batch
     )
 
 
@@ -75,7 +102,7 @@ update msg model =
 
         LoadInstrument instrumentId ->
             ( { model
-                | instrumentId = instrumentId
+                | instrumentIds = instrumentId :: model.instrumentIds
               }
             , Ports.loadInstrument instrumentId
             )
@@ -83,10 +110,9 @@ update msg model =
         PlayInBrowser ->
             ( model
             , Ports.playInBrowser
-                model.instrumentId
                 (List.concatMap
-                    (MusicTheory.NoteSequence.toEvents 100)
-                    model.notes
+                    (SequenceOnInstrument.toNoteEvents model.tempo)
+                    model.sequences
                 )
             )
 

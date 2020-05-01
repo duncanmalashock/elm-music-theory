@@ -1,4 +1,4 @@
-module Pages.Home exposing (Flags, Model, Msg, page)
+module Pages.Top exposing (Flags, Model, Msg, page)
 
 import Element
 import Element.Input as Input
@@ -60,14 +60,6 @@ view globalModel model =
     { title = "Home"
     , body =
         [ Input.button []
-            { onPress = Just (ClickedLoad 20)
-            , label = Element.text "Load 20"
-            }
-        , Input.button []
-            { onPress = Just (ClickedLoad 60)
-            , label = Element.text "Load 60"
-            }
-        , Input.button []
             { onPress = Just ClickedPlay
             , label = Element.text "Play"
             }

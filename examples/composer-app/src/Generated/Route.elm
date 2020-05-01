@@ -9,7 +9,7 @@ import Url.Parser as Parser exposing ((</>), Parser)
 
 
 type Route
-    = Home
+    = Top
     | NotFound
 
 
@@ -21,8 +21,7 @@ fromUrl =
 routes : Parser (Route -> a) a
 routes =
     Parser.oneOf
-        [ Parser.map Home Parser.top
-        , Parser.map Home (Parser.s "home")
+        [ Parser.map Top Parser.top
         , Parser.map NotFound (Parser.s "not-found")
         ]
 
@@ -33,9 +32,9 @@ toHref route =
         segments : List String
         segments =
             case route of
-                Home ->
-                    [ "home" ]
-
+                Top ->
+                    []
+                
                 NotFound ->
                     [ "not-found" ]
     in

@@ -14,7 +14,6 @@ const browserPlaybackInit = function(app) {
     const instrumentInfo = player.loader.instrumentInfo(instrumentId);
     instrumentsDict[instrumentId] = instrumentInfo
     player.loader.startLoad(audioContext, instrumentInfo.url, instrumentInfo.variable);
-    console.log(instrumentsDict);
   })
 
   app.ports.play.subscribe(function(events) {
