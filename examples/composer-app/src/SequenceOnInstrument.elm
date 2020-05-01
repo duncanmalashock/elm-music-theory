@@ -1,10 +1,10 @@
 module SequenceOnInstrument exposing (..)
 
-import MusicTheory.NoteSequence
+import MusicTheory.Sequence
 
 
 type alias SequenceOnInstrument =
-    { sequence : MusicTheory.NoteSequence.NoteSequence
+    { sequence : MusicTheory.Sequence.Sequence
     , instrumentId : Int
     }
 
@@ -20,7 +20,7 @@ type alias NoteEventWithInstrumentId =
 toNoteEvents : Int -> SequenceOnInstrument -> List NoteEventWithInstrumentId
 toNoteEvents tempo sequenceOnInstrument =
     sequenceOnInstrument.sequence
-        |> MusicTheory.NoteSequence.toEvents tempo
+        |> MusicTheory.Sequence.toEvents tempo
         |> List.map
             (\event ->
                 { time = event.time

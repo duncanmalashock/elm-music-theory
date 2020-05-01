@@ -1,6 +1,6 @@
-module MusicTheory.NoteSequence exposing
+module MusicTheory.Sequence exposing
     ( NoteEvent
-    , NoteSequence
+    , Sequence
     , appendNote
     , appendNotes
     , init
@@ -45,11 +45,11 @@ type alias RestEntry =
     }
 
 
-type NoteSequence
-    = NoteSequence (List Entry)
+type Sequence
+    = Sequence (List Entry)
 
 
-sequence1 : NoteSequence
+sequence1 : Sequence
 sequence1 =
     let
         theTuplet =
@@ -81,7 +81,7 @@ sequence1 =
         |> appendTuplet theTuplet
 
 
-sequence2 : NoteSequence
+sequence2 : Sequence
 sequence2 =
     let
         theTuplet =
@@ -122,7 +122,7 @@ sequence2 =
         |> appendTuplet theTuplet
 
 
-sequence3 : NoteSequence
+sequence3 : Sequence
 sequence3 =
     init
         |> appendNote (Note.eighth Pitch.e5)
@@ -154,72 +154,72 @@ sequence3 =
         |> appendNote (Note.eighth Pitch.c5)
 
 
-appendTuplet : Tuplet -> NoteSequence -> NoteSequence
-appendTuplet theTuplet sequence =
+appendTuplet : Tuplet -> Sequence -> Sequence
+appendTuplet theTuplet theSequence =
     let
         newEntryAtTime =
             EntryTuplet
-                { startTime = firstAvailableStart sequence
+                { startTime = firstAvailableStart theSequence
                 , tuplet = theTuplet
                 }
     in
-    noteSequence <|
-        getEntries sequence
+    sequence <|
+        getEntries theSequence
             ++ [ newEntryAtTime ]
 
 
 tuplet :
     { duration : Time.Time
     }
-    -> NoteSequence
+    -> Sequence
     -> Tuplet
-tuplet { duration } sequence =
+tuplet { duration } theSequence =
     { duration = duration
-    , entries = normalizeStartTimes (getEntries sequence)
+    , entries = normalizeStartTimes (getEntries theSequence)
     }
 
 
-init : NoteSequence
+init : Sequence
 init =
-    NoteSequence []
+    Sequence []
 
 
-appendNote : Note.Note -> NoteSequence -> NoteSequence
-appendNote note sequence =
+appendNote : Note.Note -> Sequence -> Sequence
+appendNote note theSequence =
     let
         newEntryAtTime =
             EntryNote
-                { startTime = firstAvailableStart sequence
+                { startTime = firstAvailableStart theSequence
                 , note = note
                 }
     in
-    noteSequence <|
-        getEntries sequence
+    sequence <|
+        getEntries theSequence
             ++ [ newEntryAtTime ]
 
 
-appendRest : Time.Time -> NoteSequence -> NoteSequence
-appendRest restDuration sequence =
+appendRest : Time.Time -> Sequence -> Sequence
+appendRest restDuration theSequence =
     let
         newEntryAtTime =
             EntryRest
-                { startTime = firstAvailableStart sequence
+                { startTime = firstAvailableStart theSequence
                 , duration = restDuration
                 }
     in
-    noteSequence <|
-        getEntries sequence
+    sequence <|
+        getEntries theSequence
             ++ [ newEntryAtTime ]
 
 
-appendNotes : List Note.Note -> NoteSequence -> NoteSequence
-appendNotes notes sequence =
-    List.foldl appendNote sequence notes
+appendNotes : List Note.Note -> Sequence -> Sequence
+appendNotes notes theSequence =
+    List.foldl appendNote theSequence notes
 
 
-noteSequence : List Entry -> NoteSequence
-noteSequence theEntries =
-    NoteSequence theEntries
+sequence : List Entry -> Sequence
+sequence theEntries =
+    Sequence theEntries
 
 
 type alias NoteEvent =
@@ -296,18 +296,18 @@ addStartTimeToNoteEntry timeToAdd entry =
     }
 
 
-getEntries : NoteSequence -> List Entry
-getEntries (NoteSequence theEntries) =
+getEntries : Sequence -> List Entry
+getEntries (Sequence theEntries) =
     theEntries
 
 
-toEvents : Int -> NoteSequence -> List NoteEvent
-toEvents tempo sequence =
+toEvents : Int -> Sequence -> List NoteEvent
+toEvents tempo theSequence =
     let
         tempoAsCoefficient =
             4 / (Basics.toFloat tempo / 60)
     in
-    getEntries sequence
+    getEntries theSequence
         |> flattenToNoteEntries
         |> noteEntriesToNoteEvents tempoAsCoefficient
 
@@ -393,9 +393,9 @@ getDuration entry =
             restEntry.duration
 
 
-firstAvailableStart : NoteSequence -> Time.Time
-firstAvailableStart sequence =
-    getEntries sequence
+firstAvailableStart : Sequence -> Time.Time
+firstAvailableStart theSequence =
+    getEntries theSequence
         |> List.reverse
         |> List.head
         |> Maybe.map

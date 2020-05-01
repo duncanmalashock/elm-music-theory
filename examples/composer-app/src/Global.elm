@@ -13,7 +13,7 @@ module Global exposing
 import Browser.Navigation as Nav
 import Document exposing (Document)
 import Generated.Route as Route exposing (Route)
-import MusicTheory.NoteSequence
+import MusicTheory.Sequence
 import Ports
 import SequenceOnInstrument exposing (SequenceOnInstrument)
 import Task
@@ -61,13 +61,13 @@ init flags url key =
             , url = url
             , key = key
             , sequences =
-                [ { sequence = MusicTheory.NoteSequence.sequence1
+                [ { sequence = MusicTheory.Sequence.sequence1
                   , instrumentId = inst2
                   }
-                , { sequence = MusicTheory.NoteSequence.sequence2
+                , { sequence = MusicTheory.Sequence.sequence2
                   , instrumentId = inst2
                   }
-                , { sequence = MusicTheory.NoteSequence.sequence3
+                , { sequence = MusicTheory.Sequence.sequence3
                   , instrumentId = inst2
                   }
                 ]
