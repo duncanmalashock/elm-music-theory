@@ -17,7 +17,6 @@ const browserPlaybackInit = function(app) {
   })
 
   app.ports.play.subscribe(function(events) {
-    const volume = 40 / 127;
     player.loader.waitLoad(function () {
       player.cancelQueue(audioContext);
       const startTime = audioContext.currentTime;
@@ -30,7 +29,7 @@ const browserPlaybackInit = function(app) {
           time,
           event.pitch,
           event.duration,
-          volume
+          (event.volume / 127)
         )
       })
     });

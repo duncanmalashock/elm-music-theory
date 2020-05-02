@@ -16,6 +16,7 @@ encode noteEvent =
         [ ( "time", Json.Encode.float noteEvent.time )
         , ( "pitch", Json.Encode.int noteEvent.pitch )
         , ( "duration", Json.Encode.float noteEvent.duration )
+        , ( "volume", Json.Encode.int noteEvent.volume )
         , ( "instrumentId", Json.Encode.int noteEvent.instrumentId )
         ]
 

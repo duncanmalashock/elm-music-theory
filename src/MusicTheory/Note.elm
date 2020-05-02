@@ -6,103 +6,127 @@ module MusicTheory.Note exposing
     , eighth
     , half
     , join
+    , louder
     , multiplyDuration
     , oneHundredTwentyEighth
     , quarter
     , setDuration
     , sixteenth
     , sixtyFourth
+    , softer
     , thirtySecond
-    , toMidiNote
+    , toMidiNoteNumber
+    , toMidiVelocity
     , twoHundredFiftySixth
     , whole
     )
 
+import MusicTheory.Dynamics as Dynamics
 import MusicTheory.Pitch as Pitch
 import MusicTheory.Time as Time
 
 
 type Note
-    = Note Pitch.Pitch Time.Time
+    = Note Pitch.Pitch Time.Time Dynamics.Dynamics
 
 
-toMidiNote : Note -> Int
-toMidiNote (Note pitch dur) =
-    Pitch.toMidiNote pitch
+note : Pitch.Pitch -> Time.Time -> Note
+note pitch dur =
+    Note pitch dur Dynamics.normal
+
+
+toMidiNoteNumber : Note -> Int
+toMidiNoteNumber (Note pitch dur dyn) =
+    Pitch.toMidiNoteNumber pitch
+
+
+toMidiVelocity : Note -> Int
+toMidiVelocity (Note pitch dur dyn) =
+    Dynamics.toMidiVelocity dyn
+
+
+softer : Note -> Note
+softer (Note pitch dur dyn) =
+    Note pitch dur (Dynamics.softer dyn)
+
+
+louder : Note -> Note
+louder (Note pitch dur dyn) =
+    Note pitch dur (Dynamics.louder dyn)
 
 
 duration : Note -> Time.Time
-duration (Note pitch dur) =
+duration (Note pitch dur dyn) =
     dur
 
 
 addDuration : Note -> Time.Time -> Note
-addDuration (Note pitch dur) durationToAdd =
-    Note pitch (Time.add dur durationToAdd)
+addDuration (Note pitch dur dyn) durationToAdd =
+    note pitch (Time.add dur durationToAdd)
 
 
 multiplyDuration : Note -> Time.Time -> Note
-multiplyDuration (Note pitch dur) durationToMultiply =
-    Note pitch (Time.multiply dur durationToMultiply)
+multiplyDuration (Note pitch dur dyn) durationToMultiply =
+    note pitch (Time.multiply dur durationToMultiply)
 
 
 setDuration : Note -> Time.Time -> Note
-setDuration (Note pitch dur) durationToSet =
-    Note pitch durationToSet
+setDuration (Note pitch dur dyn) durationToSet =
+    note pitch durationToSet
 
 
 dotted : Note -> Note
-dotted (Note pitch dur) =
-    Note pitch (Time.add dur (Time.subdivide dur))
+dotted (Note pitch dur dyn) =
+    note pitch (Time.add dur (Time.subdivide dur))
 
 
 join : Note -> Note -> Note
-join (Note pitchA durationA) (Note pitchB durationB) =
+join (Note pitchA durationA dynA) (Note pitchB durationB dynB) =
     -- This uses only the pitch of the first Note.
     -- Make sure client code checks that the two pitches are the same before joining
-    Note pitchA (Time.add durationA durationB)
+    note pitchA (Time.add durationA durationB)
 
 
 whole : Pitch.Pitch -> Note
 whole pitch =
-    Note pitch Time.whole
+    note pitch Time.whole
 
 
 half : Pitch.Pitch -> Note
 half pitch =
-    Note pitch Time.half
+    note pitch Time.half
 
 
 quarter : Pitch.Pitch -> Note
 quarter pitch =
-    Note pitch Time.quarter
+    note pitch Time.quarter
 
 
 eighth : Pitch.Pitch -> Note
 eighth pitch =
-    Note pitch Time.eighth
+    note pitch Time.eighth
 
 
 sixteenth : Pitch.Pitch -> Note
 sixteenth pitch =
-    Note pitch Time.sixteenth
+    note pitch Time.sixteenth
 
 
 thirtySecond : Pitch.Pitch -> Note
 thirtySecond pitch =
-    Note pitch Time.thirtySecond
+    note pitch Time.thirtySecond
 
 
 sixtyFourth : Pitch.Pitch -> Note
 sixtyFourth pitch =
-    Note pitch Time.sixtyFourth
+    note pitch Time.sixtyFourth
 
 
 oneHundredTwentyEighth : Pitch.Pitch -> Note
 oneHundredTwentyEighth pitch =
-    Note pitch Time.oneHundredTwentyEighth
+    note pitch Time.oneHundredTwentyEighth
 
 
 twoHundredFiftySixth : Pitch.Pitch -> Note
 twoHundredFiftySixth pitch =
-    Note pitch Time.twoHundredFiftySixth
+    note pitch Time.twoHundredFiftySixth

@@ -118,6 +118,7 @@ type alias NoteEvent =
     { time : Float
     , pitch : Int
     , duration : Float
+    , volume : Int
     }
 
 
@@ -250,11 +251,12 @@ noteEntriesToNoteEvents tempoAsCoefficient entryList =
                     startTime
                         |> Time.toFloat
                         |> (*) tempoAsCoefficient
-                , pitch = Note.toMidiNote note
+                , pitch = Note.toMidiNoteNumber note
                 , duration =
                     Note.duration note
                         |> Time.toFloat
                         |> (*) tempoAsCoefficient
+                , volume = Note.toMidiVelocity note
                 }
             )
 

@@ -64,14 +64,15 @@ init flags url key =
         scale =
             Scale.scale PitchClass.f ScaleClass.phrygianDominant
 
-        sequence startingPitch =
-            List.foldl
-                (\pitch -> MusicTheory.Sequence.appendNote (Note.eighth pitch))
-                MusicTheory.Sequence.init
-                (Melody.init scale startingPitch
-                    |> Melody.generate
-                        [ 0, 2, -4, 6, -3, 2, -1, 4, -2, -1, -1, -1, -2, 2, 1, 2, -4, 6, -3, 2, -1, 4, -2, -1, -1, -1, -2, 2, -1 ]
-                )
+        sequence1 =
+            MusicTheory.Sequence.init
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.c4 |> Note.louder |> Note.louder |> Note.louder)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.e4 |> Note.louder |> Note.louder)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.g4 |> Note.louder)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.b4)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.d5 |> Note.softer)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.fSharp5 |> Note.softer |> Note.softer)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.a5 |> Note.softer |> Note.softer |> Note.softer)
 
         model : Model
         model =
@@ -79,17 +80,11 @@ init flags url key =
             , url = url
             , key = key
             , sequences =
-                [ { sequence = sequence Pitch.f5
+                [ { sequence = sequence1
                   , instrumentId = inst2
                   }
-                , { sequence = sequence Pitch.a4
-                  , instrumentId = inst1
-                  }
-                , { sequence = sequence Pitch.c3
-                  , instrumentId = inst1
-                  }
                 ]
-            , tempo = 200
+            , tempo = 120
             , instrumentIds = firstInstrumentIds
             }
     in

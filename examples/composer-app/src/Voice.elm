@@ -13,6 +13,7 @@ type alias NoteEventWithInstrumentId =
     { time : Float
     , pitch : Int
     , duration : Float
+    , volume : Int
     , instrumentId : Int
     }
 
@@ -26,6 +27,7 @@ toNoteEvents tempo sequenceOnInstrument =
                 { time = event.time
                 , pitch = event.pitch
                 , duration = event.duration
+                , volume = event.volume
                 , instrumentId = sequenceOnInstrument.instrumentId
                 }
             )
