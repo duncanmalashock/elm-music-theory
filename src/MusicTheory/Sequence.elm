@@ -2,16 +2,13 @@ module MusicTheory.Sequence exposing
     ( NoteEvent
     , Sequence
     , appendNote
-    , appendNotes
+    , appendRest
+    , appendTuplet
     , init
-    , sequence1
-    , sequence2
-    , sequence3
     , toEvents
     )
 
 import MusicTheory.Note as Note
-import MusicTheory.Pitch as Pitch
 import MusicTheory.Time as Time
 
 
@@ -47,111 +44,6 @@ type alias RestEntry =
 
 type Sequence
     = Sequence (List Entry)
-
-
-sequence1 : Sequence
-sequence1 =
-    let
-        theTuplet =
-            init
-                |> appendNote (Note.quarter Pitch.c3)
-                |> appendNote (Note.quarter Pitch.d3)
-                |> appendNote (Note.quarter Pitch.e3)
-                |> appendNote (Note.quarter Pitch.f3)
-                |> appendNote (Note.eighth Pitch.g3)
-                |> appendNote (Note.eighth Pitch.a3)
-                |> appendNote (Note.eighth Pitch.b3)
-                |> appendNote (Note.eighth Pitch.c4)
-                |> appendNote (Note.eighth Pitch.d4)
-                |> appendNote (Note.quarter Pitch.e4)
-                |> appendNote (Note.quarter Pitch.f4)
-                |> appendNote (Note.eighth Pitch.g4)
-                |> appendNote (Note.eighth Pitch.a4)
-                |> appendNote (Note.eighth Pitch.b4)
-                |> appendNote (Note.eighth Pitch.c5)
-                |> appendNote (Note.eighth Pitch.d5)
-                |> tuplet
-                    { duration =
-                        Time.whole
-                            |> Time.add Time.whole
-                            |> Time.add Time.whole
-                    }
-    in
-    init
-        |> appendTuplet theTuplet
-
-
-sequence2 : Sequence
-sequence2 =
-    let
-        theTuplet =
-            init
-                |> appendNote (Note.eighth Pitch.e4)
-                |> appendNote (Note.eighth Pitch.d4)
-                |> appendNote (Note.sixteenth Pitch.c4)
-                |> appendNote (Note.eighth Pitch.b3)
-                |> appendNote (Note.eighth Pitch.a3)
-                |> appendNote (Note.eighth Pitch.g3)
-                |> appendNote (Note.sixteenth Pitch.f3)
-                |> appendNote (Note.eighth Pitch.e3)
-                |> appendNote (Note.eighth Pitch.d3)
-                |> appendNote (Note.eighth Pitch.c3)
-                |> appendNote (Note.eighth Pitch.d3)
-                |> appendNote (Note.sixteenth Pitch.e3)
-                |> appendNote (Note.eighth Pitch.f3)
-                |> appendNote (Note.eighth Pitch.g3)
-                |> appendNote (Note.eighth Pitch.a3)
-                |> appendNote (Note.sixteenth Pitch.b3)
-                |> appendNote (Note.eighth Pitch.c4)
-                |> appendNote (Note.sixteenth Pitch.d4)
-                |> appendNote (Note.eighth Pitch.e4)
-                |> appendNote (Note.eighth Pitch.d4)
-                |> appendNote (Note.eighth Pitch.c4)
-                |> appendNote (Note.sixteenth Pitch.b3)
-                |> appendNote (Note.sixteenth Pitch.a3)
-                |> appendNote (Note.eighth Pitch.g3)
-                |> appendNote (Note.eighth Pitch.f3)
-                |> tuplet
-                    { duration =
-                        Time.whole
-                            |> Time.add Time.whole
-                            |> Time.add Time.whole
-                    }
-    in
-    init
-        |> appendTuplet theTuplet
-
-
-sequence3 : Sequence
-sequence3 =
-    init
-        |> appendNote (Note.eighth Pitch.e5)
-        |> appendNote (Note.eighth Pitch.d5)
-        |> appendNote (Note.sixteenth Pitch.c5)
-        |> appendNote (Note.eighth Pitch.b4)
-        |> appendNote (Note.eighth Pitch.a4)
-        |> appendNote (Note.eighth Pitch.g4)
-        |> appendNote (Note.sixteenth Pitch.f4)
-        |> appendNote (Note.eighth Pitch.e4)
-        |> appendNote (Note.eighth Pitch.d4)
-        |> appendNote (Note.eighth Pitch.c4)
-        |> appendNote (Note.eighth Pitch.d4)
-        |> appendNote (Note.sixteenth Pitch.e4)
-        |> appendNote (Note.eighth Pitch.f4)
-        |> appendNote (Note.eighth Pitch.g4)
-        |> appendNote (Note.eighth Pitch.a4)
-        |> appendNote (Note.sixteenth Pitch.b4)
-        |> appendNote (Note.eighth Pitch.c5)
-        |> appendNote (Note.sixteenth Pitch.d5)
-        |> appendNote (Note.eighth Pitch.e5)
-        |> appendNote (Note.eighth Pitch.d5)
-        |> appendNote (Note.eighth Pitch.c5)
-        |> appendNote (Note.sixteenth Pitch.b4)
-        |> appendNote (Note.eighth Pitch.c5)
-        |> appendNote (Note.sixteenth Pitch.d5)
-        |> appendNote (Note.eighth Pitch.e5)
-        |> appendNote (Note.eighth Pitch.d5)
-        |> appendNote (Note.eighth Pitch.c5)
 
 
 appendTuplet : Tuplet -> Sequence -> Sequence

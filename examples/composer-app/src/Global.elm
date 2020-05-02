@@ -13,6 +13,12 @@ module Global exposing
 import Browser.Navigation as Nav
 import Document exposing (Document)
 import Generated.Route as Route exposing (Route)
+import MusicTheory.Generate.Melody as Melody
+import MusicTheory.Note as Note
+import MusicTheory.Pitch as Pitch
+import MusicTheory.PitchClass as PitchClass
+import MusicTheory.Scale as Scale
+import MusicTheory.ScaleClass as ScaleClass
 import MusicTheory.Sequence
 import Ports
 import Task
@@ -55,23 +61,35 @@ init flags url key =
         firstInstrumentIds =
             [ inst1, inst2, inst3 ]
 
+        scale =
+            Scale.scale PitchClass.f ScaleClass.phrygianDominant
+
+        sequence startingPitch =
+            List.foldl
+                (\pitch -> MusicTheory.Sequence.appendNote (Note.eighth pitch))
+                MusicTheory.Sequence.init
+                (Melody.init scale startingPitch
+                    |> Melody.generate
+                        [ 0, 2, -4, 6, -3, 2, -1, 4, -2, -1, -1, -1, -2, 2, 1, 2, -4, 6, -3, 2, -1, 4, -2, -1, -1, -1, -2, 2, -1 ]
+                )
+
         model : Model
         model =
             { flags = flags
             , url = url
             , key = key
             , sequences =
-                [ { sequence = MusicTheory.Sequence.sequence1
+                [ { sequence = sequence Pitch.f5
                   , instrumentId = inst2
                   }
-                , { sequence = MusicTheory.Sequence.sequence2
-                  , instrumentId = inst2
+                , { sequence = sequence Pitch.a4
+                  , instrumentId = inst1
                   }
-                , { sequence = MusicTheory.Sequence.sequence3
-                  , instrumentId = inst2
+                , { sequence = sequence Pitch.c3
+                  , instrumentId = inst1
                   }
                 ]
-            , tempo = 100
+            , tempo = 200
             , instrumentIds = firstInstrumentIds
             }
     in

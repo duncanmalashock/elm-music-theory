@@ -6,7 +6,6 @@ module MusicTheory.Generate.Melody exposing
     )
 
 import List.Zipper exposing (Zipper)
-import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch exposing (Pitch)
 import MusicTheory.Scale as Scale exposing (Scale)
 import Util.Basic
@@ -23,12 +22,7 @@ init scale pitch =
         default =
             List.Zipper.singleton pitch
     in
-    Octave.allValid
-        |> List.concatMap
-            (\octave ->
-                Scale.toList scale
-                    |> List.map (Pitch.fromPitchClass octave)
-            )
+    Scale.toListThroughAllOctaves scale
         |> List.Zipper.fromList
         |> Maybe.andThen (List.Zipper.findFirst ((==) pitch))
         |> Maybe.withDefault default
@@ -64,9 +58,7 @@ step numberOfScaleSteps ( ScaleStepper zipper, list ) =
                 Just False
             )
         )
-        ( zipper
-        , list
-        )
+        ( zipper, list )
         |> (\( z, l ) ->
                 ( ScaleStepper z
                 , list

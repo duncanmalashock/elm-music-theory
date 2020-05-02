@@ -28,6 +28,7 @@ module MusicTheory.ScaleClass exposing
     , phrygian
     , phrygianDominant
     , superlocrian
+    , toList
     , ultralocrian
     , wholeTone
     )
@@ -78,6 +79,48 @@ type alias OctatonicIntervals =
     , rootToSeventh : Interval
     , rootToEighth : Interval
     }
+
+
+toList : ScaleClass -> List Interval
+toList theScaleClass =
+    case theScaleClass of
+        Pentatonic intervals ->
+            [ Interval.perfectUnison
+            , intervals.rootToSecond
+            , intervals.rootToThird
+            , intervals.rootToFourth
+            , intervals.rootToFifth
+            ]
+
+        Hexatonic intervals ->
+            [ Interval.perfectUnison
+            , intervals.rootToSecond
+            , intervals.rootToThird
+            , intervals.rootToFourth
+            , intervals.rootToFifth
+            , intervals.rootToSixth
+            ]
+
+        Heptatonic intervals ->
+            [ Interval.perfectUnison
+            , intervals.rootToSecond
+            , intervals.rootToThird
+            , intervals.rootToFourth
+            , intervals.rootToFifth
+            , intervals.rootToSixth
+            , intervals.rootToSeventh
+            ]
+
+        Octatonic intervals ->
+            [ Interval.perfectUnison
+            , intervals.rootToSecond
+            , intervals.rootToThird
+            , intervals.rootToFourth
+            , intervals.rootToFifth
+            , intervals.rootToSixth
+            , intervals.rootToSeventh
+            , intervals.rootToEighth
+            ]
 
 
 mode : Int -> ScaleClass -> ScaleClass

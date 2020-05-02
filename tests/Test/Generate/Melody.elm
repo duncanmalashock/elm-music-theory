@@ -17,7 +17,7 @@ all =
                 \_ ->
                     let
                         expected =
-                            ( 63, Pitch.c4 )
+                            ( 56, Pitch.c4 )
 
                         result =
                             Melody.init (Scale.scale PitchClass.c ScaleClass.ionian) Pitch.c4
@@ -33,15 +33,15 @@ all =
                     let
                         expected =
                             [ Pitch.c4
-                            , Pitch.e4
+                            , Pitch.eFlat4
                             , Pitch.d4
                             , Pitch.f4
-                            , Pitch.e4
+                            , Pitch.eFlat4
                             , Pitch.g4
                             ]
 
                         result =
-                            Melody.init (Scale.scale PitchClass.c ScaleClass.ionian) Pitch.c4
+                            Melody.init (Scale.scale PitchClass.c ScaleClass.aeolian) Pitch.c4
                                 |> Melody.generate [ 0, 2, -1, 2, -1, 2 ]
                     in
                     Expect.equal expected result

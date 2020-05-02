@@ -3,8 +3,11 @@ module MusicTheory.Scale exposing
     , root
     , scale
     , toList
+    , toListThroughAllOctaves
     )
 
+import MusicTheory.Octave as Octave
+import MusicTheory.Pitch as Pitch exposing (Pitch)
 import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
 import MusicTheory.ScaleClass as ScaleClass exposing (ScaleClass)
 
@@ -70,6 +73,24 @@ scale scaleRoot scaleClass =
 root : Scale -> PitchClass
 root (Scale scaleRoot _) =
     scaleRoot
+
+
+toListThroughAllOctaves : Scale -> List Pitch
+toListThroughAllOctaves (Scale scaleRoot scaleClass) =
+    Octave.allValid
+        |> List.take 8
+        |> List.concatMap
+            (\octave ->
+                let
+                    tonic =
+                        Pitch.fromPitchClass octave scaleRoot
+                in
+                ScaleClass.toList scaleClass
+                    |> List.map
+                        (\interval ->
+                            Pitch.transposeUp interval tonic
+                        )
+            )
 
 
 toList : Scale -> List PitchClass
