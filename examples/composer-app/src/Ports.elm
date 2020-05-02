@@ -1,7 +1,7 @@
 port module Ports exposing (..)
 
 import Json.Encode
-import SequenceOnInstrument exposing (NoteEventWithInstrumentId)
+import Voice exposing (NoteEventWithInstrumentId)
 
 
 port play : List Json.Encode.Value -> Cmd msg

@@ -1,9 +1,9 @@
-module SequenceOnInstrument exposing (..)
+module Voice exposing (..)
 
 import MusicTheory.Sequence
 
 
-type alias SequenceOnInstrument =
+type alias Voice =
     { sequence : MusicTheory.Sequence.Sequence
     , instrumentId : Int
     }
@@ -17,7 +17,7 @@ type alias NoteEventWithInstrumentId =
     }
 
 
-toNoteEvents : Int -> SequenceOnInstrument -> List NoteEventWithInstrumentId
+toNoteEvents : Int -> Voice -> List NoteEventWithInstrumentId
 toNoteEvents tempo sequenceOnInstrument =
     sequenceOnInstrument.sequence
         |> MusicTheory.Sequence.toEvents tempo

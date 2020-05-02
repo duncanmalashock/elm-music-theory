@@ -15,10 +15,10 @@ import Document exposing (Document)
 import Generated.Route as Route exposing (Route)
 import MusicTheory.Sequence
 import Ports
-import SequenceOnInstrument exposing (SequenceOnInstrument)
 import Task
 import UI
 import Url exposing (Url)
+import Voice exposing (Voice)
 
 
 
@@ -33,7 +33,7 @@ type alias Model =
     { flags : Flags
     , url : Url
     , key : Nav.Key
-    , sequences : List SequenceOnInstrument
+    , sequences : List Voice
     , tempo : Int
     , instrumentIds : List Int
     }
@@ -111,7 +111,7 @@ update msg model =
             ( model
             , Ports.playInBrowser
                 (List.concatMap
-                    (SequenceOnInstrument.toNoteEvents model.tempo)
+                    (Voice.toNoteEvents model.tempo)
                     model.sequences
                 )
             )
