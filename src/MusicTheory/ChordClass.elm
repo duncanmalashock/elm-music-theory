@@ -49,7 +49,7 @@ toIntervals : ChordClass -> List Interval
 toIntervals theChordClass =
     case theChordClass of
         ChordClass chordFactors ->
-            chordFactors
+            List.sortBy Interval.semitones chordFactors
 
 
 all : List ChordClass
