@@ -9,6 +9,7 @@ module MusicTheory.Time exposing
     , quarter
     , sixteenth
     , sixtyFourth
+    , sort
     , subdivide
     , thirtySecond
     , toFloat
@@ -22,6 +23,14 @@ import Fraction
 
 type Time
     = Time Fraction.Fraction
+
+
+sort : List Time -> List Time
+sort timeList =
+    timeList
+        |> List.map (\(Time fraction) -> fraction)
+        |> Fraction.sort
+        |> List.map Time
 
 
 toFloat : Time -> Float

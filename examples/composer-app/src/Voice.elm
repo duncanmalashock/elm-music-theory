@@ -18,10 +18,10 @@ type alias NoteEventWithInstrumentId =
     }
 
 
-toNoteEvents : Int -> Voice -> List NoteEventWithInstrumentId
-toNoteEvents tempo sequenceOnInstrument =
+toNoteEvents : Voice -> List NoteEventWithInstrumentId
+toNoteEvents sequenceOnInstrument =
     sequenceOnInstrument.sequence
-        |> MusicTheory.Sequence.toEvents tempo
+        |> MusicTheory.Sequence.toEvents
         |> List.map
             (\event ->
                 { time = event.time

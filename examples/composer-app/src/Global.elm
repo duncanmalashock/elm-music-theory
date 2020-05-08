@@ -66,13 +66,15 @@ init flags url key =
 
         sequence1 =
             MusicTheory.Sequence.init
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.c4 |> Note.louder |> Note.louder |> Note.louder)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.e4 |> Note.louder |> Note.louder)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.g4 |> Note.louder)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.b4)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.d5 |> Note.softer)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.fSharp5 |> Note.softer |> Note.softer)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.a5 |> Note.softer |> Note.softer |> Note.softer)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.c4 |> Note.louder |> Note.louder |> Note.louder |> Note.louder)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.e4 |> Note.louder |> Note.louder |> Note.louder)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.g4 |> Note.louder |> Note.louder)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.b4 |> Note.louder)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.d5)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.fSharp5 |> Note.softer)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.a5 |> Note.softer |> Note.softer)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.c6 |> Note.softer |> Note.softer |> Note.softer)
+                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.e6 |> Note.softer |> Note.softer |> Note.softer |> Note.softer)
 
         model : Model
         model =
@@ -124,7 +126,7 @@ update msg model =
             ( model
             , Ports.playInBrowser
                 (List.concatMap
-                    (Voice.toNoteEvents model.tempo)
+                    Voice.toNoteEvents
                     model.sequences
                 )
             )

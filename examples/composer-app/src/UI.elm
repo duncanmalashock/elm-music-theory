@@ -59,11 +59,22 @@ footer =
 -- STYLES
 
 
-colors : { blue : Color, white : Color, red : Color }
 colors =
-    { white = rgb 1 1 1
-    , red = rgb255 204 85 68
-    , blue = rgb255 50 100 150
+    { white = rgb255 215 216 204
+    , white1 = rgb255 189 186 182
+    , white2 = rgb255 224 228 216
+    , blue = rgb255 77 104 133
+    , blue2 = rgb255 81 89 113
+    , blue3 = rgb255 73 109 121
+    , red = rgb255 144 66 68
+    , red1 = rgb255 120 75 53
+    , red2 = rgb255 131 72 88
+    , yellow = rgb255 183 153 59
+    , yellow1 = rgb255 146 154 82
+    , yellow2 = rgb255 184 156 83
+    , purple = rgb255 105 80 128
+    , purple1 = rgb255 103 78 108
+    , purple2 = rgb255 103 87 134
     }
 
 

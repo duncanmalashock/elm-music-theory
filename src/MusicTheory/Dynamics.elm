@@ -28,4 +28,5 @@ softer (Dynamics level) =
 
 toMidiVelocity : Dynamics -> Int
 toMidiVelocity (Dynamics level) =
-    64 + (level * 16)
+    (64 + (level * 16))
+        |> clamp 1 127
