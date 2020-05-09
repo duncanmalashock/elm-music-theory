@@ -78,9 +78,16 @@ init flags url key =
                 |> MusicTheory.Sequence.appendTuplet
                     (MusicTheory.Sequence.init
                         |> MusicTheory.Sequence.appendNote
-                            (Note.eighth Pitch.c4 |> Note.fff)
-                        |> MusicTheory.Sequence.appendNote
-                            (Note.eighth Pitch.c4 |> Note.fff)
+                            (Note.eighth Pitch.g4 |> Note.fff)
+                        |> MusicTheory.Sequence.appendTuplet
+                            (MusicTheory.Sequence.init
+                                |> MusicTheory.Sequence.appendNote
+                                    (Note.eighth Pitch.f4 |> Note.fff)
+                                |> MusicTheory.Sequence.appendNote
+                                    (Note.eighth Pitch.e4 |> Note.fff)
+                                |> MusicTheory.Sequence.tuplet
+                                    { duration = Time.eighth }
+                            )
                         |> MusicTheory.Sequence.appendNote
                             (Note.eighth Pitch.c4 |> Note.fff)
                         |> MusicTheory.Sequence.tuplet

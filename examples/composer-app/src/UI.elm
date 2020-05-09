@@ -64,10 +64,11 @@ viewNoteEntry theEntry =
                 )
 
         EntryTuplet { startTime, tuplet } ->
-            Element.text
-                ("["
-                    ++ String.fromInt (List.length tuplet.entries)
-                    ++ "]"
+            Element.row [ spacing 10 ]
+                ([ Element.text ("[ " ++ String.fromInt (List.length tuplet.entries))
+                 ]
+                    ++ List.map viewNoteEntry tuplet.entries
+                    ++ [ Element.text "]" ]
                 )
 
         EntryRest { startTime, duration } ->
