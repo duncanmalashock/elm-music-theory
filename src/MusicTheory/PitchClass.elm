@@ -42,6 +42,7 @@ module MusicTheory.PitchClass exposing
     , gSharp
     , letter
     , natural
+    , offset
     , pitchClass
     , semitones
     , sharp

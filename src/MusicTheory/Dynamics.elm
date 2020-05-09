@@ -1,7 +1,15 @@
 module MusicTheory.Dynamics exposing
     ( Dynamics
+    , f
+    , ff
+    , fff
     , louder
+    , mf
+    , mp
     , normal
+    , p
+    , pp
+    , ppp
     , softer
     , toMidiVelocity
     )
@@ -14,6 +22,46 @@ type Dynamics
 normal : Dynamics
 normal =
     Dynamics 0
+
+
+mf : Dynamics
+mf =
+    Dynamics 1
+
+
+f : Dynamics
+f =
+    Dynamics 2
+
+
+ff : Dynamics
+ff =
+    Dynamics 3
+
+
+fff : Dynamics
+fff =
+    Dynamics 4
+
+
+mp : Dynamics
+mp =
+    Dynamics -1
+
+
+p : Dynamics
+p =
+    Dynamics -2
+
+
+pp : Dynamics
+pp =
+    Dynamics -3
+
+
+ppp : Dynamics
+ppp =
+    Dynamics -4
 
 
 louder : Dynamics -> Dynamics

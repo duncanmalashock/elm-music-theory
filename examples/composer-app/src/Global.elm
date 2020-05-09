@@ -20,6 +20,7 @@ import MusicTheory.PitchClass as PitchClass
 import MusicTheory.Scale as Scale
 import MusicTheory.ScaleClass as ScaleClass
 import MusicTheory.Sequence
+import MusicTheory.Time as Time
 import Ports
 import Task
 import UI
@@ -66,15 +67,37 @@ init flags url key =
 
         sequence1 =
             MusicTheory.Sequence.init
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.c4 |> Note.louder |> Note.louder |> Note.louder |> Note.louder)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.e4 |> Note.louder |> Note.louder |> Note.louder)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.g4 |> Note.louder |> Note.louder)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.b4 |> Note.louder)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.d5)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.fSharp5 |> Note.softer)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.a5 |> Note.softer |> Note.softer)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.c6 |> Note.softer |> Note.softer |> Note.softer)
-                |> MusicTheory.Sequence.appendNote (Note.eighth Pitch.e6 |> Note.softer |> Note.softer |> Note.softer |> Note.softer)
+                |> MusicTheory.Sequence.appendRest Time.eighth
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.c4 |> Note.fff)
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.eFlat4 |> Note.ff)
+                |> MusicTheory.Sequence.appendRest Time.eighth
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.g4 |> Note.f)
+                |> MusicTheory.Sequence.appendTuplet
+                    (MusicTheory.Sequence.init
+                        |> MusicTheory.Sequence.appendNote
+                            (Note.eighth Pitch.c4 |> Note.fff)
+                        |> MusicTheory.Sequence.appendNote
+                            (Note.eighth Pitch.c4 |> Note.fff)
+                        |> MusicTheory.Sequence.appendNote
+                            (Note.eighth Pitch.c4 |> Note.fff)
+                        |> MusicTheory.Sequence.tuplet
+                            { duration = Time.quarter }
+                    )
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.b4 |> Note.mf)
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.d5)
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.fSharp5 |> Note.mf)
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.a5 |> Note.f)
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.c6 |> Note.ff)
+                |> MusicTheory.Sequence.appendNote
+                    (Note.eighth Pitch.eFlat6 |> Note.fff)
 
         model : Model
         model =

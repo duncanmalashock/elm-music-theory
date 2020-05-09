@@ -4,11 +4,20 @@ module MusicTheory.Note exposing
     , dotted
     , duration
     , eighth
+    , f
+    , ff
+    , fff
     , half
     , join
     , louder
+    , mf
+    , mp
     , multiplyDuration
     , oneHundredTwentyEighth
+    , p
+    , pitch
+    , pp
+    , ppp
     , quarter
     , setDuration
     , sixteenth
@@ -31,102 +40,147 @@ type Note
 
 
 note : Pitch.Pitch -> Time.Time -> Note
-note pitch dur =
-    Note pitch dur Dynamics.normal
+note pit dur =
+    Note pit dur Dynamics.normal
+
+
+pitch : Note -> Pitch.Pitch
+pitch (Note pit _ _) =
+    pit
 
 
 toMidiNoteNumber : Note -> Int
-toMidiNoteNumber (Note pitch dur dyn) =
-    Pitch.toMidiNoteNumber pitch
+toMidiNoteNumber (Note pit dur dyn) =
+    Pitch.toMidiNoteNumber pit
 
 
 toMidiVelocity : Note -> Int
-toMidiVelocity (Note pitch dur dyn) =
+toMidiVelocity (Note pit dur dyn) =
     Dynamics.toMidiVelocity dyn
 
 
+mf : Note -> Note
+mf (Note pit dur dyn) =
+    Note pit dur Dynamics.mf
+
+
+f : Note -> Note
+f (Note pit dur dyn) =
+    Note pit dur Dynamics.f
+
+
+ff : Note -> Note
+ff (Note pit dur dyn) =
+    Note pit dur Dynamics.ff
+
+
+fff : Note -> Note
+fff (Note pit dur dyn) =
+    Note pit dur Dynamics.fff
+
+
+mp : Note -> Note
+mp (Note pit dur dyn) =
+    Note pit dur Dynamics.mp
+
+
+p : Note -> Note
+p (Note pit dur dyn) =
+    Note pit dur Dynamics.p
+
+
+pp : Note -> Note
+pp (Note pit dur dyn) =
+    Note pit dur Dynamics.pp
+
+
+ppp : Note -> Note
+ppp (Note pit dur dyn) =
+    Note pit dur Dynamics.ppp
+
+
 softer : Note -> Note
-softer (Note pitch dur dyn) =
-    Note pitch dur (Dynamics.softer dyn)
+softer (Note pit dur dyn) =
+    Note pit dur (Dynamics.softer dyn)
 
 
 louder : Note -> Note
-louder (Note pitch dur dyn) =
-    Note pitch dur (Dynamics.louder dyn)
+louder (Note pit dur dyn) =
+    Note pit dur (Dynamics.louder dyn)
 
 
 duration : Note -> Time.Time
-duration (Note pitch dur dyn) =
+duration (Note pit dur dyn) =
     dur
 
 
 addDuration : Note -> Time.Time -> Note
-addDuration (Note pitch dur dyn) durationToAdd =
-    note pitch (Time.add dur durationToAdd)
+addDuration (Note pit dur dyn) durationToAdd =
+    note pit (Time.add dur durationToAdd)
 
 
 multiplyDuration : Note -> Time.Time -> Note
-multiplyDuration (Note pitch dur dyn) durationToMultiply =
-    note pitch (Time.multiply dur durationToMultiply)
+multiplyDuration (Note pit dur dyn) durationToMultiply =
+    note pit (Time.multiply dur durationToMultiply)
 
 
 setDuration : Note -> Time.Time -> Note
-setDuration (Note pitch dur dyn) durationToSet =
-    note pitch durationToSet
+setDuration (Note pit dur dyn) durationToSet =
+    note pit durationToSet
 
 
 dotted : Note -> Note
-dotted (Note pitch dur dyn) =
-    note pitch (Time.add dur (Time.subdivide dur))
+dotted (Note pit dur dyn) =
+    note pit (Time.add dur (Time.subdivide dur))
 
 
 join : Note -> Note -> Note
-join (Note pitchA durationA dynA) (Note pitchB durationB dynB) =
-    -- This uses only the pitch of the first Note.
-    -- Make sure client code checks that the two pitches are the same before joining
-    note pitchA (Time.add durationA durationB)
+join (Note pitA durationA dynA) (Note pitB durationB dynB) =
+    -- This uses only the p of the first Note.
+    -- Make sure client code checks that the two pes are the same before joining
+    note pitA (Time.add durationA durationB)
 
 
 whole : Pitch.Pitch -> Note
-whole pitch =
-    note pitch Time.whole
+whole pit =
+    note pit Time.whole
 
 
 half : Pitch.Pitch -> Note
-half pitch =
-    note pitch Time.half
+half pit =
+    note pit Time.half
 
 
 quarter : Pitch.Pitch -> Note
-quarter pitch =
-    note pitch Time.quarter
+quarter pit =
+    note pit Time.quarter
 
 
 eighth : Pitch.Pitch -> Note
-eighth pitch =
-    note pitch Time.eighth
+eighth pit =
+    note pit Time.eighth
 
 
 sixteenth : Pitch.Pitch -> Note
-sixteenth pitch =
-    note pitch Time.sixteenth
+sixteenth pit =
+    note pit Time.sixteenth
 
 
 thirtySecond : Pitch.Pitch -> Note
-thirtySecond pitch =
-    note pitch Time.thirtySecond
+thirtySecond pit =
+    note pit Time.thirtySecond
 
 
 sixtyFourth : Pitch.Pitch -> Note
-sixtyFourth pitch =
-    note pitch Time.sixtyFourth
+sixtyFourth pit =
+    note pit Time.sixtyFourth
 
 
 oneHundredTwentyEighth : Pitch.Pitch -> Note
-oneHundredTwentyEighth pitch =
-    note pitch Time.oneHundredTwentyEighth
+oneHundredTwentyEighth pit =
+    note pit Time.oneHundredTwentyEighth
 
 
 twoHundredFiftySixth : Pitch.Pitch -> Note
-twoHundredFiftySixth pitch =
-    note pitch Time.twoHundredFiftySixth
+twoHundredFiftySixth pit =
+    note pit Time.twoHundredFiftySixth

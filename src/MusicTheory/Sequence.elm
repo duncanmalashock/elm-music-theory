@@ -1,14 +1,17 @@
 module MusicTheory.Sequence exposing
-    ( NoteEvent
+    ( NoteEntry(..)
+    , NoteEvent
     , Sequence
     , allTempoEventPoints
     , appendNote
     , appendRest
     , appendTempoChange
     , appendTuplet
+    , getNoteEntries
     , init
     , initialTempo
     , toEvents
+    , tuplet
     )
 
 import List.Extra

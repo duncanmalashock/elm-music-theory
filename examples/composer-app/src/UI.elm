@@ -1,4 +1,4 @@
-module UI exposing (layout)
+module UI exposing (layout, viewSequence)
 
 import Document exposing (Document)
 import Element exposing (..)
@@ -6,6 +6,11 @@ import Element.Background as Background
 import Element.Border as Border
 import Element.Font as Font
 import Generated.Route as Route exposing (Route)
+import MusicTheory.Letter as Letter
+import MusicTheory.Note as Note
+import MusicTheory.Pitch as Pitch
+import MusicTheory.PitchClass as PitchClass
+import MusicTheory.Sequence as Sequence exposing (NoteEntry(..))
 
 
 layout : { page : Document msg } -> Document msg
@@ -27,6 +32,48 @@ layout { page } =
     }
 
 
+viewSequence : Sequence.Sequence -> Element msg
+viewSequence theSequence =
+    Sequence.getNoteEntries theSequence
+        |> List.map viewNoteEntry
+        |> Element.row [ Element.spacing 10 ]
+
+
+viewNoteEntry : Sequence.NoteEntry -> Element msg
+viewNoteEntry theEntry =
+    case theEntry of
+        EntryNote { startTime, note } ->
+            Element.text
+                ((Note.pitch note
+                    |> Pitch.pitchClass
+                    |> PitchClass.letter
+                    |> Letter.toString
+                 )
+                    ++ (Note.pitch note
+                            |> Pitch.pitchClass
+                            |> PitchClass.offset
+                            |> (\num ->
+                                    if num >= 0 then
+                                        List.repeat num "#"
+
+                                    else
+                                        List.repeat (num * -1) "b"
+                               )
+                            |> String.join ""
+                       )
+                )
+
+        EntryTuplet { startTime, tuplet } ->
+            Element.text
+                ("["
+                    ++ String.fromInt (List.length tuplet.entries)
+                    ++ "]"
+                )
+
+        EntryRest { startTime, duration } ->
+            Element.text "_"
+
+
 navbar : Element msg
 navbar =
     row [ width fill ]
@@ -39,14 +86,6 @@ link ( label, route ) =
     Element.link styles.link
         { label = text label
         , url = Route.toHref route
-        }
-
-
-externalButtonLink : ( String, String ) -> Element msg
-externalButtonLink ( label, url ) =
-    Element.newTabLink styles.button
-        { label = text label
-        , url = url
         }
 
 
