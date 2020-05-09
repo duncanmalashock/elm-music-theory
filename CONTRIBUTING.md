@@ -8,7 +8,7 @@ If you have a question about this project, feel free to reach out to me at `@dun
 
 I'm currently working on the design of this project myself and am not accepting contributions that add features or change the design of the API. This may change in the future!
 
-But if you're interested, you can still contribute in the following ways:
+But if you're interested, please contribute in the following ways:
 
 ## Share your use cases
 
@@ -16,8 +16,10 @@ I'm interested in hearing about any projects you're working on that you're consi
 
 ## Report bugs
 
-If you find problems or behavior that seems wrong, open an issue with a [Short, Self Contained, Correct, Example](http://sscce.org/) of code that produces the problem.
+If you find problems or behavior that seems wrong, open an issue with a [Short, Self Contained, Correct Example](http://sscce.org/) of code that produces the problem.
 
 Sometimes it's hard to understand a bug report out of context, so when reporting a bug, please include the following:
 - What you were trying to do
 - What you expected to happen and why
+
+After we discuss the bug and agree on the correct behavior and possible API changes, I'm open to PRs that would address the issues. But it's always a great move to start a conversation first.

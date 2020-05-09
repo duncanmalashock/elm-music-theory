@@ -231,8 +231,7 @@ type Pitch
 
 
 type PitchError
-    = SemitonesOutOfRange Int
-    | ValidPitchNotFound
+    = ValidPitchNotFound
 
 
 pitch : Letter -> Offset -> Octave -> Pitch
