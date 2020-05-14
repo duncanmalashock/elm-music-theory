@@ -10,6 +10,7 @@ module MusicTheory.Sequence exposing
     , getNoteEntries
     , init
     , initialTempo
+    , subdivideAt
     , toEvents
     , tuplet
     )
@@ -225,6 +226,51 @@ addStartTime timeToAdd entry =
                 { startTime = Time.add timeToAdd startTime
                 , duration = duration
                 }
+
+
+subdivideAt : Time.Time -> Sequence -> Sequence
+subdivideAt theStartTime (Sequence { noteEntries, tempoEntries }) =
+    Sequence
+        { noteEntries =
+            List.concatMap
+                (\noteEntry ->
+                    if theStartTime == getStartTime noteEntry then
+                        case noteEntry of
+                            EntryNote { startTime, note } ->
+                                let
+                                    halfDuration =
+                                        Time.multiply Time.half (Note.duration note)
+                                in
+                                [ EntryNote
+                                    { startTime = startTime
+                                    , note = Note.setDuration note halfDuration
+                                    }
+                                , EntryNote
+                                    { startTime = Time.add startTime halfDuration
+                                    , note = Note.setDuration note halfDuration
+                                    }
+                                ]
+
+                            EntryTuplet tupletEntry ->
+                                [ EntryTuplet
+                                    { startTime = tupletEntry.startTime
+                                    , tuplet = tupletEntry.tuplet
+                                    }
+                                ]
+
+                            EntryRest { startTime, duration } ->
+                                [ EntryRest
+                                    { startTime = startTime
+                                    , duration = duration
+                                    }
+                                ]
+
+                    else
+                        [ noteEntry ]
+                )
+                noteEntries
+        , tempoEntries = tempoEntries
+        }
 
 
 addStartTimeToNoteEntry : Time.Time -> SingleNote -> SingleNote
