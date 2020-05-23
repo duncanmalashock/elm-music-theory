@@ -59,7 +59,7 @@ all =
                     in
                     resultIsNonEmpty
                         |> Expect.true "Generated no voicings"
-            , test "all voicings should be in root position" <|
+            , test "all voicings should have root in the fourth voice" <|
                 \_ ->
                     let
                         results =

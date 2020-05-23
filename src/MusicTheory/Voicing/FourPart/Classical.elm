@@ -63,53 +63,21 @@ allRootPositionVoicingClasses tones =
             , tones.fifth
             ]
 
-        triadWithDoubledThird =
-            [ tones.third
-            , tones.third
-            , tones.fifth
-            ]
-
-        triadWithDoubledFifth =
-            [ tones.third
-            , tones.fifth
-            , tones.fifth
-            ]
-
-        seventhArrangements =
+        seventhWithAllTones =
             Maybe.map
                 (\seventh ->
-                    let
-                        seventhWithAllTones =
-                            [ tones.third
-                            , tones.fifth
-                            , seventh
-                            ]
-
-                        seventhWithDoubledRoot =
-                            [ tones.root
-                            , tones.third
-                            , seventh
-                            ]
-
-                        seventhWithDoubledThird =
-                            [ tones.third
-                            , tones.third
-                            , seventh
-                            ]
-                    in
-                    [ seventhWithAllTones
-                    , seventhWithDoubledRoot
-                    , seventhWithDoubledThird
+                    [ [ tones.third
+                      , tones.fifth
+                      , seventh
+                      ]
                     ]
                 )
                 tones.seventh
                 |> Maybe.withDefault []
     in
     [ triadWithDoubledRoot
-    , triadWithDoubledThird
-    , triadWithDoubledFifth
     ]
-        ++ seventhArrangements
+        ++ seventhWithAllTones
         |> List.concatMap List.Extra.permutations
         |> List.map (\l -> Interval.perfectUnison :: l)
         |> List.filterMap FourPartUtil.chordToneListToVoicingClass
