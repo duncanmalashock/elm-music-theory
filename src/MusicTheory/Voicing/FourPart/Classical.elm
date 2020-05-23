@@ -1,4 +1,7 @@
-module MusicTheory.Voicing.FourPart.Classical exposing (..)
+module MusicTheory.Voicing.FourPart.Classical exposing
+    ( rootPosition
+    , satbRanges
+    )
 
 import List.Extra
 import MusicTheory.Chord as Chord
@@ -30,6 +33,33 @@ rootPosition { ranges, chord } =
             []
 
 
+allRootPositionVoicingClasses :
+    CategorizedChordTones
+    -> List VoicingClass.FourPartVoicingClass
+allRootPositionVoicingClasses tones =
+    let
+        validChordTonesAboveRoot =
+            case tones.seventh of
+                Just seventh ->
+                    -- If it's a seventh chord, use one chord tone per voice
+                    [ tones.third
+                    , tones.fifth
+                    , seventh
+                    ]
+
+                Nothing ->
+                    -- If it's a triad, double the root
+                    [ tones.root
+                    , tones.third
+                    , tones.fifth
+                    ]
+    in
+    validChordTonesAboveRoot
+        |> List.Extra.permutations
+        |> List.map (\l -> Interval.perfectUnison :: l)
+        |> List.filterMap FourPartUtil.chordToneListToVoicingClass
+
+
 categorizeChordTones : Chord.Chord -> Maybe CategorizedChordTones
 categorizeChordTones chord =
     Maybe.map2
@@ -50,37 +80,6 @@ type alias CategorizedChordTones =
     , fifth : Interval.Interval
     , seventh : Maybe Interval.Interval
     }
-
-
-allRootPositionVoicingClasses :
-    CategorizedChordTones
-    -> List VoicingClass.FourPartVoicingClass
-allRootPositionVoicingClasses tones =
-    let
-        triadWithDoubledRoot =
-            [ tones.root
-            , tones.third
-            , tones.fifth
-            ]
-
-        seventhWithAllTones =
-            Maybe.map
-                (\seventh ->
-                    [ [ tones.third
-                      , tones.fifth
-                      , seventh
-                      ]
-                    ]
-                )
-                tones.seventh
-                |> Maybe.withDefault []
-    in
-    [ triadWithDoubledRoot
-    ]
-        ++ seventhWithAllTones
-        |> List.concatMap List.Extra.permutations
-        |> List.map (\l -> Interval.perfectUnison :: l)
-        |> List.filterMap FourPartUtil.chordToneListToVoicingClass
 
 
 satbRanges : FourPart.Ranges
