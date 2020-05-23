@@ -1,6 +1,7 @@
 module MusicTheory.Pitch exposing
     ( Pitch
     , PitchError(..)
+    , Range
     , a0
     , a1
     , a2
@@ -198,14 +199,17 @@ module MusicTheory.Pitch exposing
     , gSharp7
     , gSharp8
     , intervalBetween
+    , isWithin
     , natural
     , octave
     , pitch
     , pitchClass
+    , range
     , semitones
     , sharp
     , sort
     , toMidiNoteNumber
+    , toString
     , transposeDown
     , transposeUp
     )
@@ -244,8 +248,31 @@ letter (Pitch l o) =
     PitchClass.letter l
 
 
+toString : Pitch -> String
+toString (Pitch l o) =
+    PitchClass.toString l ++ Octave.toString o
+
+
 
 --
+
+
+type Range
+    = Range { lower : Pitch, upper : Pitch }
+
+
+range : Pitch -> Pitch -> Range
+range lower upper =
+    Range
+        { lower = lower
+        , upper = upper
+        }
+
+
+isWithin : Range -> Pitch -> Bool
+isWithin (Range { lower, upper }) thePitch =
+    (semitones lower <= semitones thePitch)
+        && (semitones upper >= semitones thePitch)
 
 
 intervalBetween : Pitch -> Pitch -> Interval

@@ -182,4 +182,16 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "isWithin"
+            [ test "C2 is within C1–C5" <|
+                \_ ->
+                    Pitch.c2
+                        |> Pitch.isWithin (Pitch.range Pitch.c1 Pitch.c5)
+                        |> Expect.equal True
+            , test "C2 is not within C3–C5" <|
+                \_ ->
+                    Pitch.c2
+                        |> Pitch.isWithin (Pitch.range Pitch.c3 Pitch.c5)
+                        |> Expect.equal False
+            ]
         ]

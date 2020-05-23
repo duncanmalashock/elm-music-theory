@@ -12,6 +12,7 @@ module MusicTheory.Octave exposing
     , seven
     , six
     , three
+    , toString
     , two
     , zero
     )
@@ -98,3 +99,8 @@ seven =
 eight : Octave
 eight =
     Octave 8
+
+
+toString : Octave -> String
+toString (Octave o) =
+    String.fromInt o
