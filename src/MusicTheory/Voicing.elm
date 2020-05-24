@@ -7,6 +7,7 @@ module MusicTheory.Voicing exposing
     , ThreePartVoicing
     , fivePart
     , fourPart
+    , fourPartToList
     , threePart
     , toPitchesFivePart
     , toPitchesFourPart
@@ -84,6 +85,11 @@ toPitchesFourPart (FourPartVoicing root voicingClass) =
     , voiceThree = Pitch.transposeUp voicingClass.voiceThree root
     , voiceFour = Pitch.transposeUp voicingClass.voiceFour root
     }
+
+
+fourPartToList : PitchesFourPart -> List Pitch.Pitch
+fourPartToList { voiceOne, voiceTwo, voiceThree, voiceFour } =
+    [ voiceOne, voiceTwo, voiceThree, voiceFour ]
 
 
 toPitchesFivePart : FivePartVoicing -> PitchesFivePart

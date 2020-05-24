@@ -2,10 +2,12 @@ module MusicTheory.Voicing.FourPart exposing
     ( Config
     , Ranges
     , TechniqueInput
+    , commonTones
     , config
     , execute
     )
 
+import List.Extra
 import MusicTheory.Chord as Chord
 import MusicTheory.Pitch as Pitch
 import MusicTheory.Voicing as Voicing
@@ -59,4 +61,22 @@ execute (Config theConfig) theChord =
                     { ranges = theConfig.ranges
                     , chord = theChord
                     }
+            )
+
+
+commonTones : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
+commonTones voicingA voicingB =
+    let
+        listA =
+            Voicing.toPitchesFourPart voicingA
+                |> Voicing.fourPartToList
+
+        listB =
+            Voicing.toPitchesFourPart voicingB
+                |> Voicing.fourPartToList
+    in
+    listA
+        |> List.Extra.count
+            (\m ->
+                List.member m listB
             )
