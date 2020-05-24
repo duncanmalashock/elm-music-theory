@@ -1,5 +1,6 @@
 module MusicTheory.Voicing.FourPart.Classical exposing
-    ( firstInversion
+    ( compareByCommonTones
+    , firstInversion
     , rootPosition
     , satbRanges
     , secondInversion
@@ -261,3 +262,11 @@ satbRanges =
     , third = InstrumentRanges.tenorVoice
     , fourth = InstrumentRanges.bassVoice
     }
+
+
+compareByCommonTones :
+    Voicing.FourPartVoicing
+    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+compareByCommonTones from =
+    \a b ->
+        compare (FourPart.commonTones from b) (FourPart.commonTones from a)

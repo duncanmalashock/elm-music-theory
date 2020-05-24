@@ -70,6 +70,7 @@ chordToneListToVoicingClass intervals =
 correctIntervalOctaves : VoicingClass.FourPartVoicingClass -> VoicingClass.FourPartVoicingClass
 correctIntervalOctaves { voiceOne, voiceTwo, voiceThree, voiceFour } =
     let
+        -- TODO: allow for larger (e.g. 10th) and smaller distances (unison) between voices
         voiceThreeCorrected =
             Util.Basic.while
                 (\v3 -> Interval.semitones voiceFour >= Interval.semitones v3)

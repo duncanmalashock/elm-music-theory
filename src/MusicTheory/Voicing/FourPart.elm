@@ -67,16 +67,19 @@ execute (Config theConfig) theChord =
 commonTones : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
 commonTones voicingA voicingB =
     let
-        listA =
+        pitchesA =
             Voicing.toPitchesFourPart voicingA
-                |> Voicing.fourPartToList
 
-        listB =
+        pitchesB =
             Voicing.toPitchesFourPart voicingB
-                |> Voicing.fourPartToList
+
+        areCommonTones =
+            [ pitchesA.voiceOne == pitchesB.voiceOne
+            , pitchesA.voiceTwo == pitchesB.voiceTwo
+            , pitchesA.voiceThree == pitchesB.voiceThree
+            , pitchesA.voiceFour == pitchesB.voiceFour
+            ]
     in
-    listA
-        |> List.Extra.count
-            (\m ->
-                List.member m listB
-            )
+    areCommonTones
+        |> List.filter identity
+        |> List.length
