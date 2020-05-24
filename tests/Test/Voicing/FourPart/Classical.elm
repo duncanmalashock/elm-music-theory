@@ -16,6 +16,8 @@ all =
     describe "all"
         [ rootPositionTests
         , firstInversionTests
+        , secondInversionTests
+        , thirdInversionTests
         ]
 
 

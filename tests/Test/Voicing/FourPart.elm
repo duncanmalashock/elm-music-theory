@@ -72,5 +72,33 @@ all =
                             0
                     in
                     Expect.equal expected result
+            , test "should return no common tones between the same chord an octave apart" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectUnison
+                                , voiceTwo = Interval.majorThird
+                                , voiceThree = Interval.perfectFifth
+                                , voiceFour = Interval.majorSeventh
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.c5
+                                { voiceOne = Interval.perfectUnison
+                                , voiceTwo = Interval.minorThird
+                                , voiceThree = Interval.perfectFifth
+                                , voiceFour = Interval.minorSeventh
+                                }
+
+                        result =
+                            FourPart.commonTones voicingA voicingB
+
+                        expected =
+                            0
+                    in
+                    Expect.equal expected result
             ]
         ]
