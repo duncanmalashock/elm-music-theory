@@ -4,10 +4,12 @@ module MusicTheory.Voicing.FourPart exposing
     , TechniqueInput
     , commonTones
     , compareByCommonTones
+    , compareBySemitoneDistance
     , config
     , containsParallelFifths
     , containsParallelOctaves
     , execute
+    , totalSemitoneDistance
     , withFilter
     , withSort
     )
@@ -123,6 +125,37 @@ compareByCommonTones :
 compareByCommonTones from =
     \a b ->
         compare (commonTones from b) (commonTones from a)
+
+
+totalSemitoneDistance : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
+totalSemitoneDistance voicingA voicingB =
+    let
+        pitchesA =
+            Voicing.toPitchesFourPart voicingA
+
+        pitchesB =
+            Voicing.toPitchesFourPart voicingB
+
+        semitoneDistance a b =
+            abs (Pitch.semitones a - Pitch.semitones b)
+
+        semitoneDistances =
+            [ semitoneDistance pitchesA.voiceOne pitchesB.voiceOne
+            , semitoneDistance pitchesA.voiceTwo pitchesB.voiceTwo
+            , semitoneDistance pitchesA.voiceThree pitchesB.voiceThree
+            , semitoneDistance pitchesA.voiceFour pitchesB.voiceFour
+            ]
+    in
+    semitoneDistances
+        |> List.sum
+
+
+compareBySemitoneDistance :
+    Voicing.FourPartVoicing
+    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+compareBySemitoneDistance from =
+    \a b ->
+        compare (commonTones from a) (commonTones from b)
 
 
 containsParallelFifths :

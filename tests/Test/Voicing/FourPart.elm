@@ -283,4 +283,90 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "totalSemitoneDistance"
+            [ test "should return 0 for identical voicings" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.totalSemitoneDistance voicingA voicingB
+
+                        expected =
+                            0
+                    in
+                    Expect.equal expected result
+            , test "should return 1 for a voice changed by a semitone" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.totalSemitoneDistance voicingA voicingB
+
+                        expected =
+                            1
+                    in
+                    Expect.equal expected result
+            , test "should return 4 for voices changed by 2 semitones in different directions" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.majorSixth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.majorNinth
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.totalSemitoneDistance voicingA voicingB
+
+                        expected =
+                            4
+                    in
+                    Expect.equal expected result
+            ]
         ]
