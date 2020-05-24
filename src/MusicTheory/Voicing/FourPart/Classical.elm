@@ -34,8 +34,39 @@ optimizeVoiceLeading fromVoicing config =
 orderByBestVoiceLeading :
     Voicing.FourPartVoicing
     -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
-orderByBestVoiceLeading from to =
-    FourPart.compareByCommonTones from to
+orderByBestVoiceLeading from =
+    let
+        orderToInt : Order -> Int
+        orderToInt ord =
+            case ord of
+                LT ->
+                    -1
+
+                EQ ->
+                    0
+
+                GT ->
+                    1
+
+        commonToneWeight : Int
+        commonToneWeight =
+            2
+
+        semitoneDistanceWeight : Int
+        semitoneDistanceWeight =
+            1
+
+        score : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
+        score a b =
+            (orderToInt (FourPart.compareByCommonTones from a b)
+                * commonToneWeight
+            )
+                + (orderToInt (FourPart.compareBySemitoneDistance from a b)
+                    * semitoneDistanceWeight
+                  )
+    in
+    \a b ->
+        compare (score a b) 0
 
 
 rootPosition : FourPart.TechniqueInput -> List Voicing.FourPartVoicing
