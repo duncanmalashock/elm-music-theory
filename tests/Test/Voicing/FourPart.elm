@@ -10,6 +10,7 @@ import MusicTheory.Voicing as Voicing
 import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.FourPart.Classical as Classical
 import Test exposing (..)
+import Test.Util
 
 
 all : Test

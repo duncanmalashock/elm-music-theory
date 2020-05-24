@@ -8,6 +8,8 @@ module MusicTheory.Voicing.FourPart exposing
     , containsParallelFifths
     , containsParallelOctaves
     , execute
+    , withFilter
+    , withSort
     )
 
 import MusicTheory.Chord as Chord
@@ -28,7 +30,7 @@ type Config
         { ranges : Ranges
         , techniques : List (TechniqueInput -> List Voicing.FourPartVoicing)
         , filter : List (Voicing.FourPartVoicing -> Bool)
-        , sort : List (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+        , sort : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order
         }
 
 
@@ -52,12 +54,34 @@ config { ranges, techniques } =
         { ranges = ranges
         , techniques = techniques
         , filter = []
-        , sort = []
+        , sort = \a b -> EQ
         }
 
 
-execute : Config -> Chord.Chord -> List Voicing.FourPartVoicing
-execute (Config theConfig) theChord =
+withFilter : (Voicing.FourPartVoicing -> Bool) -> Config -> Config
+withFilter filterFn (Config theConfig) =
+    Config
+        { theConfig
+            | filter = theConfig.filter ++ [ filterFn ]
+        }
+
+
+withSort :
+    (Voicing.FourPartVoicing
+     -> Voicing.FourPartVoicing
+     -> Order
+    )
+    -> Config
+    -> Config
+withSort sortFn (Config theConfig) =
+    Config
+        { theConfig
+            | sort = sortFn
+        }
+
+
+execute : Chord.Chord -> Config -> List Voicing.FourPartVoicing
+execute theChord (Config theConfig) =
     theConfig.techniques
         |> List.concatMap
             (\technique ->
@@ -66,6 +90,10 @@ execute (Config theConfig) theChord =
                     , chord = theChord
                     }
             )
+        |> (\candidates ->
+                List.foldl List.filter candidates theConfig.filter
+           )
+        |> List.sortWith theConfig.sort
 
 
 commonTones : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
@@ -97,17 +125,27 @@ compareByCommonTones from =
         compare (commonTones from b) (commonTones from a)
 
 
-containsParallelFifths : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
+containsParallelFifths :
+    Voicing.FourPartVoicing
+    -> Voicing.FourPartVoicing
+    -> Bool
 containsParallelFifths voicingA voicingB =
     containsParallelIntervals Interval.perfectFifth voicingA voicingB
 
 
-containsParallelOctaves : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
+containsParallelOctaves :
+    Voicing.FourPartVoicing
+    -> Voicing.FourPartVoicing
+    -> Bool
 containsParallelOctaves voicingA voicingB =
     containsParallelIntervals Interval.perfectUnison voicingA voicingB
 
 
-containsParallelIntervals : Interval.Interval -> Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
+containsParallelIntervals :
+    Interval.Interval
+    -> Voicing.FourPartVoicing
+    -> Voicing.FourPartVoicing
+    -> Bool
 containsParallelIntervals interval voicingA voicingB =
     let
         intervalsA =

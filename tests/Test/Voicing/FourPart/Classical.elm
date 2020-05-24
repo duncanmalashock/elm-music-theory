@@ -29,7 +29,7 @@ all =
                                         PitchClass.c
                                         ChordClass.dominantSeventh
                                 }
-                                |> List.map voicingToString
+                                |> List.map Test.Util.voicingToString
                                 |> List.isEmpty
                                 |> not
                     in
@@ -97,7 +97,7 @@ all =
                                         PitchClass.c
                                         ChordClass.dominantSeventh
                                 }
-                                |> List.map voicingToString
+                                |> List.map Test.Util.voicingToString
                                 |> List.isEmpty
                                 |> not
                     in
@@ -181,7 +181,7 @@ all =
                                         PitchClass.c
                                         ChordClass.dominantSeventh
                                 }
-                                |> List.map voicingToString
+                                |> List.map Test.Util.voicingToString
                                 |> List.isEmpty
                                 |> not
                     in
@@ -249,7 +249,7 @@ all =
                                         PitchClass.c
                                         ChordClass.dominantSeventh
                                 }
-                                |> List.map voicingToString
+                                |> List.map Test.Util.voicingToString
                                 |> List.isEmpty
                                 |> not
                     in
@@ -267,7 +267,7 @@ all =
                                         PitchClass.c
                                         ChordClass.major
                                 }
-                                |> List.map voicingToString
+                                |> List.map Test.Util.voicingToString
                     in
                     Expect.equal results []
             , test "all voicings should have the seventh in the fourth voice" <|
@@ -335,6 +335,62 @@ all =
                         |> Test.Util.expectAllInList
                             (checkDoesNotDoublePitchClass PitchClass.g)
             ]
+        , describe "orderByBestVoiceLeading"
+            [ test "should prefer voicings with common tones" <|
+                \_ ->
+                    let
+                        fromVoicing =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingWithNoCommonTones =
+                            Voicing.fourPart
+                                Pitch.d4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingWithOneCommonTone =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectFifth |> Interval.addOctave
+                                , voiceTwo = Interval.perfectOctave
+                                , voiceThree = Interval.perfectFifth
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingWithTwoCommonTones =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.majorTenth
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            [ voicingWithNoCommonTones
+                            , voicingWithTwoCommonTones
+                            , voicingWithOneCommonTone
+                            ]
+                                |> List.sortWith
+                                    (Classical.orderByBestVoiceLeading fromVoicing)
+
+                        expected =
+                            [ voicingWithTwoCommonTones
+                            , voicingWithOneCommonTone
+                            , voicingWithNoCommonTones
+                            ]
+                    in
+                    Expect.equal expected result
+            ]
         ]
 
 
@@ -354,7 +410,7 @@ checkVoice getter expectedPitchClass voicing =
                 else
                     Just <|
                         "Expected pitch class in voicing "
-                            ++ voicingToString voicing
+                            ++ Test.Util.voicingToString voicing
                             ++ " to be "
                             ++ PitchClass.toString expectedPitchClass
                             ++ ", but got "
@@ -386,7 +442,7 @@ checkIncludesPitchClass expectedPitchClass voicing =
                 else
                     Just <|
                         "Expected voicing "
-                            ++ voicingToString voicing
+                            ++ Test.Util.voicingToString voicing
                             ++ " to contain "
                             ++ PitchClass.toString expectedPitchClass
                             ++ ".\n"
@@ -414,25 +470,11 @@ checkDoesNotDoublePitchClass pitchClassNotToInclude voicing =
                 if instancesOfPitchClass > 1 then
                     Just <|
                         "Expected voicing "
-                            ++ voicingToString voicing
+                            ++ Test.Util.voicingToString voicing
                             ++ " not to double "
                             ++ PitchClass.toString pitchClassNotToInclude
                             ++ ".\n"
 
                 else
                     Nothing
-           )
-
-
-voicingToString : Voicing.FourPartVoicing -> String
-voicingToString theVoicing =
-    theVoicing
-        |> Voicing.toPitchesFourPart
-        |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
-                String.join " "
-                    [ Pitch.toString voiceFour
-                    , Pitch.toString voiceThree
-                    , Pitch.toString voiceTwo
-                    , Pitch.toString voiceOne
-                    ]
            )

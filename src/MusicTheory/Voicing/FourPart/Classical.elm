@@ -1,5 +1,7 @@
 module MusicTheory.Voicing.FourPart.Classical exposing
     ( firstInversion
+    , optimizeVoiceLeading
+    , orderByBestVoiceLeading
     , rootPosition
     , satbRanges
     , secondInversion
@@ -16,6 +18,24 @@ import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.FourPart.Util as FourPartUtil
 import MusicTheory.VoicingClass as VoicingClass
 import Util.Permutations
+
+
+optimizeVoiceLeading : Voicing.FourPartVoicing -> FourPart.Config -> FourPart.Config
+optimizeVoiceLeading fromVoicing config =
+    config
+        |> FourPart.withSort
+            (orderByBestVoiceLeading fromVoicing)
+        |> FourPart.withFilter
+            (FourPart.containsParallelFifths fromVoicing >> not)
+        |> FourPart.withFilter
+            (FourPart.containsParallelOctaves fromVoicing >> not)
+
+
+orderByBestVoiceLeading :
+    Voicing.FourPartVoicing
+    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+orderByBestVoiceLeading from to =
+    FourPart.compareByCommonTones from to
 
 
 rootPosition : FourPart.TechniqueInput -> List Voicing.FourPartVoicing
