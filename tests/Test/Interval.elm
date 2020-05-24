@@ -27,6 +27,13 @@ all =
                         |> Interval.semitones
                         |> Expect.equal -3
             ]
+        , describe "toSimple"
+            [ test "major tenth should become major third" <|
+                \_ ->
+                    Interval.majorTenth
+                        |> Interval.toSimple
+                        |> Expect.equal Interval.majorThird
+            ]
         , describe "firstBelow"
             [ test "Should return unchanged if it is the first below the reference" <|
                 \_ ->

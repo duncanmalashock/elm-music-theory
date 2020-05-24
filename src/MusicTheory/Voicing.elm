@@ -12,6 +12,7 @@ module MusicTheory.Voicing exposing
     , toPitchesFivePart
     , toPitchesFourPart
     , toPitchesThreePart
+    , voicingClassFourPart
     )
 
 import MusicTheory.Interval as Interval
@@ -36,6 +37,11 @@ fourPart root voicingClass =
 fivePart : Pitch.Pitch -> VoicingClass.FivePartVoicingClass -> FivePartVoicing
 fivePart root voicingClass =
     FivePartVoicing root voicingClass
+
+
+voicingClassFourPart : FourPartVoicing -> VoicingClass.FourPartVoicingClass
+voicingClassFourPart (FourPartVoicing root voicingClass) =
+    voicingClass
 
 
 type FourPartVoicing

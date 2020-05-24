@@ -5,12 +5,15 @@ module MusicTheory.Voicing.FourPart exposing
     , commonTones
     , compareByCommonTones
     , config
+    , containsParallelFifths
     , execute
     )
 
 import MusicTheory.Chord as Chord
+import MusicTheory.Interval as Interval
 import MusicTheory.Pitch as Pitch
 import MusicTheory.Voicing as Voicing
+import MusicTheory.VoicingClass as VoicingClass
 
 
 type alias ConfigInput =
@@ -91,3 +94,32 @@ compareByCommonTones :
 compareByCommonTones from =
     \a b ->
         compare (commonTones from b) (commonTones from a)
+
+
+containsParallelFifths : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
+containsParallelFifths voicingA voicingB =
+    let
+        intervalsA =
+            VoicingClass.allIntervalsFourPart
+                (Voicing.voicingClassFourPart voicingA)
+
+        intervalsB =
+            VoicingClass.allIntervalsFourPart
+                (Voicing.voicingClassFourPart voicingB)
+
+        areParallelFifths a b =
+            (Interval.toSimple a == Interval.perfectFifth)
+                && (Interval.toSimple b == Interval.perfectFifth)
+
+        areParallelIntervals =
+            [ areParallelFifths intervalsA.voiceFourToVoiceOne intervalsB.voiceFourToVoiceOne
+            , areParallelFifths intervalsA.voiceFourToVoiceTwo intervalsB.voiceFourToVoiceTwo
+            , areParallelFifths intervalsA.voiceThreeToVoiceOne intervalsB.voiceThreeToVoiceOne
+            , areParallelFifths intervalsA.voiceFourToVoiceThree intervalsB.voiceFourToVoiceThree
+            , areParallelFifths intervalsA.voiceThreeToVoiceTwo intervalsB.voiceThreeToVoiceTwo
+            , areParallelFifths intervalsA.voiceTwoToVoiceOne intervalsB.voiceTwoToVoiceOne
+            ]
+    in
+    areParallelIntervals
+        |> List.filter identity
+        |> (\list -> List.length list > 0)

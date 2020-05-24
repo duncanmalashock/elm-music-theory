@@ -22,19 +22,19 @@ all =
                         voicingA =
                             Voicing.fourPart
                                 Pitch.c4
-                                { voiceOne = Interval.perfectUnison
-                                , voiceTwo = Interval.majorThird
-                                , voiceThree = Interval.perfectFifth
-                                , voiceFour = Interval.majorSeventh
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
                                 }
 
                         voicingB =
                             Voicing.fourPart
                                 Pitch.c4
-                                { voiceOne = Interval.perfectUnison
-                                , voiceTwo = Interval.majorThird
-                                , voiceThree = Interval.perfectFifth
-                                , voiceFour = Interval.majorSixth
+                                { voiceOne = Interval.majorSixth
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
                                 }
 
                         result =
@@ -50,19 +50,19 @@ all =
                         voicingA =
                             Voicing.fourPart
                                 Pitch.c4
-                                { voiceOne = Interval.perfectUnison
-                                , voiceTwo = Interval.majorThird
-                                , voiceThree = Interval.perfectFifth
-                                , voiceFour = Interval.majorSeventh
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
                                 }
 
                         voicingB =
                             Voicing.fourPart
                                 Pitch.d4
-                                { voiceOne = Interval.perfectUnison
-                                , voiceTwo = Interval.minorThird
-                                , voiceThree = Interval.perfectFifth
-                                , voiceFour = Interval.minorSeventh
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
                                 }
 
                         result =
@@ -78,19 +78,19 @@ all =
                         voicingA =
                             Voicing.fourPart
                                 Pitch.c4
-                                { voiceOne = Interval.perfectUnison
-                                , voiceTwo = Interval.majorThird
-                                , voiceThree = Interval.perfectFifth
-                                , voiceFour = Interval.majorSeventh
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
                                 }
 
                         voicingB =
                             Voicing.fourPart
                                 Pitch.c5
-                                { voiceOne = Interval.perfectUnison
-                                , voiceTwo = Interval.minorThird
-                                , voiceThree = Interval.perfectFifth
-                                , voiceFour = Interval.minorSeventh
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
                                 }
 
                         result =
@@ -135,6 +135,92 @@ all =
                                 , voiceFour = Interval.perfectUnison
                                 }
                                 |> Just
+                    in
+                    Expect.equal expected result
+            ]
+        , describe "containsParallelFifths"
+            [ test "should return true for same voicing of chords a step apart" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.d4
+                                { voiceOne = Interval.minorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.minorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.containsParallelFifths voicingA voicingB
+
+                        expected =
+                            True
+                    in
+                    Expect.equal expected result
+            , test "should return false for voicings without parallel fifths" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.majorThird |> Interval.addOctave |> Interval.addOctave
+                                , voiceTwo = Interval.perfectFifth |> Interval.addOctave
+                                , voiceThree = Interval.perfectOctave
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.g3
+                                { voiceOne = Interval.perfectFifth |> Interval.addOctave |> Interval.addOctave
+                                , voiceTwo = Interval.perfectOctave |> Interval.addOctave
+                                , voiceThree = Interval.majorThird |> Interval.addOctave
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.containsParallelFifths voicingA voicingB
+
+                        expected =
+                            False
+                    in
+                    Expect.equal expected result
+            , test "should return true for voicings that contain compound fifth intervals" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.majorThird |> Interval.addOctave |> Interval.addOctave
+                                , voiceTwo = Interval.perfectFifth |> Interval.addOctave
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.d4
+                                { voiceOne = Interval.majorThird |> Interval.addOctave |> Interval.addOctave
+                                , voiceTwo = Interval.perfectFifth |> Interval.addOctave
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.containsParallelFifths voicingA voicingB
+
+                        expected =
+                            True
                     in
                     Expect.equal expected result
             ]

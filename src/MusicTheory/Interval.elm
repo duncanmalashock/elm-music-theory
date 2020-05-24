@@ -57,6 +57,7 @@ module MusicTheory.Interval exposing
     , reverse
     , semitones
     , subtract
+    , toSimple
     , up
     )
 
@@ -95,6 +96,16 @@ type Direction
 interval : Direction -> IntervalQuality -> IntervalNumber -> Interval
 interval dir qual num =
     Interval dir qual num
+
+
+toSimple : Interval -> Interval
+toSimple (Interval dir qual num) =
+    case num of
+        Octave innerNum ->
+            toSimple (Interval dir qual innerNum)
+
+        _ ->
+            Interval dir qual num
 
 
 offset : Interval -> Int
