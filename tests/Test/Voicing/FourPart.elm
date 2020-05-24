@@ -224,4 +224,62 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "containsParallelOctaves"
+            [ test "should return true for voicing of chords (with octaves) a step apart" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.d4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.minorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.containsParallelOctaves voicingA voicingB
+
+                        expected =
+                            True
+                    in
+                    Expect.equal expected result
+            , test "should return false for voicing of chords (without octaves) a step apart" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.d4
+                                { voiceOne = Interval.majorSeventh
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.minorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.containsParallelOctaves voicingA voicingB
+
+                        expected =
+                            False
+                    in
+                    Expect.equal expected result
+            ]
         ]

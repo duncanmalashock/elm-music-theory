@@ -6,6 +6,7 @@ module MusicTheory.Voicing.FourPart exposing
     , compareByCommonTones
     , config
     , containsParallelFifths
+    , containsParallelOctaves
     , execute
     )
 
@@ -98,6 +99,16 @@ compareByCommonTones from =
 
 containsParallelFifths : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
 containsParallelFifths voicingA voicingB =
+    containsParallelIntervals Interval.perfectFifth voicingA voicingB
+
+
+containsParallelOctaves : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
+containsParallelOctaves voicingA voicingB =
+    containsParallelIntervals Interval.perfectUnison voicingA voicingB
+
+
+containsParallelIntervals : Interval.Interval -> Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
+containsParallelIntervals interval voicingA voicingB =
     let
         intervalsA =
             VoicingClass.allIntervalsFourPart
@@ -107,19 +118,19 @@ containsParallelFifths voicingA voicingB =
             VoicingClass.allIntervalsFourPart
                 (Voicing.voicingClassFourPart voicingB)
 
-        areParallelFifths a b =
-            (Interval.toSimple a == Interval.perfectFifth)
-                && (Interval.toSimple b == Interval.perfectFifth)
+        areParallelInterval a b =
+            (Interval.toSimple a == interval)
+                && (Interval.toSimple b == interval)
 
-        areParallelIntervals =
-            [ areParallelFifths intervalsA.voiceFourToVoiceOne intervalsB.voiceFourToVoiceOne
-            , areParallelFifths intervalsA.voiceFourToVoiceTwo intervalsB.voiceFourToVoiceTwo
-            , areParallelFifths intervalsA.voiceThreeToVoiceOne intervalsB.voiceThreeToVoiceOne
-            , areParallelFifths intervalsA.voiceFourToVoiceThree intervalsB.voiceFourToVoiceThree
-            , areParallelFifths intervalsA.voiceThreeToVoiceTwo intervalsB.voiceThreeToVoiceTwo
-            , areParallelFifths intervalsA.voiceTwoToVoiceOne intervalsB.voiceTwoToVoiceOne
+        matchParallelIntervals =
+            [ areParallelInterval intervalsA.voiceFourToVoiceOne intervalsB.voiceFourToVoiceOne
+            , areParallelInterval intervalsA.voiceFourToVoiceTwo intervalsB.voiceFourToVoiceTwo
+            , areParallelInterval intervalsA.voiceThreeToVoiceOne intervalsB.voiceThreeToVoiceOne
+            , areParallelInterval intervalsA.voiceFourToVoiceThree intervalsB.voiceFourToVoiceThree
+            , areParallelInterval intervalsA.voiceThreeToVoiceTwo intervalsB.voiceThreeToVoiceTwo
+            , areParallelInterval intervalsA.voiceTwoToVoiceOne intervalsB.voiceTwoToVoiceOne
             ]
     in
-    areParallelIntervals
+    matchParallelIntervals
         |> List.filter identity
         |> (\list -> List.length list > 0)
