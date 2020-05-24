@@ -36,8 +36,8 @@ orderByBestVoiceLeading :
     -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
 orderByBestVoiceLeading from =
     let
-        orderToInt : Order -> Int
-        orderToInt ord =
+        orderToNumber : Order -> Float
+        orderToNumber ord =
             case ord of
                 LT ->
                     -1
@@ -48,21 +48,25 @@ orderByBestVoiceLeading from =
                 GT ->
                     1
 
-        commonToneWeight : Int
         commonToneWeight =
-            2
+            3
 
-        semitoneDistanceWeight : Int
         semitoneDistanceWeight =
             1
 
-        score : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
+        contraryMotionWeight =
+            4
+
+        score : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Float
         score a b =
-            (orderToInt (FourPart.compareByCommonTones from a b)
+            (orderToNumber (FourPart.compareByCommonTones from a b)
                 * commonToneWeight
             )
-                + (orderToInt (FourPart.compareBySemitoneDistance from a b)
+                + (orderToNumber (FourPart.compareBySemitoneDistance from a b)
                     * semitoneDistanceWeight
+                  )
+                + (orderToNumber (FourPart.compareByContraryMotion from a b)
+                    * contraryMotionWeight
                   )
     in
     \a b ->
@@ -82,6 +86,7 @@ rootPosition { ranges, chord } =
                 (allRootPositionVoicingClasses chordTones)
                 Voicing.fourPart
                 |> List.filter (FourPartUtil.withinRanges ranges)
+                |> List.Extra.uniqueBy Voicing.fourPartToComparable
 
         Nothing ->
             []
@@ -101,6 +106,7 @@ firstInversion { ranges, chord } =
                 (allFirstInversionVoicingClasses chordTones)
                 Voicing.fourPart
                 |> List.filter (FourPartUtil.withinRanges ranges)
+                |> List.Extra.uniqueBy Voicing.fourPartToComparable
 
         Nothing ->
             []
@@ -120,6 +126,7 @@ secondInversion { ranges, chord } =
                 (allSecondInversionVoicingClasses chordTones)
                 Voicing.fourPart
                 |> List.filter (FourPartUtil.withinRanges ranges)
+                |> List.Extra.uniqueBy Voicing.fourPartToComparable
 
         Nothing ->
             []
@@ -139,6 +146,7 @@ thirdInversion { ranges, chord } =
                 (allThirdInversionVoicingClasses chordTones)
                 Voicing.fourPart
                 |> List.filter (FourPartUtil.withinRanges ranges)
+                |> List.Extra.uniqueBy Voicing.fourPartToComparable
 
         Nothing ->
             []

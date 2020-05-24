@@ -16,6 +16,7 @@ module MusicTheory.Interval exposing
     , augmentedSeventh
     , augmentedSixth
     , augmentedThird
+    , augmentedTwelfth
     , augmentedUnison
     , diminishedFifth
     , diminishedFourth
@@ -24,6 +25,7 @@ module MusicTheory.Interval exposing
     , diminishedSeventh
     , diminishedSixth
     , diminishedThird
+    , diminishedTwelfth
     , direction
     , directionToInteger
     , down
@@ -52,6 +54,7 @@ module MusicTheory.Interval exposing
     , perfectFifth
     , perfectFourth
     , perfectOctave
+    , perfectTwelfth
     , perfectUnison
     , quality
     , reverse
@@ -550,6 +553,21 @@ perfectEleventh =
 augmentedEleventh : Interval
 augmentedEleventh =
     Interval up perfectAugmented (Octave Fourth)
+
+
+diminishedTwelfth : Interval
+diminishedTwelfth =
+    Interval up perfectDiminished (Octave Fifth)
+
+
+perfectTwelfth : Interval
+perfectTwelfth =
+    Interval up perfect (Octave Fifth)
+
+
+augmentedTwelfth : Interval
+augmentedTwelfth =
+    Interval up perfectAugmented (Octave Fifth)
 
 
 minorThirteenth : Interval

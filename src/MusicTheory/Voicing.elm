@@ -7,6 +7,7 @@ module MusicTheory.Voicing exposing
     , ThreePartVoicing
     , fivePart
     , fourPart
+    , fourPartToComparable
     , fourPartToList
     , threePart
     , toPitchesFivePart
@@ -46,6 +47,20 @@ voicingClassFourPart (FourPartVoicing root voicingClass) =
 
 type FourPartVoicing
     = FourPartVoicing Pitch.Pitch VoicingClass.FourPartVoicingClass
+
+
+fourPartToComparable : FourPartVoicing -> String
+fourPartToComparable v =
+    v
+        |> toPitchesFourPart
+        |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
+                String.join " "
+                    [ Pitch.toString voiceFour
+                    , Pitch.toString voiceThree
+                    , Pitch.toString voiceTwo
+                    , Pitch.toString voiceOne
+                    ]
+           )
 
 
 type FivePartVoicing

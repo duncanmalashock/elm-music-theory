@@ -109,8 +109,8 @@ all =
                         voicingFrom =
                             Voicing.fourPart
                                 Pitch.c3
-                                { voiceOne = Interval.majorThird |> Interval.addOctave |> Interval.addOctave
-                                , voiceTwo = Interval.perfectFifth |> Interval.addOctave
+                                { voiceOne = Interval.majorTenth |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
                                 , voiceThree = Interval.perfectOctave
                                 , voiceFour = Interval.perfectUnison
                                 }
@@ -130,7 +130,7 @@ all =
                         expected =
                             Voicing.fourPart
                                 Pitch.g3
-                                { voiceOne = Interval.perfectFifth |> Interval.addOctave
+                                { voiceOne = Interval.perfectTwelfth
                                 , voiceTwo = Interval.perfectOctave
                                 , voiceThree = Interval.majorThird
                                 , voiceFour = Interval.perfectUnison
@@ -174,8 +174,8 @@ all =
                         voicingA =
                             Voicing.fourPart
                                 Pitch.c4
-                                { voiceOne = Interval.majorThird |> Interval.addOctave |> Interval.addOctave
-                                , voiceTwo = Interval.perfectFifth |> Interval.addOctave
+                                { voiceOne = Interval.majorTenth |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
                                 , voiceThree = Interval.perfectOctave
                                 , voiceFour = Interval.perfectUnison
                                 }
@@ -183,7 +183,7 @@ all =
                         voicingB =
                             Voicing.fourPart
                                 Pitch.g3
-                                { voiceOne = Interval.perfectFifth |> Interval.addOctave |> Interval.addOctave
+                                { voiceOne = Interval.perfectTwelfth |> Interval.addOctave
                                 , voiceTwo = Interval.perfectOctave |> Interval.addOctave
                                 , voiceThree = Interval.majorThird |> Interval.addOctave
                                 , voiceFour = Interval.perfectUnison
@@ -202,8 +202,8 @@ all =
                         voicingA =
                             Voicing.fourPart
                                 Pitch.c4
-                                { voiceOne = Interval.majorThird |> Interval.addOctave |> Interval.addOctave
-                                , voiceTwo = Interval.perfectFifth |> Interval.addOctave
+                                { voiceOne = Interval.majorTenth |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
                                 , voiceThree = Interval.majorThird
                                 , voiceFour = Interval.perfectUnison
                                 }
@@ -211,8 +211,8 @@ all =
                         voicingB =
                             Voicing.fourPart
                                 Pitch.d4
-                                { voiceOne = Interval.majorThird |> Interval.addOctave |> Interval.addOctave
-                                , voiceTwo = Interval.perfectFifth |> Interval.addOctave
+                                { voiceOne = Interval.majorTenth |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
                                 , voiceThree = Interval.majorThird
                                 , voiceFour = Interval.perfectUnison
                                 }
@@ -369,4 +369,133 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "usesContraryMotion"
+            [ test "should return true when voices three and four move in different directions" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.g3
+                                { voiceOne = Interval.majorTenth
+                                , voiceTwo = Interval.perfectTwelfth
+                                , voiceThree = Interval.perfectOctave
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.usesContraryMotion voicingA voicingB
+
+                        expected =
+                            True
+                    in
+                    Expect.equal expected result
+            , test "should return false when voices three and four move in oblique motion" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.majorTenth
+                                , voiceTwo = Interval.perfectOctave
+                                , voiceThree = Interval.perfectFifth
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.usesContraryMotion voicingA voicingB
+
+                        expected =
+                            False
+                    in
+                    Expect.equal expected result
+            , test "should return false when voices three and four move in parallel motion" <|
+                \_ ->
+                    let
+                        voicingA =
+                            Voicing.fourPart
+                                Pitch.c4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        voicingB =
+                            Voicing.fourPart
+                                Pitch.d4
+                                { voiceOne = Interval.perfectOctave
+                                , voiceTwo = Interval.perfectFifth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            FourPart.usesContraryMotion voicingA voicingB
+
+                        expected =
+                            False
+                    in
+                    Expect.equal expected result
+            ]
+        , skip <|
+            describe "execute" <|
+                [ describe "using Classical.optimizeVoiceLeading"
+                    [ test "just seeing what this ordering is like" <|
+                        \_ ->
+                            let
+                                fromVoicing =
+                                    Voicing.fourPart
+                                        Pitch.c3
+                                        { voiceOne = Interval.majorTenth |> Interval.addOctave
+                                        , voiceTwo = Interval.perfectTwelfth
+                                        , voiceThree = Interval.perfectOctave
+                                        , voiceFour = Interval.perfectUnison
+                                        }
+
+                                result =
+                                    FourPart.config
+                                        { ranges = Classical.satbRanges
+                                        , techniques =
+                                            [ Classical.rootPosition
+                                            , Classical.firstInversion
+                                            , Classical.secondInversion
+                                            , Classical.thirdInversion
+                                            ]
+                                        }
+                                        |> Classical.optimizeVoiceLeading fromVoicing
+                                        |> FourPart.execute (Chord.chord PitchClass.g ChordClass.major)
+                                        |> List.map
+                                            (\v ->
+                                                { voicing =
+                                                    Test.Util.voicingToString v
+                                                , semitoneDistance = FourPart.totalSemitoneDistance fromVoicing v
+                                                , commonTones = FourPart.commonTones fromVoicing v
+                                                , useContraryMotion = FourPart.usesContraryMotion fromVoicing v
+                                                }
+                                            )
+
+                                expected =
+                                    []
+                            in
+                            Expect.equal expected result
+                    ]
+                ]
         ]

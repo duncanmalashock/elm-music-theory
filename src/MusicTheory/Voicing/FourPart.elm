@@ -4,16 +4,19 @@ module MusicTheory.Voicing.FourPart exposing
     , TechniqueInput
     , commonTones
     , compareByCommonTones
+    , compareByContraryMotion
     , compareBySemitoneDistance
     , config
     , containsParallelFifths
     , containsParallelOctaves
     , execute
     , totalSemitoneDistance
+    , usesContraryMotion
     , withFilter
     , withSort
     )
 
+import List.Extra
 import MusicTheory.Chord as Chord
 import MusicTheory.Interval as Interval
 import MusicTheory.Pitch as Pitch
@@ -95,6 +98,7 @@ execute theChord (Config theConfig) =
         |> (\candidates ->
                 List.foldl List.filter candidates theConfig.filter
            )
+        |> List.Extra.uniqueBy Voicing.fourPartToComparable
         |> List.sortWith theConfig.sort
 
 
@@ -155,7 +159,53 @@ compareBySemitoneDistance :
     -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
 compareBySemitoneDistance from =
     \a b ->
-        compare (commonTones from a) (commonTones from b)
+        compare (totalSemitoneDistance from a) (totalSemitoneDistance from b)
+
+
+usesContraryMotion : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
+usesContraryMotion voicingA voicingB =
+    let
+        pitchesA =
+            Voicing.toPitchesFourPart voicingA
+
+        pitchesB =
+            Voicing.toPitchesFourPart voicingB
+
+        positiveSemitoneDistance : Pitch.Pitch -> Pitch.Pitch -> Maybe Bool
+        positiveSemitoneDistance a b =
+            if (Pitch.semitones a - Pitch.semitones b) == 0 then
+                Nothing
+
+            else if (Pitch.semitones a - Pitch.semitones b) > 0 then
+                Just False
+
+            else
+                Just True
+    in
+    Maybe.map2
+        (/=)
+        (positiveSemitoneDistance pitchesA.voiceFour pitchesB.voiceFour)
+        (positiveSemitoneDistance pitchesA.voiceThree pitchesB.voiceThree)
+        |> Maybe.withDefault False
+
+
+compareByContraryMotion :
+    Voicing.FourPartVoicing
+    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+compareByContraryMotion from =
+    let
+        boolToInt bool =
+            case bool of
+                False ->
+                    0
+
+                True ->
+                    1
+    in
+    \a b ->
+        compare
+            (usesContraryMotion from b |> boolToInt)
+            (usesContraryMotion from a |> boolToInt)
 
 
 containsParallelFifths :
