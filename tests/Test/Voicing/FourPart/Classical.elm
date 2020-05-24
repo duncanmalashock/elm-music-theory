@@ -335,43 +335,6 @@ all =
                         |> Test.Util.expectAllInList
                             (checkDoesNotDoublePitchClass PitchClass.g)
             ]
-        , describe "compareByCommonTones"
-            [ test "should prioritize voicings with more common tones" <|
-                \_ ->
-                    let
-                        voicingFrom =
-                            Voicing.fourPart
-                                Pitch.c3
-                                { voiceOne = Interval.majorThird |> Interval.addOctave |> Interval.addOctave
-                                , voiceTwo = Interval.perfectFifth |> Interval.addOctave
-                                , voiceThree = Interval.perfectOctave
-                                , voiceFour = Interval.perfectUnison
-                                }
-
-                        result =
-                            Classical.rootPosition
-                                { ranges =
-                                    Classical.satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.g
-                                        ChordClass.major
-                                }
-                                |> List.sortWith (Classical.compareByCommonTones voicingFrom)
-                                |> List.head
-
-                        expected =
-                            Voicing.fourPart
-                                Pitch.g3
-                                { voiceOne = Interval.perfectFifth |> Interval.addOctave
-                                , voiceTwo = Interval.perfectOctave
-                                , voiceThree = Interval.majorThird
-                                , voiceFour = Interval.perfectUnison
-                                }
-                                |> Just
-                    in
-                    Expect.equal expected result
-            ]
         ]
 
 

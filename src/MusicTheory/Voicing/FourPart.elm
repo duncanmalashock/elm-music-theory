@@ -3,11 +3,11 @@ module MusicTheory.Voicing.FourPart exposing
     , Ranges
     , TechniqueInput
     , commonTones
+    , compareByCommonTones
     , config
     , execute
     )
 
-import List.Extra
 import MusicTheory.Chord as Chord
 import MusicTheory.Pitch as Pitch
 import MusicTheory.Voicing as Voicing
@@ -83,3 +83,11 @@ commonTones voicingA voicingB =
     areCommonTones
         |> List.filter identity
         |> List.length
+
+
+compareByCommonTones :
+    Voicing.FourPartVoicing
+    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+compareByCommonTones from =
+    \a b ->
+        compare (commonTones from b) (commonTones from a)
