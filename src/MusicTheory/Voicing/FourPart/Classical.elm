@@ -100,7 +100,7 @@ allThirdInversionVoicingClasses tones =
     case tones.seventh of
         Just seventh ->
             -- If it's a seventh chord, use one chord tone per voice
-            -- or double the root or fifth
+            -- or double the root
             [ [ tones.root
               , tones.third
               , tones.fifth
