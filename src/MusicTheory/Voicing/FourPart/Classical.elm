@@ -3,6 +3,7 @@ module MusicTheory.Voicing.FourPart.Classical exposing
     , rootPosition
     , satbRanges
     , secondInversion
+    , thirdInversion
     )
 
 import List.Extra
@@ -70,6 +71,51 @@ secondInversion { ranges, chord } =
                 |> List.filter (FourPartUtil.withinRanges ranges)
 
         Nothing ->
+            []
+
+
+thirdInversion : FourPart.TechniqueInput -> List Voicing.FourPartVoicing
+thirdInversion { ranges, chord } =
+    let
+        allValidRoots =
+            Chord.root chord
+                |> Pitch.allForPitchClass
+    in
+    case categorizeChordTones chord of
+        Just chordTones ->
+            Util.Permutations.permutations2
+                allValidRoots
+                (allThirdInversionVoicingClasses chordTones)
+                Voicing.fourPart
+                |> List.filter (FourPartUtil.withinRanges ranges)
+
+        Nothing ->
+            []
+
+
+allThirdInversionVoicingClasses :
+    CategorizedChordTones
+    -> List VoicingClass.FourPartVoicingClass
+allThirdInversionVoicingClasses tones =
+    case tones.seventh of
+        Just seventh ->
+            -- If it's a seventh chord, use one chord tone per voice
+            -- or double the root or fifth
+            [ [ tones.root
+              , tones.third
+              , tones.fifth
+              ]
+            , [ tones.root
+              , tones.root
+              , tones.third
+              ]
+            ]
+                |> List.concatMap List.Extra.permutations
+                |> List.map (\l -> seventh :: l)
+                |> List.filterMap FourPartUtil.chordToneListToVoicingClass
+
+        Nothing ->
+            -- If it's a triad, no possible voicings
             []
 
 

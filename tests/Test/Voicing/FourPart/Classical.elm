@@ -251,6 +251,109 @@ secondInversionTests =
         ]
 
 
+thirdInversionTests : Test
+thirdInversionTests =
+    describe "thirdInversion"
+        [ test "should generate voicings of the chord" <|
+            \_ ->
+                let
+                    resultIsNonEmpty =
+                        Classical.thirdInversion
+                            { ranges =
+                                Classical.satbRanges
+                            , chord =
+                                Chord.chord
+                                    PitchClass.c
+                                    ChordClass.dominantSeventh
+                            }
+                            |> List.map voicingToString
+                            |> List.isEmpty
+                            |> not
+                in
+                resultIsNonEmpty
+                    |> Expect.true "List of generated voicings was empty."
+        , test "should not generate voicings of triads" <|
+            \_ ->
+                let
+                    results =
+                        Classical.thirdInversion
+                            { ranges =
+                                Classical.satbRanges
+                            , chord =
+                                Chord.chord
+                                    PitchClass.c
+                                    ChordClass.major
+                            }
+                            |> List.map voicingToString
+                in
+                Expect.equal results []
+        , test "all voicings should have the seventh in the fourth voice" <|
+            \_ ->
+                let
+                    results =
+                        Classical.thirdInversion
+                            { ranges =
+                                Classical.satbRanges
+                            , chord =
+                                Chord.chord
+                                    PitchClass.c
+                                    ChordClass.dominantSeventh
+                            }
+                in
+                results
+                    |> Test.Util.expectAllInList
+                        (checkVoice .voiceFour PitchClass.bFlat)
+        , test "voicings should not double the seventh" <|
+            \_ ->
+                let
+                    results =
+                        Classical.thirdInversion
+                            { ranges =
+                                Classical.satbRanges
+                            , chord =
+                                Chord.chord
+                                    PitchClass.c
+                                    ChordClass.dominantSeventh
+                            }
+                in
+                results
+                    |> Test.Util.expectAllInList
+                        (checkDoesNotDoublePitchClass PitchClass.bFlat)
+        , test "voicings should not double the third" <|
+            \_ ->
+                let
+                    results =
+                        Classical.thirdInversion
+                            { ranges =
+                                Classical.satbRanges
+                            , chord =
+                                Chord.chord
+                                    PitchClass.c
+                                    ChordClass.dominantSeventh
+                            }
+                in
+                results
+                    |> Test.Util.expectAllInList
+                        (checkDoesNotDoublePitchClass PitchClass.e)
+        , test "voicings should not double the fifth" <|
+            \_ ->
+                let
+                    results =
+                        Classical.thirdInversion
+                            { ranges =
+                                Classical.satbRanges
+                            , chord =
+                                Chord.chord
+                                    PitchClass.c
+                                    ChordClass.dominantSeventh
+                            }
+                in
+                results
+                    |> Test.Util.expectAllInList
+                        (checkDoesNotDoublePitchClass PitchClass.g)
+        ]
+
+
 checkVoice :
     (Voicing.PitchesFourPart -> Pitch.Pitch)
     -> PitchClass.PitchClass
