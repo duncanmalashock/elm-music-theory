@@ -9,6 +9,7 @@ module MusicTheory.Voicing exposing
     , fourPart
     , fourPartToComparable
     , fourPartToList
+    , rootFourPart
     , threePart
     , toPitchesFivePart
     , toPitchesFourPart
@@ -47,6 +48,11 @@ voicingClassFourPart (FourPartVoicing root voicingClass) =
 
 type FourPartVoicing
     = FourPartVoicing Pitch.Pitch VoicingClass.FourPartVoicingClass
+
+
+rootFourPart : FourPartVoicing -> Pitch.Pitch
+rootFourPart (FourPartVoicing theRoot vc) =
+    theRoot
 
 
 fourPartToComparable : FourPartVoicing -> String
