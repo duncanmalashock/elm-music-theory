@@ -48,26 +48,26 @@ orderByBestVoiceLeading from =
                 GT ->
                     1
 
-        commonToneWeight =
+        contraryMotionWeight =
             3
 
         semitoneDistanceWeight =
-            1
+            2
 
-        contraryMotionWeight =
-            4
+        commonToneWeight =
+            1
 
         score : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Float
         score a b =
-            (orderToNumber (FourPart.compareByCommonTones from a b)
-                * commonToneWeight
-            )
-                + (orderToNumber (FourPart.compareBySemitoneDistance from a b)
-                    * semitoneDistanceWeight
-                  )
-                + (orderToNumber (FourPart.compareByContraryMotion from a b)
-                    * contraryMotionWeight
-                  )
+            [ ( FourPart.compareByCommonTones from a b, commonToneWeight )
+            , ( FourPart.compareBySemitoneDistance from a b, semitoneDistanceWeight )
+            , ( FourPart.compareByContraryMotion from a b, contraryMotionWeight )
+            ]
+                |> List.map
+                    (\( comp, weight ) ->
+                        orderToNumber comp * weight
+                    )
+                |> List.sum
     in
     \a b ->
         compare (score a b) 0
@@ -187,11 +187,12 @@ allSecondInversionVoicingClasses tones =
             case tones.seventh of
                 Just seventh ->
                     -- If it's a seventh chord, use one chord tone per voice
-                    -- or double the fifth or third
                     [ [ tones.root
                       , tones.third
                       , seventh
                       ]
+
+                    -- or double the fifth
                     , [ tones.third
                       , tones.fifth
                       , seventh
