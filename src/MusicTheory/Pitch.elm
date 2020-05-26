@@ -332,7 +332,7 @@ intervalBetween pitchA pitchB =
 
 toMidiNoteNumber : Pitch -> Int
 toMidiNoteNumber thePitch =
-    semitones thePitch
+    semitones thePitch + 12
 
 
 
