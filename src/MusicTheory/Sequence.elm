@@ -20,6 +20,11 @@ import MusicTheory.Note as Note
 import MusicTheory.Time as Time
 
 
+defaultTempo =
+    -- TODO: implement tempo changes correctly
+    160
+
+
 type NoteEntry
     = EntryNote SingleNote
     | EntryTuplet TupletEntry
@@ -347,12 +352,12 @@ noteEntriesToNoteEvents tempoEntries singleNoteEntries =
                 { time =
                     startTime
                         |> Time.toFloat
-                        |> (*) (tempoToCoefficient 60)
+                        |> (*) (tempoToCoefficient defaultTempo)
                 , pitch = Note.toMidiNoteNumber note
                 , duration =
                     Note.duration note
                         |> Time.toFloat
-                        |> (*) (tempoToCoefficient 60)
+                        |> (*) (tempoToCoefficient defaultTempo)
                 , volume = Note.toMidiVelocity note
                 }
             )
