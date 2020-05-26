@@ -8,10 +8,12 @@ module MusicTheory.ChordClass exposing
     , dominantEleventh
     , dominantNinth
     , dominantSeventh
+    , dominantSeventhFlatFive
     , dominantSeventhFlatNine
     , dominantSeventhFlatNineFlatThirteen
     , dominantSeventhFlatNineSharpNine
     , dominantSeventhFlatNineSharpNineFlatThirteen
+    , dominantSeventhSharpFive
     , dominantSeventhSharpNine
     , dominantSeventhSharpNineFlatThirteen
     , dominantSeventhSus4
@@ -61,6 +63,8 @@ all =
     , dominantEleventh
     , dominantNinth
     , dominantSeventh
+    , dominantSeventhSharpFive
+    , dominantSeventhFlatFive
     , dominantSeventhFlatNine
     , dominantSeventhFlatNineFlatThirteen
     , dominantSeventhFlatNineSharpNine
@@ -238,6 +242,22 @@ dominantSeventh =
     chordClass
         |> withMajorThird
         |> withFifth
+        |> withMinorSeventh
+
+
+dominantSeventhSharpFive : ChordClass
+dominantSeventhSharpFive =
+    chordClass
+        |> withMajorThird
+        |> withSharpFifth
+        |> withMinorSeventh
+
+
+dominantSeventhFlatFive : ChordClass
+dominantSeventhFlatFive =
+    chordClass
+        |> withMajorThird
+        |> withFlatFifth
         |> withMinorSeventh
 
 
