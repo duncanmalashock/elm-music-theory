@@ -242,6 +242,7 @@ containsParallelIntervals interval voicingA voicingB =
         areParallelInterval a b =
             (Interval.toSimple a == interval)
                 && (Interval.toSimple b == interval)
+                && (Voicing.rootFourPart voicingA /= Voicing.rootFourPart voicingB)
 
         matchParallelIntervals =
             [ areParallelInterval intervalsA.voiceFourToVoiceOne intervalsB.voiceFourToVoiceOne
