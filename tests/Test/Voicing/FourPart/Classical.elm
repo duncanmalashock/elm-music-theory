@@ -4,6 +4,7 @@ import Expect
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Interval as Interval
+import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
 import MusicTheory.Voicing as Voicing
@@ -335,63 +336,98 @@ all =
                         |> Test.Util.expectAllInList
                             (checkDoesNotDoublePitchClass PitchClass.g)
             ]
-        , skip <|
-            describe "orderByBestVoiceLeading"
-                [ test "should prefer voicings with common tones" <|
-                    \_ ->
-                        let
-                            fromVoicing =
-                                Voicing.fourPart
-                                    Pitch.c4
-                                    { voiceOne = Interval.perfectOctave
-                                    , voiceTwo = Interval.perfectFifth
-                                    , voiceThree = Interval.majorThird
-                                    , voiceFour = Interval.perfectUnison
-                                    }
+        , describe "resolvesTendencyTonesCorrectly"
+            [ test "in D7 to G major, F# should resolve to G, and C should resolve to B" <|
+                \_ ->
+                    let
+                        d7voicing =
+                            Voicing.fourPart
+                                (Chord.chord PitchClass.d ChordClass.dominantSeventh)
+                                Octave.three
+                                { voiceOne = Interval.majorTenth |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
+                                , voiceThree = Interval.minorSeventh
+                                , voiceFour = Interval.perfectUnison
+                                }
 
-                            voicingWithNoCommonTones =
-                                Voicing.fourPart
-                                    Pitch.d4
-                                    { voiceOne = Interval.perfectOctave
-                                    , voiceTwo = Interval.perfectFifth
-                                    , voiceThree = Interval.majorThird
-                                    , voiceFour = Interval.perfectUnison
-                                    }
+                        gVoicing =
+                            Voicing.fourPart
+                                (Chord.chord PitchClass.g ChordClass.major)
+                                Octave.three
+                                { voiceOne = Interval.perfectOctave |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
+                                , voiceThree = Interval.majorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
 
-                            voicingWithOneCommonTone =
-                                Voicing.fourPart
-                                    Pitch.c4
-                                    { voiceOne = Interval.perfectFifth |> Interval.addOctave
-                                    , voiceTwo = Interval.perfectOctave
-                                    , voiceThree = Interval.perfectFifth
-                                    , voiceFour = Interval.perfectUnison
-                                    }
+                        result =
+                            Classical.resolvesTendencyTonesCorrectly d7voicing gVoicing
 
-                            voicingWithTwoCommonTones =
-                                Voicing.fourPart
-                                    Pitch.c4
-                                    { voiceOne = Interval.majorTenth
-                                    , voiceTwo = Interval.perfectFifth
-                                    , voiceThree = Interval.majorThird
-                                    , voiceFour = Interval.perfectUnison
-                                    }
+                        expected =
+                            True
+                    in
+                    Expect.equal expected result
+            , test "in D7 to G minor, F# should resolve to G, and C should resolve to Bb" <|
+                \_ ->
+                    let
+                        d7voicing =
+                            Voicing.fourPart
+                                (Chord.chord PitchClass.d ChordClass.dominantSeventh)
+                                Octave.three
+                                { voiceOne = Interval.majorTenth |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
+                                , voiceThree = Interval.minorSeventh
+                                , voiceFour = Interval.perfectUnison
+                                }
 
-                            result =
-                                [ voicingWithNoCommonTones
-                                , voicingWithTwoCommonTones
-                                , voicingWithOneCommonTone
-                                ]
-                                    |> List.sortWith
-                                        (Classical.orderByBestVoiceLeading fromVoicing)
+                        gMinorVoicing =
+                            Voicing.fourPart
+                                (Chord.chord PitchClass.g ChordClass.minor)
+                                Octave.three
+                                { voiceOne = Interval.perfectOctave |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
+                                , voiceThree = Interval.minorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
 
-                            expected =
-                                [ voicingWithTwoCommonTones
-                                , voicingWithOneCommonTone
-                                , voicingWithNoCommonTones
-                                ]
-                        in
-                        Expect.equal expected result
-                ]
+                        result =
+                            Classical.resolvesTendencyTonesCorrectly d7voicing gMinorVoicing
+
+                        expected =
+                            True
+                    in
+                    Expect.equal expected result
+            , test "in D7 to G, F# should not resolve to D" <|
+                \_ ->
+                    let
+                        d7voicing =
+                            Voicing.fourPart
+                                (Chord.chord PitchClass.d ChordClass.dominantSeventh)
+                                Octave.three
+                                { voiceOne = Interval.majorTenth |> Interval.addOctave
+                                , voiceTwo = Interval.perfectTwelfth
+                                , voiceThree = Interval.minorSeventh
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        gMinorVoicing =
+                            Voicing.fourPart
+                                (Chord.chord PitchClass.g ChordClass.minor)
+                                Octave.three
+                                { voiceOne = Interval.perfectTwelfth
+                                , voiceTwo = Interval.perfectOctave
+                                , voiceThree = Interval.minorThird
+                                , voiceFour = Interval.perfectUnison
+                                }
+
+                        result =
+                            Classical.resolvesTendencyTonesCorrectly d7voicing gMinorVoicing
+
+                        expected =
+                            False
+                    in
+                    Expect.equal expected result
+            ]
         ]
 
 

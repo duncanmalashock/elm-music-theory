@@ -5,6 +5,7 @@ module MusicTheory.Voicing exposing
     , PitchesFourPart
     , PitchesThreePart
     , ThreePartVoicing
+    , chordFourPart
     , fivePart
     , fourPart
     , fourPartToComparable
@@ -17,7 +18,10 @@ module MusicTheory.Voicing exposing
     , voicingClassFourPart
     )
 
+import MusicTheory.Chord as Chord
+import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Interval as Interval
+import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.VoicingClass as VoicingClass
 
@@ -31,9 +35,9 @@ threePart root voicingClass =
     ThreePartVoicing root voicingClass
 
 
-fourPart : Pitch.Pitch -> VoicingClass.FourPartVoicingClass -> FourPartVoicing
-fourPart root voicingClass =
-    FourPartVoicing root voicingClass
+fourPart : Chord.Chord -> Octave.Octave -> VoicingClass.FourPartVoicingClass -> FourPartVoicing
+fourPart chord octave voicingClass =
+    FourPartVoicing chord octave voicingClass
 
 
 fivePart : Pitch.Pitch -> VoicingClass.FivePartVoicingClass -> FivePartVoicing
@@ -42,17 +46,23 @@ fivePart root voicingClass =
 
 
 voicingClassFourPart : FourPartVoicing -> VoicingClass.FourPartVoicingClass
-voicingClassFourPart (FourPartVoicing root voicingClass) =
+voicingClassFourPart (FourPartVoicing chord octave voicingClass) =
     voicingClass
 
 
+chordFourPart : FourPartVoicing -> Chord.Chord
+chordFourPart (FourPartVoicing chord octave voicingClass) =
+    chord
+
+
 type FourPartVoicing
-    = FourPartVoicing Pitch.Pitch VoicingClass.FourPartVoicingClass
+    = FourPartVoicing Chord.Chord Octave.Octave VoicingClass.FourPartVoicingClass
 
 
 rootFourPart : FourPartVoicing -> Pitch.Pitch
-rootFourPart (FourPartVoicing theRoot vc) =
-    theRoot
+rootFourPart (FourPartVoicing chord octave vc) =
+    Chord.root chord
+        |> Pitch.fromPitchClass octave
 
 
 fourPartToComparable : FourPartVoicing -> String
@@ -106,7 +116,12 @@ toPitchesThreePart (ThreePartVoicing root voicingClass) =
 
 
 toPitchesFourPart : FourPartVoicing -> PitchesFourPart
-toPitchesFourPart (FourPartVoicing root voicingClass) =
+toPitchesFourPart (FourPartVoicing chord octave voicingClass) =
+    let
+        root =
+            Chord.root chord
+                |> Pitch.fromPitchClass octave
+    in
     { voiceOne = Pitch.transposeUp voicingClass.voiceOne root
     , voiceTwo = Pitch.transposeUp voicingClass.voiceTwo root
     , voiceThree = Pitch.transposeUp voicingClass.voiceThree root

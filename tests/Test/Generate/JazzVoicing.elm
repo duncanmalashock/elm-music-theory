@@ -5,7 +5,8 @@ import MusicTheory.Analyze.JazzChord as AnalyzeChord
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Generate.JazzVoicing as GenerateVoicing
-import MusicTheory.Interval as Interval
+import MusicTheory.Interval as Interval exposing (IntervalNumber(..))
+import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
 import MusicTheory.Voicing as Voicing
@@ -28,16 +29,18 @@ all =
                                 , voiceFour = Pitch.g4
                                 }
 
+                        chord =
+                            Chord.chord PitchClass.c ChordClass.majorSix
+
                         availables =
-                            AnalyzeChord.availables
-                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                            AnalyzeChord.availables chord
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
                                 (GenerateVoicing.fourWayClose Interval.majorThird)
                                 availables
-                                |> Result.map (Voicing.fourPart Pitch.c5)
+                                |> Result.map (Voicing.fourPart chord Octave.five)
                                 |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
@@ -54,9 +57,11 @@ all =
                                 , voiceFour = Pitch.c4
                                 }
 
+                        chord =
+                            Chord.chord PitchClass.c ChordClass.majorSix
+
                         availables =
-                            AnalyzeChord.availables
-                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                            AnalyzeChord.availables chord
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
@@ -67,7 +72,7 @@ all =
                                     GenerateVoicing.fourWayDrop2
                                     availables
                                 |> Result.Extra.join
-                                |> Result.map (Voicing.fourPart Pitch.c5)
+                                |> Result.map (Voicing.fourPart chord Octave.five)
                                 |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
@@ -84,9 +89,12 @@ all =
                                 , voiceFour = Pitch.a3
                                 }
 
+                        chord =
+                            Chord.chord PitchClass.c ChordClass.majorSix
+
                         availables =
                             AnalyzeChord.availables
-                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                chord
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
@@ -97,7 +105,7 @@ all =
                                     GenerateVoicing.fourWayDrop3
                                     availables
                                 |> Result.Extra.join
-                                |> Result.map (Voicing.fourPart Pitch.c5)
+                                |> Result.map (Voicing.fourPart chord Octave.five)
                                 |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
@@ -114,9 +122,11 @@ all =
                                 , voiceFour = Pitch.g3
                                 }
 
+                        chord =
+                            Chord.chord PitchClass.c ChordClass.majorSix
+
                         availables =
-                            AnalyzeChord.availables
-                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                            AnalyzeChord.availables chord
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
@@ -127,7 +137,7 @@ all =
                                     GenerateVoicing.fourWayDrop2and4
                                     availables
                                 |> Result.Extra.join
-                                |> Result.map (Voicing.fourPart Pitch.c5)
+                                |> Result.map (Voicing.fourPart chord Octave.five)
                                 |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result
@@ -171,16 +181,18 @@ all =
                                 , voiceFour = Pitch.c3
                                 }
 
+                        chord =
+                            Chord.chord PitchClass.c ChordClass.majorSix
+
                         availables =
-                            AnalyzeChord.availables
-                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                            AnalyzeChord.availables chord
                                 |> Result.mapError GenerateVoicing.AnalyzeChordError
 
                         result =
                             Result.andThen
                                 (GenerateVoicing.fourWaySpread Interval.perfectUnison)
                                 availables
-                                |> Result.map (Voicing.fourPart Pitch.c3)
+                                |> Result.map (Voicing.fourPart chord Octave.three)
                                 |> Result.map Voicing.toPitchesFourPart
                     in
                     Expect.equal expected result

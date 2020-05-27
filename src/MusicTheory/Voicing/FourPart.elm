@@ -7,8 +7,10 @@ module MusicTheory.Voicing.FourPart exposing
     , compareByContraryMotion
     , compareBySemitoneDistance
     , config
+    , containsFactor
     , containsParallelFifths
     , containsParallelOctaves
+    , containsPitch
     , execute
     , totalSemitoneDistance
     , usesContraryMotion
@@ -256,3 +258,28 @@ containsParallelIntervals interval voicingA voicingB =
     matchParallelIntervals
         |> List.filter identity
         |> (\list -> List.length list > 0)
+
+
+containsPitch :
+    Pitch.Pitch
+    -> Voicing.FourPartVoicing
+    -> Bool
+containsPitch pitch voicing =
+    voicing
+        |> Voicing.toPitchesFourPart
+        |> Voicing.fourPartToList
+        |> List.member pitch
+
+
+containsFactor :
+    Interval.Interval
+    -> Voicing.FourPartVoicing
+    -> Bool
+containsFactor factor voicing =
+    voicing
+        |> Voicing.voicingClassFourPart
+        |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
+                [ voiceOne, voiceTwo, voiceThree, voiceFour ]
+           )
+        |> List.map Interval.toSimple
+        |> List.member factor
