@@ -30,10 +30,6 @@ optimizeVoiceLeading fromVoicing config =
             (orderByBestVoiceLeading fromVoicing)
         |> FourPart.withFilter
             (FourPart.containsParallelFifths fromVoicing >> not)
-        |> FourPart.withFilter
-            (FourPart.containsParallelOctaves fromVoicing >> not)
-        |> FourPart.withFilter
-            (resolvesTendencyTonesCorrectly fromVoicing)
 
 
 resolvesTendencyTonesCorrectly :
@@ -42,6 +38,14 @@ resolvesTendencyTonesCorrectly :
     -> Bool
 resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
     let
+        resolvesByFifth : Bool
+        resolvesByFifth =
+            (Voicing.rootFourPart nextVoicing |> Pitch.pitchClass)
+                == (Voicing.rootFourPart lastVoicing
+                        |> Pitch.transposeDown Interval.perfectFifth
+                        |> Pitch.pitchClass
+                   )
+
         isDominantChord : Voicing.FourPartVoicing -> Bool
         isDominantChord chord =
             [ Interval.majorThird
@@ -79,68 +83,37 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
                             |> (\i -> List.member factor i)
                     )
     in
-    if isDominantChord lastVoicing then
+    if isDominantChord lastVoicing && resolvesByFifth then
         let
-            thirds : List Pitch.Pitch
-            thirds =
-                lastVoicing
-                    |> Voicing.voicingClassFourPart
-                    |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
-                            [ voiceOne, voiceTwo, voiceThree, voiceFour ]
-                       )
-                    |> List.filter
-                        (\f ->
-                            Interval.toSimple f == Interval.majorThird
-                        )
-                    |> List.map
-                        (\f ->
-                            Pitch.transposeUp f (Voicing.rootFourPart lastVoicing)
-                        )
+            checkResolution getter allowResolutionToFifth =
+                ( Voicing.voicingClassFourPart lastVoicing, Voicing.voicingClassFourPart nextVoicing )
+                    |> (\( last, next ) ->
+                            if Interval.toSimple (getter last) == Interval.majorThird then
+                                (Interval.toSimple (getter next) == Interval.perfectUnison)
+                                    || ((Interval.toSimple (getter next) == Interval.perfectFifth)
+                                            && allowResolutionToFifth
+                                       )
 
-            sevenths : List Pitch.Pitch
-            sevenths =
-                lastVoicing
-                    |> Voicing.voicingClassFourPart
-                    |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
-                            [ voiceOne, voiceTwo, voiceThree, voiceFour ]
-                       )
-                    |> List.filter
-                        (\f ->
-                            Interval.toSimple f == Interval.minorSeventh
-                        )
-                    |> List.map
-                        (\f ->
-                            Pitch.transposeUp f (Voicing.rootFourPart lastVoicing)
-                        )
+                            else if Interval.toSimple (getter last) == Interval.minorSeventh then
+                                if isMinorChord nextVoicing then
+                                    Interval.toSimple (getter next) == Interval.minorThird
 
-            thirdsDestinations =
-                thirds
-                    |> List.map (Pitch.transposeUp Interval.minorSecond)
+                                else if isMajorChord nextVoicing then
+                                    Interval.toSimple (getter next) == Interval.majorThird
 
-            seventhsDestinations =
-                if isMinorChord nextVoicing then
-                    sevenths
-                        |> List.map (Pitch.transposeDown Interval.majorSecond)
+                                else
+                                    True
 
-                else
-                    sevenths
-                        |> List.map (Pitch.transposeDown Interval.minorSecond)
-
-            shouldIncludePitches =
-                thirdsDestinations ++ seventhsDestinations
-
-            pitchesInNextVoicing =
-                nextVoicing
-                    |> Voicing.toPitchesFourPart
-                    |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
-                            [ voiceOne, voiceTwo, voiceThree, voiceFour ]
+                            else
+                                True
                        )
         in
-        shouldIncludePitches
-            |> List.all
-                (\i ->
-                    List.member i pitchesInNextVoicing
-                )
+        [ checkResolution .voiceOne False
+        , checkResolution .voiceTwo True
+        , checkResolution .voiceThree True
+        , checkResolution .voiceFour True
+        ]
+            |> List.all identity
 
     else
         True
@@ -163,29 +136,73 @@ orderByBestVoiceLeading from =
                 GT ->
                     1
 
-        contraryMotionWeight =
-            3
+        voiceOneSemitoneDistanceWeight =
+            1
 
-        semitoneDistanceWeight =
+        voiceTwoSemitoneDistanceWeight =
+            1
+
+        voiceThreeSemitoneDistanceWeight =
             2
+
+        voiceFourSemitoneDistanceWeight =
+            2
+
+        contraryMotionWeight =
+            2
+
+        totalSemitoneDistanceWeight =
+            1
 
         commonToneWeight =
             1
 
+        parallelOctaveWeight =
+            10
+
+        tendencyTonesWeight =
+            5
+
         score : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Float
         score a b =
             [ ( FourPart.compareByCommonTones from a b, commonToneWeight )
-            , ( FourPart.compareBySemitoneDistance from a b, semitoneDistanceWeight )
+            , ( FourPart.compareBySemitoneDistance from a b, totalSemitoneDistanceWeight )
             , ( FourPart.compareByContraryMotion from a b, contraryMotionWeight )
+            , ( FourPart.compareByVoiceSemitoneDistance .voiceOne from a b, voiceOneSemitoneDistanceWeight )
+            , ( FourPart.compareByVoiceSemitoneDistance .voiceTwo from a b, voiceTwoSemitoneDistanceWeight )
+            , ( FourPart.compareByVoiceSemitoneDistance .voiceThree from a b, voiceThreeSemitoneDistanceWeight )
+            , ( FourPart.compareByVoiceSemitoneDistance .voiceFour from a b, voiceFourSemitoneDistanceWeight )
+            , ( FourPart.compareByParallelOctave from a b, parallelOctaveWeight )
+            , ( compareByTendencyToneResolution from a b, tendencyTonesWeight )
             ]
                 |> List.map
                     (\( comp, weight ) ->
                         orderToNumber comp * weight
                     )
                 |> List.sum
+                |> Debug.log "score"
     in
     \a b ->
         compare (score a b) 0
+
+
+compareByTendencyToneResolution :
+    Voicing.FourPartVoicing
+    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+compareByTendencyToneResolution from =
+    let
+        boolToInt bool =
+            case bool of
+                False ->
+                    0
+
+                True ->
+                    1
+    in
+    \a b ->
+        compare
+            (resolvesTendencyTonesCorrectly from b |> boolToInt)
+            (resolvesTendencyTonesCorrectly from a |> boolToInt)
 
 
 rootPosition : FourPart.TechniqueInput -> List Voicing.FourPartVoicing
@@ -378,6 +395,10 @@ allRootPositionVoicingClasses tones =
                     -- If it's a triad, double the root
                     [ [ tones.root
                       , tones.third
+                      , tones.fifth
+                      ]
+                    , [ tones.third
+                      , tones.fifth
                       , tones.fifth
                       ]
                     ]

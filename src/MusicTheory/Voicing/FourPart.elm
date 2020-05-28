@@ -5,12 +5,15 @@ module MusicTheory.Voicing.FourPart exposing
     , commonTones
     , compareByCommonTones
     , compareByContraryMotion
+    , compareByParallelOctave
     , compareBySemitoneDistance
+    , compareByVoiceSemitoneDistance
     , config
     , containsFactor
     , containsParallelFifths
     , containsParallelOctaves
     , containsPitch
+    , containsPitchInVoice
     , execute
     , totalSemitoneDistance
     , usesContraryMotion
@@ -156,6 +159,49 @@ totalSemitoneDistance voicingA voicingB =
         |> List.sum
 
 
+voiceSemitoneDistance : (Voicing.PitchesFourPart -> Pitch.Pitch) -> Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
+voiceSemitoneDistance getter voicingA voicingB =
+    let
+        pitchesA =
+            Voicing.toPitchesFourPart voicingA
+
+        pitchesB =
+            Voicing.toPitchesFourPart voicingB
+
+        semitoneDistance a b =
+            abs (Pitch.semitones a - Pitch.semitones b)
+    in
+    semitoneDistance (getter pitchesA) (getter pitchesB)
+
+
+compareByVoiceSemitoneDistance :
+    (Voicing.PitchesFourPart -> Pitch.Pitch)
+    -> Voicing.FourPartVoicing
+    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+compareByVoiceSemitoneDistance getter from =
+    \a b ->
+        compare (voiceSemitoneDistance getter from a) (voiceSemitoneDistance getter from b)
+
+
+compareByParallelOctave :
+    Voicing.FourPartVoicing
+    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+compareByParallelOctave from =
+    let
+        boolToInt bool =
+            case bool of
+                False ->
+                    1
+
+                True ->
+                    0
+    in
+    \a b ->
+        compare
+            (containsParallelOctaves from b |> boolToInt)
+            (containsParallelOctaves from a |> boolToInt)
+
+
 compareBySemitoneDistance :
     Voicing.FourPartVoicing
     -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
@@ -269,6 +315,17 @@ containsPitch pitch voicing =
         |> Voicing.toPitchesFourPart
         |> Voicing.fourPartToList
         |> List.member pitch
+
+
+containsPitchInVoice :
+    Pitch.Pitch
+    -> (Voicing.PitchesFourPart -> Pitch.Pitch)
+    -> Voicing.FourPartVoicing
+    -> Bool
+containsPitchInVoice pitch getter voicing =
+    voicing
+        |> Voicing.toPitchesFourPart
+        |> (\pitches -> getter pitches == pitch)
 
 
 containsFactor :
