@@ -21,3 +21,18 @@ tenorVoice =
 bassVoice : Pitch.Range
 bassVoice =
     Pitch.range Pitch.e2 Pitch.e4
+
+
+violin : Pitch.Range
+violin =
+    Pitch.range Pitch.g3 Pitch.a7
+
+
+viola : Pitch.Range
+viola =
+    Pitch.range Pitch.c3 Pitch.e6
+
+
+cello : Pitch.Range
+cello =
+    Pitch.range Pitch.c2 Pitch.c6
