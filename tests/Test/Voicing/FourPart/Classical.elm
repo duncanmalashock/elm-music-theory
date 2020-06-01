@@ -7,7 +7,6 @@ import MusicTheory.Interval as Interval
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
-import MusicTheory.Voicing as Voicing
 import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.FourPart.Classical as Classical
 import Test exposing (..)
@@ -341,7 +340,7 @@ all =
                 \_ ->
                     let
                         d7voicing =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -351,7 +350,7 @@ all =
                                 }
 
                         gVoicing =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.g ChordClass.major)
                                 Octave.three
                                 { voiceOne = Interval.perfectOctave |> Interval.addOctave
@@ -371,7 +370,7 @@ all =
                 \_ ->
                     let
                         d7voicing =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -381,7 +380,7 @@ all =
                                 }
 
                         gMinorVoicing =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.g ChordClass.minor)
                                 Octave.three
                                 { voiceOne = Interval.perfectOctave |> Interval.addOctave
@@ -401,7 +400,7 @@ all =
                 \_ ->
                     let
                         d7voicing =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -411,7 +410,7 @@ all =
                                 }
 
                         gMinorVoicing =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.g ChordClass.minor)
                                 Octave.three
                                 { voiceOne = Interval.perfectTwelfth
@@ -432,13 +431,13 @@ all =
 
 
 checkVoice :
-    (Voicing.PitchesFourPart -> Pitch.Pitch)
+    (FourPart.Pitches -> Pitch.Pitch)
     -> PitchClass.PitchClass
-    -> Voicing.FourPartVoicing
+    -> FourPart.Voicing
     -> Maybe String
 checkVoice getter expectedPitchClass voicing =
     voicing
-        |> Voicing.toPitchesFourPart
+        |> FourPart.toPitches
         |> getter
         |> (\pitch ->
                 if Pitch.pitchClass pitch == expectedPitchClass then
@@ -460,11 +459,11 @@ checkVoice getter expectedPitchClass voicing =
 
 checkIncludesPitchClass :
     PitchClass.PitchClass
-    -> Voicing.FourPartVoicing
+    -> FourPart.Voicing
     -> Maybe String
 checkIncludesPitchClass expectedPitchClass voicing =
     voicing
-        |> Voicing.toPitchesFourPart
+        |> FourPart.toPitches
         |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
                 if
                     List.member expectedPitchClass
@@ -488,11 +487,11 @@ checkIncludesPitchClass expectedPitchClass voicing =
 
 checkDoesNotDoublePitchClass :
     PitchClass.PitchClass
-    -> Voicing.FourPartVoicing
+    -> FourPart.Voicing
     -> Maybe String
 checkDoesNotDoublePitchClass pitchClassNotToInclude voicing =
     voicing
-        |> Voicing.toPitchesFourPart
+        |> FourPart.toPitches
         |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
                 let
                     instancesOfPitchClass =

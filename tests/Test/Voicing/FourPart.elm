@@ -22,7 +22,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.majorSeventh)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -32,7 +32,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.majorSix)
                                 Octave.four
                                 { voiceOne = Interval.majorSixth
@@ -52,7 +52,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.majorSeventh)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -62,7 +62,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.majorSeventh)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -82,7 +82,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.majorSeventh)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -92,7 +92,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.majorSeventh)
                                 Octave.five
                                 { voiceOne = Interval.majorSeventh
@@ -114,7 +114,7 @@ all =
                 \_ ->
                     let
                         voicingFrom =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -136,7 +136,7 @@ all =
                                 |> List.head
 
                         expected =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.g ChordClass.major)
                                 Octave.three
                                 { voiceOne = Interval.perfectTwelfth
@@ -153,7 +153,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -163,7 +163,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -183,7 +183,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -193,7 +193,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.g ChordClass.major)
                                 Octave.three
                                 { voiceOne = Interval.perfectTwelfth |> Interval.addOctave
@@ -213,7 +213,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -223,7 +223,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -245,7 +245,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -255,7 +255,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -275,7 +275,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -285,7 +285,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.minor)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -307,7 +307,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -317,7 +317,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -337,7 +337,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -347,7 +347,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.majorSeventh)
                                 Octave.four
                                 { voiceOne = Interval.majorSeventh
@@ -367,7 +367,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.majorSix)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -377,7 +377,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.majorAddNine)
                                 Octave.four
                                 { voiceOne = Interval.majorNinth
@@ -399,7 +399,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -409,7 +409,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.g ChordClass.major)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth
@@ -429,7 +429,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -439,7 +439,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.majorTenth
@@ -459,7 +459,7 @@ all =
                 \_ ->
                     let
                         voicingA =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -469,7 +469,7 @@ all =
                                 }
 
                         voicingB =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.major)
                                 Octave.four
                                 { voiceOne = Interval.perfectOctave
@@ -491,7 +491,7 @@ all =
                 \_ ->
                     let
                         voicing =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.d ChordClass.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -511,7 +511,7 @@ all =
                 \_ ->
                     let
                         voicing =
-                            Voicing.fourPart
+                            FourPart.voicing
                                 (Chord.chord PitchClass.c ChordClass.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -534,9 +534,9 @@ all =
         --        [ describe "using Classical.optimizeVoiceLeading"
         --            [ test "just seeing what this ordering is like" <|
         --                \_ ->
-        --                    let
+        --                     let
         --                        fromVoicing =
-        --                            Voicing.fourPart
+        --                            FourPart.fourPart
         --                                Pitch.c3
         --                                { voiceOne = Interval.majorTenth |> Interval.addOctave
         --                                , voiceTwo = Interval.perfectTwelfth

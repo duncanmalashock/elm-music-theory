@@ -1,27 +1,15 @@
 module MusicTheory.Voicing exposing
     ( FivePartVoicing
-    , FourPartVoicing
     , PitchesFivePart
-    , PitchesFourPart
     , PitchesThreePart
     , ThreePartVoicing
-    , chordFourPart
     , fivePart
-    , fourPart
-    , fourPartToComparable
-    , fourPartToList
-    , rootFourPart
     , threePart
     , toPitchesFivePart
-    , toPitchesFourPart
     , toPitchesThreePart
-    , voicingClassFourPart
     )
 
-import MusicTheory.Chord as Chord
-import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Interval as Interval
-import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.VoicingClass as VoicingClass
 
@@ -35,48 +23,9 @@ threePart root voicingClass =
     ThreePartVoicing root voicingClass
 
 
-fourPart : Chord.Chord -> Octave.Octave -> VoicingClass.FourPartVoicingClass -> FourPartVoicing
-fourPart chord octave voicingClass =
-    FourPartVoicing chord octave voicingClass
-
-
 fivePart : Pitch.Pitch -> VoicingClass.FivePartVoicingClass -> FivePartVoicing
 fivePart root voicingClass =
     FivePartVoicing root voicingClass
-
-
-voicingClassFourPart : FourPartVoicing -> VoicingClass.FourPartVoicingClass
-voicingClassFourPart (FourPartVoicing chord octave voicingClass) =
-    voicingClass
-
-
-chordFourPart : FourPartVoicing -> Chord.Chord
-chordFourPart (FourPartVoicing chord octave voicingClass) =
-    chord
-
-
-type FourPartVoicing
-    = FourPartVoicing Chord.Chord Octave.Octave VoicingClass.FourPartVoicingClass
-
-
-rootFourPart : FourPartVoicing -> Pitch.Pitch
-rootFourPart (FourPartVoicing chord octave vc) =
-    Chord.root chord
-        |> Pitch.fromPitchClass octave
-
-
-fourPartToComparable : FourPartVoicing -> String
-fourPartToComparable v =
-    v
-        |> toPitchesFourPart
-        |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
-                String.join " "
-                    [ Pitch.toString voiceFour
-                    , Pitch.toString voiceThree
-                    , Pitch.toString voiceTwo
-                    , Pitch.toString voiceOne
-                    ]
-           )
 
 
 type FivePartVoicing
@@ -87,14 +36,6 @@ type alias PitchesThreePart =
     { voiceOne : Pitch.Pitch
     , voiceTwo : Pitch.Pitch
     , voiceThree : Pitch.Pitch
-    }
-
-
-type alias PitchesFourPart =
-    { voiceOne : Pitch.Pitch
-    , voiceTwo : Pitch.Pitch
-    , voiceThree : Pitch.Pitch
-    , voiceFour : Pitch.Pitch
     }
 
 
@@ -113,25 +54,6 @@ toPitchesThreePart (ThreePartVoicing root voicingClass) =
     , voiceTwo = Pitch.transposeUp voicingClass.voiceTwo root
     , voiceThree = Pitch.transposeUp voicingClass.voiceThree root
     }
-
-
-toPitchesFourPart : FourPartVoicing -> PitchesFourPart
-toPitchesFourPart (FourPartVoicing chord octave voicingClass) =
-    let
-        root =
-            Chord.root chord
-                |> Pitch.fromPitchClass octave
-    in
-    { voiceOne = Pitch.transposeUp voicingClass.voiceOne root
-    , voiceTwo = Pitch.transposeUp voicingClass.voiceTwo root
-    , voiceThree = Pitch.transposeUp voicingClass.voiceThree root
-    , voiceFour = Pitch.transposeUp voicingClass.voiceFour root
-    }
-
-
-fourPartToList : PitchesFourPart -> List Pitch.Pitch
-fourPartToList { voiceOne, voiceTwo, voiceThree, voiceFour } =
-    [ voiceOne, voiceTwo, voiceThree, voiceFour ]
 
 
 toPitchesFivePart : FivePartVoicing -> PitchesFivePart

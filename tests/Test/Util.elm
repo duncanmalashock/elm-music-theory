@@ -2,7 +2,7 @@ module Test.Util exposing (..)
 
 import Expect
 import MusicTheory.Pitch as Pitch
-import MusicTheory.Voicing as Voicing
+import MusicTheory.Voicing.FourPart as FourPart
 
 
 expectAllInList : (a -> Maybe String) -> List a -> Expect.Expectation
@@ -24,10 +24,10 @@ expectAllInList maybeErrorDescription list =
            )
 
 
-voicingToString : Voicing.FourPartVoicing -> String
+voicingToString : FourPart.Voicing -> String
 voicingToString theVoicing =
     theVoicing
-        |> Voicing.toPitchesFourPart
+        |> FourPart.toPitches
         |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
                 String.join " "
                     [ Pitch.toString voiceFour

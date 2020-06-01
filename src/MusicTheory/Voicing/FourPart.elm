@@ -1,7 +1,11 @@
 module MusicTheory.Voicing.FourPart exposing
     ( Config
+    , Pitches
     , Ranges
     , TechniqueInput
+    , Voicing
+    , chord
+    , chordToneListToVoicingClass
     , commonTones
     , compareByCommonTones
     , compareByContraryMotion
@@ -15,32 +19,105 @@ module MusicTheory.Voicing.FourPart exposing
     , containsPitch
     , containsPitchInVoice
     , execute
+    , root
+    , toPitches
+    , toString
     , totalSemitoneDistance
     , usesContraryMotion
+    , voicing
+    , voicingClass
     , withFilter
     , withSort
+    , withinRanges
     )
 
 import List.Extra
 import MusicTheory.Chord as Chord
 import MusicTheory.Interval as Interval
+import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
-import MusicTheory.Voicing as Voicing
 import MusicTheory.VoicingClass as VoicingClass
+import Util.Basic
+
+
+type Voicing
+    = FourPartVoicing Chord.Chord Octave.Octave VoicingClass.FourPartVoicingClass
+
+
+voicing : Chord.Chord -> Octave.Octave -> VoicingClass.FourPartVoicingClass -> Voicing
+voicing ch octave vc =
+    FourPartVoicing ch octave vc
+
+
+type alias Pitches =
+    { voiceOne : Pitch.Pitch
+    , voiceTwo : Pitch.Pitch
+    , voiceThree : Pitch.Pitch
+    , voiceFour : Pitch.Pitch
+    }
+
+
+toString : Voicing -> String
+toString v =
+    v
+        |> toPitches
+        |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
+                String.join " "
+                    [ Pitch.toString voiceFour
+                    , Pitch.toString voiceThree
+                    , Pitch.toString voiceTwo
+                    , Pitch.toString voiceOne
+                    ]
+           )
+
+
+toPitches : Voicing -> Pitches
+toPitches (FourPartVoicing ch octave vc) =
+    let
+        theRoot =
+            Chord.root ch
+                |> Pitch.fromPitchClass octave
+    in
+    { voiceOne = Pitch.transposeUp vc.voiceOne theRoot
+    , voiceTwo = Pitch.transposeUp vc.voiceTwo theRoot
+    , voiceThree = Pitch.transposeUp vc.voiceThree theRoot
+    , voiceFour = Pitch.transposeUp vc.voiceFour theRoot
+    }
+
+
+toList : Pitches -> List Pitch.Pitch
+toList { voiceOne, voiceTwo, voiceThree, voiceFour } =
+    [ voiceOne, voiceTwo, voiceThree, voiceFour ]
+
+
+voicingClass : Voicing -> VoicingClass.FourPartVoicingClass
+voicingClass (FourPartVoicing ch octave vc) =
+    vc
+
+
+chord : Voicing -> Chord.Chord
+chord (FourPartVoicing ch octave vc) =
+    ch
+
+
+root : Voicing -> Pitch.Pitch
+root (FourPartVoicing ch octave vc) =
+    Chord.root ch
+        |> Pitch.fromPitchClass octave
 
 
 type alias ConfigInput =
     { ranges : Ranges
-    , techniques : List (TechniqueInput -> List Voicing.FourPartVoicing)
+    , techniques : List (TechniqueInput -> List Voicing)
     }
 
 
 type Config
     = Config
         { ranges : Ranges
-        , techniques : List (TechniqueInput -> List Voicing.FourPartVoicing)
-        , filter : List (Voicing.FourPartVoicing -> Bool)
-        , sort : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order
+        , techniques : List (TechniqueInput -> List Voicing)
+        , filter : List (Voicing -> Bool)
+        , sort : Voicing -> Voicing -> Order
         }
 
 
@@ -58,6 +135,17 @@ type alias Ranges =
     }
 
 
+withinRanges : Ranges -> Voicing -> Bool
+withinRanges { first, second, third, fourth } theVoicing =
+    toPitches theVoicing
+        |> (\voiced ->
+                Pitch.isWithin first voiced.voiceOne
+                    && Pitch.isWithin second voiced.voiceTwo
+                    && Pitch.isWithin third voiced.voiceFour
+                    && Pitch.isWithin fourth voiced.voiceFour
+           )
+
+
 config : ConfigInput -> Config
 config { ranges, techniques } =
     Config
@@ -68,7 +156,7 @@ config { ranges, techniques } =
         }
 
 
-withFilter : (Voicing.FourPartVoicing -> Bool) -> Config -> Config
+withFilter : (Voicing -> Bool) -> Config -> Config
 withFilter filterFn (Config theConfig) =
     Config
         { theConfig
@@ -77,8 +165,8 @@ withFilter filterFn (Config theConfig) =
 
 
 withSort :
-    (Voicing.FourPartVoicing
-     -> Voicing.FourPartVoicing
+    (Voicing
+     -> Voicing
      -> Order
     )
     -> Config
@@ -90,7 +178,7 @@ withSort sortFn (Config theConfig) =
         }
 
 
-execute : Chord.Chord -> Config -> List Voicing.FourPartVoicing
+execute : Chord.Chord -> Config -> List Voicing
 execute theChord (Config theConfig) =
     theConfig.techniques
         |> List.concatMap
@@ -103,18 +191,18 @@ execute theChord (Config theConfig) =
         |> (\candidates ->
                 List.foldl List.filter candidates theConfig.filter
            )
-        |> List.Extra.uniqueBy Voicing.fourPartToComparable
+        |> List.Extra.uniqueBy toString
         |> List.sortWith theConfig.sort
 
 
-commonTones : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
+commonTones : Voicing -> Voicing -> Int
 commonTones voicingA voicingB =
     let
         pitchesA =
-            Voicing.toPitchesFourPart voicingA
+            toPitches voicingA
 
         pitchesB =
-            Voicing.toPitchesFourPart voicingB
+            toPitches voicingB
 
         areCommonTones =
             [ pitchesA.voiceOne == pitchesB.voiceOne
@@ -129,21 +217,21 @@ commonTones voicingA voicingB =
 
 
 compareByCommonTones :
-    Voicing.FourPartVoicing
-    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+    Voicing
+    -> (Voicing -> Voicing -> Order)
 compareByCommonTones from =
     \a b ->
         compare (commonTones from b) (commonTones from a)
 
 
-totalSemitoneDistance : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
+totalSemitoneDistance : Voicing -> Voicing -> Int
 totalSemitoneDistance voicingA voicingB =
     let
         pitchesA =
-            Voicing.toPitchesFourPart voicingA
+            toPitches voicingA
 
         pitchesB =
-            Voicing.toPitchesFourPart voicingB
+            toPitches voicingB
 
         semitoneDistance a b =
             abs (Pitch.semitones a - Pitch.semitones b)
@@ -159,14 +247,14 @@ totalSemitoneDistance voicingA voicingB =
         |> List.sum
 
 
-voiceSemitoneDistance : (Voicing.PitchesFourPart -> Pitch.Pitch) -> Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Int
+voiceSemitoneDistance : (Pitches -> Pitch.Pitch) -> Voicing -> Voicing -> Int
 voiceSemitoneDistance getter voicingA voicingB =
     let
         pitchesA =
-            Voicing.toPitchesFourPart voicingA
+            toPitches voicingA
 
         pitchesB =
-            Voicing.toPitchesFourPart voicingB
+            toPitches voicingB
 
         semitoneDistance a b =
             abs (Pitch.semitones a - Pitch.semitones b)
@@ -175,17 +263,17 @@ voiceSemitoneDistance getter voicingA voicingB =
 
 
 compareByVoiceSemitoneDistance :
-    (Voicing.PitchesFourPart -> Pitch.Pitch)
-    -> Voicing.FourPartVoicing
-    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+    (Pitches -> Pitch.Pitch)
+    -> Voicing
+    -> (Voicing -> Voicing -> Order)
 compareByVoiceSemitoneDistance getter from =
     \a b ->
         compare (voiceSemitoneDistance getter from a) (voiceSemitoneDistance getter from b)
 
 
 compareByParallelOctave :
-    Voicing.FourPartVoicing
-    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+    Voicing
+    -> (Voicing -> Voicing -> Order)
 compareByParallelOctave from =
     let
         boolToInt bool =
@@ -203,21 +291,21 @@ compareByParallelOctave from =
 
 
 compareBySemitoneDistance :
-    Voicing.FourPartVoicing
-    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+    Voicing
+    -> (Voicing -> Voicing -> Order)
 compareBySemitoneDistance from =
     \a b ->
         compare (totalSemitoneDistance from a) (totalSemitoneDistance from b)
 
 
-usesContraryMotion : Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Bool
+usesContraryMotion : Voicing -> Voicing -> Bool
 usesContraryMotion voicingA voicingB =
     let
         pitchesA =
-            Voicing.toPitchesFourPart voicingA
+            toPitches voicingA
 
         pitchesB =
-            Voicing.toPitchesFourPart voicingB
+            toPitches voicingB
 
         positiveSemitoneDistance : Pitch.Pitch -> Pitch.Pitch -> Maybe Bool
         positiveSemitoneDistance a b =
@@ -238,8 +326,8 @@ usesContraryMotion voicingA voicingB =
 
 
 compareByContraryMotion :
-    Voicing.FourPartVoicing
-    -> (Voicing.FourPartVoicing -> Voicing.FourPartVoicing -> Order)
+    Voicing
+    -> (Voicing -> Voicing -> Order)
 compareByContraryMotion from =
     let
         boolToInt bool =
@@ -257,16 +345,16 @@ compareByContraryMotion from =
 
 
 containsParallelFifths :
-    Voicing.FourPartVoicing
-    -> Voicing.FourPartVoicing
+    Voicing
+    -> Voicing
     -> Bool
 containsParallelFifths voicingA voicingB =
     containsParallelIntervals Interval.perfectFifth voicingA voicingB
 
 
 containsParallelOctaves :
-    Voicing.FourPartVoicing
-    -> Voicing.FourPartVoicing
+    Voicing
+    -> Voicing
     -> Bool
 containsParallelOctaves voicingA voicingB =
     containsParallelIntervals Interval.perfectUnison voicingA voicingB
@@ -274,23 +362,23 @@ containsParallelOctaves voicingA voicingB =
 
 containsParallelIntervals :
     Interval.Interval
-    -> Voicing.FourPartVoicing
-    -> Voicing.FourPartVoicing
+    -> Voicing
+    -> Voicing
     -> Bool
 containsParallelIntervals interval voicingA voicingB =
     let
         intervalsA =
             VoicingClass.allIntervalsFourPart
-                (Voicing.voicingClassFourPart voicingA)
+                (voicingClass voicingA)
 
         intervalsB =
             VoicingClass.allIntervalsFourPart
-                (Voicing.voicingClassFourPart voicingB)
+                (voicingClass voicingB)
 
         areParallelInterval a b =
             (Interval.toSimple a == interval)
                 && (Interval.toSimple b == interval)
-                && (Voicing.rootFourPart voicingA /= Voicing.rootFourPart voicingB)
+                && (root voicingA /= root voicingB)
 
         matchParallelIntervals =
             [ areParallelInterval intervalsA.voiceFourToVoiceOne intervalsB.voiceFourToVoiceOne
@@ -308,35 +396,80 @@ containsParallelIntervals interval voicingA voicingB =
 
 containsPitch :
     Pitch.Pitch
-    -> Voicing.FourPartVoicing
+    -> Voicing
     -> Bool
-containsPitch pitch voicing =
-    voicing
-        |> Voicing.toPitchesFourPart
-        |> Voicing.fourPartToList
+containsPitch pitch theVoicing =
+    theVoicing
+        |> toPitches
+        |> toList
         |> List.member pitch
 
 
 containsPitchInVoice :
     Pitch.Pitch
-    -> (Voicing.PitchesFourPart -> Pitch.Pitch)
-    -> Voicing.FourPartVoicing
+    -> (Pitches -> Pitch.Pitch)
+    -> Voicing
     -> Bool
-containsPitchInVoice pitch getter voicing =
-    voicing
-        |> Voicing.toPitchesFourPart
+containsPitchInVoice pitch getter theVoicing =
+    theVoicing
+        |> toPitches
         |> (\pitches -> getter pitches == pitch)
 
 
 containsFactor :
     Interval.Interval
-    -> Voicing.FourPartVoicing
+    -> Voicing
     -> Bool
-containsFactor factor voicing =
-    voicing
-        |> Voicing.voicingClassFourPart
+containsFactor factor theVoicing =
+    theVoicing
+        |> voicingClass
         |> (\{ voiceOne, voiceTwo, voiceThree, voiceFour } ->
                 [ voiceOne, voiceTwo, voiceThree, voiceFour ]
            )
         |> List.map Interval.toSimple
         |> List.member factor
+
+
+chordToneListToVoicingClass : List Interval.Interval -> Maybe VoicingClass.FourPartVoicingClass
+chordToneListToVoicingClass intervals =
+    case intervals of
+        i1 :: i2 :: i3 :: i4 :: _ ->
+            { voiceOne = i4
+            , voiceTwo = i3
+            , voiceThree = i2
+            , voiceFour = i1
+            }
+                |> correctIntervalOctaves
+                |> Just
+
+        _ ->
+            Nothing
+
+
+correctIntervalOctaves : VoicingClass.FourPartVoicingClass -> VoicingClass.FourPartVoicingClass
+correctIntervalOctaves { voiceOne, voiceTwo, voiceThree, voiceFour } =
+    let
+        -- TODO: allow for larger (e.g. 10th) and smaller distances (unison) between voices
+        voiceThreeCorrected =
+            Util.Basic.while
+                (\v3 -> Interval.semitones voiceFour >= Interval.semitones v3)
+                Interval.addOctave
+                voiceThree
+
+        voiceTwoCorrected =
+            Util.Basic.while
+                (\v2 -> Interval.semitones voiceThreeCorrected >= Interval.semitones v2)
+                Interval.addOctave
+                voiceTwo
+
+        voiceOneCorrected =
+            Util.Basic.while
+                (\v4 -> Interval.semitones voiceTwoCorrected >= Interval.semitones v4)
+                Interval.addOctave
+                voiceOne
+    in
+    { voiceOne = voiceOneCorrected
+    , voiceTwo = voiceTwoCorrected
+    , voiceThree = voiceThreeCorrected
+    , voiceFour = voiceFour
+    }
