@@ -9,7 +9,7 @@ import MusicTheory.Interval as Interval exposing (IntervalNumber(..))
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
-import MusicTheory.Voicing as Voicing
+import MusicTheory.Voicing.FivePart as FivePart
 import MusicTheory.Voicing.FourPart as FourPart
 import Result.Extra
 import Test exposing (..)
@@ -165,8 +165,8 @@ all =
                             Result.andThen
                                 (GenerateVoicing.fourWayCloseDoubleLead Interval.majorThird)
                                 availables
-                                |> Result.map (Voicing.fivePart Pitch.c5)
-                                |> Result.map Voicing.toPitchesFivePart
+                                |> Result.map (FivePart.voicing Pitch.c5)
+                                |> Result.map FivePart.toPitches
                     in
                     Expect.equal expected result
             ]
@@ -220,8 +220,8 @@ all =
                             availables
                                 |> Result.andThen
                                     (GenerateVoicing.fiveWaySpread Interval.perfectUnison)
-                                |> Result.map (Voicing.fivePart Pitch.c3)
-                                |> Result.map Voicing.toPitchesFivePart
+                                |> Result.map (FivePart.voicing Pitch.c3)
+                                |> Result.map FivePart.toPitches
                     in
                     Expect.equal expected result
             ]
@@ -247,8 +247,8 @@ all =
                             Result.andThen
                                 (GenerateVoicing.substituteDoubleLead Interval.majorNinth)
                                 availables
-                                |> Result.map (Voicing.fivePart Pitch.c4)
-                                |> Result.map Voicing.toPitchesFivePart
+                                |> Result.map (FivePart.voicing Pitch.c4)
+                                |> Result.map FivePart.toPitches
                     in
                     Expect.equal expected result
             ]

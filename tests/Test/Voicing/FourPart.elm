@@ -1,17 +1,17 @@
 module Test.Voicing.FourPart exposing (..)
 
 import Expect
+import MusicTheory.Analyze.JazzChord as AnalyzeChord
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
+import MusicTheory.Generate.JazzVoicing as GenerateVoicing
 import MusicTheory.Interval as Interval
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
-import MusicTheory.Voicing as Voicing
 import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.FourPart.Classical as Classical
 import Test exposing (..)
-import Test.Util
 
 
 all : Test
@@ -528,48 +528,31 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "allIntervalsFourPart"
+            [ test "correct intervals for four-way close voicing of Cmaj6" <|
+                \_ ->
+                    let
+                        availables =
+                            AnalyzeChord.availables
+                                (Chord.chord PitchClass.c ChordClass.majorSix)
+                                |> Result.mapError GenerateVoicing.AnalyzeChordError
 
-        --, skip <|
-        --    describe "execute" <|
-        --        [ describe "using Classical.optimizeVoiceLeading"
-        --            [ test "just seeing what this ordering is like" <|
-        --                \_ ->
-        --                     let
-        --                        fromVoicing =
-        --                            FourPart.fourPart
-        --                                Pitch.c3
-        --                                { voiceOne = Interval.majorTenth |> Interval.addOctave
-        --                                , voiceTwo = Interval.perfectTwelfth
-        --                                , voiceThree = Interval.perfectOctave
-        --                                , voiceFour = Interval.perfectUnison
-        --                                }
-        --
-        --                        result =
-        --                            FourPart.config
-        --                                { ranges = Classical.satbRanges
-        --                                , techniques =
-        --                                    [ Classical.rootPosition
-        --                                    , Classical.firstInversion
-        --                                    , Classical.secondInversion
-        --                                    , Classical.thirdInversion
-        --                                    ]
-        --                                }
-        --                                |> Classical.optimizeVoiceLeading fromVoicing
-        --                                |> FourPart.execute (Chord.chord PitchClass.g ChordClass.major)
-        --                                |> List.map
-        --                                    (\v ->
-        --                                        { voicing =
-        --                                            Test.Util.voicingToString v
-        --                                        , semitoneDistance = FourPart.totalSemitoneDistance fromVoicing v
-        --                                        , commonTones = FourPart.commonTones fromVoicing v
-        --                                        , useContraryMotion = FourPart.usesContraryMotion fromVoicing v
-        --                                        }
-        --                                    )
-        --
-        --                        expected =
-        --                            []
-        --                    in
-        --                    Expect.equal expected result
-        --            ]
-        --        ]
+                        result =
+                            availables
+                                |> Result.andThen
+                                    (GenerateVoicing.fourWayClose Interval.majorThird)
+                                |> Result.map FourPart.allIntervals
+
+                        expected =
+                            { voiceFourToVoiceOne = Interval.majorSixth
+                            , voiceFourToVoiceTwo = Interval.perfectFourth
+                            , voiceThreeToVoiceOne = Interval.perfectFifth
+                            , voiceFourToVoiceThree = Interval.majorSecond
+                            , voiceThreeToVoiceTwo = Interval.minorThird
+                            , voiceTwoToVoiceOne = Interval.majorThird
+                            }
+                                |> Ok
+                    in
+                    Expect.equal expected result
+            ]
         ]

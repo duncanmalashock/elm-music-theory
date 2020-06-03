@@ -19,12 +19,8 @@ import MusicTheory.Analyze.JazzChord as AnalyzeChord
         , VoiceCategory(..)
         )
 import MusicTheory.Interval as Interval
-import MusicTheory.VoicingClass
-    exposing
-        ( FivePartVoicingClass
-        , FourPartVoicingClass
-        , ThreePartVoicingClass
-        )
+import MusicTheory.Voicing.FivePart as FivePart
+import MusicTheory.Voicing.FourPart as FourPart
 
 
 type Error
@@ -199,7 +195,7 @@ nextVoiceCategory voiceCategory =
 fourWayClose :
     Interval.Interval
     -> Availables
-    -> Result Error FourPartVoicingClass
+    -> Result Error FourPart.VoicingClass
 fourWayClose leadVoice availables =
     let
         maybeFirstVoiceCategory =
@@ -252,7 +248,7 @@ fourWayClose leadVoice availables =
 fourWayCloseDoubleLead :
     Interval.Interval
     -> Availables
-    -> Result Error FivePartVoicingClass
+    -> Result Error FivePart.VoicingClass
 fourWayCloseDoubleLead leadVoice availables =
     let
         maybeFirstVoiceCategory =
@@ -307,7 +303,7 @@ fourWayCloseDoubleLead leadVoice availables =
 fourWaySpread :
     Interval.Interval
     -> Availables
-    -> Result Error FourPartVoicingClass
+    -> Result Error FourPart.VoicingClass
 fourWaySpread bass availables =
     let
         voicing =
@@ -339,7 +335,7 @@ fourWaySpread bass availables =
 fiveWaySpread :
     Interval.Interval
     -> Availables
-    -> Result Error FivePartVoicingClass
+    -> Result Error FivePart.VoicingClass
 fiveWaySpread bass availables =
     let
         voicing =
@@ -376,8 +372,8 @@ fiveWaySpread bass availables =
 
 fourWayDrop2 :
     Availables
-    -> FourPartVoicingClass
-    -> Result Error FourPartVoicingClass
+    -> FourPart.VoicingClass
+    -> Result Error FourPart.VoicingClass
 fourWayDrop2 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceThree
@@ -394,8 +390,8 @@ fourWayDrop2 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
 
 fourWayDrop3 :
     Availables
-    -> FourPartVoicingClass
-    -> Result Error FourPartVoicingClass
+    -> FourPart.VoicingClass
+    -> Result Error FourPart.VoicingClass
 fourWayDrop3 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceTwo
@@ -412,8 +408,8 @@ fourWayDrop3 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
 
 fourWayDrop2and4 :
     Availables
-    -> FourPartVoicingClass
-    -> Result Error FourPartVoicingClass
+    -> FourPart.VoicingClass
+    -> Result Error FourPart.VoicingClass
 fourWayDrop2and4 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceThree
@@ -433,7 +429,7 @@ fourWayDrop2and4 availables { voiceOne, voiceTwo, voiceThree, voiceFour } =
 substituteDoubleLead :
     Interval.Interval
     -> Availables
-    -> Result Error FivePartVoicingClass
+    -> Result Error FivePart.VoicingClass
 substituteDoubleLead leadVoice availables =
     let
         maybeFirstVoiceCategory =
@@ -492,8 +488,8 @@ substituteDoubleLead leadVoice availables =
 
 fiveWayDrop2 :
     Availables
-    -> FivePartVoicingClass
-    -> Result Error FivePartVoicingClass
+    -> FivePart.VoicingClass
+    -> Result Error FivePart.VoicingClass
 fiveWayDrop2 availables { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceThree
@@ -511,8 +507,8 @@ fiveWayDrop2 availables { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive }
 
 fiveWayDrop3 :
     Availables
-    -> FivePartVoicingClass
-    -> Result Error FivePartVoicingClass
+    -> FivePart.VoicingClass
+    -> Result Error FivePart.VoicingClass
 fiveWayDrop3 availables { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceTwo
@@ -528,7 +524,7 @@ fiveWayDrop3 availables { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive }
         |> Result.fromMaybe CouldNotCompleteVoicing
 
 
-fiveWayDrop2and4 : Availables -> FivePartVoicingClass -> Result Error FivePartVoicingClass
+fiveWayDrop2and4 : Availables -> FivePart.VoicingClass -> Result Error FivePart.VoicingClass
 fiveWayDrop2and4 availables { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
     { voiceOne = Just voiceOne
     , voiceTwo = Just voiceThree
@@ -638,9 +634,9 @@ fourPartInit availables =
 
 completeFourPart :
     FourPartVoicingClassInProgress
-    -> Maybe FourPartVoicingClass
+    -> Maybe FourPart.VoicingClass
 completeFourPart { voiceOne, voiceTwo, voiceThree, voiceFour } =
-    Maybe.map4 FourPartVoicingClass voiceOne voiceTwo voiceThree voiceFour
+    Maybe.map4 FourPart.VoicingClass voiceOne voiceTwo voiceThree voiceFour
 
 
 applyStepFourPart :
@@ -795,9 +791,9 @@ fivePartInit availables =
 
 completeFivePart :
     FivePartVoicingClassInProgress
-    -> Maybe FivePartVoicingClass
+    -> Maybe FivePart.VoicingClass
 completeFivePart { voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive } =
-    Maybe.map5 FivePartVoicingClass voiceOne voiceTwo voiceThree voiceFour voiceFive
+    Maybe.map5 FivePart.VoicingClass voiceOne voiceTwo voiceThree voiceFour voiceFive
 
 
 applyStepFivePart :

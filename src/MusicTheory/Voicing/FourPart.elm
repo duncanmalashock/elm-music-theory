@@ -4,6 +4,8 @@ module MusicTheory.Voicing.FourPart exposing
     , Ranges
     , TechniqueInput
     , Voicing
+    , VoicingClass
+    , allIntervals
     , chord
     , chordToneListToVoicingClass
     , commonTones
@@ -36,15 +38,14 @@ import MusicTheory.Chord as Chord
 import MusicTheory.Interval as Interval
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
-import MusicTheory.VoicingClass as VoicingClass
 import Util.Basic
 
 
 type Voicing
-    = FourPartVoicing Chord.Chord Octave.Octave VoicingClass.FourPartVoicingClass
+    = FourPartVoicing Chord.Chord Octave.Octave VoicingClass
 
 
-voicing : Chord.Chord -> Octave.Octave -> VoicingClass.FourPartVoicingClass -> Voicing
+voicing : Chord.Chord -> Octave.Octave -> VoicingClass -> Voicing
 voicing ch octave vc =
     FourPartVoicing ch octave vc
 
@@ -54,6 +55,41 @@ type alias Pitches =
     , voiceTwo : Pitch.Pitch
     , voiceThree : Pitch.Pitch
     , voiceFour : Pitch.Pitch
+    }
+
+
+type alias VoicingClass =
+    { voiceOne : Interval.Interval
+    , voiceTwo : Interval.Interval
+    , voiceThree : Interval.Interval
+    , voiceFour : Interval.Interval
+    }
+
+
+allIntervals : VoicingClass -> IntervalList
+allIntervals vc =
+    { voiceFourToVoiceOne =
+        Interval.subtract vc.voiceFour vc.voiceOne
+    , voiceFourToVoiceTwo =
+        Interval.subtract vc.voiceFour vc.voiceTwo
+    , voiceThreeToVoiceOne =
+        Interval.subtract vc.voiceThree vc.voiceOne
+    , voiceFourToVoiceThree =
+        Interval.subtract vc.voiceFour vc.voiceThree
+    , voiceThreeToVoiceTwo =
+        Interval.subtract vc.voiceThree vc.voiceTwo
+    , voiceTwoToVoiceOne =
+        Interval.subtract vc.voiceTwo vc.voiceOne
+    }
+
+
+type alias IntervalList =
+    { voiceFourToVoiceOne : Interval.Interval
+    , voiceFourToVoiceTwo : Interval.Interval
+    , voiceThreeToVoiceOne : Interval.Interval
+    , voiceFourToVoiceThree : Interval.Interval
+    , voiceThreeToVoiceTwo : Interval.Interval
+    , voiceTwoToVoiceOne : Interval.Interval
     }
 
 
@@ -90,7 +126,7 @@ toList { voiceOne, voiceTwo, voiceThree, voiceFour } =
     [ voiceOne, voiceTwo, voiceThree, voiceFour ]
 
 
-voicingClass : Voicing -> VoicingClass.FourPartVoicingClass
+voicingClass : Voicing -> VoicingClass
 voicingClass (FourPartVoicing ch octave vc) =
     vc
 
@@ -368,11 +404,11 @@ containsParallelIntervals :
 containsParallelIntervals interval voicingA voicingB =
     let
         intervalsA =
-            VoicingClass.allIntervalsFourPart
+            allIntervals
                 (voicingClass voicingA)
 
         intervalsB =
-            VoicingClass.allIntervalsFourPart
+            allIntervals
                 (voicingClass voicingB)
 
         areParallelInterval a b =
@@ -430,7 +466,7 @@ containsFactor factor theVoicing =
         |> List.member factor
 
 
-chordToneListToVoicingClass : List Interval.Interval -> Maybe VoicingClass.FourPartVoicingClass
+chordToneListToVoicingClass : List Interval.Interval -> Maybe VoicingClass
 chordToneListToVoicingClass intervals =
     case intervals of
         i1 :: i2 :: i3 :: i4 :: _ ->
@@ -446,7 +482,7 @@ chordToneListToVoicingClass intervals =
             Nothing
 
 
-correctIntervalOctaves : VoicingClass.FourPartVoicingClass -> VoicingClass.FourPartVoicingClass
+correctIntervalOctaves : VoicingClass -> VoicingClass
 correctIntervalOctaves { voiceOne, voiceTwo, voiceThree, voiceFour } =
     let
         -- TODO: allow for larger (e.g. 10th) and smaller distances (unison) between voices

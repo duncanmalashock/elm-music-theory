@@ -18,7 +18,6 @@ import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.Util as VoicingUtil
-import MusicTheory.VoicingClass as VoicingClass
 import Util.Permutations
 
 
@@ -266,7 +265,7 @@ thirdInversion { ranges, chord } =
 
 allThirdInversionVoicingClasses :
     CategorizedChordTones
-    -> List VoicingClass.FourPartVoicingClass
+    -> List FourPart.VoicingClass
 allThirdInversionVoicingClasses tones =
     case tones.seventh of
         Just seventh ->
@@ -292,7 +291,7 @@ allThirdInversionVoicingClasses tones =
 
 allSecondInversionVoicingClasses :
     CategorizedChordTones
-    -> List VoicingClass.FourPartVoicingClass
+    -> List FourPart.VoicingClass
 allSecondInversionVoicingClasses tones =
     let
         validChordTonesAboveRoot =
@@ -331,7 +330,7 @@ allSecondInversionVoicingClasses tones =
 
 allFirstInversionVoicingClasses :
     CategorizedChordTones
-    -> List VoicingClass.FourPartVoicingClass
+    -> List FourPart.VoicingClass
 allFirstInversionVoicingClasses tones =
     let
         validChordTonesAboveRoot =
@@ -369,7 +368,7 @@ allFirstInversionVoicingClasses tones =
 
 allRootPositionVoicingClasses :
     CategorizedChordTones
-    -> List VoicingClass.FourPartVoicingClass
+    -> List FourPart.VoicingClass
 allRootPositionVoicingClasses tones =
     let
         validChordTonesAboveRoot =
