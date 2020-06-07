@@ -1,24 +1,71 @@
-module MusicTheory.Generate.Melody exposing
-    ( current
-    , generate
-    , init
-    , length
+module MusicTheory.Melody exposing
+    ( Fragment
+    , Melody
+    , fragment
+    , melody
+    , toList
     )
 
 import List.Zipper exposing (Zipper)
-import MusicTheory.Pitch as Pitch exposing (Pitch)
-import MusicTheory.Scale as Scale exposing (Scale)
+import MusicTheory.Chord as Chord
+import MusicTheory.Octave as Octave
+import MusicTheory.Pitch as Pitch
+import MusicTheory.Scale as Scale
 import Util.Basic
 
 
+type Melody
+    = Melody (List Fragment)
+
+
+type Fragment
+    = Fragment FragmentData
+
+
+type alias FragmentData =
+    { start : ( Octave.Octave, Int )
+    , steps : List Int
+    , chord : Chord.Chord
+    , scale : Scale.Scale
+    }
+
+
+melody : List Fragment -> Melody
+melody fragments =
+    Melody fragments
+
+
+fragment : FragmentData -> Fragment
+fragment fragmentData =
+    Fragment fragmentData
+
+
+toList : Melody -> List Pitch.Pitch
+toList (Melody fragments) =
+    List.concatMap
+        (\(Fragment { start, steps, chord, scale }) ->
+            scaleStepper scale (Tuple.first start) (Tuple.second start)
+                |> generatePitchesFromStepper steps
+        )
+        fragments
+
+
+
+--
+
+
 type ScaleStepper
-    = ScaleStepper (Zipper Pitch)
+    = ScaleStepper (Zipper Pitch.Pitch)
 
 
-init : Scale -> Pitch -> ScaleStepper
-init scale pitch =
+scaleStepper : Scale.Scale -> Octave.Octave -> Int -> ScaleStepper
+scaleStepper scale startingOctave startingDegree =
     let
-        default : Zipper Pitch
+        pitch =
+            Scale.degree startingDegree scale
+                |> Pitch.fromPitchClass startingOctave
+
+        default : Zipper Pitch.Pitch
         default =
             List.Zipper.singleton pitch
     in
@@ -29,13 +76,13 @@ init scale pitch =
         |> ScaleStepper
 
 
-generate : List Int -> ScaleStepper -> List Pitch
-generate steps stepper =
+generatePitchesFromStepper : List Int -> ScaleStepper -> List Pitch.Pitch
+generatePitchesFromStepper steps stepper =
     List.foldl step ( stepper, [] ) steps
         |> Tuple.second
 
 
-step : Int -> ( ScaleStepper, List Pitch ) -> ( ScaleStepper, List Pitch )
+step : Int -> ( ScaleStepper, List Pitch.Pitch ) -> ( ScaleStepper, List Pitch.Pitch )
 step numberOfScaleSteps ( ScaleStepper zipper, list ) =
     Util.Basic.applyNTimes
         (abs numberOfScaleSteps
@@ -72,7 +119,10 @@ step numberOfScaleSteps ( ScaleStepper zipper, list ) =
            )
 
 
-traverseStep : Maybe Bool -> ( Zipper Pitch, List Pitch ) -> ( Zipper Pitch, List Pitch )
+traverseStep :
+    Maybe Bool
+    -> ( Zipper Pitch.Pitch, List Pitch.Pitch )
+    -> ( Zipper Pitch.Pitch, List Pitch.Pitch )
 traverseStep positiveNegativeOrZero ( zipper, list ) =
     (case positiveNegativeOrZero of
         Just True ->
@@ -90,14 +140,3 @@ traverseStep positiveNegativeOrZero ( zipper, list ) =
             )
         |> Maybe.withDefault
             ( zipper, list )
-
-
-length : ScaleStepper -> Int
-length (ScaleStepper zipper) =
-    List.Zipper.toList zipper
-        |> List.length
-
-
-current : ScaleStepper -> Pitch
-current (ScaleStepper zipper) =
-    List.Zipper.current zipper

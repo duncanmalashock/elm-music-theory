@@ -1,15 +1,18 @@
 module MusicTheory.Scale exposing
     ( Scale
+    , degree
     , root
     , scale
     , toList
     , toListThroughAllOctaves
     )
 
+import List.Extra
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch exposing (Pitch)
 import MusicTheory.PitchClass as PitchClass exposing (PitchClass)
 import MusicTheory.ScaleClass as ScaleClass exposing (ScaleClass)
+import Util.Basic
 
 
 type Scale
@@ -133,6 +136,23 @@ toList theScale =
             , scaleDegrees.seventh
             , scaleDegrees.eighth
             ]
+
+
+degree : Int -> Scale -> PitchClass
+degree degreeNumber theScale =
+    let
+        shift theList =
+            case theList of
+                [] ->
+                    []
+
+                head :: tail ->
+                    tail ++ [ head ]
+    in
+    toList theScale
+        |> Util.Basic.applyNTimes (degreeNumber - 1) shift
+        |> List.head
+        |> Maybe.withDefault PitchClass.bDoubleFlat
 
 
 toScaleDegrees : Scale -> ScaleDegrees

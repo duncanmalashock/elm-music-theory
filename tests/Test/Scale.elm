@@ -130,6 +130,13 @@ all =
                 Scale.scale (pitchClass B natural) ScaleClass.locrian
                     |> Scale.toList
                     |> Expect.equal pitchClassesInBLocrian
+        , describe "degree"
+            [ test "Fourth degree of C major is F" <|
+                \_ ->
+                    Scale.scale PitchClass.c ScaleClass.ionian
+                        |> Scale.degree 4
+                        |> Expect.equal PitchClass.f
+            ]
         , describe "toListThroughAllOctaves"
             [ test "F lydian should contain pitches through all octaves" <|
                 \_ ->
