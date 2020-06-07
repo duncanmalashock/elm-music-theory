@@ -1,13 +1,19 @@
 module MusicTheory.Melody exposing
-    ( Fragment
-    , Melody
+    ( Melody
+    , MelodyFragment
     , fragment
     , melody
+    , melodyClass
+    , toChordToneWithGoalInterval
     , toList
+    , toMelodyClass
+    , toNonChordToneWithGoalInterval
     )
 
+import List.Extra
 import List.Zipper exposing (Zipper)
 import MusicTheory.Chord as Chord
+import MusicTheory.Interval as Interval
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.Scale as Scale
@@ -15,14 +21,14 @@ import Util.Basic
 
 
 type Melody
-    = Melody (List Fragment)
+    = Melody (List MelodyFragment)
 
 
-type Fragment
-    = Fragment FragmentData
+type MelodyFragment
+    = MelodyFragment MelodyFragmentData
 
 
-type alias FragmentData =
+type alias MelodyFragmentData =
     { startingDegree : Int
     , startingOctave : Octave.Octave
     , steps : List Int
@@ -31,24 +37,113 @@ type alias FragmentData =
     }
 
 
-melody : List Fragment -> Melody
+chordFromFragment : MelodyFragment -> Chord.Chord
+chordFromFragment (MelodyFragment fragmentData) =
+    fragmentData.chord
+
+
+melody : List MelodyFragment -> Melody
 melody fragments =
     Melody fragments
 
 
-fragment : FragmentData -> Fragment
+fragment : MelodyFragmentData -> MelodyFragment
 fragment fragmentData =
-    Fragment fragmentData
+    MelodyFragment fragmentData
 
 
 toList : Melody -> List Pitch.Pitch
 toList (Melody fragments) =
+    List.concatMap fragmentToPitchList fragments
+
+
+fragmentToPitchList : MelodyFragment -> List Pitch.Pitch
+fragmentToPitchList (MelodyFragment { startingDegree, startingOctave, steps, chord, scale }) =
+    scaleStepper scale startingOctave startingDegree
+        |> generatePitchesFromStepper steps
+
+
+
+--
+
+
+type MelodyClass
+    = MelodyClass (List MelodyClassStep)
+
+
+melodyClass : List MelodyClassStep -> MelodyClass
+melodyClass steps =
+    MelodyClass steps
+
+
+type MelodyClassStep
+    = ToChordTone Interval.Interval
+    | ToNonChordTone Interval.Interval
+
+
+toChordToneWithGoalInterval : Interval.Interval -> MelodyClassStep
+toChordToneWithGoalInterval interval =
+    ToChordTone interval
+
+
+toNonChordToneWithGoalInterval : Interval.Interval -> MelodyClassStep
+toNonChordToneWithGoalInterval interval =
+    ToNonChordTone interval
+
+
+toMelodyClass : Melody -> MelodyClass
+toMelodyClass (Melody fragments) =
+    fragments
+        |> toChordAndPitch
+        |> toChordAndPitchTuples
+        |> List.map pitchToMelodyClassStep
+        |> MelodyClass
+
+
+toChordAndPitch : List MelodyFragment -> List ( Chord.Chord, Pitch.Pitch )
+toChordAndPitch fragments =
     List.concatMap
-        (\(Fragment { startingDegree, startingOctave, steps, chord, scale }) ->
-            scaleStepper scale startingOctave startingDegree
-                |> generatePitchesFromStepper steps
+        (\frag ->
+            fragmentToPitchList frag
+                |> List.map (\pitch -> ( chordFromFragment frag, pitch ))
         )
         fragments
+
+
+toChordAndPitchTuples :
+    List ( Chord.Chord, Pitch.Pitch )
+    -> List ( ( Chord.Chord, Pitch.Pitch ), ( Chord.Chord, Pitch.Pitch ) )
+toChordAndPitchTuples chordAndPitches =
+    case chordAndPitches of
+        head :: tail ->
+            List.Extra.zip chordAndPitches tail
+
+        [] ->
+            []
+
+
+pitchToMelodyClassStep :
+    ( ( Chord.Chord, Pitch.Pitch ), ( Chord.Chord, Pitch.Pitch ) )
+    -> MelodyClassStep
+pitchToMelodyClassStep ( ( lastChord, lastPitch ), ( currentChord, currentPitch ) ) =
+    let
+        interval =
+            Pitch.intervalBetween lastPitch currentPitch
+    in
+    if Chord.containsPitchClass (Pitch.pitchClass currentPitch) currentChord then
+        ToChordTone interval
+
+    else
+        ToNonChordTone interval
+
+
+
+--{ startingDegree : Int
+--, startingOctave : Octave.Octave
+--, steps : List Int
+--, chord : Chord.Chord
+--, scale : Scale.Scale
+--}
 
 
 

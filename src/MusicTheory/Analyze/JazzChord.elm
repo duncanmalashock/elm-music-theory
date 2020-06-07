@@ -3,13 +3,11 @@ module MusicTheory.Analyze.JazzChord exposing
     , Error
     , VoiceCategory(..)
     , availables
-    , containsPitchClass
     )
 
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Interval as Interval
-import MusicTheory.PitchClass as PitchClass
 
 
 type VoiceCategory
@@ -53,12 +51,6 @@ type alias Availables =
 type Error
     = CouldNotFindAllVoiceCategories (List (Maybe Interval.Interval))
     | CouldNotDetermineChordQuality
-
-
-containsPitchClass : PitchClass.PitchClass -> Chord.Chord -> Bool
-containsPitchClass pitchClass chord =
-    List.member pitchClass
-        (Chord.toPitchClasses chord)
 
 
 availables : Chord.Chord -> Result Error Availables

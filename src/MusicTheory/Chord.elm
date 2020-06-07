@@ -2,6 +2,7 @@ module MusicTheory.Chord exposing
     ( Chord
     , chord
     , chordClass
+    , containsPitchClass
     , root
     , toPitchClasses
     )
@@ -36,3 +37,9 @@ toPitchClasses (Chord rootPitchClass theChordClass) =
             PitchClass.transpose interval rootPitchClass
         )
         (ChordClass.toIntervals theChordClass)
+
+
+containsPitchClass : PitchClass.PitchClass -> Chord -> Bool
+containsPitchClass pitchClass theChord =
+    List.member pitchClass
+        (toPitchClasses theChord)
