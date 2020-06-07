@@ -32,10 +32,11 @@ all =
 
                         expected =
                             [ Melody.fragment
-                                { start = ( Octave.four, 1 )
+                                { startingDegree = 1
+                                , startingOctave = Octave.four
                                 , steps = [ 0, -1, 1, 4, -2, -1, -1 ]
                                 , chord = Chord.chord PitchClass.c ChordClass.major
-                                , scale = Scale.scale PitchClass.c ScaleClass.ionian
+                                , scale = Scale.scale PitchClass.c ScaleClass.major
                                 }
                             ]
                                 |> Melody.melody

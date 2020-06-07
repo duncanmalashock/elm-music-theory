@@ -18,6 +18,7 @@ module MusicTheory.ScaleClass exposing
     , lydian
     , lydianAugmented
     , lydianDiminished
+    , major
     , majorAugmented
     , majorMinor
     , majorPentatonic
@@ -125,7 +126,7 @@ toList theScaleClass =
 
 mode : Int -> ScaleClass -> ScaleClass
 mode modeShiftIndex scale =
-    if modeShiftIndex <= 0 then
+    if modeShiftIndex <= 1 then
         scale
 
     else
@@ -210,40 +211,45 @@ ionian =
         }
 
 
+major : ScaleClass
+major =
+    ionian
+
+
 dorian : ScaleClass
 dorian =
     ionian
-        |> mode 1
+        |> mode 2
 
 
 phrygian : ScaleClass
 phrygian =
     ionian
-        |> mode 2
+        |> mode 3
 
 
 lydian : ScaleClass
 lydian =
     ionian
-        |> mode 3
+        |> mode 4
 
 
 mixolydian : ScaleClass
 mixolydian =
     ionian
-        |> mode 4
+        |> mode 5
 
 
 aeolian : ScaleClass
 aeolian =
     ionian
-        |> mode 5
+        |> mode 6
 
 
 locrian : ScaleClass
 locrian =
     ionian
-        |> mode 6
+        |> mode 7
 
 
 
@@ -265,37 +271,37 @@ melodicMinor =
 dorianFlat2 : ScaleClass
 dorianFlat2 =
     melodicMinor
-        |> mode 1
+        |> mode 2
 
 
 lydianAugmented : ScaleClass
 lydianAugmented =
     melodicMinor
-        |> mode 2
+        |> mode 3
 
 
 acoustic : ScaleClass
 acoustic =
     melodicMinor
-        |> mode 3
+        |> mode 4
 
 
 majorMinor : ScaleClass
 majorMinor =
     melodicMinor
-        |> mode 4
+        |> mode 5
 
 
 minorLocrian : ScaleClass
 minorLocrian =
     melodicMinor
-        |> mode 5
+        |> mode 6
 
 
 superlocrian : ScaleClass
 superlocrian =
     melodicMinor
-        |> mode 6
+        |> mode 7
 
 
 
@@ -317,37 +323,37 @@ harmonicMinor =
 locrianNatural6 : ScaleClass
 locrianNatural6 =
     harmonicMinor
-        |> mode 1
+        |> mode 2
 
 
 majorAugmented : ScaleClass
 majorAugmented =
     harmonicMinor
-        |> mode 2
+        |> mode 3
 
 
 lydianDiminished : ScaleClass
 lydianDiminished =
     harmonicMinor
-        |> mode 3
+        |> mode 4
 
 
 phrygianDominant : ScaleClass
 phrygianDominant =
     harmonicMinor
-        |> mode 4
+        |> mode 5
 
 
 aeolianHarmonic : ScaleClass
 aeolianHarmonic =
     harmonicMinor
-        |> mode 5
+        |> mode 6
 
 
 ultralocrian : ScaleClass
 ultralocrian =
     harmonicMinor
-        |> mode 6
+        |> mode 7
 
 
 
