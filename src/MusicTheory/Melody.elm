@@ -23,7 +23,8 @@ type Fragment
 
 
 type alias FragmentData =
-    { start : ( Octave.Octave, Int )
+    { startingDegree : Int
+    , startingOctave : Octave.Octave
     , steps : List Int
     , chord : Chord.Chord
     , scale : Scale.Scale
@@ -43,8 +44,8 @@ fragment fragmentData =
 toList : Melody -> List Pitch.Pitch
 toList (Melody fragments) =
     List.concatMap
-        (\(Fragment { start, steps, chord, scale }) ->
-            scaleStepper scale (Tuple.first start) (Tuple.second start)
+        (\(Fragment { startingDegree, startingOctave, steps, chord, scale }) ->
+            scaleStepper scale startingOctave startingDegree
                 |> generatePitchesFromStepper steps
         )
         fragments
