@@ -1,5 +1,6 @@
 module MusicTheory.Scale exposing
     ( Scale
+    , containsPitchClass
     , degree
     , root
     , scale
@@ -94,6 +95,11 @@ toListThroughAllOctaves (Scale scaleRoot scaleClass) =
                             Pitch.transposeUp interval tonic
                         )
             )
+
+
+containsPitchClass : PitchClass -> Scale -> Bool
+containsPitchClass thePitchClass theScale =
+    List.member thePitchClass (toList theScale)
 
 
 toList : Scale -> List PitchClass

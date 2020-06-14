@@ -14,8 +14,11 @@ module MusicTheory.Melody exposing
     , moveChromaticallyAfterScaleSteps
     , moveChromaticallyFromCurrentScaleStep
     , repeatLastPitch
+    , scaleFromFragment
     , scaleStepper
     , startWithIntervalOffset
+    , startsOnChordTone
+    , startsOnScaleTone
     , toList
     )
 
@@ -39,6 +42,38 @@ type Melody
 melody : List Fragment -> Melody
 melody fragments =
     Melody fragments
+
+
+startsOnChordTone : Melody -> Bool
+startsOnChordTone (Melody fragments) =
+    case fragments of
+        firstFragment :: tail ->
+            fragmentToPitchList firstFragment
+                |> List.head
+                |> Maybe.map
+                    (\firstPitch ->
+                        Chord.containsPitchClass (Pitch.pitchClass firstPitch) (chordFromFragment firstFragment)
+                    )
+                |> Maybe.withDefault False
+
+        [] ->
+            False
+
+
+startsOnScaleTone : Melody -> Bool
+startsOnScaleTone (Melody fragments) =
+    case fragments of
+        firstFragment :: tail ->
+            fragmentToPitchList firstFragment
+                |> List.head
+                |> Maybe.map
+                    (\firstPitch ->
+                        Scale.containsPitchClass (Pitch.pitchClass firstPitch) (scaleFromFragment firstFragment)
+                    )
+                |> Maybe.withDefault False
+
+        [] ->
+            False
 
 
 
@@ -103,6 +138,11 @@ type alias ScaleAndChord =
 chordFromFragment : Fragment -> Chord.Chord
 chordFromFragment (Fragment fragmentData) =
     fragmentData.scaleAndChord.chord
+
+
+scaleFromFragment : Fragment -> Scale.Scale
+scaleFromFragment (Fragment fragmentData) =
+    fragmentData.scaleAndChord.scale
 
 
 getFragments : Melody -> List Fragment
