@@ -135,16 +135,16 @@ orderByBestVoiceLeading from =
                     1
 
         voiceOneSemitoneDistanceWeight =
-            1
+            2
 
         voiceTwoSemitoneDistanceWeight =
             1
 
         voiceThreeSemitoneDistanceWeight =
-            2
+            1
 
         voiceFourSemitoneDistanceWeight =
-            2
+            0
 
         contraryMotionWeight =
             2
@@ -178,7 +178,6 @@ orderByBestVoiceLeading from =
                         orderToNumber comp * weight
                     )
                 |> List.sum
-                |> Debug.log "score"
     in
     \a b ->
         compare (score a b) 0
