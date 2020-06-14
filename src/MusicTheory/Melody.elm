@@ -1,16 +1,24 @@
 module MusicTheory.Melody exposing
-    ( Melody
-    , MelodyFragment
+    ( Fragment
+    , FragmentData
+    , Melody
+    , ScaleAndChord
+    , ScaleStepper
+    , chordFromFragment
+    , currentStepperPitch
     , fragment
+    , fragmentToPitchList
+    , getFragments
     , melody
-    , melodyClass
-    , toChordToneWithGoalInterval
+    , moveByScaleSteps
+    , moveChromaticallyAfterScaleSteps
+    , moveChromaticallyFromCurrentScaleStep
+    , repeatLastPitch
+    , scaleStepper
+    , startWithIntervalOffset
     , toList
-    , toMelodyClass
-    , toNonChordToneWithGoalInterval
     )
 
-import List.Extra
 import List.Zipper exposing (Zipper)
 import MusicTheory.Chord as Chord
 import MusicTheory.Interval as Interval
@@ -20,36 +28,132 @@ import MusicTheory.Scale as Scale
 import Util.Basic
 
 
+
+-- Melody
+
+
 type Melody
-    = Melody (List MelodyFragment)
+    = Melody (List Fragment)
 
 
-type MelodyFragment
-    = MelodyFragment MelodyFragmentData
-
-
-type alias MelodyFragmentData =
-    { startingDegree : Int
-    , startingOctave : Octave.Octave
-    , steps : List Int
-    , chord : Chord.Chord
-    , scale : Scale.Scale
-    }
-
-
-chordFromFragment : MelodyFragment -> Chord.Chord
-chordFromFragment (MelodyFragment fragmentData) =
-    fragmentData.chord
-
-
-melody : List MelodyFragment -> Melody
+melody : List Fragment -> Melody
 melody fragments =
     Melody fragments
 
 
-fragment : MelodyFragmentData -> MelodyFragment
-fragment fragmentData =
-    MelodyFragment fragmentData
+
+-- Fragment
+
+
+fragment : FragmentConfig -> Fragment
+fragment config =
+    { start =
+        { scaleDegree = Tuple.first config.startingDegree
+        , octave = Tuple.second config.startingDegree
+        , adjustByInterval = Interval.perfectUnison
+        }
+    , movements = []
+    , scaleAndChord = config.scaleAndChord
+    }
+        |> Fragment
+
+
+startWithIntervalOffset : Interval.Interval -> Fragment -> Fragment
+startWithIntervalOffset interval (Fragment theFragment) =
+    { theFragment
+        | start =
+            { scaleDegree = theFragment.start.scaleDegree
+            , octave = theFragment.start.octave
+            , adjustByInterval = interval
+            }
+    }
+        |> Fragment
+
+
+type alias FragmentConfig =
+    { startingDegree : ( Int, Octave.Octave )
+    , scaleAndChord : ScaleAndChord
+    }
+
+
+type Fragment
+    = Fragment FragmentData
+
+
+type alias FragmentData =
+    { start : Start
+    , movements : List Movement
+    , scaleAndChord : ScaleAndChord
+    }
+
+
+type alias Start =
+    { scaleDegree : Int
+    , adjustByInterval : Interval.Interval
+    , octave : Octave.Octave
+    }
+
+
+type alias ScaleAndChord =
+    { chord : Chord.Chord
+    , scale : Scale.Scale
+    }
+
+
+chordFromFragment : Fragment -> Chord.Chord
+chordFromFragment (Fragment fragmentData) =
+    fragmentData.scaleAndChord.chord
+
+
+getFragments : Melody -> List Fragment
+getFragments (Melody fragments) =
+    fragments
+
+
+
+-- Movements
+
+
+type Movement
+    = MoveByScaleSteps Int
+    | MoveByScaleStepsAndAddInterval { transposedBy : Interval.Interval, moveBySteps : Int }
+    | RepeatLastPitch
+
+
+moveByScaleSteps : Int -> Fragment -> Fragment
+moveByScaleSteps scaleSteps theFragment =
+    MoveByScaleSteps scaleSteps
+        |> addMovement theFragment
+
+
+repeatLastPitch : Fragment -> Fragment
+repeatLastPitch theFragment =
+    RepeatLastPitch
+        |> addMovement theFragment
+
+
+moveChromaticallyFromCurrentScaleStep : Interval.Interval -> Fragment -> Fragment
+moveChromaticallyFromCurrentScaleStep interval theFragment =
+    MoveByScaleStepsAndAddInterval { transposedBy = interval, moveBySteps = 0 }
+        |> addMovement theFragment
+
+
+moveChromaticallyAfterScaleSteps : Int -> Interval.Interval -> Fragment -> Fragment
+moveChromaticallyAfterScaleSteps scaleSteps interval theFragment =
+    MoveByScaleStepsAndAddInterval { transposedBy = interval, moveBySteps = scaleSteps }
+        |> addMovement theFragment
+
+
+addMovement : Fragment -> Movement -> Fragment
+addMovement (Fragment fragmentData) movement =
+    { fragmentData
+        | movements = fragmentData.movements ++ [ movement ]
+    }
+        |> Fragment
+
+
+
+-- Conversion to pitches
 
 
 toList : Melody -> List Pitch.Pitch
@@ -57,169 +161,81 @@ toList (Melody fragments) =
     List.concatMap fragmentToPitchList fragments
 
 
-fragmentToPitchList : MelodyFragment -> List Pitch.Pitch
-fragmentToPitchList (MelodyFragment { startingDegree, startingOctave, steps, chord, scale }) =
-    scaleStepper scale startingOctave startingDegree
-        |> generatePitchesFromStepper steps
+fragmentToPitchList : Fragment -> List Pitch.Pitch
+fragmentToPitchList (Fragment fragmentData) =
+    scaleStepper fragmentData.scaleAndChord fragmentData.start
+        |> (\stepper -> List.foldl addOutputPitchFromMovement stepper fragmentData.movements)
+        |> getOutputPitchesFromStepper
 
 
-
---
-
-
-type MelodyClass
-    = MelodyClass (List MelodyClassStep)
+getOutputPitchesFromStepper : ScaleStepper -> List Pitch.Pitch
+getOutputPitchesFromStepper (ScaleStepper zipper outputPitchList) =
+    outputPitchList
 
 
-melodyClass : List MelodyClassStep -> MelodyClass
-melodyClass steps =
-    MelodyClass steps
-
-
-type MelodyClassStep
-    = ToChordTone Interval.Interval
-    | ToNonChordTone Interval.Interval
-
-
-toChordToneWithGoalInterval : Interval.Interval -> MelodyClassStep
-toChordToneWithGoalInterval interval =
-    ToChordTone interval
-
-
-toNonChordToneWithGoalInterval : Interval.Interval -> MelodyClassStep
-toNonChordToneWithGoalInterval interval =
-    ToNonChordTone interval
-
-
-toMelodyClass : Melody -> MelodyClass
-toMelodyClass (Melody fragments) =
-    fragments
-        |> toChordAndPitch
-        |> toChordAndPitchTuples
-        |> List.map pitchToMelodyClassStep
-        |> MelodyClass
-
-
-toChordAndPitch : List MelodyFragment -> List ( Chord.Chord, Pitch.Pitch )
-toChordAndPitch fragments =
-    List.concatMap
-        (\frag ->
-            fragmentToPitchList frag
-                |> List.map (\pitch -> ( chordFromFragment frag, pitch ))
-        )
-        fragments
-
-
-toChordAndPitchTuples :
-    List ( Chord.Chord, Pitch.Pitch )
-    -> List ( ( Chord.Chord, Pitch.Pitch ), ( Chord.Chord, Pitch.Pitch ) )
-toChordAndPitchTuples chordAndPitches =
-    case chordAndPitches of
-        head :: tail ->
-            List.Extra.zip chordAndPitches tail
-
-        [] ->
-            []
-
-
-pitchToMelodyClassStep :
-    ( ( Chord.Chord, Pitch.Pitch ), ( Chord.Chord, Pitch.Pitch ) )
-    -> MelodyClassStep
-pitchToMelodyClassStep ( ( lastChord, lastPitch ), ( currentChord, currentPitch ) ) =
+addOutputPitchFromMovement : Movement -> ScaleStepper -> ScaleStepper
+addOutputPitchFromMovement motion ((ScaleStepper zipper outputPitchList) as stepper) =
     let
-        interval =
-            Pitch.intervalBetween lastPitch currentPitch
-    in
-    if Chord.containsPitchClass (Pitch.pitchClass currentPitch) currentChord then
-        ToChordTone interval
+        ( intervalForChromaticPitches, numberOfScaleSteps ) =
+            case motion of
+                MoveByScaleSteps int ->
+                    ( Interval.perfectUnison, int )
 
-    else
-        ToNonChordTone interval
+                MoveByScaleStepsAndAddInterval { moveBySteps, transposedBy } ->
+                    ( transposedBy, moveBySteps )
 
+                RepeatLastPitch ->
+                    ( Interval.perfectUnison, 0 )
 
+        timesToApply =
+            abs numberOfScaleSteps
+                |> (\val ->
+                        if val == 0 then
+                            1
 
---{ startingDegree : Int
---, startingOctave : Octave.Octave
---, steps : List Int
---, chord : Chord.Chord
---, scale : Scale.Scale
---}
+                        else
+                            val
+                   )
 
-
-
---
-
-
-type ScaleStepper
-    = ScaleStepper (Zipper Pitch.Pitch)
-
-
-scaleStepper : Scale.Scale -> Octave.Octave -> Int -> ScaleStepper
-scaleStepper scale startingOctave startingDegree =
-    let
-        pitch =
-            Scale.degree startingDegree scale
-                |> Pitch.fromPitchClass startingOctave
-
-        default : Zipper Pitch.Pitch
-        default =
-            List.Zipper.singleton pitch
-    in
-    Scale.toListThroughAllOctaves scale
-        |> List.Zipper.fromList
-        |> Maybe.andThen (List.Zipper.findFirst ((==) pitch))
-        |> Maybe.withDefault default
-        |> ScaleStepper
-
-
-generatePitchesFromStepper : List Int -> ScaleStepper -> List Pitch.Pitch
-generatePitchesFromStepper steps stepper =
-    List.foldl step ( stepper, [] ) steps
-        |> Tuple.second
-
-
-step : Int -> ( ScaleStepper, List Pitch.Pitch ) -> ( ScaleStepper, List Pitch.Pitch )
-step numberOfScaleSteps ( ScaleStepper zipper, list ) =
-    Util.Basic.applyNTimes
-        (abs numberOfScaleSteps
-            |> (\val ->
-                    if val == 0 then
-                        1
-
-                    else
-                        val
-               )
-        )
-        (traverseStep
-            (if numberOfScaleSteps == 0 then
+        maybeDirectionBool =
+            if numberOfScaleSteps == 0 then
                 Nothing
 
-             else if numberOfScaleSteps > 0 then
+            else if numberOfScaleSteps > 0 then
                 Just True
 
-             else
+            else
                 Just False
-            )
-        )
-        ( zipper, list )
-        |> (\( z, l ) ->
-                ( ScaleStepper z
-                , list
-                    ++ (l
-                            |> List.reverse
-                            |> List.head
-                            |> Maybe.map List.singleton
-                            |> Maybe.withDefault []
-                       )
-                )
-           )
+    in
+    case motion of
+        RepeatLastPitch ->
+            let
+                lastOutputPitch =
+                    outputPitchList
+                        |> List.reverse
+                        |> List.take 1
+            in
+            ScaleStepper zipper (outputPitchList ++ lastOutputPitch)
+
+        _ ->
+            Util.Basic.applyNTimes timesToApply (moveByOneScaleStep maybeDirectionBool) stepper
+                |> appendToOutputPitchList intervalForChromaticPitches
 
 
-traverseStep :
+appendToOutputPitchList : Interval.Interval -> ScaleStepper -> ScaleStepper
+appendToOutputPitchList interval ((ScaleStepper zipper outputPitchList) as stepper) =
+    let
+        newPitch =
+            currentStepperPitch stepper interval
+    in
+    ScaleStepper zipper (outputPitchList ++ [ newPitch ])
+
+
+moveByOneScaleStep :
     Maybe Bool
-    -> ( Zipper Pitch.Pitch, List Pitch.Pitch )
-    -> ( Zipper Pitch.Pitch, List Pitch.Pitch )
-traverseStep positiveNegativeOrZero ( zipper, list ) =
+    -> ScaleStepper
+    -> ScaleStepper
+moveByOneScaleStep positiveNegativeOrZero (ScaleStepper zipper outputPitchList) =
     (case positiveNegativeOrZero of
         Just True ->
             List.Zipper.next zipper
@@ -232,7 +248,69 @@ traverseStep positiveNegativeOrZero ( zipper, list ) =
     )
         |> Maybe.map
             (\resultZipper ->
-                ( resultZipper, list ++ [ List.Zipper.current resultZipper ] )
+                ScaleStepper resultZipper outputPitchList
             )
         |> Maybe.withDefault
-            ( zipper, list )
+            (ScaleStepper zipper outputPitchList)
+
+
+
+-- ScaleStepper
+
+
+type ScaleStepper
+    = ScaleStepper (Zipper StepperStep) (List Pitch.Pitch)
+
+
+type alias StepperStep =
+    { pitch : Pitch.Pitch
+    , isChordTone : Bool
+    }
+
+
+pitchToScaleStep : Chord.Chord -> Pitch.Pitch -> StepperStep
+pitchToScaleStep chord pitch =
+    { pitch = pitch
+    , isChordTone = Chord.containsPitchClass (Pitch.pitchClass pitch) chord
+    }
+
+
+stepperStepToPitch : StepperStep -> Interval.Interval -> Pitch.Pitch
+stepperStepToPitch theStep alterationForNonScaleTone =
+    theStep.pitch
+        |> Pitch.transposeUp alterationForNonScaleTone
+
+
+scaleStepper : ScaleAndChord -> Start -> ScaleStepper
+scaleStepper { scale, chord } start =
+    let
+        startingScalePitch =
+            Scale.degree start.scaleDegree scale
+                |> Pitch.fromPitchClass start.octave
+
+        currentStep : StepperStep
+        currentStep =
+            { pitch = startingScalePitch
+            , isChordTone = Chord.containsPitchClass (Pitch.pitchClass startingScalePitch) chord
+            }
+
+        stepperStepList =
+            Scale.toListThroughAllOctaves scale
+                |> List.map (pitchToScaleStep chord)
+
+        zipper =
+            stepperStepList
+                |> List.Zipper.fromList
+                |> Maybe.andThen (List.Zipper.findFirst (\s -> s.pitch == currentStep.pitch))
+                |> Maybe.withDefault (List.Zipper.singleton currentStep)
+
+        pitchOutputList =
+            [ stepperStepToPitch currentStep start.adjustByInterval ]
+    in
+    ScaleStepper zipper pitchOutputList
+
+
+currentStepperPitch : ScaleStepper -> Interval.Interval -> Pitch.Pitch
+currentStepperPitch (ScaleStepper zipper pitchOutputList) interval =
+    List.Zipper.current zipper
+        |> (\stepper -> stepperStepToPitch stepper interval)
