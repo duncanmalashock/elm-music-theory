@@ -10,7 +10,7 @@ import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
 import MusicTheory.Scale as Scale
 import MusicTheory.ScaleClass as ScaleClass
-import Test exposing (Test, describe, test)
+import Test exposing (Test, describe, skip, test)
 
 
 all : Test
@@ -26,14 +26,13 @@ all =
                                 ]
 
                             result =
-                                [ Melody.fragment
+                                Melody.fragment
                                     { startingDegree = ( 1, Octave.four )
                                     , scaleAndChord =
                                         { chord = Chord.chord PitchClass.c ChordClass.major
                                         , scale = Scale.scale PitchClass.c ScaleClass.major
                                         }
                                     }
-                                ]
                                     |> Melody.melody
                                     |> Melody.toList
                         in
@@ -47,7 +46,7 @@ all =
                                     ]
 
                                 result =
-                                    [ Melody.fragment
+                                    (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
                                             { chord = Chord.chord PitchClass.c ChordClass.major
@@ -55,7 +54,7 @@ all =
                                             }
                                         }
                                         |> Melody.startWithIntervalOffset Interval.augmentedUnison
-                                    ]
+                                    )
                                         |> Melody.melody
                                         |> Melody.toList
                             in
@@ -70,7 +69,7 @@ all =
                                     ]
 
                                 result =
-                                    [ Melody.fragment
+                                    (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
                                             { chord = Chord.chord PitchClass.c ChordClass.major
@@ -80,7 +79,7 @@ all =
                                         |> Melody.startWithIntervalOffset Interval.augmentedUnison
                                         |> Melody.moveByScaleSteps 0
                                         |> Melody.moveChromaticallyAfterScaleSteps 1 Interval.augmentedUnison
-                                    ]
+                                    )
                                         |> Melody.melody
                                         |> Melody.toList
                             in
@@ -97,7 +96,7 @@ all =
                                     ]
 
                                 result =
-                                    [ Melody.fragment
+                                    (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
                                             { chord = Chord.chord PitchClass.c ChordClass.major
@@ -106,7 +105,7 @@ all =
                                         }
                                         |> Melody.moveByScaleSteps 2
                                         |> Melody.moveByScaleSteps 2
-                                    ]
+                                    )
                                         |> Melody.melody
                                         |> Melody.toList
                             in
@@ -125,7 +124,7 @@ all =
                                     ]
 
                                 result =
-                                    [ Melody.fragment
+                                    (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
                                             { chord = Chord.chord PitchClass.c ChordClass.major
@@ -137,12 +136,34 @@ all =
                                         |> Melody.moveByScaleSteps 2
                                         |> Melody.repeatLastPitch
                                         |> Melody.moveChromaticallyFromCurrentScaleStep Interval.augmentedUnison
-                                    ]
+                                    )
                                         |> Melody.melody
                                         |> Melody.toList
                             in
                             Expect.equal expected result
                     ]
+                , skip <|
+                    describe "findMatchingTonesByStepDistance" <|
+                        [ test "should only find matching tones in the same direction as the interval given" <|
+                            \_ ->
+                                let
+                                    expected =
+                                        []
+
+                                    fragment =
+                                        Melody.fragment
+                                            { startingDegree = ( 1, Octave.four )
+                                            , scaleAndChord =
+                                                { scale = Scale.scale PitchClass.c ScaleClass.major
+                                                , chord = Chord.chord PitchClass.c ChordClass.major
+                                                }
+                                            }
+
+                                    result =
+                                        Melody.findMatchingTonesByStepDistance (always True) fragment Interval.minorSecond
+                                in
+                                Expect.equal expected result
+                        ]
                 ]
             ]
         ]

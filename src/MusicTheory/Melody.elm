@@ -1,19 +1,25 @@
 module MusicTheory.Melody exposing
     ( Fragment
+    , FragmentConfig
     , FragmentData
     , Melody
     , ScaleAndChord
     , ScaleStepper
+    , addFragment
+    , addFragments
     , chordFromFragment
     , currentStepperPitch
+    , findMatchingTonesByStepDistance
     , fragment
     , fragmentToPitchList
+    , fragmentToStepper
     , getFragments
     , melody
     , moveByScaleSteps
     , moveChromaticallyAfterScaleSteps
     , moveChromaticallyFromCurrentScaleStep
     , repeatLastPitch
+    , scaleAndChordFromFragment
     , scaleFromFragment
     , scaleStepper
     , startWithIntervalOffset
@@ -22,6 +28,7 @@ module MusicTheory.Melody exposing
     , toList
     )
 
+import List.Extra
 import List.Zipper exposing (Zipper)
 import MusicTheory.Chord as Chord
 import MusicTheory.Interval as Interval
@@ -36,44 +43,44 @@ import Util.Basic
 
 
 type Melody
-    = Melody (List Fragment)
+    = Melody Fragment (List Fragment)
 
 
-melody : List Fragment -> Melody
-melody fragments =
-    Melody fragments
+melody : Fragment -> Melody
+melody firstFragment =
+    Melody firstFragment []
+
+
+addFragment : Fragment -> Melody -> Melody
+addFragment newFragment (Melody firstFragment tail) =
+    Melody firstFragment (tail ++ [ newFragment ])
+
+
+addFragments : List Fragment -> Melody -> Melody
+addFragments newFragments (Melody firstFragment tail) =
+    Melody firstFragment (tail ++ newFragments)
 
 
 startsOnChordTone : Melody -> Bool
-startsOnChordTone (Melody fragments) =
-    case fragments of
-        firstFragment :: tail ->
-            fragmentToPitchList firstFragment
-                |> List.head
-                |> Maybe.map
-                    (\firstPitch ->
-                        Chord.containsPitchClass (Pitch.pitchClass firstPitch) (chordFromFragment firstFragment)
-                    )
-                |> Maybe.withDefault False
-
-        [] ->
-            False
+startsOnChordTone (Melody firstFragment fragments) =
+    fragmentToPitchList firstFragment
+        |> List.head
+        |> Maybe.map
+            (\firstPitch ->
+                Chord.containsPitchClass (Pitch.pitchClass firstPitch) (chordFromFragment firstFragment)
+            )
+        |> Maybe.withDefault False
 
 
 startsOnScaleTone : Melody -> Bool
-startsOnScaleTone (Melody fragments) =
-    case fragments of
-        firstFragment :: tail ->
-            fragmentToPitchList firstFragment
-                |> List.head
-                |> Maybe.map
-                    (\firstPitch ->
-                        Scale.containsPitchClass (Pitch.pitchClass firstPitch) (scaleFromFragment firstFragment)
-                    )
-                |> Maybe.withDefault False
-
-        [] ->
-            False
+startsOnScaleTone (Melody firstFragment fragments) =
+    fragmentToPitchList firstFragment
+        |> List.head
+        |> Maybe.map
+            (\firstPitch ->
+                Scale.containsPitchClass (Pitch.pitchClass firstPitch) (scaleFromFragment firstFragment)
+            )
+        |> Maybe.withDefault False
 
 
 
@@ -145,9 +152,14 @@ scaleFromFragment (Fragment fragmentData) =
     fragmentData.scaleAndChord.scale
 
 
+scaleAndChordFromFragment : Fragment -> ScaleAndChord
+scaleAndChordFromFragment (Fragment fragmentData) =
+    fragmentData.scaleAndChord
+
+
 getFragments : Melody -> List Fragment
-getFragments (Melody fragments) =
-    fragments
+getFragments (Melody firstFragment fragments) =
+    firstFragment :: fragments
 
 
 
@@ -197,15 +209,91 @@ addMovement (Fragment fragmentData) movement =
 
 
 toList : Melody -> List Pitch.Pitch
-toList (Melody fragments) =
-    List.concatMap fragmentToPitchList fragments
+toList (Melody firstFragment fragments) =
+    List.concatMap fragmentToPitchList (firstFragment :: fragments)
 
 
 fragmentToPitchList : Fragment -> List Pitch.Pitch
-fragmentToPitchList (Fragment fragmentData) =
+fragmentToPitchList theFragment =
+    fragmentToStepper theFragment
+        |> getOutputPitchesFromStepper
+
+
+fragmentToStepper : Fragment -> ScaleStepper
+fragmentToStepper (Fragment fragmentData) =
     scaleStepper fragmentData.scaleAndChord fragmentData.start
         |> (\stepper -> List.foldl addOutputPitchFromMovement stepper fragmentData.movements)
-        |> getOutputPitchesFromStepper
+
+
+findMatchingTonesByStepDistance : (StepperStep -> Bool) -> Fragment -> Interval.Interval -> List Int
+findMatchingTonesByStepDistance isMatchingTone ((Fragment fragmentData) as theFragment) goalInterval =
+    let
+        maxIntervalSemitoneDeviation =
+            2
+
+        intervalSemitoneDeviation theCurrentPitch candidatePitch =
+            let
+                semitoneDistanceFromCurrentToCandidate =
+                    Interval.semitones (Pitch.intervalBetween theCurrentPitch candidatePitch)
+
+                semitoneDistanceInGoalInterval =
+                    Interval.semitones goalInterval
+            in
+            (semitoneDistanceFromCurrentToCandidate - semitoneDistanceInGoalInterval)
+                |> abs
+    in
+    fragmentToStepper theFragment
+        |> (\((ScaleStepper zipper outputPitchList) as stepper) ->
+                let
+                    currentPitch =
+                        currentStepperPitch stepper Interval.perfectUnison
+
+                    indicesAfter =
+                        zipper
+                            |> List.Zipper.after
+                            |> List.Extra.findIndices
+                                (\candidate ->
+                                    isMatchingTone candidate
+                                        && (intervalSemitoneDeviation currentPitch candidate.pitch
+                                                <= maxIntervalSemitoneDeviation
+                                           )
+                                )
+                            |> List.map ((+) 1)
+
+                    indicesBefore =
+                        zipper
+                            |> List.Zipper.before
+                            |> List.reverse
+                            |> List.Extra.findIndices
+                                (\candidate ->
+                                    isMatchingTone candidate
+                                        && (intervalSemitoneDeviation currentPitch candidate.pitch
+                                                <= maxIntervalSemitoneDeviation
+                                           )
+                                )
+                            |> List.map ((+) 1)
+                            |> List.map ((*) -1)
+
+                    currentIndex =
+                        zipper
+                            |> List.Zipper.current
+                            |> (\candidate ->
+                                    if
+                                        isMatchingTone candidate
+                                            && (intervalSemitoneDeviation currentPitch candidate.pitch
+                                                    <= maxIntervalSemitoneDeviation
+                                               )
+                                    then
+                                        [ 0 ]
+
+                                    else
+                                        []
+                               )
+                in
+                indicesBefore
+                    ++ indicesAfter
+                    ++ currentIndex
+           )
 
 
 getOutputPitchesFromStepper : ScaleStepper -> List Pitch.Pitch

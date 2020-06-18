@@ -1,5 +1,7 @@
 module MusicTheory.MelodyClass exposing
-    ( fromMelody
+    ( config
+    , fromMelody
+    , generateMelodies
     , melodyClass
     , startOnChordTone
     , startOnNonChordTone
@@ -14,10 +16,9 @@ module MusicTheory.MelodyClass exposing
 import List.Extra
 import MusicTheory.Chord as Chord
 import MusicTheory.Interval as Interval
-import MusicTheory.Melody as Melody exposing (Fragment, Melody)
+import MusicTheory.Melody as Melody exposing (Melody)
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
-import MusicTheory.PitchClass as PitchClass
 import MusicTheory.Scale as Scale
 import Util.ConstraintSolver as ConstraintSolver
 
@@ -27,20 +28,35 @@ type MelodyClass
 
 
 melodyClass : Start -> List Movement -> MelodyClass
-melodyClass start steps =
-    MelodyClass start steps
+melodyClass start theMovements =
+    MelodyClass start theMovements
 
 
-type Movement
-    = ToChordTone Interval.Interval
-    | ToNonChordTone Interval.Interval
-    | ToNonScaleTone Interval.Interval
+getStart : MelodyClass -> Start
+getStart (MelodyClass theStart _) =
+    theStart
+
+
+length : MelodyClass -> Int
+length (MelodyClass start theMovements) =
+    List.length theMovements + 1
+
+
+movements : MelodyClass -> List Movement
+movements (MelodyClass _ theMovements) =
+    theMovements
 
 
 type Start
     = StartOnChordTone
     | StartOnNonChordTone
     | StartOnNonScaleTone
+
+
+type Movement
+    = ToChordTone Interval.Interval
+    | ToNonChordTone Interval.Interval
+    | ToNonScaleTone Interval.Interval
 
 
 startOnChordTone : Start
@@ -147,301 +163,269 @@ harmonicContextToMovement ( last, current ) =
 
 
 
---type alias Config =
---    { melodyClass : MelodyClass
---    , scalesAndChords : List (Melody.ScaleAndChord )
---    }
---
---
---type alias ConfigInput =
---    { melodyClass : MelodyClass
---    , scalesAndChords : List ( Int, Melody.ScaleAndChord )
---    }
---
---
---init : ConfigInput -> Config
---init input =
---    { melodyClass = input.melodyClass
---    , scalesAndChords = input.scalesAndChords
---    }
---
---
---generate : Config -> List Melody
---generate theConfig =
---    case theConfig.scalesAndChords of
---        ( int, scaleAndChord ) :: tail ->
---            let
---                temporaryScaleStepper =
---                    Melody.scaleStepper scaleAndChord Octave.four 0
---            in
---            ConstraintSolver.solve
---                { problemSetup =
---                    { melodyClass = theConfig.melodyClass
---                    , scaleAndChords = theConfig.scalesAndChords
---                    , scaleStepper = temporaryScaleStepper
---                    , fragments = []
---                    }
---                , getNextSetups = addStep
---                , constraints = [ validateSetup ]
---                , setupToSolution = finalizeMelody
---                }
---                |> .solved
---
---        [] ->
---            []
---
---
---type alias ProblemSetup =
---    { melodyClass : MelodyClass
---    , scaleAndChords : List ( Int, Melody.ScaleAndChord )
---    , scaleStepper : Melody.ScaleStepper
---    , fragments : List Melody.MelodyFragmentData
---    }
---
---
---newStartingDegreesAndOctavesForFragmentWithCurrentPitch :
---    Pitch.Pitch
---    -> MelodyClassStep
---    -> Melody.ScaleAndChord
---    -> List ( Int, Octave.Octave )
---newStartingDegreesAndOctavesForFragmentWithCurrentPitch lastPitch stepToTake scaleAndChord =
---    -- TODO: possible starting degrees and octaves for a new fragment, starting at a current pitch
---    [ ( 0, Octave.four ) ]
---
---
---newStartingDegreesAndOctavesForFragmentWithNoCurrentPitch :
---    MelodyClassStep
---    -> Melody.ScaleAndChord
---    -> List ( Int, Octave.Octave )
---newStartingDegreesAndOctavesForFragmentWithNoCurrentPitch stepToTake scaleAndChord =
---    -- TODO: possible starting degrees and octaves for a new fragment, starting from no first pitch
---    [ ( 0, Octave.four ) ]
---
---
---scaleAndChordToString : Melody.ScaleAndChord -> String
---scaleAndChordToString { scale, chord } =
---    Chord.toPitchClasses chord
---        |> List.reverse
---        |> List.map PitchClass.toString
---        |> String.join " "
---
---
---addStep : ProblemSetup -> List ProblemSetup
---addStep setup =
---    case ( setup.scaleAndChords, melodyClassSteps setup.melodyClass ) of
---        ( ( scaleAndChordCount, scaleAndChordHead ) :: scaleAndChordTail, stepHead :: stepTail ) ->
---            -- scaleAndChords and melodyClass steps are both non-empty
---            case setup.fragments of
---                fragmentsHead :: fragmentsTail ->
---                    -- there is a first output fragment that we may be able to continue
---                    if fragmentsHead.scaleAndChord == scaleAndChordHead then
---                        -- the first output fragment's scaleAndChord matches
---                        -- our current scaleAndChord and we can add a step to it
---                        let
---                            _ =
---                                Debug.log "continue current output fragment" (scaleAndChordToString fragmentsHead.scaleAndChord)
---                        in
---                        continueCurrentFragment
---                            ( fragmentsHead, fragmentsTail )
---                            setup.scaleStepper
---                            ( stepHead, stepTail )
---                            scaleAndChordCount
---                            ( scaleAndChordHead, scaleAndChordTail )
---
---                    else
---                        -- the first output fragment's scaleAndChord doesn't
---                        -- match our current scaleAndChord. we create a list of
---                        -- new fragments from possible next starting pitches.
---                        let
---                            _ =
---                                Debug.log "start output fragment with new scaleAndChord" (scaleAndChordToString fragmentsHead.scaleAndChord)
---
---                            startingDegreesAndOctaves =
---                                -- TODO: this needs parameters for a pitch range
---                                newStartingDegreesAndOctavesForFragmentWithCurrentPitch
---                                    (Melody.currentStepperPitch setup.scaleStepper)
---                                    stepHead
---                                    scaleAndChordHead
---                        in
---                        startingDegreesAndOctaves
---                            |> List.concatMap
---                                (\( startingDegree, startingOctave ) ->
---                                    beginNewFragment
---                                        startingDegree
---                                        startingOctave
---                                        setup.fragments
---                                        stepTail
---                                        scaleAndChordCount
---                                        ( scaleAndChordHead, scaleAndChordTail )
---                                )
---
---                [] ->
---                    -- there is no first output fragment. we need to start it,
---                    -- and we have no current pitch to refer to.
---                    let
---                        _ =
---                            Debug.log "start first output fragment" (scaleAndChordToString scaleAndChordHead)
---
---                        startingDegreesAndOctaves =
---                            -- TODO: this needs parameters for a pitch range
---                            newStartingDegreesAndOctavesForFragmentWithNoCurrentPitch
---                                stepHead
---                                scaleAndChordHead
---                    in
---                    startingDegreesAndOctaves
---                        |> List.concatMap
---                            (\( startingDegree, startingOctave ) ->
---                                beginFirstFragment
---                                    startingDegree
---                                    startingOctave
---                                    setup.fragments
---                                    ( stepHead, stepTail )
---                                    scaleAndChordCount
---                                    ( scaleAndChordHead, scaleAndChordTail )
---                            )
---
---        _ ->
---            -- either scaleAndChords or melodyClass steps (or both) are empty.
---            -- we need both in order to add a step, so we have to stop here.
---            []
---
---
---beginFirstFragment :
---    Int
---    -> Octave.Octave
---    -> List Melody.MelodyFragmentData
---    -> ( MelodyClassStep, List MelodyClassStep )
---    -> Int
---    -> ( Melody.ScaleAndChord, List ( Int, Melody.ScaleAndChord ) )
---    -> List ProblemSetup
---beginFirstFragment startingStep startingOctave fragments ( stepHead, stepTail ) scaleAndChordCount ( scaleAndChordHead, scaleAndChordTail ) =
---    [ { melodyClass =
---            melodyClass StartOnChordTone (stepHead :: stepTail)
---      , scaleStepper =
---            Melody.scaleStepper
---                scaleAndChordHead
---                startingOctave
---                startingStep
---      , scaleAndChords =
---            ( scaleAndChordCount
---            , scaleAndChordHead
---            )
---                :: scaleAndChordTail
---      , fragments =
---            { startingStep = startingStep
---            , startingOctave = startingOctave
---            , steps = [ 0 ]
---            , scaleAndChord = scaleAndChordHead
---            }
---                :: fragments
---      }
---    ]
---
---
---beginNewFragment :
---    Int
---    -> Octave.Octave
---    -> List Melody.MelodyFragmentData
---    -> List MelodyClassStep
---    -> Int
---    -> ( Melody.ScaleAndChord, List ( Int, Melody.ScaleAndChord ) )
---    -> List ProblemSetup
---beginNewFragment startingStep startingOctave fragments stepTail scaleAndChordCount ( scaleAndChordHead, scaleAndChordTail ) =
---    [ { melodyClass =
---            melodyClass StartOnChordTone stepTail
---      , scaleStepper =
---            Melody.scaleStepper
---                scaleAndChordHead
---                startingOctave
---                startingStep
---      , scaleAndChords =
---            decrementScaleAndChords
---                scaleAndChordCount
---                scaleAndChordHead
---                scaleAndChordTail
---      , fragments =
---            { startingStep = startingStep
---            , startingOctave = startingOctave
---            , steps = [ 0 ]
---            , scaleAndChord = scaleAndChordHead
---            }
---                :: fragments
---      }
---    ]
---
---
---continueCurrentFragment :
---    ( Melody.MelodyFragmentData, List Melody.MelodyFragmentData )
---    -> Melody.ScaleStepper
---    -> ( MelodyClassStep, List MelodyClassStep )
---    -> Int
---    -> ( Melody.ScaleAndChord, List ( Int, Melody.ScaleAndChord ) )
---    -> List ProblemSetup
---continueCurrentFragment ( fragmentsHead, fragmentsTail ) currentScaleStepper ( stepHead, stepTail ) scaleAndChordCount ( scaleAndChordHead, scaleAndChordTail ) =
---    [ { melodyClass =
---            melodyClass StartOnChordTone stepTail
---      , scaleAndChords =
---            decrementScaleAndChords
---                scaleAndChordCount
---                scaleAndChordHead
---                scaleAndChordTail
---      , scaleStepper = currentScaleStepper
---      , fragments =
---            { fragmentsHead
---                | steps =
---                    -- TODO: determine which steps will land on chord- and non-chord- tones
---                    fragmentsHead.steps
---                        ++ (case stepHead of
---                                ToChordTone interval ->
---                                    [ 1 ]
---
---                                ToNonChordTone interval ->
---                                    [ -1 ]
---
---                                ToNonScaleTone interval ->
---                                    [ -2 ]
---                           )
---            }
---                :: fragmentsTail
---      }
---    ]
---
---
---decrementScaleAndChords :
---    Int
---    -> Melody.ScaleAndChord
---    -> List ( Int, Melody.ScaleAndChord )
---    -> List ( Int, Melody.ScaleAndChord )
---decrementScaleAndChords scaleAndChordCount scaleAndChordHead scaleAndChordTail =
---    let
---        _ =
---            Debug.log "scaleAndChord"
---                ( ( scaleAndChordCount, scaleAndChordToString scaleAndChordHead )
---                , List.length scaleAndChordTail
---                )
---    in
---    if scaleAndChordCount == 1 then
---        scaleAndChordTail
---
---    else
---        ( scaleAndChordCount - 1, scaleAndChordHead ) :: scaleAndChordTail
---
---
---validateSetup : ProblemSetup -> Result String ProblemSetup
---validateSetup setup =
---    -- TODO: melody should move in correct direction for each step
---    -- TODO: melody should move correctly to chord or scale tone for each step
---    Ok setup
---
---
---finalizeMelody : ProblemSetup -> Result String Melody
---finalizeMelody setup =
---    -- TODO: melody should have correct length
---    List.map Melody.fragment setup.fragments
---        |> List.reverse
---        |> Melody.melody
---        |> Ok
---
---
---
-----
+-- Generating melodies
+
+
+type alias Config =
+    { melodyClass : MelodyClass
+    , scalesAndChords : ( Melody.ScaleAndChord, List Melody.ScaleAndChord )
+    }
+
+
+type alias ConfigInput =
+    { melodyClass : MelodyClass
+    , scalesAndChords : ( Melody.ScaleAndChord, List ( Int, Melody.ScaleAndChord ) )
+    }
+
+
+config : ConfigInput -> Config
+config input =
+    { melodyClass = input.melodyClass
+    , scalesAndChords =
+        case input.scalesAndChords of
+            ( firstScaleAndChord, rest ) ->
+                ( firstScaleAndChord
+                , List.concatMap
+                    (\( number, scaleAndChord ) ->
+                        List.repeat number scaleAndChord
+                    )
+                    rest
+                )
+    }
+
+
+generateMelodies : Config -> List Melody
+generateMelodies theConfig =
+    List.map
+        (\setup ->
+            { problemSetup = setup
+            , getNextSetups = getNextSetups
+            , constraints = solverConstraints theConfig
+            , setupToSolution = setupToSolution
+            }
+        )
+        (configToProblemSetups theConfig)
+        |> List.concatMap (ConstraintSolver.solve >> .solved)
+
+
+configToProblemSetups : Config -> List ProblemSetup
+configToProblemSetups theConfig =
+    case theConfig.scalesAndChords of
+        ( first, rest ) ->
+            List.map
+                (\fragments ->
+                    { fragments = ( fragments, [] )
+                    , remainingMovementsToProcess =
+                        List.map2
+                            Tuple.pair
+                            (movements theConfig.melodyClass)
+                            rest
+                    , totalPitchesGoal = length theConfig.melodyClass
+                    }
+                )
+                (startFragments (getStart theConfig.melodyClass) first)
+
+
+type alias ProblemSetup =
+    { fragments : ( Melody.Fragment, List Melody.Fragment )
+    , remainingMovementsToProcess : List ( Movement, Melody.ScaleAndChord )
+    , totalPitchesGoal : Int
+    }
+
+
+startFragments : Start -> Melody.ScaleAndChord -> List Melody.Fragment
+startFragments theStart scaleAndChord =
+    degreesForStart theStart scaleAndChord
+        |> List.map
+            (\degree ->
+                Melody.fragment
+                    { startingDegree = ( degree, Octave.four )
+                    , scaleAndChord = scaleAndChord
+                    }
+            )
+
+
+degreesForStart : Start -> Melody.ScaleAndChord -> List Int
+degreesForStart theStart { scale, chord } =
+    let
+        chordDegrees =
+            Scale.toList scale
+                |> List.indexedMap
+                    (\index degree ->
+                        if Chord.containsPitchClass degree chord then
+                            Just <| index + 1
+
+                        else
+                            Nothing
+                    )
+                |> List.filterMap identity
+
+        scaleDegrees =
+            Scale.toList scale
+                |> List.indexedMap
+                    (\index degree ->
+                        if Chord.containsPitchClass degree chord then
+                            Nothing
+
+                        else
+                            Just <| index + 1
+                    )
+                |> List.filterMap identity
+    in
+    case theStart of
+        StartOnChordTone ->
+            chordDegrees
+
+        StartOnNonChordTone ->
+            scaleDegrees
+
+        StartOnNonScaleTone ->
+            []
+
+
+getNextSetups : ProblemSetup -> List ProblemSetup
+getNextSetups theProblemSetup =
+    let
+        newProblemSetup remainingMovements newFragment =
+            { theProblemSetup
+                | fragments =
+                    case theProblemSetup.fragments of
+                        ( first, rest ) ->
+                            ( first, rest ++ [ newFragment ] )
+                , remainingMovementsToProcess = remainingMovements
+            }
+    in
+    case theProblemSetup.remainingMovementsToProcess of
+        [] ->
+            []
+
+        ( firstMovement, firstChordAndScale ) :: tail ->
+            if Melody.scaleAndChordFromFragment (currentFragment theProblemSetup) == firstChordAndScale then
+                -- append to the current fragment
+                let
+                    theCurrentFragment =
+                        currentFragment theProblemSetup
+                in
+                case firstMovement of
+                    ToChordTone interval ->
+                        Melody.findMatchingTonesByStepDistance .isChordTone theCurrentFragment interval
+                            |> List.map
+                                (\scaleSteps ->
+                                    updateCurrentFragment theProblemSetup
+                                        tail
+                                        (theCurrentFragment
+                                            |> Melody.moveByScaleSteps scaleSteps
+                                        )
+                                )
+
+                    ToNonChordTone interval ->
+                        Melody.findMatchingTonesByStepDistance (.isChordTone >> not) theCurrentFragment interval
+                            |> List.map
+                                (\scaleSteps ->
+                                    updateCurrentFragment theProblemSetup
+                                        tail
+                                        (theCurrentFragment
+                                            |> Melody.moveByScaleSteps scaleSteps
+                                        )
+                                )
+
+                    ToNonScaleTone interval ->
+                        --scaleStepsToNonScaleTones
+                        []
+                            |> List.map
+                                (\scaleSteps ->
+                                    updateCurrentFragment theProblemSetup
+                                        tail
+                                        (theCurrentFragment
+                                            |> Melody.moveByScaleSteps scaleSteps
+                                        )
+                                )
+
+            else
+                -- create a new fragment
+                case firstMovement of
+                    ToChordTone interval ->
+                        startFragments StartOnChordTone firstChordAndScale
+                            |> List.map (newProblemSetup tail)
+
+                    ToNonChordTone interval ->
+                        startFragments StartOnNonChordTone firstChordAndScale
+                            |> List.map (newProblemSetup tail)
+
+                    ToNonScaleTone interval ->
+                        startFragments StartOnNonScaleTone firstChordAndScale
+                            |> List.map (newProblemSetup tail)
+
+
+currentFragment : ProblemSetup -> Melody.Fragment
+currentFragment { fragments } =
+    case fragments of
+        ( firstFragment, [] ) ->
+            firstFragment
+
+        ( firstFragment, rest ) ->
+            List.reverse rest
+                |> List.head
+                |> Maybe.withDefault firstFragment
+
+
+updateCurrentFragment : ProblemSetup -> List ( Movement, Melody.ScaleAndChord ) -> Melody.Fragment -> ProblemSetup
+updateCurrentFragment ({ fragments } as theSetup) remainingMovements newFragment =
+    case fragments of
+        ( firstFragment, [] ) ->
+            { theSetup
+                | fragments = ( newFragment, [] )
+                , remainingMovementsToProcess = remainingMovements
+            }
+
+        ( firstFragment, rest ) ->
+            { theSetup
+                | fragments =
+                    ( firstFragment
+                    , List.reverse rest
+                        |> (\theRest ->
+                                case theRest of
+                                    head :: tail ->
+                                        newFragment :: tail
+
+                                    [] ->
+                                        []
+                           )
+                        |> List.reverse
+                    )
+                , remainingMovementsToProcess = remainingMovements
+            }
+
+
+solverConstraints : Config -> List (ProblemSetup -> Result String ProblemSetup)
+solverConstraints theConfig =
+    [ Ok
+    ]
+
+
+setupToSolution : ProblemSetup -> Result String Melody
+setupToSolution setup =
+    let
+        melody =
+            case setup.fragments of
+                ( first, rest ) ->
+                    Melody.melody first
+                        |> Melody.addFragments rest
+
+        numberOfPitches =
+            Melody.toList melody
+                |> List.length
+
+        hasCorrectNumberOfPitches =
+            numberOfPitches == setup.totalPitchesGoal
+    in
+    if hasCorrectNumberOfPitches then
+        Ok melody
+
+    else
+        Err
+            ("expected "
+                ++ String.fromInt setup.totalPitchesGoal
+                ++ " pitches in output, but got "
+                ++ String.fromInt numberOfPitches
+            )
