@@ -38,6 +38,7 @@ import MusicTheory.Chord as Chord
 import MusicTheory.Interval as Interval
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
+import MusicTheory.Voicing.Part as Part
 import Util.Basic
 
 
@@ -56,6 +57,30 @@ type alias Pitches =
     , voiceThree : Pitch.Pitch
     , voiceFour : Pitch.Pitch
     }
+
+
+getVoices : List (Voicing -> Pitch.Pitch)
+getVoices =
+    [ toPitches >> .voiceOne
+    , toPitches >> .voiceTwo
+    , toPitches >> .voiceThree
+    , toPitches >> .voiceFour
+    ]
+
+
+forEachPitch : Voicing -> Voicing -> (Pitch.Pitch -> Pitch.Pitch -> a) -> List a
+forEachPitch voicingA voicingB fn =
+    getVoices
+        |> List.map
+            (\getPitch ->
+                ( getPitch voicingA, getPitch voicingB )
+            )
+        |> List.map (\( a, b ) -> fn a b)
+
+
+forPitch : Voicing -> Voicing -> (Pitches -> Pitch.Pitch) -> (Pitch.Pitch -> Pitch.Pitch -> a) -> a
+forPitch voicingA voicingB getPitch fn =
+    fn (getPitch (toPitches voicingA)) (getPitch (toPitches voicingB))
 
 
 type alias VoicingClass =
@@ -233,23 +258,8 @@ execute theChord (Config theConfig) =
 
 commonTones : Voicing -> Voicing -> Int
 commonTones voicingA voicingB =
-    let
-        pitchesA =
-            toPitches voicingA
-
-        pitchesB =
-            toPitches voicingB
-
-        areCommonTones =
-            [ pitchesA.voiceOne == pitchesB.voiceOne
-            , pitchesA.voiceTwo == pitchesB.voiceTwo
-            , pitchesA.voiceThree == pitchesB.voiceThree
-            , pitchesA.voiceFour == pitchesB.voiceFour
-            ]
-    in
-    areCommonTones
-        |> List.filter identity
-        |> List.length
+    forEachPitch voicingA voicingB Part.commonTones
+        |> List.sum
 
 
 compareByCommonTones :
@@ -262,40 +272,13 @@ compareByCommonTones from =
 
 totalSemitoneDistance : Voicing -> Voicing -> Int
 totalSemitoneDistance voicingA voicingB =
-    let
-        pitchesA =
-            toPitches voicingA
-
-        pitchesB =
-            toPitches voicingB
-
-        semitoneDistance a b =
-            abs (Pitch.semitones a - Pitch.semitones b)
-
-        semitoneDistances =
-            [ semitoneDistance pitchesA.voiceOne pitchesB.voiceOne
-            , semitoneDistance pitchesA.voiceTwo pitchesB.voiceTwo
-            , semitoneDistance pitchesA.voiceThree pitchesB.voiceThree
-            , semitoneDistance pitchesA.voiceFour pitchesB.voiceFour
-            ]
-    in
-    semitoneDistances
+    forEachPitch voicingA voicingB Part.semitoneDistance
         |> List.sum
 
 
 voiceSemitoneDistance : (Pitches -> Pitch.Pitch) -> Voicing -> Voicing -> Int
 voiceSemitoneDistance getter voicingA voicingB =
-    let
-        pitchesA =
-            toPitches voicingA
-
-        pitchesB =
-            toPitches voicingB
-
-        semitoneDistance a b =
-            abs (Pitch.semitones a - Pitch.semitones b)
-    in
-    semitoneDistance (getter pitchesA) (getter pitchesB)
+    forPitch voicingA voicingB getter Part.semitoneDistance
 
 
 compareByVoiceSemitoneDistance :
@@ -304,7 +287,9 @@ compareByVoiceSemitoneDistance :
     -> (Voicing -> Voicing -> Order)
 compareByVoiceSemitoneDistance getter from =
     \a b ->
-        compare (voiceSemitoneDistance getter from a) (voiceSemitoneDistance getter from b)
+        compare
+            (voiceSemitoneDistance getter from a)
+            (voiceSemitoneDistance getter from b)
 
 
 compareByParallelOctave :
@@ -334,31 +319,19 @@ compareBySemitoneDistance from =
         compare (totalSemitoneDistance from a) (totalSemitoneDistance from b)
 
 
+compareParts : Voicing -> Voicing -> (Pitches -> Pitch.Pitch) -> (Pitches -> Pitch.Pitch) -> Part.CompareParts
+compareParts voicingA voicingB getPartA getPartB =
+    Part.compareParts
+        voicingA
+        voicingB
+        (toPitches >> getPartA)
+        (toPitches >> getPartB)
+
+
 usesContraryMotion : Voicing -> Voicing -> Bool
 usesContraryMotion voicingA voicingB =
-    let
-        pitchesA =
-            toPitches voicingA
-
-        pitchesB =
-            toPitches voicingB
-
-        positiveSemitoneDistance : Pitch.Pitch -> Pitch.Pitch -> Maybe Bool
-        positiveSemitoneDistance a b =
-            if (Pitch.semitones a - Pitch.semitones b) == 0 then
-                Nothing
-
-            else if (Pitch.semitones a - Pitch.semitones b) > 0 then
-                Just False
-
-            else
-                Just True
-    in
-    Maybe.map2
-        (/=)
-        (positiveSemitoneDistance pitchesA.voiceFour pitchesB.voiceFour)
-        (positiveSemitoneDistance pitchesA.voiceThree pitchesB.voiceThree)
-        |> Maybe.withDefault False
+    compareParts voicingA voicingB .voiceThree .voiceFour
+        |> Part.usesContraryMotion
 
 
 compareByContraryMotion :
