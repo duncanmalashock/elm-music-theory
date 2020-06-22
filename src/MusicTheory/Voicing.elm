@@ -1,23 +1,153 @@
 module MusicTheory.Voicing exposing
-    ( commonTones
+    ( Config
+    , TechniqueInput
+    , Voicing
+    , chord
+    , commonTones
     , compareByCommonTones
     , compareByContraryMotion
     , compareByParallelOctave
     , compareByTotalSemitoneDistance
     , compareByVoiceSemitoneDistance
+    , config
     , containsParallelFifths
     , containsParallelOctaves
     , containsPitch
+    , execute
+    , root
     , semitoneDistance
+    , toString
     , totalSemitoneDistance
     , usesContraryMotion
+    , voicing
+    , voicingClass
+    , withFilter
+    , withSort
+    , withinRanges
     )
 
+import List.Extra
+import MusicTheory.Chord as Chord
 import MusicTheory.Interval as Interval
+import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 
 
-usesContraryMotion : (voicing -> Pitch.Pitch) -> (voicing -> Pitch.Pitch) -> voicing -> voicing -> Bool
+type Voicing voicingClass
+    = Voicing Chord.Chord Octave.Octave voicingClass
+
+
+voicing : Chord.Chord -> Octave.Octave -> voicingClass -> Voicing voicingClass
+voicing ch theOctave vc =
+    Voicing ch theOctave vc
+
+
+chord : Voicing voicingClass -> Chord.Chord
+chord (Voicing ch theOctave vc) =
+    ch
+
+
+root : Voicing voicingClass -> Pitch.Pitch
+root (Voicing ch theOctave vc) =
+    Chord.root ch
+        |> Pitch.fromPitchClass theOctave
+
+
+voicingClass : Voicing voicingClass -> voicingClass
+voicingClass (Voicing ch theOctave vc) =
+    vc
+
+
+
+-- Generating voicings
+
+
+type alias ConfigInput voicingClass ranges =
+    { ranges : ranges
+    , techniques : List (TechniqueInput ranges -> List (Voicing voicingClass))
+    }
+
+
+type Config voicingClass ranges
+    = Config
+        { ranges : ranges
+        , techniques : List (TechniqueInput ranges -> List (Voicing voicingClass))
+        , filter : List (Voicing voicingClass -> Bool)
+        , sort : Voicing voicingClass -> Voicing voicingClass -> Order
+        }
+
+
+type alias TechniqueInput ranges =
+    { ranges : ranges
+    , chord : Chord.Chord
+    }
+
+
+withinRanges : List (Voicing voicingClass -> Pitch.Pitch) -> List (ranges -> Pitch.Range) -> ranges -> Voicing voicingClass -> Bool
+withinRanges allVoices allRanges ranges theVoicing =
+    List.map2
+        (\voice range ->
+            Pitch.isWithin range voice
+        )
+        (List.map (\fn -> fn theVoicing) allVoices)
+        (List.map (\fn -> fn ranges) allRanges)
+        |> List.all identity
+
+
+config : ConfigInput voicingClass ranges -> Config voicingClass ranges
+config { ranges, techniques } =
+    Config
+        { ranges = ranges
+        , techniques = techniques
+        , filter = []
+        , sort = \a b -> EQ
+        }
+
+
+withFilter : (Voicing voicingClass -> Bool) -> Config voicingClass ranges -> Config voicingClass ranges
+withFilter filterFn (Config theConfig) =
+    Config
+        { theConfig
+            | filter = theConfig.filter ++ [ filterFn ]
+        }
+
+
+withSort :
+    (Voicing voicingClass
+     -> Voicing voicingClass
+     -> Order
+    )
+    -> Config voicingClass ranges
+    -> Config voicingClass ranges
+withSort sortFn (Config theConfig) =
+    Config
+        { theConfig
+            | sort = sortFn
+        }
+
+
+execute : List (Voicing voicingClass -> Pitch.Pitch) -> Chord.Chord -> Config voicingClass ranges -> List (Voicing voicingClass)
+execute allVoices theChord (Config theConfig) =
+    theConfig.techniques
+        |> List.concatMap
+            (\technique ->
+                technique
+                    { ranges = theConfig.ranges
+                    , chord = theChord
+                    }
+            )
+        |> (\candidates ->
+                List.foldl List.filter candidates theConfig.filter
+           )
+        |> List.Extra.uniqueBy (toString allVoices)
+        |> List.sortWith theConfig.sort
+
+
+
+-- Comparisons & predicates
+
+
+usesContraryMotion : (Voicing voicingClass -> Pitch.Pitch) -> (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> Bool
 usesContraryMotion getVoiceOne getVoiceTwo voicingA voicingB =
     Maybe.map2
         (/=)
@@ -26,7 +156,7 @@ usesContraryMotion getVoiceOne getVoiceTwo voicingA voicingB =
         |> Maybe.withDefault False
 
 
-compareByContraryMotion : (voicing -> Pitch.Pitch) -> (voicing -> Pitch.Pitch) -> voicing -> (voicing -> voicing -> Order)
+compareByContraryMotion : (Voicing voicingClass -> Pitch.Pitch) -> (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> (Voicing voicingClass -> Voicing voicingClass -> Order)
 compareByContraryMotion getVoiceOne getVoiceTwo from =
     let
         boolToInt bool =
@@ -55,7 +185,7 @@ movesUpward a b =
         Just True
 
 
-forEachVoice : List (voicing -> Pitch.Pitch) -> voicing -> voicing -> (Pitch.Pitch -> Pitch.Pitch -> a) -> List a
+forEachVoice : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> (Pitch.Pitch -> Pitch.Pitch -> a) -> List a
 forEachVoice allVoices voicingA voicingB fn =
     allVoices
         |> List.map
@@ -65,7 +195,7 @@ forEachVoice allVoices voicingA voicingB fn =
         |> List.map (\( a, b ) -> fn a b)
 
 
-commonTones : List (voicing -> Pitch.Pitch) -> voicing -> voicing -> Int
+commonTones : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> Int
 commonTones allVoices voicingA voicingB =
     forEachVoice allVoices
         voicingA
@@ -81,9 +211,9 @@ commonTones allVoices voicingA voicingB =
 
 
 compareByCommonTones :
-    List (voicing -> Pitch.Pitch)
-    -> voicing
-    -> (voicing -> voicing -> Order)
+    List (Voicing voicingClass -> Pitch.Pitch)
+    -> Voicing voicingClass
+    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
 compareByCommonTones allVoices from =
     \a b ->
         compare (commonTones allVoices from b) (commonTones allVoices from a)
@@ -94,7 +224,7 @@ semitoneDistance a b =
     abs (Pitch.semitones a - Pitch.semitones b)
 
 
-totalSemitoneDistance : List (voicing -> Pitch.Pitch) -> voicing -> voicing -> Int
+totalSemitoneDistance : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> Int
 totalSemitoneDistance allVoices voicingA voicingB =
     forEachVoice allVoices
         voicingA
@@ -104,9 +234,9 @@ totalSemitoneDistance allVoices voicingA voicingB =
 
 
 compareByTotalSemitoneDistance :
-    List (voicing -> Pitch.Pitch)
-    -> voicing
-    -> (voicing -> voicing -> Order)
+    List (Voicing voicingClass -> Pitch.Pitch)
+    -> Voicing voicingClass
+    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
 compareByTotalSemitoneDistance allVoices from =
     \a b ->
         compare
@@ -120,9 +250,9 @@ voiceSemitoneDistance getVoice voicingA voicingB =
 
 
 compareByVoiceSemitoneDistance :
-    (voicing -> Pitch.Pitch)
-    -> voicing
-    -> (voicing -> voicing -> Order)
+    (Voicing voicingClass -> Pitch.Pitch)
+    -> Voicing voicingClass
+    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
 compareByVoiceSemitoneDistance getter from =
     \a b ->
         compare
@@ -132,8 +262,8 @@ compareByVoiceSemitoneDistance getter from =
 
 containsPitch :
     Pitch.Pitch
-    -> List (voicing -> Pitch.Pitch)
-    -> voicing
+    -> List (Voicing voicingClass -> Pitch.Pitch)
+    -> Voicing voicingClass
     -> Bool
 containsPitch pitch allVoices theVoicing =
     List.map (\fn -> fn theVoicing) allVoices
@@ -142,8 +272,8 @@ containsPitch pitch allVoices theVoicing =
 
 containsPitchInVoice :
     Pitch.Pitch
-    -> (voicing -> Pitch.Pitch)
-    -> voicing
+    -> (Voicing voicingClass -> Pitch.Pitch)
+    -> Voicing voicingClass
     -> Bool
 containsPitchInVoice pitch getter theVoicing =
     getter theVoicing == pitch
@@ -151,8 +281,8 @@ containsPitchInVoice pitch getter theVoicing =
 
 containsFactor :
     Interval.Interval
-    -> (voicing -> List Interval.Interval)
-    -> voicing
+    -> (Voicing voicingClass -> List Interval.Interval)
+    -> Voicing voicingClass
     -> Bool
 containsFactor factor allFactors theVoicing =
     theVoicing
@@ -163,10 +293,10 @@ containsFactor factor allFactors theVoicing =
 
 containsParallelIntervals :
     Interval.Interval
-    -> (voicing -> Pitch.Pitch)
-    -> List (voicing -> Interval.Interval)
-    -> voicing
-    -> voicing
+    -> (Voicing voicingClass -> Pitch.Pitch)
+    -> List (Voicing voicingClass -> Interval.Interval)
+    -> Voicing voicingClass
+    -> Voicing voicingClass
     -> Bool
 containsParallelIntervals interval getRoot allFactors voicingA voicingB =
     let
@@ -186,10 +316,10 @@ containsParallelIntervals interval getRoot allFactors voicingA voicingB =
 
 
 compareByParallelOctave :
-    (voicing -> Pitch.Pitch)
-    -> List (voicing -> Interval.Interval)
-    -> voicing
-    -> (voicing -> voicing -> Order)
+    (Voicing voicingClass -> Pitch.Pitch)
+    -> List (Voicing voicingClass -> Interval.Interval)
+    -> Voicing voicingClass
+    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
 compareByParallelOctave getRoot allFactors from =
     let
         boolToInt bool =
@@ -207,23 +337,34 @@ compareByParallelOctave getRoot allFactors from =
 
 
 containsParallelFifths :
-    (voicing -> Pitch.Pitch)
-    -> List (voicing -> Interval.Interval)
-    -> voicing
-    -> voicing
+    (Voicing voicingClass -> Pitch.Pitch)
+    -> List (Voicing voicingClass -> Interval.Interval)
+    -> Voicing voicingClass
+    -> Voicing voicingClass
     -> Bool
 containsParallelFifths getRoot allFactors voicingA voicingB =
     containsParallelIntervals Interval.perfectFifth getRoot allFactors voicingA voicingB
 
 
 containsParallelOctaves :
-    (voicing -> Pitch.Pitch)
-    -> List (voicing -> Interval.Interval)
-    -> voicing
-    -> voicing
+    (Voicing voicingClass -> Pitch.Pitch)
+    -> List (Voicing voicingClass -> Interval.Interval)
+    -> Voicing voicingClass
+    -> Voicing voicingClass
     -> Bool
 containsParallelOctaves getRoot allFactors voicingA voicingB =
     containsParallelIntervals Interval.perfectUnison getRoot allFactors voicingA voicingB
+
+
+
+-- Miscellaneous conversions
+
+
+toString : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> String
+toString allVoices v =
+    allVoices
+        |> List.map (\fn -> fn v |> Pitch.toString)
+        |> String.join " "
 
 
 

@@ -9,6 +9,7 @@ import MusicTheory.Interval as Interval exposing (IntervalNumber(..))
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
+import MusicTheory.Voicing as Voicing
 import MusicTheory.Voicing.FivePart as FivePart
 import MusicTheory.Voicing.FourPart as FourPart
 import Result.Extra
@@ -41,7 +42,7 @@ all =
                             Result.andThen
                                 (GenerateVoicing.fourWayClose Interval.majorThird)
                                 availables
-                                |> Result.map (FourPart.voicing chord Octave.five)
+                                |> Result.map (Voicing.voicing chord Octave.five)
                                 |> Result.map FourPart.toPitches
                     in
                     Expect.equal expected result
@@ -73,7 +74,7 @@ all =
                                     GenerateVoicing.fourWayDrop2
                                     availables
                                 |> Result.Extra.join
-                                |> Result.map (FourPart.voicing chord Octave.five)
+                                |> Result.map (Voicing.voicing chord Octave.five)
                                 |> Result.map FourPart.toPitches
                     in
                     Expect.equal expected result
@@ -106,7 +107,7 @@ all =
                                     GenerateVoicing.fourWayDrop3
                                     availables
                                 |> Result.Extra.join
-                                |> Result.map (FourPart.voicing chord Octave.five)
+                                |> Result.map (Voicing.voicing chord Octave.five)
                                 |> Result.map FourPart.toPitches
                     in
                     Expect.equal expected result
@@ -138,7 +139,7 @@ all =
                                     GenerateVoicing.fourWayDrop2and4
                                     availables
                                 |> Result.Extra.join
-                                |> Result.map (FourPart.voicing chord Octave.five)
+                                |> Result.map (Voicing.voicing chord Octave.five)
                                 |> Result.map FourPart.toPitches
                     in
                     Expect.equal expected result
@@ -193,7 +194,7 @@ all =
                             Result.andThen
                                 (GenerateVoicing.fourWaySpread Interval.perfectUnison)
                                 availables
-                                |> Result.map (FourPart.voicing chord Octave.three)
+                                |> Result.map (Voicing.voicing chord Octave.three)
                                 |> Result.map FourPart.toPitches
                     in
                     Expect.equal expected result

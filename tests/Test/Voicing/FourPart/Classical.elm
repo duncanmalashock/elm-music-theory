@@ -3,14 +3,25 @@ module Test.Voicing.FourPart.Classical exposing (..)
 import Expect
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
+import MusicTheory.InstrumentRanges as InstrumentRanges
 import MusicTheory.Interval as Interval
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
+import MusicTheory.Voicing as Voicing
 import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.FourPart.Classical as Classical
 import Test exposing (..)
 import Test.Util
+
+
+satbRanges : FourPart.Ranges
+satbRanges =
+    { voiceOne = InstrumentRanges.sopranoVoice
+    , voiceTwo = InstrumentRanges.altoVoice
+    , voiceThree = InstrumentRanges.tenorVoice
+    , voiceFour = InstrumentRanges.bassVoice
+    }
 
 
 all : Test
@@ -23,7 +34,7 @@ all =
                         resultIsNonEmpty =
                             Classical.rootPosition
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -41,7 +52,7 @@ all =
                         results =
                             Classical.rootPosition
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -57,7 +68,7 @@ all =
                         results =
                             Classical.rootPosition
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -73,7 +84,7 @@ all =
                         results =
                             Classical.rootPosition
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -91,7 +102,7 @@ all =
                         resultIsNonEmpty =
                             Classical.firstInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -109,7 +120,7 @@ all =
                         results =
                             Classical.firstInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -125,7 +136,7 @@ all =
                         results =
                             Classical.firstInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -141,7 +152,7 @@ all =
                         results =
                             Classical.firstInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -157,7 +168,7 @@ all =
                         results =
                             Classical.firstInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -175,7 +186,7 @@ all =
                         resultIsNonEmpty =
                             Classical.secondInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -193,7 +204,7 @@ all =
                         results =
                             Classical.secondInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -209,7 +220,7 @@ all =
                         results =
                             Classical.secondInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -225,7 +236,7 @@ all =
                         results =
                             Classical.secondInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -243,7 +254,7 @@ all =
                         resultIsNonEmpty =
                             Classical.thirdInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -261,7 +272,7 @@ all =
                         results =
                             Classical.thirdInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -276,7 +287,7 @@ all =
                         results =
                             Classical.thirdInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -292,7 +303,7 @@ all =
                         results =
                             Classical.thirdInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -308,7 +319,7 @@ all =
                         results =
                             Classical.thirdInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -324,7 +335,7 @@ all =
                         results =
                             Classical.thirdInversion
                                 { ranges =
-                                    Classical.satbRanges
+                                    satbRanges
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
@@ -340,7 +351,7 @@ all =
                 \_ ->
                     let
                         d7voicing =
-                            FourPart.voicing
+                            Voicing.voicing
                                 (Chord.chord PitchClass.d ChordClass.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -350,7 +361,7 @@ all =
                                 }
 
                         gVoicing =
-                            FourPart.voicing
+                            Voicing.voicing
                                 (Chord.chord PitchClass.g ChordClass.major)
                                 Octave.three
                                 { voiceOne = Interval.perfectOctave |> Interval.addOctave
@@ -370,7 +381,7 @@ all =
                 \_ ->
                     let
                         d7voicing =
-                            FourPart.voicing
+                            Voicing.voicing
                                 (Chord.chord PitchClass.d ChordClass.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -380,7 +391,7 @@ all =
                                 }
 
                         gMinorVoicing =
-                            FourPart.voicing
+                            Voicing.voicing
                                 (Chord.chord PitchClass.g ChordClass.minor)
                                 Octave.three
                                 { voiceOne = Interval.perfectOctave |> Interval.addOctave
@@ -400,7 +411,7 @@ all =
                 \_ ->
                     let
                         d7voicing =
-                            FourPart.voicing
+                            Voicing.voicing
                                 (Chord.chord PitchClass.d ChordClass.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
@@ -410,7 +421,7 @@ all =
                                 }
 
                         gMinorVoicing =
-                            FourPart.voicing
+                            Voicing.voicing
                                 (Chord.chord PitchClass.g ChordClass.minor)
                                 Octave.three
                                 { voiceOne = Interval.perfectTwelfth

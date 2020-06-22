@@ -3,7 +3,6 @@ module MusicTheory.Voicing.Util exposing (..)
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Interval as Interval
-import MusicTheory.Pitch as Pitch
 
 
 thirds : List Interval.Interval

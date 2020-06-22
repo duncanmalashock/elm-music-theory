@@ -4,7 +4,6 @@ module MusicTheory.Voicing.FourPart.Classical exposing
     , orderByBestVoiceLeading
     , resolvesTendencyTonesCorrectly
     , rootPosition
-    , satbRanges
     , secondInversion
     , thirdInversion
     )
@@ -22,13 +21,16 @@ import MusicTheory.Voicing.Util as VoicingUtil
 import Util.Permutations
 
 
-optimizeVoiceLeading : FourPart.Voicing -> FourPart.Config -> FourPart.Config
+optimizeVoiceLeading :
+    FourPart.Voicing
+    -> Voicing.Config FourPart.VoicingClass FourPart.Ranges
+    -> Voicing.Config FourPart.VoicingClass FourPart.Ranges
 optimizeVoiceLeading fromVoicing config =
     config
-        |> FourPart.withSort
+        |> Voicing.withSort
             (orderByBestVoiceLeading fromVoicing)
-        |> FourPart.withFilter
-            (Voicing.containsParallelFifths FourPart.root FourPart.allFactors fromVoicing >> not)
+        |> Voicing.withFilter
+            (Voicing.containsParallelFifths Voicing.root FourPart.allFactors fromVoicing >> not)
 
 
 resolvesTendencyTonesCorrectly :
@@ -39,8 +41,8 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
     let
         resolvesByFifth : Bool
         resolvesByFifth =
-            (FourPart.root nextVoicing |> Pitch.pitchClass)
-                == (FourPart.root lastVoicing
+            (Voicing.root nextVoicing |> Pitch.pitchClass)
+                == (Voicing.root lastVoicing
                         |> Pitch.transposeDown Interval.perfectFifth
                         |> Pitch.pitchClass
                    )
@@ -52,7 +54,7 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
             ]
                 |> List.all
                     (\factor ->
-                        FourPart.chord chord
+                        Voicing.chord chord
                             |> Chord.chordClass
                             |> ChordClass.toIntervals
                             |> (\i -> List.member factor i)
@@ -64,7 +66,7 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
             ]
                 |> List.all
                     (\factor ->
-                        FourPart.chord chord
+                        Voicing.chord chord
                             |> Chord.chordClass
                             |> ChordClass.toIntervals
                             |> (\i -> List.member factor i)
@@ -76,7 +78,7 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
             ]
                 |> List.all
                     (\factor ->
-                        FourPart.chord chord
+                        Voicing.chord chord
                             |> Chord.chordClass
                             |> ChordClass.toIntervals
                             |> (\i -> List.member factor i)
@@ -85,7 +87,7 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
     if isDominantChord lastVoicing && resolvesByFifth then
         let
             checkResolution getter allowResolutionToFifth =
-                ( FourPart.voicingClass lastVoicing, FourPart.voicingClass nextVoicing )
+                ( Voicing.voicingClass lastVoicing, Voicing.voicingClass nextVoicing )
                     |> (\( last, next ) ->
                             if Interval.toSimple (getter last) == Interval.majorThird then
                                 (Interval.toSimple (getter next) == Interval.perfectUnison)
@@ -171,7 +173,7 @@ orderByBestVoiceLeading from =
             , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceTwo from a b, voiceTwoSemitoneDistanceWeight )
             , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceThree from a b, voiceThreeSemitoneDistanceWeight )
             , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceFour from a b, voiceFourSemitoneDistanceWeight )
-            , ( Voicing.compareByParallelOctave FourPart.root FourPart.allFactors from a b, parallelOctaveWeight )
+            , ( Voicing.compareByParallelOctave Voicing.root FourPart.allFactors from a b, parallelOctaveWeight )
             , ( compareByTendencyToneResolution from a b, tendencyTonesWeight )
             ]
                 |> List.map
@@ -203,61 +205,61 @@ compareByTendencyToneResolution from =
             (resolvesTendencyTonesCorrectly from a |> boolToInt)
 
 
-rootPosition : FourPart.TechniqueInput -> List FourPart.Voicing
+rootPosition : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 rootPosition { ranges, chord } =
     case categorizeChordTones chord of
         Just chordTones ->
             Util.Permutations.permutations2
                 Octave.allValid
                 (allRootPositionVoicingClasses chordTones)
-                (FourPart.voicing chord)
-                |> List.filter (FourPart.withinRanges ranges)
-                |> List.Extra.uniqueBy FourPart.toString
+                (Voicing.voicing chord)
+                |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
+                |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
 
         Nothing ->
             []
 
 
-firstInversion : FourPart.TechniqueInput -> List FourPart.Voicing
+firstInversion : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 firstInversion { ranges, chord } =
     case categorizeChordTones chord of
         Just chordTones ->
             Util.Permutations.permutations2
                 Octave.allValid
                 (allFirstInversionVoicingClasses chordTones)
-                (FourPart.voicing chord)
-                |> List.filter (FourPart.withinRanges ranges)
-                |> List.Extra.uniqueBy FourPart.toString
+                (Voicing.voicing chord)
+                |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
+                |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
 
         Nothing ->
             []
 
 
-secondInversion : FourPart.TechniqueInput -> List FourPart.Voicing
+secondInversion : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 secondInversion { ranges, chord } =
     case categorizeChordTones chord of
         Just chordTones ->
             Util.Permutations.permutations2
                 Octave.allValid
                 (allSecondInversionVoicingClasses chordTones)
-                (FourPart.voicing chord)
-                |> List.filter (FourPart.withinRanges ranges)
-                |> List.Extra.uniqueBy FourPart.toString
+                (Voicing.voicing chord)
+                |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
+                |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
 
         Nothing ->
             []
 
 
-thirdInversion : FourPart.TechniqueInput -> List FourPart.Voicing
+thirdInversion : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 thirdInversion { ranges, chord } =
     case categorizeChordTones chord of
         Just chordTones ->
             Util.Permutations.permutations2
                 Octave.allValid
                 (allThirdInversionVoicingClasses chordTones)
-                (FourPart.voicing chord)
-                |> List.filter (FourPart.withinRanges ranges)
-                |> List.Extra.uniqueBy FourPart.toString
+                (Voicing.voicing chord)
+                |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
+                |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
 
         Nothing ->
             []
@@ -431,8 +433,8 @@ type alias CategorizedChordTones =
 
 satbRanges : FourPart.Ranges
 satbRanges =
-    { first = InstrumentRanges.sopranoVoice
-    , second = InstrumentRanges.altoVoice
-    , third = InstrumentRanges.tenorVoice
-    , fourth = InstrumentRanges.bassVoice
+    { voiceOne = InstrumentRanges.sopranoVoice
+    , voiceTwo = InstrumentRanges.altoVoice
+    , voiceThree = InstrumentRanges.tenorVoice
+    , voiceFour = InstrumentRanges.bassVoice
     }
