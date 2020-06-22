@@ -16,6 +16,7 @@ import MusicTheory.InstrumentRanges as InstrumentRanges
 import MusicTheory.Interval as Interval exposing (IntervalNumber(..))
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
+import MusicTheory.Voicing as Voicing
 import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.Util as VoicingUtil
 import Util.Permutations
@@ -27,7 +28,7 @@ optimizeVoiceLeading fromVoicing config =
         |> FourPart.withSort
             (orderByBestVoiceLeading fromVoicing)
         |> FourPart.withFilter
-            (FourPart.containsParallelFifths fromVoicing >> not)
+            (Voicing.containsParallelFifths FourPart.root FourPart.allFactors fromVoicing >> not)
 
 
 resolvesTendencyTonesCorrectly :
@@ -163,14 +164,14 @@ orderByBestVoiceLeading from =
 
         score : FourPart.Voicing -> FourPart.Voicing -> Float
         score a b =
-            [ ( FourPart.compareByCommonTones from a b, commonToneWeight )
-            , ( FourPart.compareBySemitoneDistance from a b, totalSemitoneDistanceWeight )
-            , ( FourPart.compareByContraryMotion from a b, contraryMotionWeight )
-            , ( FourPart.compareByVoiceSemitoneDistance .voiceOne from a b, voiceOneSemitoneDistanceWeight )
-            , ( FourPart.compareByVoiceSemitoneDistance .voiceTwo from a b, voiceTwoSemitoneDistanceWeight )
-            , ( FourPart.compareByVoiceSemitoneDistance .voiceThree from a b, voiceThreeSemitoneDistanceWeight )
-            , ( FourPart.compareByVoiceSemitoneDistance .voiceFour from a b, voiceFourSemitoneDistanceWeight )
-            , ( FourPart.compareByParallelOctave from a b, parallelOctaveWeight )
+            [ ( Voicing.compareByCommonTones FourPart.allVoices from a b, commonToneWeight )
+            , ( Voicing.compareByTotalSemitoneDistance FourPart.allVoices from a b, totalSemitoneDistanceWeight )
+            , ( Voicing.compareByContraryMotion FourPart.getVoiceFour FourPart.getVoiceThree from a b, contraryMotionWeight )
+            , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceOne from a b, voiceOneSemitoneDistanceWeight )
+            , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceTwo from a b, voiceTwoSemitoneDistanceWeight )
+            , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceThree from a b, voiceThreeSemitoneDistanceWeight )
+            , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceFour from a b, voiceFourSemitoneDistanceWeight )
+            , ( Voicing.compareByParallelOctave FourPart.root FourPart.allFactors from a b, parallelOctaveWeight )
             , ( compareByTendencyToneResolution from a b, tendencyTonesWeight )
             ]
                 |> List.map

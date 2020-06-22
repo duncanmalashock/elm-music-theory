@@ -9,6 +9,7 @@ import MusicTheory.Interval as Interval
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
 import MusicTheory.PitchClass as PitchClass
+import MusicTheory.Voicing as Voicing
 import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.FourPart.Classical as Classical
 import Test exposing (..)
@@ -42,7 +43,7 @@ all =
                                 }
 
                         result =
-                            FourPart.commonTones voicingA voicingB
+                            Voicing.commonTones FourPart.allVoices voicingA voicingB
 
                         expected =
                             3
@@ -72,7 +73,7 @@ all =
                                 }
 
                         result =
-                            FourPart.commonTones voicingA voicingB
+                            Voicing.commonTones FourPart.allVoices voicingA voicingB
 
                         expected =
                             0
@@ -102,7 +103,7 @@ all =
                                 }
 
                         result =
-                            FourPart.commonTones voicingA voicingB
+                            Voicing.commonTones FourPart.allVoices voicingA voicingB
 
                         expected =
                             0
@@ -132,7 +133,7 @@ all =
                                         PitchClass.g
                                         ChordClass.major
                                 }
-                                |> List.sortWith (FourPart.compareByCommonTones voicingFrom)
+                                |> List.sortWith (Voicing.compareByCommonTones FourPart.allVoices voicingFrom)
                                 |> List.head
 
                         expected =
@@ -173,7 +174,7 @@ all =
                                 }
 
                         result =
-                            FourPart.containsParallelFifths voicingA voicingB
+                            Voicing.containsParallelFifths FourPart.root FourPart.allFactors voicingA voicingB
 
                         expected =
                             True
@@ -203,7 +204,7 @@ all =
                                 }
 
                         result =
-                            FourPart.containsParallelFifths voicingA voicingB
+                            Voicing.containsParallelFifths FourPart.root FourPart.allFactors voicingA voicingB
 
                         expected =
                             False
@@ -233,7 +234,7 @@ all =
                                 }
 
                         result =
-                            FourPart.containsParallelFifths voicingA voicingB
+                            Voicing.containsParallelFifths FourPart.root FourPart.allFactors voicingA voicingB
 
                         expected =
                             True
@@ -265,7 +266,7 @@ all =
                                 }
 
                         result =
-                            FourPart.containsParallelOctaves voicingA voicingB
+                            Voicing.containsParallelOctaves FourPart.root FourPart.allFactors voicingA voicingB
 
                         expected =
                             True
@@ -295,7 +296,7 @@ all =
                                 }
 
                         result =
-                            FourPart.containsParallelOctaves voicingA voicingB
+                            Voicing.containsParallelOctaves FourPart.root FourPart.allFactors voicingA voicingB
 
                         expected =
                             False
@@ -327,7 +328,7 @@ all =
                                 }
 
                         result =
-                            FourPart.totalSemitoneDistance voicingA voicingB
+                            Voicing.totalSemitoneDistance FourPart.allVoices voicingA voicingB
 
                         expected =
                             0
@@ -357,7 +358,7 @@ all =
                                 }
 
                         result =
-                            FourPart.totalSemitoneDistance voicingA voicingB
+                            Voicing.totalSemitoneDistance FourPart.allVoices voicingA voicingB
 
                         expected =
                             1
@@ -387,7 +388,7 @@ all =
                                 }
 
                         result =
-                            FourPart.totalSemitoneDistance voicingA voicingB
+                            Voicing.totalSemitoneDistance FourPart.allVoices voicingA voicingB
 
                         expected =
                             4
@@ -419,7 +420,7 @@ all =
                                 }
 
                         result =
-                            FourPart.usesContraryMotion voicingA voicingB
+                            Voicing.usesContraryMotion FourPart.getVoiceFour FourPart.getVoiceThree voicingA voicingB
 
                         expected =
                             True
@@ -449,7 +450,7 @@ all =
                                 }
 
                         result =
-                            FourPart.usesContraryMotion voicingA voicingB
+                            Voicing.usesContraryMotion FourPart.getVoiceFour FourPart.getVoiceThree voicingA voicingB
 
                         expected =
                             False
@@ -479,7 +480,7 @@ all =
                                 }
 
                         result =
-                            FourPart.usesContraryMotion voicingA voicingB
+                            Voicing.usesContraryMotion FourPart.getVoiceFour FourPart.getVoiceThree voicingA voicingB
 
                         expected =
                             False
@@ -501,7 +502,7 @@ all =
                                 }
 
                         result =
-                            FourPart.containsPitch Pitch.fSharp5 voicing
+                            Voicing.containsPitch Pitch.fSharp5 FourPart.allVoices voicing
 
                         expected =
                             True
@@ -521,7 +522,7 @@ all =
                                 }
 
                         result =
-                            FourPart.containsPitch Pitch.fSharp5 voicing
+                            Voicing.containsPitch Pitch.fSharp5 FourPart.allVoices voicing
 
                         expected =
                             False
@@ -544,12 +545,12 @@ all =
                                 |> Result.map FourPart.allIntervals
 
                         expected =
-                            { voiceFourToVoiceOne = Interval.majorSixth
-                            , voiceFourToVoiceTwo = Interval.perfectFourth
-                            , voiceThreeToVoiceOne = Interval.perfectFifth
-                            , voiceFourToVoiceThree = Interval.majorSecond
-                            , voiceThreeToVoiceTwo = Interval.minorThird
-                            , voiceTwoToVoiceOne = Interval.majorThird
+                            { fourToOne = Interval.majorSixth
+                            , fourToTwo = Interval.perfectFourth
+                            , threeToOne = Interval.perfectFifth
+                            , fourToThree = Interval.majorSecond
+                            , threeToTwo = Interval.minorThird
+                            , twoToOne = Interval.majorThird
                             }
                                 |> Ok
                     in
