@@ -7,8 +7,6 @@ module MusicTheory.VoicingClass exposing
     , withTwoFactorsFrom
     )
 
--- Building VoicingClasses
-
 import List.Extra
 import MusicTheory.Interval as Interval
 
@@ -22,8 +20,12 @@ builder construct =
     VoicingClassBuilder [ ( construct, [] ) ]
 
 
-withFactor : Interval.Interval -> { mustBeUnique : Bool } -> VoicingClassBuilder (Interval.Interval -> a) -> VoicingClassBuilder a
-withFactor newInterval { mustBeUnique } (VoicingClassBuilder incompleteVoicingsWithIntervalsSoFar) =
+withFactor :
+    Interval.Interval
+    -> { mustBeUnique : Bool }
+    -> VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClassBuilder a
+withFactor newInterval { mustBeUnique } (VoicingClassBuilder voicingsSoFar) =
     let
         addIntervalToVoicing :
             Interval.Interval
@@ -34,19 +36,26 @@ withFactor newInterval { mustBeUnique } (VoicingClassBuilder incompleteVoicingsW
                 Nothing
 
             else
-                Just ( theVoicing intervalToApply, intervalToApply :: intervalsUsed )
+                Just
+                    ( theVoicing intervalToApply
+                    , intervalToApply :: intervalsUsed
+                    )
     in
     VoicingClassBuilder
         (List.filterMap
             (\voicingWithIntervals ->
                 addIntervalToVoicing newInterval voicingWithIntervals
             )
-            incompleteVoicingsWithIntervalsSoFar
+            voicingsSoFar
         )
 
 
-withFactorFrom : List Interval.Interval -> { mustBeUnique : Bool } -> VoicingClassBuilder (Interval.Interval -> a) -> VoicingClassBuilder a
-withFactorFrom options { mustBeUnique } (VoicingClassBuilder incompleteVoicingsWithIntervalsSoFar) =
+withFactorFrom :
+    List Interval.Interval
+    -> { mustBeUnique : Bool }
+    -> VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClassBuilder a
+withFactorFrom options { mustBeUnique } (VoicingClassBuilder voicingsSoFar) =
     let
         addIntervalToVoicing :
             Interval.Interval
@@ -57,7 +66,10 @@ withFactorFrom options { mustBeUnique } (VoicingClassBuilder incompleteVoicingsW
                 Nothing
 
             else
-                Just ( theVoicing intervalToApply, intervalToApply :: intervalsUsed )
+                Just
+                    ( theVoicing intervalToApply
+                    , intervalToApply :: intervalsUsed
+                    )
     in
     VoicingClassBuilder
         (List.concatMap
@@ -68,25 +80,44 @@ withFactorFrom options { mustBeUnique } (VoicingClassBuilder incompleteVoicingsW
                     )
                     options
             )
-            incompleteVoicingsWithIntervalsSoFar
+            voicingsSoFar
         )
 
 
-withTwoFactorsFrom : List Interval.Interval -> { mustBeUnique : Bool } -> VoicingClassBuilder (Interval.Interval -> Interval.Interval -> a) -> VoicingClassBuilder a
-withTwoFactorsFrom options { mustBeUnique } (VoicingClassBuilder incompleteVoicingsWithIntervalsSoFar) =
+withTwoFactorsFrom :
+    List Interval.Interval
+    -> { mustBeUnique : Bool }
+    -> VoicingClassBuilder (Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClassBuilder a
+withTwoFactorsFrom options { mustBeUnique } (VoicingClassBuilder voicingsSoFar) =
     let
         addIntervalsToVoicing :
             ( Interval.Interval, Interval.Interval )
-            -> ( Interval.Interval -> Interval.Interval -> a, List Interval.Interval )
+            ->
+                ( Interval.Interval
+                  -> Interval.Interval
+                  -> a
+                , List Interval.Interval
+                )
             -> Maybe ( a, List Interval.Interval )
         addIntervalsToVoicing ( interval1, interval2 ) ( theVoicing, intervalsUsed ) =
-            if mustBeUnique && List.any (\i -> List.member i intervalsUsed) [ interval1, interval2 ] then
+            if
+                mustBeUnique
+                    && List.any
+                        (\i -> List.member i intervalsUsed)
+                        [ interval1, interval2 ]
+            then
                 Nothing
 
             else
-                Just ( theVoicing interval1 interval2, [ interval1, interval2 ] ++ intervalsUsed )
+                Just
+                    ( theVoicing interval1 interval2
+                    , [ interval1, interval2 ] ++ intervalsUsed
+                    )
 
-        pairs : List Interval.Interval -> List ( Interval.Interval, Interval.Interval )
+        pairs :
+            List Interval.Interval
+            -> List ( Interval.Interval, Interval.Interval )
         pairs theList =
             List.Extra.permutations theList
                 |> List.map
@@ -109,25 +140,51 @@ withTwoFactorsFrom options { mustBeUnique } (VoicingClassBuilder incompleteVoici
                     )
                     (pairs options)
             )
-            incompleteVoicingsWithIntervalsSoFar
+            voicingsSoFar
         )
 
 
-withThreeFactorsFrom : List Interval.Interval -> { mustBeUnique : Bool } -> VoicingClassBuilder (Interval.Interval -> Interval.Interval -> Interval.Interval -> a) -> VoicingClassBuilder a
-withThreeFactorsFrom options { mustBeUnique } (VoicingClassBuilder incompleteVoicingsWithIntervalsSoFar) =
+withThreeFactorsFrom :
+    List Interval.Interval
+    -> { mustBeUnique : Bool }
+    ->
+        VoicingClassBuilder
+            (Interval.Interval
+             -> Interval.Interval
+             -> Interval.Interval
+             -> a
+            )
+    -> VoicingClassBuilder a
+withThreeFactorsFrom options { mustBeUnique } (VoicingClassBuilder voicingsSoFar) =
     let
         addIntervalsToVoicing :
             ( Interval.Interval, Interval.Interval, Interval.Interval )
-            -> ( Interval.Interval -> Interval.Interval -> Interval.Interval -> a, List Interval.Interval )
+            ->
+                ( Interval.Interval
+                  -> Interval.Interval
+                  -> Interval.Interval
+                  -> a
+                , List Interval.Interval
+                )
             -> Maybe ( a, List Interval.Interval )
         addIntervalsToVoicing ( interval1, interval2, interval3 ) ( theVoicing, intervalsUsed ) =
-            if mustBeUnique && List.any (\i -> List.member i intervalsUsed) [ interval1, interval2, interval3 ] then
+            if
+                mustBeUnique
+                    && List.any
+                        (\i -> List.member i intervalsUsed)
+                        [ interval1, interval2, interval3 ]
+            then
                 Nothing
 
             else
-                Just ( theVoicing interval1 interval2 interval3, [ interval1, interval2, interval3 ] ++ intervalsUsed )
+                Just
+                    ( theVoicing interval1 interval2 interval3
+                    , [ interval1, interval2, interval3 ] ++ intervalsUsed
+                    )
 
-        triplets : List Interval.Interval -> List ( Interval.Interval, Interval.Interval, Interval.Interval )
+        triplets :
+            List Interval.Interval
+            -> List ( Interval.Interval, Interval.Interval, Interval.Interval )
         triplets theList =
             List.Extra.permutations theList
                 |> List.map
@@ -150,7 +207,7 @@ withThreeFactorsFrom options { mustBeUnique } (VoicingClassBuilder incompleteVoi
                     )
                     (triplets options)
             )
-            incompleteVoicingsWithIntervalsSoFar
+            voicingsSoFar
         )
 
 
