@@ -30,7 +30,11 @@ withFactor newInterval { mustBeUnique } (VoicingClassBuilder incompleteVoicingsW
             -> ( Interval.Interval -> a, List Interval.Interval )
             -> Maybe ( a, List Interval.Interval )
         addIntervalToVoicing intervalToApply ( theVoicing, intervalsUsed ) =
-            Just ( theVoicing intervalToApply, intervalToApply :: intervalsUsed )
+            if mustBeUnique && List.member intervalToApply intervalsUsed then
+                Nothing
+
+            else
+                Just ( theVoicing intervalToApply, intervalToApply :: intervalsUsed )
     in
     VoicingClassBuilder
         (List.filterMap
