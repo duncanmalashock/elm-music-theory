@@ -11,7 +11,6 @@ module MusicTheory.Voicing.FourPart.Classical exposing
 import List.Extra
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass exposing (ChordClass(..))
-import MusicTheory.InstrumentRanges as InstrumentRanges
 import MusicTheory.Interval as Interval exposing (IntervalNumber(..))
 import MusicTheory.Octave as Octave
 import MusicTheory.Pitch as Pitch
@@ -428,13 +427,4 @@ type alias CategorizedChordTones =
     , third : Interval.Interval
     , fifth : Interval.Interval
     , seventh : Maybe Interval.Interval
-    }
-
-
-satbRanges : FourPart.Ranges
-satbRanges =
-    { voiceOne = InstrumentRanges.sopranoVoice
-    , voiceTwo = InstrumentRanges.altoVoice
-    , voiceThree = InstrumentRanges.tenorVoice
-    , voiceFour = InstrumentRanges.bassVoice
     }
