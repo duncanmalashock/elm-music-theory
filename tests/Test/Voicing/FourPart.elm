@@ -131,7 +131,7 @@ all =
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
                                 , voiceTwo = Interval.perfectTwelfth
                                 , voiceThree = Interval.perfectOctave
-                                , voiceFour = Interval.perfectUnison
+                                , voiceFour = Interval.perfectFifth
                                 }
 
                         result =
@@ -145,17 +145,10 @@ all =
                                 }
                                 |> List.sortWith (Voicing.compareByCommonTones FourPart.allVoices voicingFrom)
                                 |> List.head
+                                |> Maybe.map (Voicing.toString FourPart.allVoices)
 
                         expected =
-                            Voicing.voicing
-                                (Chord.chord PitchClass.g ChordClass.major)
-                                Octave.three
-                                { voiceOne = Interval.perfectTwelfth
-                                , voiceTwo = Interval.perfectOctave
-                                , voiceThree = Interval.majorThird
-                                , voiceFour = Interval.perfectUnison
-                                }
-                                |> Just
+                            Just "B4 G4 D4 G3"
                     in
                     Expect.equal expected result
             ]
@@ -563,6 +556,145 @@ all =
                             , twoToOne = Interval.majorThird
                             }
                                 |> Ok
+                    in
+                    Expect.equal expected result
+            ]
+        , describe "adjustToBeAboveMinimum"
+            [ test "places upper voice above the lower voice plus the minimum interval" <|
+                \_ ->
+                    let
+                        result : Interval.Interval
+                        result =
+                            Interval.majorNinth
+
+                        expected : Interval.Interval
+                        expected =
+                            FourPart.adjustToBeAboveMinimum
+                                { minimum = Interval.perfectUnison
+                                , lower = Interval.majorThird
+                                , upper = Interval.majorSecond
+                                }
+                    in
+                    Expect.equal expected result
+            , test "places the same interval in unison when the the minimum interval is unison" <|
+                \_ ->
+                    let
+                        result : Interval.Interval
+                        result =
+                            Interval.majorSecond
+
+                        expected : Interval.Interval
+                        expected =
+                            FourPart.adjustToBeAboveMinimum
+                                { minimum = Interval.perfectUnison
+                                , lower = Interval.majorSecond
+                                , upper = Interval.majorSecond
+                                }
+                    in
+                    Expect.equal expected result
+            , test "places the same interval an octave apart when the the minimum interval is larger than unison" <|
+                \_ ->
+                    let
+                        result : Interval.Interval
+                        result =
+                            Interval.majorNinth
+
+                        expected : Interval.Interval
+                        expected =
+                            FourPart.adjustToBeAboveMinimum
+                                { minimum = Interval.augmentedUnison
+                                , lower = Interval.majorSecond
+                                , upper = Interval.majorSecond
+                                }
+                    in
+                    Expect.equal expected result
+            ]
+        , describe "placeFactors"
+            [ test "places chord factors in ascending order" <|
+                \_ ->
+                    let
+                        result : List String
+                        result =
+                            [ "C6 E5 G4 B3"
+                            ]
+
+                        expected : List String
+                        expected =
+                            { voiceOne = Interval.perfectUnison
+                            , voiceTwo = Interval.majorThird
+                            , voiceThree = Interval.perfectFifth
+                            , voiceFour = Interval.majorSeventh
+                            }
+                                |> FourPart.placeFactors
+                                    { twoToOne =
+                                        { min = Interval.augmentedUnison
+                                        , max = Interval.perfectOctave
+                                        }
+                                    , threeToTwo =
+                                        { min = Interval.augmentedUnison
+                                        , max = Interval.perfectOctave
+                                        }
+                                    , fourToThree =
+                                        { min = Interval.augmentedUnison
+                                        , max = Interval.perfectOctave
+                                        }
+                                    }
+                                |> List.map
+                                    (Voicing.voicing
+                                        (Chord.chord
+                                            PitchClass.c
+                                            ChordClass.majorSixNine
+                                        )
+                                        Octave.three
+                                    )
+                                |> List.map (Voicing.toString FourPart.allVoices)
+                    in
+                    Expect.equal expected result
+            , test "lists multiple options when they are within interval limits" <|
+                \_ ->
+                    let
+                        result : List String
+                        result =
+                            [ "C3 C3 C3 C3"
+                            , "C4 C3 C3 C3"
+                            , "C4 C4 C3 C3"
+                            , "C5 C4 C3 C3"
+                            , "C4 C4 C4 C3"
+                            , "C5 C4 C4 C3"
+                            , "C5 C5 C4 C3"
+                            , "C6 C5 C4 C3"
+                            ]
+
+                        expected : List String
+                        expected =
+                            { voiceOne = Interval.perfectUnison
+                            , voiceTwo = Interval.perfectUnison
+                            , voiceThree = Interval.perfectUnison
+                            , voiceFour = Interval.perfectUnison
+                            }
+                                |> FourPart.placeFactors
+                                    { twoToOne =
+                                        { min = Interval.perfectUnison
+                                        , max = Interval.perfectOctave
+                                        }
+                                    , threeToTwo =
+                                        { min = Interval.perfectUnison
+                                        , max = Interval.perfectOctave
+                                        }
+                                    , fourToThree =
+                                        { min = Interval.perfectUnison
+                                        , max = Interval.perfectOctave
+                                        }
+                                    }
+                                |> List.map
+                                    (Voicing.voicing
+                                        (Chord.chord
+                                            PitchClass.c
+                                            ChordClass.majorSixNine
+                                        )
+                                        Octave.three
+                                    )
+                                |> List.map (Voicing.toString FourPart.allVoices)
                     in
                     Expect.equal expected result
             ]

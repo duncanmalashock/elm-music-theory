@@ -1,23 +1,26 @@
 module MusicTheory.Voicing.FourPart exposing
     ( Pitches
     , Ranges
+    , VoiceIntervalLimits
     , Voicing
     , VoicingClass
+    , adjustToBeAboveMinimum
     , allFactors
     , allIntervals
     , allRanges
     , allVoices
-    , chordToneListToVoicingClass
     , getVoiceFour
     , getVoiceOne
     , getVoiceThree
     , getVoiceTwo
+    , placeFactors
     , toPitches
     )
 
 import MusicTheory.Interval as Interval
 import MusicTheory.Pitch as Pitch
 import MusicTheory.Voicing as Voicing
+import MusicTheory.VoicingClass as VoicingClass
 import Util.Basic
 
 
@@ -179,46 +182,235 @@ type alias AllIntervalsContained =
 -- Generating voicings
 
 
-chordToneListToVoicingClass : List Interval.Interval -> Maybe VoicingClass
-chordToneListToVoicingClass intervals =
-    case intervals of
-        i1 :: i2 :: i3 :: i4 :: _ ->
-            { voiceOne = i4
-            , voiceTwo = i3
-            , voiceThree = i2
-            , voiceFour = i1
-            }
-                |> correctIntervalOctaves
-                |> Just
-
-        _ ->
-            Nothing
-
-
-correctIntervalOctaves : VoicingClass -> VoicingClass
-correctIntervalOctaves { voiceOne, voiceTwo, voiceThree, voiceFour } =
+placeFactors : VoiceIntervalLimits -> VoicingClass -> List VoicingClass
+placeFactors intervalLimits voicingClass =
     let
-        -- TODO: allow for larger (e.g. 10th) and smaller distances (unison) between voices
-        voiceThreeCorrected =
-            Util.Basic.while
-                (\v3 -> Interval.semitones voiceFour >= Interval.semitones v3)
-                Interval.addOctave
-                voiceThree
+        voiceFourInitial =
+            Interval.toSimple voicingClass.voiceFour
 
-        voiceTwoCorrected =
-            Util.Basic.while
-                (\v2 -> Interval.semitones voiceThreeCorrected >= Interval.semitones v2)
-                Interval.addOctave
-                voiceTwo
+        voiceThreeInitial =
+            adjustToBeAboveMinimum
+                { minimum = intervalLimits.fourToThree.min
+                , lower = voiceFourInitial
+                , upper = Interval.toSimple voicingClass.voiceThree
+                }
 
-        voiceOneCorrected =
-            Util.Basic.while
-                (\v4 -> Interval.semitones voiceTwoCorrected >= Interval.semitones v4)
-                Interval.addOctave
-                voiceOne
+        voiceTwoInitial =
+            adjustToBeAboveMinimum
+                { minimum = intervalLimits.threeToTwo.min
+                , lower = voiceThreeInitial
+                , upper = Interval.toSimple voicingClass.voiceTwo
+                }
+
+        voiceOneInitial =
+            adjustToBeAboveMinimum
+                { minimum = intervalLimits.twoToOne.min
+                , lower = voiceTwoInitial
+                , upper = Interval.toSimple voicingClass.voiceOne
+                }
+
+        fourToThreeOctaveShifts =
+            octaveShiftsAllowedBetween
+                { maximum = intervalLimits.fourToThree.max
+                , lower = voiceFourInitial
+                , upper = voiceThreeInitial
+                }
+
+        threeToTwoOctaveShifts =
+            octaveShiftsAllowedBetween
+                { maximum = intervalLimits.threeToTwo.max
+                , lower = voiceThreeInitial
+                , upper = voiceTwoInitial
+                }
+
+        twoToOneOctaveShifts =
+            octaveShiftsAllowedBetween
+                { maximum = intervalLimits.twoToOne.max
+                , lower = voiceTwoInitial
+                , upper = voiceOneInitial
+                }
     in
-    { voiceOne = voiceOneCorrected
-    , voiceTwo = voiceTwoCorrected
-    , voiceThree = voiceThreeCorrected
-    , voiceFour = voiceFour
+    { voiceOne = voiceOneInitial
+    , voiceTwo = voiceTwoInitial
+    , voiceThree = voiceThreeInitial
+    , voiceFour = voiceFourInitial
+    }
+        |> validateInitialVoicingClass intervalLimits
+        |> Maybe.map
+            (performAllowedOctaveShifts
+                { shiftsForVoiceThree = fourToThreeOctaveShifts
+                , shiftsForVoiceTwo = threeToTwoOctaveShifts
+                , shiftsForVoiceOne = twoToOneOctaveShifts
+                }
+            )
+        |> Maybe.withDefault []
+
+
+validateInitialVoicingClass : VoiceIntervalLimits -> VoicingClass -> Maybe VoicingClass
+validateInitialVoicingClass intervalLimits voicingClass =
+    let
+        differenceMeetsMinimum l u minimum =
+            Interval.semitones (Interval.subtract l u) >= Interval.semitones minimum
+
+        differenceMeetsMaximum l u maximum =
+            Interval.semitones (Interval.subtract l u) <= Interval.semitones maximum
+    in
+    if
+        List.all identity
+            [ differenceMeetsMinimum voicingClass.voiceFour voicingClass.voiceThree intervalLimits.fourToThree.min
+            , differenceMeetsMaximum voicingClass.voiceFour voicingClass.voiceThree intervalLimits.fourToThree.max
+            , differenceMeetsMinimum voicingClass.voiceThree voicingClass.voiceTwo intervalLimits.threeToTwo.min
+            , differenceMeetsMaximum voicingClass.voiceThree voicingClass.voiceTwo intervalLimits.threeToTwo.max
+            , differenceMeetsMinimum voicingClass.voiceTwo voicingClass.voiceOne intervalLimits.twoToOne.min
+            , differenceMeetsMaximum voicingClass.voiceTwo voicingClass.voiceOne intervalLimits.twoToOne.max
+            ]
+    then
+        Just voicingClass
+
+    else
+        Nothing
+
+
+adjustToBeAboveMinimum :
+    { minimum : Interval.Interval
+    , lower : Interval.Interval
+    , upper : Interval.Interval
+    }
+    -> Interval.Interval
+adjustToBeAboveMinimum { minimum, lower, upper } =
+    let
+        lowerIsAboveUpper l u =
+            Interval.semitones (Interval.subtract l u) < 0
+
+        differenceIsBelowMinimum l u =
+            Interval.semitones (Interval.subtract l u) < Interval.semitones minimum
+    in
+    upper
+        |> Util.Basic.while
+            (\currentUpper ->
+                lowerIsAboveUpper lower currentUpper
+                    || differenceIsBelowMinimum lower currentUpper
+            )
+            Interval.addOctave
+
+
+octaveShiftsAllowedBetween :
+    { maximum : Interval.Interval
+    , lower : Interval.Interval
+    , upper : Interval.Interval
+    }
+    -> Int
+octaveShiftsAllowedBetween { maximum, lower, upper } =
+    let
+        difference l u =
+            Interval.semitones (Interval.subtract l u)
+
+        differenceIsBelowMaximum l u =
+            difference l u < Interval.semitones maximum
+
+        maximumIsAtLeastCurrentDifferencePlusAnOctave l u =
+            Interval.semitones maximum >= (Interval.semitones Interval.perfectOctave + difference l u)
+    in
+    ( 0, upper )
+        |> Util.Basic.while
+            (\( count, currentUpper ) ->
+                differenceIsBelowMaximum lower currentUpper
+                    && maximumIsAtLeastCurrentDifferencePlusAnOctave lower currentUpper
+            )
+            (\( count, shouldBeAbove ) ->
+                ( count + 1, Interval.addOctave shouldBeAbove )
+            )
+        |> (\( count, shouldBeAbove ) -> count)
+
+
+performAllowedOctaveShifts :
+    { shiftsForVoiceThree : Int
+    , shiftsForVoiceTwo : Int
+    , shiftsForVoiceOne : Int
+    }
+    -> VoicingClass
+    -> List VoicingClass
+performAllowedOctaveShifts { shiftsForVoiceThree, shiftsForVoiceTwo, shiftsForVoiceOne } initialVoicingClass =
+    [ initialVoicingClass ]
+        |> shiftFromVoiceThree shiftsForVoiceThree
+        |> shiftFromVoiceTwo shiftsForVoiceTwo
+        |> shiftFromVoiceOne shiftsForVoiceOne
+
+
+shiftFromVoiceThree : Int -> List VoicingClass -> List VoicingClass
+shiftFromVoiceThree shiftCount voicingClasses =
+    let
+        doShifts : List Interval.Interval -> VoicingClass -> List VoicingClass
+        doShifts intervalsToShift vc =
+            List.map
+                (\shift ->
+                    { vc
+                        | voiceOne = vc.voiceOne |> Interval.add shift
+                        , voiceTwo = vc.voiceTwo |> Interval.add shift
+                        , voiceThree = vc.voiceThree |> Interval.add shift
+                        , voiceFour = vc.voiceFour
+                    }
+                )
+                intervalsToShift
+    in
+    voicingClasses
+        |> List.concatMap
+            (doShifts (shiftCountToIntervalList shiftCount))
+
+
+shiftFromVoiceTwo : Int -> List VoicingClass -> List VoicingClass
+shiftFromVoiceTwo shiftCount voicingClasses =
+    let
+        doShifts : List Interval.Interval -> VoicingClass -> List VoicingClass
+        doShifts intervalsToShift vc =
+            List.map
+                (\shift ->
+                    { vc
+                        | voiceOne = vc.voiceOne |> Interval.add shift
+                        , voiceTwo = vc.voiceTwo |> Interval.add shift
+                        , voiceThree = vc.voiceThree
+                        , voiceFour = vc.voiceFour
+                    }
+                )
+                intervalsToShift
+    in
+    voicingClasses
+        |> List.concatMap
+            (doShifts (shiftCountToIntervalList shiftCount))
+
+
+shiftFromVoiceOne : Int -> List VoicingClass -> List VoicingClass
+shiftFromVoiceOne shiftCount voicingClasses =
+    let
+        doShifts : List Interval.Interval -> VoicingClass -> List VoicingClass
+        doShifts intervalsToShift vc =
+            List.map
+                (\shift ->
+                    { vc
+                        | voiceOne = vc.voiceOne |> Interval.add shift
+                        , voiceTwo = vc.voiceTwo
+                        , voiceThree = vc.voiceThree
+                        , voiceFour = vc.voiceFour
+                    }
+                )
+                intervalsToShift
+    in
+    voicingClasses
+        |> List.concatMap
+            (doShifts (shiftCountToIntervalList shiftCount))
+
+
+shiftCountToIntervalList : Int -> List Interval.Interval
+shiftCountToIntervalList count =
+    List.map
+        (\currentCount ->
+            Util.Basic.applyNTimes currentCount Interval.addOctave Interval.perfectUnison
+        )
+        (List.range 0 count)
+
+
+type alias VoiceIntervalLimits =
+    { twoToOne : VoicingClass.IntervalRange
+    , threeToTwo : VoicingClass.IntervalRange
+    , fourToThree : VoicingClass.IntervalRange
     }

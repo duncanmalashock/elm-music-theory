@@ -17,7 +17,7 @@ import MusicTheory.Pitch as Pitch
 import MusicTheory.Voicing as Voicing
 import MusicTheory.Voicing.FourPart as FourPart
 import MusicTheory.Voicing.Util as VoicingUtil
-import Util.Permutations
+import MusicTheory.VoicingClass as VoicingClass
 
 
 optimizeVoiceLeading :
@@ -30,6 +30,8 @@ optimizeVoiceLeading fromVoicing config =
             (orderByBestVoiceLeading fromVoicing)
         |> Voicing.withFilter
             (Voicing.containsParallelFifths Voicing.root FourPart.allFactors fromVoicing >> not)
+        |> Voicing.withFilter
+            (Voicing.containsParallelOctaves Voicing.root FourPart.allFactors fromVoicing >> not)
 
 
 resolvesTendencyTonesCorrectly :
@@ -157,11 +159,8 @@ orderByBestVoiceLeading from =
         commonToneWeight =
             1
 
-        parallelOctaveWeight =
-            10
-
         tendencyTonesWeight =
-            5
+            10
 
         score : FourPart.Voicing -> FourPart.Voicing -> Float
         score a b =
@@ -172,7 +171,6 @@ orderByBestVoiceLeading from =
             , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceTwo from a b, voiceTwoSemitoneDistanceWeight )
             , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceThree from a b, voiceThreeSemitoneDistanceWeight )
             , ( Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceFour from a b, voiceFourSemitoneDistanceWeight )
-            , ( Voicing.compareByParallelOctave Voicing.root FourPart.allFactors from a b, parallelOctaveWeight )
             , ( compareByTendencyToneResolution from a b, tendencyTonesWeight )
             ]
                 |> List.map
@@ -208,12 +206,7 @@ rootPosition : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 rootPosition { ranges, chord } =
     case categorizeChordTones chord of
         Just chordTones ->
-            Util.Permutations.permutations2
-                Octave.allValid
-                (allRootPositionVoicingClasses chordTones)
-                (Voicing.voicing chord)
-                |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
-                |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
+            voicingClassesforAllOctaves allRootPositionVoicingClasses chord ranges chordTones
 
         Nothing ->
             []
@@ -223,12 +216,7 @@ firstInversion : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 firstInversion { ranges, chord } =
     case categorizeChordTones chord of
         Just chordTones ->
-            Util.Permutations.permutations2
-                Octave.allValid
-                (allFirstInversionVoicingClasses chordTones)
-                (Voicing.voicing chord)
-                |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
-                |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
+            voicingClassesforAllOctaves allFirstInversionVoicingClasses chord ranges chordTones
 
         Nothing ->
             []
@@ -238,12 +226,7 @@ secondInversion : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicin
 secondInversion { ranges, chord } =
     case categorizeChordTones chord of
         Just chordTones ->
-            Util.Permutations.permutations2
-                Octave.allValid
-                (allSecondInversionVoicingClasses chordTones)
-                (Voicing.voicing chord)
-                |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
-                |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
+            voicingClassesforAllOctaves allSecondInversionVoicingClasses chord ranges chordTones
 
         Nothing ->
             []
@@ -253,15 +236,46 @@ thirdInversion : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 thirdInversion { ranges, chord } =
     case categorizeChordTones chord of
         Just chordTones ->
-            Util.Permutations.permutations2
-                Octave.allValid
-                (allThirdInversionVoicingClasses chordTones)
-                (Voicing.voicing chord)
-                |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
-                |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
+            voicingClassesforAllOctaves allThirdInversionVoicingClasses chord ranges chordTones
 
         Nothing ->
             []
+
+
+voicingClassesforAllOctaves :
+    (CategorizedChordTones
+     -> List FourPart.VoicingClass
+    )
+    -> Chord.Chord
+    -> FourPart.Ranges
+    -> CategorizedChordTones
+    -> List (Voicing.Voicing FourPart.VoicingClass)
+voicingClassesforAllOctaves generate chord ranges chordTones =
+    List.concatMap
+        (\oct ->
+            List.map
+                (\class -> Voicing.voicing chord oct class)
+                (generate chordTones)
+        )
+        Octave.allValid
+        |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
+        |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
+
+
+intervalLimits =
+    { twoToOne =
+        { max = Interval.perfectOctave
+        , min = Interval.perfectUnison
+        }
+    , threeToTwo =
+        { max = Interval.perfectOctave
+        , min = Interval.perfectUnison
+        }
+    , fourToThree =
+        { max = Interval.perfectOctave |> Interval.addOctave
+        , min = Interval.perfectUnison
+        }
+    }
 
 
 allThirdInversionVoicingClasses :
@@ -270,20 +284,20 @@ allThirdInversionVoicingClasses :
 allThirdInversionVoicingClasses tones =
     case tones.seventh of
         Just seventh ->
-            -- If it's a seventh chord, use one chord tone per voice
-            -- or double the root
-            [ [ tones.root
+            -- If it's a seventh chord,
+            [ -- use one chord tone per voice
+              [ tones.root
               , tones.third
               , tones.fifth
               ]
+
+            -- or double the root
             , [ tones.root
               , tones.root
               , tones.third
               ]
             ]
-                |> List.concatMap List.Extra.permutations
-                |> List.map (\l -> seventh :: l)
-                |> List.filterMap FourPart.chordToneListToVoicingClass
+                |> List.concatMap (generateVoicingClasses seventh)
 
         Nothing ->
             -- If it's a triad, no possible voicings
@@ -294,118 +308,121 @@ allSecondInversionVoicingClasses :
     CategorizedChordTones
     -> List FourPart.VoicingClass
 allSecondInversionVoicingClasses tones =
-    let
-        validChordTonesAboveRoot =
-            case tones.seventh of
-                Just seventh ->
-                    -- If it's a seventh chord, use one chord tone per voice
-                    [ [ tones.root
-                      , tones.third
-                      , seventh
-                      ]
+    case tones.seventh of
+        Just seventh ->
+            -- If it's a seventh chord
+            [ -- use one chord tone per voice
+              [ tones.root
+              , tones.third
+              , seventh
+              ]
 
-                    -- or double the fifth
-                    , [ tones.third
-                      , tones.fifth
-                      , seventh
-                      ]
-                    ]
+            -- or double the fifth
+            , [ tones.third
+              , tones.fifth
+              , seventh
+              ]
+            ]
+                |> List.concatMap (generateVoicingClasses tones.fifth)
 
-                Nothing ->
-                    -- If it's a triad, double the fifth or third
-                    [ [ tones.root
-                      , tones.third
-                      , tones.fifth
-                      ]
-                    , [ tones.root
-                      , tones.third
-                      , tones.third
-                      ]
-                    ]
-    in
-    validChordTonesAboveRoot
-        |> List.concatMap List.Extra.permutations
-        |> List.map (\l -> tones.fifth :: l)
-        |> List.filterMap FourPart.chordToneListToVoicingClass
+        Nothing ->
+            -- If it's a triad,
+            [ -- double the fifth
+              [ tones.third
+              , tones.fifth
+              , tones.root
+              ]
+            , -- or double the third
+              [ tones.root
+              , tones.third
+              , tones.third
+              ]
+            ]
+                |> List.concatMap (generateVoicingClasses tones.fifth)
 
 
 allFirstInversionVoicingClasses :
     CategorizedChordTones
     -> List FourPart.VoicingClass
 allFirstInversionVoicingClasses tones =
-    let
-        validChordTonesAboveRoot =
-            case tones.seventh of
-                Just seventh ->
-                    -- If it's a seventh chord, use one chord tone per voice
-                    -- or double the root
-                    [ [ tones.root
-                      , tones.fifth
-                      , seventh
-                      ]
-                    , [ tones.root
-                      , tones.root
-                      , seventh
-                      ]
-                    ]
+    case tones.seventh of
+        Just seventh ->
+            -- If it's a seventh chord
+            [ -- use one chord tone per voice
+              [ tones.root
+              , tones.fifth
+              , seventh
+              ]
 
-                Nothing ->
-                    -- If it's a triad, double the root or fifth
-                    [ [ tones.root
-                      , tones.root
-                      , tones.fifth
-                      ]
-                    , [ tones.root
-                      , tones.fifth
-                      , tones.fifth
-                      ]
-                    ]
-    in
-    validChordTonesAboveRoot
-        |> List.concatMap List.Extra.permutations
-        |> List.map (\l -> tones.third :: l)
-        |> List.filterMap FourPart.chordToneListToVoicingClass
+            -- or double the root
+            , [ tones.root
+              , tones.root
+              , seventh
+              ]
+            ]
+                |> List.concatMap (generateVoicingClasses tones.third)
+
+        Nothing ->
+            -- If it's a triad,
+            [ -- double the root
+              [ tones.root
+              , tones.root
+              , tones.fifth
+              ]
+            , -- or double the fifth
+              [ tones.root
+              , tones.fifth
+              , tones.fifth
+              ]
+            ]
+                |> List.concatMap (generateVoicingClasses tones.third)
 
 
 allRootPositionVoicingClasses :
     CategorizedChordTones
     -> List FourPart.VoicingClass
 allRootPositionVoicingClasses tones =
-    let
-        validChordTonesAboveRoot =
-            case tones.seventh of
-                Just seventh ->
-                    -- If it's a seventh chord, use one chord tone per voice
-                    [ [ tones.third
-                      , tones.fifth
-                      , seventh
-                      ]
-                    , [ tones.root
-                      , tones.third
-                      , seventh
-                      ]
-                    , [ tones.third
-                      , tones.third
-                      , seventh
-                      ]
-                    ]
+    case tones.seventh of
+        Just seventh ->
+            -- If it's a seventh chord
+            [ -- use one chord tone per voice
+              [ tones.third
+              , tones.fifth
+              , seventh
+              ]
 
-                Nothing ->
-                    -- If it's a triad, double the root
-                    [ [ tones.root
-                      , tones.third
-                      , tones.fifth
-                      ]
-                    , [ tones.third
-                      , tones.fifth
-                      , tones.fifth
-                      ]
-                    ]
-    in
-    validChordTonesAboveRoot
-        |> List.concatMap List.Extra.permutations
-        |> List.map (\l -> Interval.perfectUnison :: l)
-        |> List.filterMap FourPart.chordToneListToVoicingClass
+            -- or double the root
+            , [ tones.third
+              , tones.root
+              , seventh
+              ]
+            ]
+                |> List.concatMap (generateVoicingClasses tones.root)
+
+        Nothing ->
+            -- If it's a triad,
+            [ -- double the root
+              [ tones.root
+              , tones.third
+              , tones.fifth
+              ]
+            , -- or double the fifth
+              [ tones.third
+              , tones.fifth
+              , tones.fifth
+              ]
+            ]
+                |> List.concatMap (generateVoicingClasses tones.root)
+
+
+generateVoicingClasses : Interval.Interval -> List Interval.Interval -> List FourPart.VoicingClass
+generateVoicingClasses bottomVoice firstThreeVoiceOptions =
+    VoicingClass.builder FourPart.VoicingClass
+        |> VoicingClass.withThreeFactorsFrom firstThreeVoiceOptions
+            { mustBeUnique = False }
+        |> VoicingClass.withFactor bottomVoice { mustBeUnique = False }
+        |> VoicingClass.execute
+            { placeFactors = FourPart.placeFactors intervalLimits }
 
 
 categorizeChordTones : Chord.Chord -> Maybe CategorizedChordTones

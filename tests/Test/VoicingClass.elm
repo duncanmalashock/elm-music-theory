@@ -34,6 +34,7 @@ all =
                                     |> VoicingClass.withFactor Interval.majorSeventh
                                         { mustBeUnique = False }
                                     |> VoicingClass.execute
+                                        { placeFactors = List.singleton }
                         in
                         Expect.equal expected result
                 , test "returns no results for a repeated factor if mustBeUnique is True" <|
@@ -53,6 +54,7 @@ all =
                                     |> VoicingClass.withFactor Interval.perfectUnison
                                         { mustBeUnique = True }
                                     |> VoicingClass.execute
+                                        { placeFactors = List.singleton }
                         in
                         Expect.equal expected result
                 ]
@@ -100,6 +102,7 @@ all =
                                     |> VoicingClass.withFactor Interval.minorSeventh
                                         { mustBeUnique = False }
                                     |> VoicingClass.execute
+                                        { placeFactors = List.singleton }
                         in
                         Expect.equal expected result
                 , test "does not duplicate already used factors when mustBeUnique is True" <|
@@ -130,6 +133,7 @@ all =
                                         Interval.minorSeventh
                                         { mustBeUnique = False }
                                     |> VoicingClass.execute
+                                        { placeFactors = List.singleton }
                         in
                         Expect.equal expected result
                 ]
@@ -183,6 +187,7 @@ all =
                                     |> VoicingClass.withFactor Interval.perfectUnison
                                         { mustBeUnique = False }
                                     |> VoicingClass.execute
+                                        { placeFactors = List.singleton }
                         in
                         Expect.equal expected result
                 , test "does not duplicate already used factors when mustBeUnique is True" <|
@@ -214,6 +219,7 @@ all =
                                     |> VoicingClass.withFactor Interval.perfectUnison
                                         { mustBeUnique = False }
                                     |> VoicingClass.execute
+                                        { placeFactors = List.singleton }
                         in
                         Expect.equal expected result
                 ]
@@ -266,6 +272,7 @@ all =
                                     |> VoicingClass.withFactor Interval.perfectUnison
                                         { mustBeUnique = False }
                                     |> VoicingClass.execute
+                                        { placeFactors = List.singleton }
                         in
                         Expect.equal expected result
                 , test "does not duplicate already used factors when mustBeUnique is True" <|
@@ -316,6 +323,7 @@ all =
                                         ]
                                         { mustBeUnique = True }
                                     |> VoicingClass.execute
+                                        { placeFactors = List.singleton }
                         in
                         Expect.equal expected result
                 ]

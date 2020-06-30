@@ -1,5 +1,6 @@
 module MusicTheory.VoicingClass exposing
-    ( builder
+    ( IntervalRange
+    , builder
     , execute
     , withFactor
     , withFactorFrom
@@ -211,6 +212,13 @@ withThreeFactorsFrom options { mustBeUnique } (VoicingClassBuilder voicingsSoFar
         )
 
 
-execute : VoicingClassBuilder a -> List a
-execute (VoicingClassBuilder voicingsWithIntervals) =
+execute : { placeFactors : a -> List a } -> VoicingClassBuilder a -> List a
+execute { placeFactors } (VoicingClassBuilder voicingsWithIntervals) =
     List.map (\( v, i ) -> v) voicingsWithIntervals
+        |> List.concatMap placeFactors
+
+
+type alias IntervalRange =
+    { max : Interval.Interval
+    , min : Interval.Interval
+    }
