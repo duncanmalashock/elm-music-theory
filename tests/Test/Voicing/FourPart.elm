@@ -1,10 +1,8 @@
 module Test.Voicing.FourPart exposing (..)
 
 import Expect
-import MusicTheory.Analyze.JazzChord as AnalyzeChord
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
-import MusicTheory.Generate.JazzVoicing as GenerateVoicing
 import MusicTheory.InstrumentRanges as InstrumentRanges
 import MusicTheory.Interval as Interval
 import MusicTheory.Octave as Octave
@@ -529,33 +527,6 @@ all =
 
                         expected =
                             False
-                    in
-                    Expect.equal expected result
-            ]
-        , describe "allIntervalsFourPart"
-            [ test "correct intervals for four-way close voicing of Cmaj6" <|
-                \_ ->
-                    let
-                        availables =
-                            AnalyzeChord.availables
-                                (Chord.chord PitchClass.c ChordClass.majorSix)
-                                |> Result.mapError GenerateVoicing.AnalyzeChordError
-
-                        result =
-                            availables
-                                |> Result.andThen
-                                    (GenerateVoicing.fourWayClose Interval.majorThird)
-                                |> Result.map FourPart.allIntervals
-
-                        expected =
-                            { fourToOne = Interval.majorSixth
-                            , fourToTwo = Interval.perfectFourth
-                            , threeToOne = Interval.perfectFifth
-                            , fourToThree = Interval.majorSecond
-                            , threeToTwo = Interval.minorThird
-                            , twoToOne = Interval.majorThird
-                            }
-                                |> Ok
                     in
                     Expect.equal expected result
             ]

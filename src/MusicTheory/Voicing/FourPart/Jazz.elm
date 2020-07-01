@@ -1,13 +1,263 @@
-module MusicTheory.Analyze.JazzChord exposing
-    ( Availables
-    , Error
-    , VoiceCategory(..)
-    , availables
+module MusicTheory.Voicing.FourPart.Jazz exposing
+    ( close
+    , drop2
+    , drop2and4
+    , drop3
+    , spread
     )
 
+import List.Extra
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
 import MusicTheory.Interval as Interval
+import MusicTheory.Octave as Octave
+import MusicTheory.Voicing as Voicing
+import MusicTheory.Voicing.FourPart as FourPart
+import MusicTheory.VoicingClass as VoicingClass
+
+
+close : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
+close { ranges, chord } =
+    case availables (Chord.chordClass chord) of
+        Just available ->
+            voicingClassesforAllOctaves allCloseVoicingClasses chord ranges available
+
+        Nothing ->
+            []
+
+
+drop2 : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
+drop2 { ranges, chord } =
+    case availables (Chord.chordClass chord) of
+        Just available ->
+            voicingClassesforAllOctaves allDrop2VoicingClasses chord ranges available
+
+        Nothing ->
+            []
+
+
+drop3 : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
+drop3 { ranges, chord } =
+    case availables (Chord.chordClass chord) of
+        Just available ->
+            voicingClassesforAllOctaves allDrop3VoicingClasses chord ranges available
+
+        Nothing ->
+            []
+
+
+drop2and4 : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
+drop2and4 { ranges, chord } =
+    case availables (Chord.chordClass chord) of
+        Just available ->
+            voicingClassesforAllOctaves allDrop2and4VoicingClasses chord ranges available
+
+        Nothing ->
+            []
+
+
+spread : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
+spread { ranges, chord } =
+    case availables (Chord.chordClass chord) of
+        Just available ->
+            voicingClassesforAllOctaves spreadVoicings chord ranges available
+
+        Nothing ->
+            []
+
+
+allCloseVoicingClasses : AvailableTensions -> List FourPart.VoicingClass
+allCloseVoicingClasses available =
+    List.concatMap
+        mechanicalVoicing
+        [ { one = available.root.true :: available.root.substitutes
+          , two = available.seventh.true :: available.seventh.substitutes
+          , three = available.fifth.true :: available.fifth.substitutes
+          , four = available.third.true :: available.third.substitutes
+          }
+        , { one = available.seventh.true :: available.seventh.substitutes
+          , two = available.fifth.true :: available.fifth.substitutes
+          , three = available.third.true :: available.third.substitutes
+          , four = available.root.true :: available.root.substitutes
+          }
+        , { one = available.fifth.true :: available.fifth.substitutes
+          , two = available.third.true :: available.third.substitutes
+          , three = available.root.true :: available.root.substitutes
+          , four = available.seventh.true :: available.seventh.substitutes
+          }
+        , { one = available.third.true :: available.third.substitutes
+          , two = available.root.true :: available.root.substitutes
+          , three = available.seventh.true :: available.seventh.substitutes
+          , four = available.fifth.true :: available.fifth.substitutes
+          }
+        ]
+
+
+allDrop2VoicingClasses : AvailableTensions -> List FourPart.VoicingClass
+allDrop2VoicingClasses available =
+    List.concatMap
+        mechanicalVoicing
+        [ { one = available.root.true :: available.root.substitutes
+          , two = available.fifth.true :: available.fifth.substitutes
+          , three = available.third.true :: available.third.substitutes
+          , four = available.seventh.true :: available.seventh.substitutes
+          }
+        , { one = available.seventh.true :: available.seventh.substitutes
+          , two = available.third.true :: available.third.substitutes
+          , three = available.root.true :: available.root.substitutes
+          , four = available.fifth.true :: available.fifth.substitutes
+          }
+        , { one = available.fifth.true :: available.fifth.substitutes
+          , two = available.root.true :: available.root.substitutes
+          , three = available.seventh.true :: available.seventh.substitutes
+          , four = available.third.true :: available.third.substitutes
+          }
+        , { one = available.third.true :: available.third.substitutes
+          , two = available.seventh.true :: available.seventh.substitutes
+          , three = available.fifth.true :: available.fifth.substitutes
+          , four = available.root.true :: available.root.substitutes
+          }
+        ]
+
+
+allDrop2and4VoicingClasses : AvailableTensions -> List FourPart.VoicingClass
+allDrop2and4VoicingClasses available =
+    List.concatMap
+        mechanicalVoicing
+        [ { one = available.root.true :: available.root.substitutes
+          , two = available.fifth.true :: available.fifth.substitutes
+          , three = available.seventh.true :: available.seventh.substitutes
+          , four = available.third.true :: available.third.substitutes
+          }
+        , { one = available.seventh.true :: available.seventh.substitutes
+          , two = available.third.true :: available.third.substitutes
+          , three = available.fifth.true :: available.fifth.substitutes
+          , four = available.root.true :: available.root.substitutes
+          }
+        , { one = available.fifth.true :: available.fifth.substitutes
+          , two = available.root.true :: available.root.substitutes
+          , three = available.third.true :: available.third.substitutes
+          , four = available.seventh.true :: available.seventh.substitutes
+          }
+        , { one = available.third.true :: available.third.substitutes
+          , two = available.seventh.true :: available.seventh.substitutes
+          , three = available.root.true :: available.root.substitutes
+          , four = available.fifth.true :: available.fifth.substitutes
+          }
+        ]
+
+
+allDrop3VoicingClasses : AvailableTensions -> List FourPart.VoicingClass
+allDrop3VoicingClasses available =
+    List.concatMap
+        mechanicalVoicing
+        [ { one = available.root.true :: available.root.substitutes
+          , two = available.seventh.true :: available.seventh.substitutes
+          , three = available.third.true :: available.third.substitutes
+          , four = available.fifth.true :: available.fifth.substitutes
+          }
+        , { one = available.seventh.true :: available.seventh.substitutes
+          , two = available.fifth.true :: available.fifth.substitutes
+          , three = available.root.true :: available.root.substitutes
+          , four = available.third.true :: available.third.substitutes
+          }
+        , { one = available.fifth.true :: available.fifth.substitutes
+          , two = available.third.true :: available.third.substitutes
+          , three = available.seventh.true :: available.seventh.substitutes
+          , four = available.root.true :: available.root.substitutes
+          }
+        , { one = available.third.true :: available.third.substitutes
+          , two = available.root.true :: available.root.substitutes
+          , three = available.fifth.true :: available.fifth.substitutes
+          , four = available.seventh.true :: available.seventh.substitutes
+          }
+        ]
+
+
+mechanicalVoicing :
+    { a
+        | one : List Interval.Interval
+        , two : List Interval.Interval
+        , three : List Interval.Interval
+        , four : List Interval.Interval
+    }
+    -> List FourPart.VoicingClass
+mechanicalVoicing { one, two, three, four } =
+    VoicingClass.builder FourPart.VoicingClass
+        |> VoicingClass.withFactorFrom one { mustBeUnique = False }
+        |> VoicingClass.withFactorFrom two { mustBeUnique = False }
+        |> VoicingClass.withFactorFrom three { mustBeUnique = False }
+        |> VoicingClass.withFactorFrom four { mustBeUnique = False }
+        |> VoicingClass.execute
+            { placeFactors = FourPart.placeFactors intervalLimits }
+
+
+spreadVoicings : AvailableTensions -> List FourPart.VoicingClass
+spreadVoicings available =
+    VoicingClass.builder FourPart.VoicingClass
+        |> VoicingClass.withFactorFrom
+            (List.concat
+                [ available.root.substitutes
+                , available.third.substitutes
+                , available.fifth.true :: available.fifth.substitutes
+                , available.seventh.substitutes
+                ]
+            )
+            { mustBeUnique = True }
+        |> VoicingClass.withFactorFrom
+            [ available.third.true
+            , available.fifth.true
+            , available.seventh.true
+            ]
+            { mustBeUnique = True }
+        |> VoicingClass.withFactorFrom
+            [ available.third.true
+            , available.seventh.true
+            ]
+            { mustBeUnique = True }
+        |> VoicingClass.withFactor available.root.true { mustBeUnique = True }
+        |> VoicingClass.execute
+            { placeFactors = FourPart.placeFactors intervalLimits }
+
+
+intervalLimits =
+    { twoToOne =
+        { max = Interval.perfectOctave
+        , min = Interval.augmentedUnison
+        }
+    , threeToTwo =
+        { max = Interval.perfectOctave
+        , min = Interval.augmentedUnison
+        }
+    , fourToThree =
+        { max = Interval.perfectOctave
+        , min = Interval.augmentedUnison
+        }
+    }
+
+
+voicingClassesforAllOctaves :
+    (AvailableTensions
+     -> List FourPart.VoicingClass
+    )
+    -> Chord.Chord
+    -> FourPart.Ranges
+    -> AvailableTensions
+    -> List (Voicing.Voicing FourPart.VoicingClass)
+voicingClassesforAllOctaves generate chord ranges available =
+    List.concatMap
+        (\oct ->
+            List.map
+                (\class -> Voicing.voicing chord oct class)
+                (generate available)
+        )
+        Octave.allValid
+        |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
+        |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
+
+
+
+-- Analysis
 
 
 type VoiceCategory
@@ -28,7 +278,7 @@ type JazzChordQuality
     | Diminished7
 
 
-type alias Availables =
+type alias AvailableTensions =
     { root :
         { true : Interval.Interval
         , substitutes : List Interval.Interval
@@ -48,17 +298,9 @@ type alias Availables =
     }
 
 
-type Error
-    = CouldNotFindAllVoiceCategories (List (Maybe Interval.Interval))
-    | CouldNotDetermineChordQuality
-
-
-availables : Chord.Chord -> Result Error Availables
-availables chord =
+availables : ChordClass.ChordClass -> Maybe AvailableTensions
+availables chordClass =
     let
-        chordClass =
-            Chord.chordClass chord
-
         maybeQuality =
             determineJazzChordQuality chordClass
 
@@ -85,7 +327,7 @@ availables chord =
         chordToneWithSubstitutes voiceCategory chordTone chordQuality =
             { true = chordTone
             , substitutes =
-                availableTensions chordClass voiceCategory chordQuality
+                availableTensionsForChordQuality chordClass voiceCategory chordQuality
                     |> List.filter ((==) chordTone >> not)
             }
 
@@ -95,7 +337,7 @@ availables chord =
             -> Interval.Interval
             -> Interval.Interval
             -> Interval.Interval
-            -> Availables
+            -> AvailableTensions
         toAvailables chordQuality root third fifth seventh =
             { root = chordToneWithSubstitutes Root root chordQuality
             , third = chordToneWithSubstitutes Third third chordQuality
@@ -105,7 +347,7 @@ availables chord =
     in
     case maybeQuality of
         Nothing ->
-            Err CouldNotDetermineChordQuality
+            Nothing
 
         Just quality ->
             Maybe.map4
@@ -114,39 +356,14 @@ availables chord =
                 maybeThird
                 maybeFifth
                 maybeSeventh
-                |> Result.fromMaybe
-                    (CouldNotFindAllVoiceCategories
-                        [ maybeRoot
-                        , maybeThird
-                        , maybeFifth
-                        , maybeSeventh
-                        ]
-                    )
 
 
-chordToneForClass :
-    ChordClass.ChordClass
-    -> VoiceCategory
-    -> JazzChordQuality
-    -> Maybe Interval.Interval
-chordToneForClass chordClass voiceCategory jazzChordQuality =
-    let
-        intervals =
-            ChordClass.toIntervals chordClass
-
-        takeFirst available =
-            List.filter (\item -> List.member item intervals) available
-                |> List.head
-    in
-    takeFirst (availableTensions chordClass voiceCategory jazzChordQuality)
-
-
-availableTensions :
+availableTensionsForChordQuality :
     ChordClass.ChordClass
     -> VoiceCategory
     -> JazzChordQuality
     -> List Interval.Interval
-availableTensions chordClass voiceCategory jazzChordQuality =
+availableTensionsForChordQuality chordClass voiceCategory jazzChordQuality =
     let
         chordIntervals =
             ChordClass.toIntervals chordClass
@@ -218,7 +435,6 @@ availableTensions chordClass voiceCategory jazzChordQuality =
 
                 Seventh ->
                     [ Interval.majorSixth
-                    , Interval.minorSeventh
                     ]
 
         Minor7 ->
@@ -239,7 +455,6 @@ availableTensions chordClass voiceCategory jazzChordQuality =
 
                 Seventh ->
                     [ Interval.minorSeventh
-                    , Interval.majorSixth
                     ]
 
         HalfDiminished ->
@@ -251,11 +466,12 @@ availableTensions chordClass voiceCategory jazzChordQuality =
                     ]
 
                 Third ->
-                    [ Interval.majorThird
+                    [ Interval.minorThird
                     ]
 
                 Fifth ->
                     [ Interval.diminishedFifth
+                    , Interval.minorThirteenth
                     ]
 
                 Seventh ->
@@ -272,10 +488,12 @@ availableTensions chordClass voiceCategory jazzChordQuality =
 
                             else if includesAll [ Interval.minorNinth ] then
                                 [ Interval.minorNinth
+                                , Interval.augmentedNinth
                                 ]
 
                             else if includesAll [ Interval.augmentedNinth ] then
                                 [ Interval.augmentedNinth
+                                , Interval.minorNinth
                                 ]
 
                             else
@@ -455,3 +673,20 @@ minimumIntervalsForJazzChordQuality jazzChordQuality =
             , Interval.diminishedFifth
             , Interval.diminishedSeventh
             ]
+
+
+chordToneForClass :
+    ChordClass.ChordClass
+    -> VoiceCategory
+    -> JazzChordQuality
+    -> Maybe Interval.Interval
+chordToneForClass chordClass voiceCategory jazzChordQuality =
+    let
+        intervals =
+            ChordClass.toIntervals chordClass
+
+        takeFirst available =
+            List.filter (\item -> List.member item intervals) available
+                |> List.head
+    in
+    takeFirst (availableTensionsForChordQuality chordClass voiceCategory jazzChordQuality)

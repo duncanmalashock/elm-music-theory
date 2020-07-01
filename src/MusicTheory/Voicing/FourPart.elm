@@ -348,7 +348,6 @@ shiftFromVoiceThree shiftCount voicingClasses =
                         | voiceOne = vc.voiceOne |> Interval.add shift
                         , voiceTwo = vc.voiceTwo |> Interval.add shift
                         , voiceThree = vc.voiceThree |> Interval.add shift
-                        , voiceFour = vc.voiceFour
                     }
                 )
                 intervalsToShift
@@ -368,8 +367,6 @@ shiftFromVoiceTwo shiftCount voicingClasses =
                     { vc
                         | voiceOne = vc.voiceOne |> Interval.add shift
                         , voiceTwo = vc.voiceTwo |> Interval.add shift
-                        , voiceThree = vc.voiceThree
-                        , voiceFour = vc.voiceFour
                     }
                 )
                 intervalsToShift
@@ -388,9 +385,6 @@ shiftFromVoiceOne shiftCount voicingClasses =
                 (\shift ->
                     { vc
                         | voiceOne = vc.voiceOne |> Interval.add shift
-                        , voiceTwo = vc.voiceTwo
-                        , voiceThree = vc.voiceThree
-                        , voiceFour = vc.voiceFour
                     }
                 )
                 intervalsToShift
