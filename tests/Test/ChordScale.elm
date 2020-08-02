@@ -66,9 +66,6 @@ all =
                         cMajorScale =
                             Scale.scale PitchClass.c ScaleClass.ionian
 
-                        cMajorSeventh =
-                            Chord.chord PitchClass.c ChordClass.majorSeventh
-
                         expected =
                             []
 

@@ -78,7 +78,7 @@ startsOnScaleTone (Melody firstFragment fragments) =
         |> List.head
         |> Maybe.map
             (\firstPitch ->
-                Scale.containsPitchClass (Pitch.pitchClass firstPitch) (scaleFromFragment firstFragment)
+                Scale.containsPitchClass (Pitch.pitchClass firstPitch) (scaleFromFragment firstFragment) { ignoreSpelling = True }
             )
         |> Maybe.withDefault False
 

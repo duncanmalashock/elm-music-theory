@@ -97,9 +97,13 @@ toListThroughAllOctaves (Scale scaleRoot scaleClass) =
             )
 
 
-containsPitchClass : PitchClass -> Scale -> Bool
-containsPitchClass thePitchClass theScale =
-    List.member thePitchClass (toList theScale)
+containsPitchClass : PitchClass -> Scale -> { ignoreSpelling : Bool } -> Bool
+containsPitchClass thePitchClass theScale { ignoreSpelling } =
+    if ignoreSpelling then
+        List.member (PitchClass.semitones thePitchClass) (toList theScale |> List.map PitchClass.semitones)
+
+    else
+        List.member thePitchClass (toList theScale)
 
 
 toList : Scale -> List PitchClass

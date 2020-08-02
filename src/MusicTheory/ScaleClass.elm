@@ -262,7 +262,7 @@ melodicMinor =
         { rootToSecond = Interval.majorSecond
         , rootToThird = Interval.minorThird
         , rootToFourth = Interval.perfectFourth
-        , rootToFifth = Interval.diminishedFifth
+        , rootToFifth = Interval.perfectFifth
         , rootToSixth = Interval.majorSixth
         , rootToSeventh = Interval.majorSeventh
         }

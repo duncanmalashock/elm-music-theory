@@ -155,7 +155,7 @@ harmonicContextToMovement ( last, current ) =
     if Chord.containsPitchClass (Pitch.pitchClass current.pitch) current.chord then
         ToChordTone interval
 
-    else if Scale.containsPitchClass (Pitch.pitchClass current.pitch) current.scale then
+    else if Scale.containsPitchClass (Pitch.pitchClass current.pitch) current.scale { ignoreSpelling = True } then
         ToNonChordTone interval
 
     else

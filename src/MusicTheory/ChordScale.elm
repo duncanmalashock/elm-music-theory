@@ -24,4 +24,4 @@ chordIsInScale scale chord =
         pitchClasses =
             Chord.toPitchClasses chord
     in
-    List.all (\pc -> Scale.containsPitchClass pc scale) pitchClasses
+    List.all (\pc -> Scale.containsPitchClass pc scale { ignoreSpelling = True }) pitchClasses
