@@ -1,27 +1,20 @@
-module MusicTheory.ChordScale exposing (chordIsInScale, diatonicChordsAtInterval)
+module MusicTheory.ChordScale exposing (chordIsInScale, diatonicChordsAt)
 
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
-import MusicTheory.Interval as Interval
 import MusicTheory.PitchClass as PitchClass
 import MusicTheory.Scale as Scale
 
 
-diatonicChordsAtInterval :
-    { targetChord : Chord.Chord
-    , approachByInterval : Interval.Interval
+diatonicChordsAt :
+    { root : PitchClass.PitchClass
     , scale : Scale.Scale
     }
     -> List Chord.Chord
-diatonicChordsAtInterval { targetChord, scale, approachByInterval } =
-    targetChord
-        |> Chord.root
-        |> PitchClass.transpose approachByInterval
-        |> (\root ->
-                List.map
-                    (Chord.chord root)
-                    ChordClass.all
-           )
+diatonicChordsAt { root, scale } =
+    List.map
+        (Chord.chord root)
+        ChordClass.all
         |> List.filter (chordIsInScale scale)
 
 
