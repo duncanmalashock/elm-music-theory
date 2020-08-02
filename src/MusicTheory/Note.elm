@@ -114,8 +114,8 @@ duration (Note pit dur dyn) =
     dur
 
 
-addDuration : Note -> Time.Time -> Note
-addDuration (Note pit dur dyn) durationToAdd =
+addDuration : Time.Time -> Note -> Note
+addDuration durationToAdd (Note pit dur dyn) =
     note pit (Time.add dur durationToAdd)
 
 
