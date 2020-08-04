@@ -1,4 +1,4 @@
-module MusicTheory.ChordScale exposing (chordIsInScale, diatonicChordsAt)
+module MusicTheory.ChordScale exposing (allChordsInScale, chordIsInScale, diatonicChordsAt)
 
 import MusicTheory.Chord as Chord
 import MusicTheory.ChordClass as ChordClass
@@ -16,6 +16,18 @@ diatonicChordsAt { root, scale } =
         (Chord.chord root)
         ChordClass.all
         |> List.filter (chordIsInScale scale)
+
+
+allChordsInScale : Scale.Scale -> List Chord.Chord
+allChordsInScale scale =
+    Scale.toList scale
+        |> List.concatMap
+            (\pitchClass ->
+                diatonicChordsAt
+                    { root = pitchClass
+                    , scale = scale
+                    }
+            )
 
 
 chordIsInScale : Scale.Scale -> Chord.Chord -> Bool

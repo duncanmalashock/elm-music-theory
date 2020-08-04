@@ -22,6 +22,8 @@ module MusicTheory.ChordClass exposing
     , dominantThirteenthSharpNine
     , dominantThirteenthSharpNineFlatNine
     , halfDiminished
+    , isDiminished
+    , isDominant
     , major
     , majorAddNine
     , majorSeventh
@@ -93,6 +95,43 @@ all =
     , sus4
     , majorSeventhSharpEleven
     ]
+
+
+isDominant : ChordClass -> Bool
+isDominant theChordClass =
+    includesAll
+        [ Interval.majorThird
+        , Interval.minorSeventh
+        ]
+        theChordClass
+        || includesAll
+            [ Interval.perfectFourth
+            , Interval.minorSeventh
+            ]
+            theChordClass
+
+
+isDiminished : ChordClass -> Bool
+isDiminished theChordClass =
+    includesAll
+        [ Interval.minorThird
+        , Interval.diminishedFifth
+        ]
+        theChordClass
+
+
+includes : Interval.Interval -> ChordClass -> Bool
+includes theInterval (ChordClass intervals) =
+    List.member theInterval intervals
+
+
+includesAll : List Interval.Interval -> ChordClass -> Bool
+includesAll intervals theChordClass =
+    List.all
+        (\interval ->
+            includes interval theChordClass
+        )
+        intervals
 
 
 
