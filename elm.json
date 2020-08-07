@@ -5,17 +5,17 @@
     "license": "BSD-3-Clause",
     "version": "1.0.0",
     "exposed-modules": [
-        "MusicTheory.Chord",
-        "MusicTheory.ChordClass",
-        "MusicTheory.Interval",
-        "MusicTheory.Key",
-        "MusicTheory.Letter",
-        "MusicTheory.Note",
-        "MusicTheory.Octave",
-        "MusicTheory.Pitch",
-        "MusicTheory.PitchClass",
-        "MusicTheory.Scale",
-        "MusicTheory.ScaleClass"
+        "MusicTheory.Internal.Chord",
+        "MusicTheory.Internal.ChordClass",
+        "MusicTheory.Internal.Interval",
+        "MusicTheory.Internal.Key",
+        "MusicTheory.Internal.Letter",
+        "MusicTheory.Internal.Note",
+        "MusicTheory.Internal.Octave",
+        "MusicTheory.Internal.Pitch",
+        "MusicTheory.Internal.PitchClass",
+        "MusicTheory.Internal.Scale",
+        "MusicTheory.Internal.ScaleClass"
     ],
     "elm-version": "0.19.1 <= v < 0.20.0",
     "dependencies": {
