@@ -258,7 +258,7 @@ voicingClassesforAllOctaves generate chord ranges chordTones =
                 (generate chordTones)
         )
         Octave.allValid
-        |> List.filter (Voicing.withinRanges FourPart.allVoices FourPart.allRanges ranges)
+        |> List.filter (Voicing.withInstrumentRanges FourPart.allVoices FourPart.allRanges ranges)
         |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
 
 

@@ -290,7 +290,7 @@ voicingClassesforAllOctaves generate chord ranges available =
                 (generate available)
         )
         Octave.allValid
-        |> List.filter (Voicing.withinRanges FivePart.allVoices FivePart.allRanges ranges)
+        |> List.filter (Voicing.withInstrumentRanges FivePart.allVoices FivePart.allRanges ranges)
         |> List.Extra.uniqueBy (Voicing.toString FivePart.allVoices)
 
 

@@ -34,6 +34,10 @@ module MusicTheory.Interval exposing
     , indexToIntervalNumber
     , interval
     , intervalNumberIndex
+    , isGreaterThan
+    , isGreaterThanOrEqualTo
+    , isLessThan
+    , isLessThanOrEqualTo
     , majorNinth
     , majorSecond
     , majorSeventh
@@ -109,6 +113,34 @@ toSimple (Interval dir qual num) =
 
         _ ->
             Interval dir qual num
+
+
+isGreaterThan : Interval -> Interval -> Bool
+isGreaterThan a b =
+    subtract b a
+        |> semitones
+        |> (>) (semitones perfectUnison)
+
+
+isLessThan : Interval -> Interval -> Bool
+isLessThan a b =
+    subtract b a
+        |> semitones
+        |> (<) (semitones perfectUnison)
+
+
+isGreaterThanOrEqualTo : Interval -> Interval -> Bool
+isGreaterThanOrEqualTo a b =
+    subtract b a
+        |> semitones
+        |> (>=) (semitones perfectUnison)
+
+
+isLessThanOrEqualTo : Interval -> Interval -> Bool
+isLessThanOrEqualTo a b =
+    subtract b a
+        |> semitones
+        |> (<=) (semitones perfectUnison)
 
 
 offset : Interval -> Int

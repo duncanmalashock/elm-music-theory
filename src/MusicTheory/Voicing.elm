@@ -14,6 +14,7 @@ module MusicTheory.Voicing exposing
     , containsParallelOctaves
     , containsPitch
     , execute
+    , range
     , root
     , semitoneDistance
     , toString
@@ -22,8 +23,10 @@ module MusicTheory.Voicing exposing
     , voicing
     , voicingClass
     , withFilter
+    , withInstrumentRanges
+    , withMaximumRange
+    , withMinimumRange
     , withSort
-    , withinRanges
     )
 
 import List.Extra
@@ -58,6 +61,18 @@ voicingClass (Voicing ch theOctave vc) =
     vc
 
 
+range :
+    { getTopVoice : Voicing voicingClass -> Pitch.Pitch
+    , getBottomVoice : Voicing voicingClass -> Pitch.Pitch
+    }
+    -> Voicing voicingClass
+    -> Interval.Interval
+range { getTopVoice, getBottomVoice } theVoicing =
+    Pitch.intervalBetween
+        (getBottomVoice theVoicing)
+        (getTopVoice theVoicing)
+
+
 
 -- Generating voicings
 
@@ -83,11 +98,76 @@ type alias TechniqueInput ranges =
     }
 
 
-withinRanges : List (Voicing voicingClass -> Pitch.Pitch) -> List (ranges -> Pitch.Range) -> ranges -> Voicing voicingClass -> Bool
-withinRanges allVoices allRanges ranges theVoicing =
+withMinimumRange :
+    Interval.Interval
+    ->
+        { getTopVoice : Voicing voicingClass -> Pitch.Pitch
+        , getBottomVoice : Voicing voicingClass -> Pitch.Pitch
+        }
+    -> Config voicingClass ranges
+    -> Config voicingClass ranges
+withMinimumRange minInterval { getTopVoice, getBottomVoice } (Config theConfig) =
+    let
+        hasRangeGreaterThanOrEqualTo theMin theVoicing =
+            let
+                theRange =
+                    range
+                        { getTopVoice = getTopVoice
+                        , getBottomVoice = getBottomVoice
+                        }
+                        theVoicing
+            in
+            Interval.isGreaterThanOrEqualTo theMin theRange
+    in
+    { theConfig
+        | filter =
+            theConfig.filter
+                ++ [ hasRangeGreaterThanOrEqualTo minInterval
+                   ]
+    }
+        |> Config
+
+
+withMaximumRange :
+    Interval.Interval
+    ->
+        { getTopVoice : Voicing voicingClass -> Pitch.Pitch
+        , getBottomVoice : Voicing voicingClass -> Pitch.Pitch
+        }
+    -> Config voicingClass ranges
+    -> Config voicingClass ranges
+withMaximumRange maxInterval { getTopVoice, getBottomVoice } (Config theConfig) =
+    let
+        hasRangeLessThanOrEqualTo theMin theVoicing =
+            let
+                theRange =
+                    range
+                        { getTopVoice = getTopVoice
+                        , getBottomVoice = getBottomVoice
+                        }
+                        theVoicing
+            in
+            Interval.isLessThanOrEqualTo theMin theRange
+    in
+    { theConfig
+        | filter =
+            theConfig.filter
+                ++ [ hasRangeLessThanOrEqualTo maxInterval
+                   ]
+    }
+        |> Config
+
+
+withInstrumentRanges :
+    List (Voicing voicingClass -> Pitch.Pitch)
+    -> List (ranges -> Pitch.Range)
+    -> ranges
+    -> Voicing voicingClass
+    -> Bool
+withInstrumentRanges allVoices allRanges ranges theVoicing =
     List.map2
-        (\voice range ->
-            Pitch.isWithin range voice
+        (\voice aRange ->
+            Pitch.isWithin aRange voice
         )
         (List.map (\fn -> fn theVoicing) allVoices)
         (List.map (\fn -> fn ranges) allRanges)
@@ -224,7 +304,14 @@ semitoneDistance a b =
     abs (Pitch.semitones a - Pitch.semitones b)
 
 
-totalSemitoneDistance : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> Int
+totalSemitoneDistance :
+    List
+        (Voicing voicingClass
+         -> Pitch.Pitch
+        )
+    -> Voicing voicingClass
+    -> Voicing voicingClass
+    -> Int
 totalSemitoneDistance allVoices voicingA voicingB =
     forEachVoice allVoices
         voicingA
