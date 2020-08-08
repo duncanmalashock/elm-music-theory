@@ -1,8 +1,11 @@
 module MusicTheory.Internal.Harmonize exposing
     ( Tone
     , chordTone
+    , diatonicApproach
+    , execute
     , nonChordTone
     , nonScaleTone
+    , parallelApproach
     , toneFromHarmonicContext
     )
 
@@ -58,6 +61,45 @@ toneFromHarmonicContext context =
         NonScaleTone
 
 
+execute :
+    { ifNonChordTone :
+        HarmonicContext.HarmonicContext
+        -> Maybe HarmonicContext.HarmonicContext
+        -> Maybe Chord.Chord
+    , ifNonScaleTone :
+        HarmonicContext.HarmonicContext
+        -> Maybe HarmonicContext.HarmonicContext
+        -> Maybe Chord.Chord
+    }
+    -> List HarmonicContext.HarmonicContext
+    -> List (Maybe Chord.Chord)
+execute tactics contexts =
+    contexts
+        |> listMapPairs
+            (\context maybeNextContext ->
+                step tactics context maybeNextContext
+            )
+
+
+listMapPairs : (a -> Maybe a -> b) -> List a -> List b
+listMapPairs fn list =
+    listToTuples list []
+        |> List.map
+            (\( item, maybeNextItem ) ->
+                fn item maybeNextItem
+            )
+
+
+listToTuples : List a -> List ( a, Maybe a ) -> List ( a, Maybe a )
+listToTuples theList listSoFar =
+    case theList of
+        [] ->
+            listSoFar
+
+        head :: tail ->
+            listToTuples tail (listSoFar ++ [ ( head, List.head tail ) ])
+
+
 step :
     { ifNonChordTone :
         HarmonicContext.HarmonicContext
@@ -104,8 +146,23 @@ parallelApproach :
 parallelApproach context maybeNextContext =
     Maybe.map
         (\nextContext ->
+            let
+                _ =
+                    Debug.log "current, next" ( context, nextContext )
+
+                intervalBetweenPitches =
+                    Pitch.intervalBetween
+                        (HarmonicContext.pitch context)
+                        (HarmonicContext.pitch nextContext)
+
+                newRoot =
+                    Pitch.transposeDown
+                        intervalBetweenPitches
+                        (HarmonicContext.pitch nextContext)
+                        |> Pitch.pitchClass
+            in
             HarmonicContext.chord nextContext
                 |> Chord.chordClass
-                |> Chord.chord (HarmonicContext.pitchClass context)
+                |> Chord.chord newRoot
         )
         maybeNextContext
