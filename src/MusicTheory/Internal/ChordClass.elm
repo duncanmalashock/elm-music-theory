@@ -84,11 +84,11 @@ all =
     , majorSeventh
     , majorSix
     , majorSixNine
+    , minorSeventh
     , minor
     , minorAddNine
     , minorMajorSeventh
     , minorNinth
-    , minorSeventh
     , minorSix
     , minorSixNine
     , sus2

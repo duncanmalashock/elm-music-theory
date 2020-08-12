@@ -9,12 +9,18 @@ import MusicTheory.Internal.Scale as Scale
 diatonicChordsAt :
     { root : PitchClass.PitchClass
     , scale : Scale.Scale
+    , chordClassesAllowed : List ChordClass.ChordClass
     }
     -> List Chord.Chord
-diatonicChordsAt { root, scale } =
+diatonicChordsAt { root, scale, chordClassesAllowed } =
     List.map
         (Chord.chord root)
-        ChordClass.all
+        (ChordClass.all
+            |> List.filter
+                (\chordClass ->
+                    List.member chordClass chordClassesAllowed
+                )
+        )
         |> List.filter (chordIsInScale scale)
 
 
@@ -26,6 +32,7 @@ allChordsInScale scale =
                 diatonicChordsAt
                     { root = pitchClass
                     , scale = scale
+                    , chordClassesAllowed = ChordClass.all
                     }
             )
 

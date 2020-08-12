@@ -21,14 +21,14 @@ all =
                             Scale.scale PitchClass.c ScaleClass.ionian
 
                         expected =
-                            [ Chord.chord PitchClass.b ChordClass.diminished
-                            , Chord.chord PitchClass.b ChordClass.halfDiminished
+                            [ Chord.chord PitchClass.b ChordClass.halfDiminished
                             ]
 
                         actual =
                             ChordScale.diatonicChordsAt
                                 { scale = cMajorScale
                                 , root = PitchClass.b
+                                , chordClassesAllowed = [ ChordClass.halfDiminished ]
                                 }
                     in
                     Expect.equal expected actual
@@ -39,21 +39,14 @@ all =
                             Scale.scale PitchClass.c ScaleClass.ionian
 
                         expected =
-                            [ Chord.chord PitchClass.d ChordClass.dominantSeventhSus4
-                            , Chord.chord PitchClass.d ChordClass.minor
-                            , Chord.chord PitchClass.d ChordClass.minorAddNine
-                            , Chord.chord PitchClass.d ChordClass.minorNinth
-                            , Chord.chord PitchClass.d ChordClass.minorSeventh
-                            , Chord.chord PitchClass.d ChordClass.minorSix
-                            , Chord.chord PitchClass.d ChordClass.minorSixNine
-                            , Chord.chord PitchClass.d ChordClass.sus2
-                            , Chord.chord PitchClass.d ChordClass.sus4
+                            [ Chord.chord PitchClass.d ChordClass.minorSeventh
                             ]
 
                         actual =
                             ChordScale.diatonicChordsAt
                                 { scale = cMajorScale
                                 , root = PitchClass.d
+                                , chordClassesAllowed = [ ChordClass.minorSeventh ]
                                 }
                     in
                     Expect.equal expected actual
@@ -70,6 +63,7 @@ all =
                             ChordScale.diatonicChordsAt
                                 { scale = cMajorScale
                                 , root = PitchClass.bFlat
+                                , chordClassesAllowed = ChordClass.all
                                 }
                     in
                     Expect.equal expected actual

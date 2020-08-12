@@ -12,6 +12,7 @@ module MusicTheory.Internal.Harmonize exposing
     )
 
 import MusicTheory.Internal.Chord as Chord
+import MusicTheory.Internal.ChordClass as ChordClass
 import MusicTheory.Internal.ChordScale as ChordScale
 import MusicTheory.Internal.HarmonicContext as HarmonicContext
 import MusicTheory.Internal.Pitch as Pitch
@@ -86,10 +87,14 @@ execute tactics contexts =
     contexts
         |> List.map initialStep
         -- Apply this until all chords are harmonized (bailing out after N attempts)
-        --|> listMapPairs
-        --    (\context maybeNextContext ->
-        --        step tactics context maybeNextContext
-        --    )
+        |> listMapPairs
+            (\context maybeNextContext ->
+                step tactics context maybeNextContext
+            )
+        |> listMapPairs
+            (\context maybeNextContext ->
+                step tactics context maybeNextContext
+            )
         |> listMapPairs
             (\context maybeNextContext ->
                 step tactics context maybeNextContext
@@ -182,16 +187,41 @@ step { ifNonChordTone, ifNonScaleTone } harmonizedContext maybeNext =
 
 
 diatonicApproach :
-    HarmonizedContext
+    List ChordClass.ChordClass
+    -> HarmonizedContext
     -> Maybe HarmonizedContext
     -> Maybe Chord.Chord
-diatonicApproach harmonized maybeNext =
-    ChordScale.diatonicChordsAt
-        { root = Chord.root (HarmonicContext.chord harmonized.context)
-        , scale = HarmonicContext.scale harmonized.context
-        }
-        -- TODO: don't just pick the first one; sort the list or pick one intelligently
-        |> List.head
+diatonicApproach chordClassesAllowed harmonized maybeNext =
+    -- 1. get the interval between the pitch of the current and next context's pitch
+    -- 2. get the root of the next harmonized context's chord if it exists
+    -- 3. transpose the root of that chord down by the interval in step 1
+    -- 4. harmonize with a chord class found in the given scale at that root
+    maybeNext
+        |> Maybe.andThen
+            (\nextContext ->
+                nextContext.maybeChord
+                    |> Maybe.andThen
+                        (\nextChord ->
+                            let
+                                intervalBetweenPitches =
+                                    Pitch.intervalBetween
+                                        (HarmonicContext.pitch nextContext.context)
+                                        (HarmonicContext.pitch harmonized.context)
+
+                                newRoot =
+                                    PitchClass.transpose
+                                        intervalBetweenPitches
+                                        (Chord.root nextChord)
+                            in
+                            ChordScale.diatonicChordsAt
+                                { root = newRoot
+                                , scale = HarmonicContext.scale harmonized.context
+                                , chordClassesAllowed = chordClassesAllowed
+                                }
+                                -- TODO: don't just pick the first one; sort the list or pick one intelligently
+                                |> List.head
+                        )
+            )
 
 
 parallelApproach :
@@ -202,6 +232,7 @@ parallelApproach harmonized maybeNext =
     -- 1. get the interval between the pitch of the current and next context's pitch
     -- 2. get the root of the next harmonized context's chord if it exists
     -- 3. transpose the root of that chord down by the interval in step 1
+    -- 4. harmonize with the same chord class as the next chord
     maybeNext
         |> Maybe.andThen
             (\nextContext ->
