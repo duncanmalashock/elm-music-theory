@@ -1,5 +1,7 @@
 module MusicTheory.Internal.Harmonize exposing
-    ( Tone
+    ( HarmonizedContext
+    , Tone
+    , chordFromHarmonizedContext
     , chordTone
     , diatonicApproach
     , execute
@@ -13,6 +15,7 @@ import MusicTheory.Internal.Chord as Chord
 import MusicTheory.Internal.ChordScale as ChordScale
 import MusicTheory.Internal.HarmonicContext as HarmonicContext
 import MusicTheory.Internal.Pitch as Pitch
+import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Internal.Scale as Scale
 
 
@@ -61,24 +64,41 @@ toneFromHarmonicContext context =
         NonScaleTone
 
 
+type alias HarmonizedContext =
+    { context : HarmonicContext.HarmonicContext
+    , maybeChord : Maybe Chord.Chord
+    }
+
+
 execute :
     { ifNonChordTone :
-        HarmonicContext.HarmonicContext
-        -> Maybe HarmonicContext.HarmonicContext
+        HarmonizedContext
+        -> Maybe HarmonizedContext
         -> Maybe Chord.Chord
     , ifNonScaleTone :
-        HarmonicContext.HarmonicContext
-        -> Maybe HarmonicContext.HarmonicContext
+        HarmonizedContext
+        -> Maybe HarmonizedContext
         -> Maybe Chord.Chord
     }
     -> List HarmonicContext.HarmonicContext
-    -> List (Maybe Chord.Chord)
+    -> List HarmonizedContext
 execute tactics contexts =
     contexts
+        |> List.map initialStep
+        -- Apply this until all chords are harmonized (bailing out after N attempts)
+        --|> listMapPairs
+        --    (\context maybeNextContext ->
+        --        step tactics context maybeNextContext
+        --    )
         |> listMapPairs
             (\context maybeNextContext ->
                 step tactics context maybeNextContext
             )
+
+
+chordFromHarmonizedContext : HarmonizedContext -> Maybe Chord.Chord
+chordFromHarmonizedContext harmonizedContext =
+    harmonizedContext.maybeChord
 
 
 listMapPairs : (a -> Maybe a -> b) -> List a -> List b
@@ -100,69 +120,108 @@ listToTuples theList listSoFar =
             listToTuples tail (listSoFar ++ [ ( head, List.head tail ) ])
 
 
-step :
-    { ifNonChordTone :
-        HarmonicContext.HarmonicContext
-        -> Maybe HarmonicContext.HarmonicContext
-        -> Maybe Chord.Chord
-    , ifNonScaleTone :
-        HarmonicContext.HarmonicContext
-        -> Maybe HarmonicContext.HarmonicContext
-        -> Maybe Chord.Chord
-    }
-    -> HarmonicContext.HarmonicContext
-    -> Maybe HarmonicContext.HarmonicContext
-    -> Maybe Chord.Chord
-step { ifNonChordTone, ifNonScaleTone } context maybeNextContext =
+initialStep :
+    HarmonicContext.HarmonicContext
+    -> HarmonizedContext
+initialStep context =
     case toneFromHarmonicContext context of
         ChordTone ->
-            HarmonicContext.chord context
-                |> Just
+            { context =
+                context
+            , maybeChord =
+                HarmonicContext.chord context
+                    |> Just
+            }
 
         NonChordTone ->
-            ifNonChordTone context maybeNextContext
+            { context =
+                context
+            , maybeChord =
+                Nothing
+            }
 
         NonScaleTone ->
-            ifNonScaleTone context maybeNextContext
+            { context =
+                context
+            , maybeChord =
+                Nothing
+            }
+
+
+step :
+    { ifNonChordTone :
+        HarmonizedContext
+        -> Maybe HarmonizedContext
+        -> Maybe Chord.Chord
+    , ifNonScaleTone :
+        HarmonizedContext
+        -> Maybe HarmonizedContext
+        -> Maybe Chord.Chord
+    }
+    -> HarmonizedContext
+    -> Maybe HarmonizedContext
+    -> HarmonizedContext
+step { ifNonChordTone, ifNonScaleTone } harmonizedContext maybeNext =
+    case toneFromHarmonicContext harmonizedContext.context of
+        ChordTone ->
+            harmonizedContext
+
+        NonChordTone ->
+            { context =
+                harmonizedContext.context
+            , maybeChord =
+                ifNonChordTone harmonizedContext maybeNext
+            }
+
+        NonScaleTone ->
+            { context =
+                harmonizedContext.context
+            , maybeChord =
+                ifNonScaleTone harmonizedContext maybeNext
+            }
 
 
 diatonicApproach :
-    HarmonicContext.HarmonicContext
-    -> Maybe HarmonicContext.HarmonicContext
+    HarmonizedContext
+    -> Maybe HarmonizedContext
     -> Maybe Chord.Chord
-diatonicApproach context maybeNextContext =
+diatonicApproach harmonized maybeNext =
     ChordScale.diatonicChordsAt
-        { root = Chord.root (HarmonicContext.chord context)
-        , scale = HarmonicContext.scale context
+        { root = Chord.root (HarmonicContext.chord harmonized.context)
+        , scale = HarmonicContext.scale harmonized.context
         }
         -- TODO: don't just pick the first one; sort the list or pick one intelligently
         |> List.head
 
 
 parallelApproach :
-    HarmonicContext.HarmonicContext
-    -> Maybe HarmonicContext.HarmonicContext
+    HarmonizedContext
+    -> Maybe HarmonizedContext
     -> Maybe Chord.Chord
-parallelApproach context maybeNextContext =
-    Maybe.map
-        (\nextContext ->
-            let
-                _ =
-                    Debug.log "current, next" ( context, nextContext )
+parallelApproach harmonized maybeNext =
+    -- 1. get the interval between the pitch of the current and next context's pitch
+    -- 2. get the root of the next harmonized context's chord if it exists
+    -- 3. transpose the root of that chord down by the interval in step 1
+    maybeNext
+        |> Maybe.andThen
+            (\nextContext ->
+                nextContext.maybeChord
+                    |> Maybe.andThen
+                        (\nextChord ->
+                            let
+                                intervalBetweenPitches =
+                                    Pitch.intervalBetween
+                                        (HarmonicContext.pitch nextContext.context)
+                                        (HarmonicContext.pitch harmonized.context)
 
-                intervalBetweenPitches =
-                    Pitch.intervalBetween
-                        (HarmonicContext.pitch context)
-                        (HarmonicContext.pitch nextContext)
-
-                newRoot =
-                    Pitch.transposeDown
-                        intervalBetweenPitches
-                        (HarmonicContext.pitch nextContext)
-                        |> Pitch.pitchClass
-            in
-            HarmonicContext.chord nextContext
-                |> Chord.chordClass
-                |> Chord.chord newRoot
-        )
-        maybeNextContext
+                                newRoot =
+                                    PitchClass.transpose
+                                        intervalBetweenPitches
+                                        (Chord.root nextChord)
+                            in
+                            HarmonicContext.chord nextContext.context
+                                |> Chord.chordClass
+                                |> Chord.chord newRoot
+                                |> Just
+                        )
+            )
