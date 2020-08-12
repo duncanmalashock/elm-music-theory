@@ -11,6 +11,7 @@ module MusicTheory.Internal.Harmonize exposing
     , toneFromHarmonicContext
     )
 
+import Maybe.Extra
 import MusicTheory.Internal.Chord as Chord
 import MusicTheory.Internal.ChordClass as ChordClass
 import MusicTheory.Internal.ChordScale as ChordScale
@@ -18,6 +19,7 @@ import MusicTheory.Internal.HarmonicContext as HarmonicContext
 import MusicTheory.Internal.Pitch as Pitch
 import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Internal.Scale as Scale
+import Util.Basic
 
 
 type Tone
@@ -86,18 +88,13 @@ execute :
 execute tactics contexts =
     contexts
         |> List.map initialStep
-        -- Apply this until all chords are harmonized (bailing out after N attempts)
-        |> listMapPairs
-            (\context maybeNextContext ->
-                step tactics context maybeNextContext
-            )
-        |> listMapPairs
-            (\context maybeNextContext ->
-                step tactics context maybeNextContext
-            )
-        |> listMapPairs
-            (\context maybeNextContext ->
-                step tactics context maybeNextContext
+        -- Apply this until all chords are harmonized (bailing out after 10 attempts)
+        |> Util.Basic.applyNTimes
+            10
+            (listMapPairs
+                (\context maybeNextContext ->
+                    step tactics context maybeNextContext
+                )
             )
 
 
@@ -218,7 +215,6 @@ diatonicApproach chordClassesAllowed harmonized maybeNext =
                                 , scale = HarmonicContext.scale harmonized.context
                                 , chordClassesAllowed = chordClassesAllowed
                                 }
-                                -- TODO: don't just pick the first one; sort the list or pick one intelligently
                                 |> List.head
                         )
             )
