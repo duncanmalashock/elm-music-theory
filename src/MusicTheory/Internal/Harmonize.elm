@@ -4,6 +4,7 @@ module MusicTheory.Internal.Harmonize exposing
     , chordFromHarmonizedContext
     , chordTone
     , diatonicApproach
+    , diminishedApproach
     , execute
     , nonChordTone
     , nonScaleTone
@@ -249,6 +250,39 @@ parallelApproach harmonized maybeNext =
                             HarmonicContext.chord nextContext.context
                                 |> Chord.chordClass
                                 |> Chord.chord newRoot
+                                |> Just
+                        )
+            )
+
+
+diminishedApproach :
+    HarmonizedContext
+    -> Maybe HarmonizedContext
+    -> Maybe Chord.Chord
+diminishedApproach harmonized maybeNext =
+    -- 1. get the interval between the pitch of the current and next context's pitch
+    -- 2. get the root of the next harmonized context's chord if it exists
+    -- 3. transpose the root of that chord down by the interval in step 1
+    -- 4. harmonize with a diminished seventh chord
+    maybeNext
+        |> Maybe.andThen
+            (\nextContext ->
+                nextContext.maybeChord
+                    |> Maybe.andThen
+                        (\nextChord ->
+                            let
+                                intervalBetweenPitches =
+                                    Pitch.intervalBetween
+                                        (HarmonicContext.pitch nextContext.context)
+                                        (HarmonicContext.pitch harmonized.context)
+
+                                newRoot =
+                                    PitchClass.transpose
+                                        intervalBetweenPitches
+                                        (Chord.root nextChord)
+                            in
+                            Chord.chord newRoot
+                                ChordClass.diminishedSeventh
                                 |> Just
                         )
             )

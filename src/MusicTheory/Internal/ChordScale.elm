@@ -15,12 +15,7 @@ diatonicChordsAt :
 diatonicChordsAt { root, scale, chordClassesAllowed } =
     List.map
         (Chord.chord root)
-        (ChordClass.all
-            |> List.filter
-                (\chordClass ->
-                    List.member chordClass chordClassesAllowed
-                )
-        )
+        chordClassesAllowed
         |> List.filter (chordIsInScale scale)
 
 
