@@ -5,6 +5,7 @@ module MusicTheory.Internal.Harmonize exposing
     , chordTone
     , diatonicApproach
     , diminishedApproach
+    , dominantApproach
     , execute
     , nonChordTone
     , nonScaleTone
@@ -17,6 +18,7 @@ import MusicTheory.Internal.Chord as Chord
 import MusicTheory.Internal.ChordClass as ChordClass
 import MusicTheory.Internal.ChordScale as ChordScale
 import MusicTheory.Internal.HarmonicContext as HarmonicContext
+import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Pitch as Pitch
 import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Internal.Scale as Scale
@@ -284,5 +286,44 @@ diminishedApproach harmonized maybeNext =
                             Chord.chord newRoot
                                 ChordClass.diminishedSeventh
                                 |> Just
+                        )
+            )
+
+
+dominantApproach :
+    List ChordClass.ChordClass
+    -> HarmonizedContext
+    -> Maybe HarmonizedContext
+    -> Maybe Chord.Chord
+dominantApproach chordClassesAllowed harmonized maybeNext =
+    -- 1. get the interval between the pitch of the current and next context's pitch
+    -- 2. get the root of the next harmonized context's chord if it exists
+    -- 3. transpose the root of that chord down by a fifth
+    -- 4. harmonize with all dominant chord classes supplied
+    -- 5. filter by only the chords which include the melody note of the precending context
+    maybeNext
+        |> Maybe.andThen
+            (\nextContext ->
+                nextContext.maybeChord
+                    |> Maybe.andThen
+                        (\nextChord ->
+                            let
+                                newRoot =
+                                    PitchClass.transpose
+                                        Interval.perfectFifth
+                                        (Chord.root nextChord)
+                            in
+                            List.map
+                                (Chord.chord newRoot)
+                                chordClassesAllowed
+                                |> List.filter
+                                    (\chord ->
+                                        Chord.containsPitchClass
+                                            (HarmonicContext.pitch harmonized.context
+                                                |> Pitch.pitchClass
+                                            )
+                                            chord
+                                    )
+                                |> List.head
                         )
             )

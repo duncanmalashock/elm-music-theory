@@ -208,6 +208,53 @@ all =
                                 |> List.map Harmonize.chordFromHarmonizedContext
                     in
                     Expect.equal expected result
+            , test "using dominant approaches, should harmonize with dominant harmony" <|
+                \_ ->
+                    let
+                        cMajor6 =
+                            Chord.chord PitchClass.c ChordClass.majorSix
+
+                        gDominantSeventh =
+                            Chord.chord PitchClass.g ChordClass.dominantSeventh
+
+                        expected : List (Maybe Chord.Chord)
+                        expected =
+                            [ Just cMajor6
+                            , Just gDominantSeventh
+                            , Just cMajor6
+                            ]
+
+                        result : List (Maybe Chord.Chord)
+                        result =
+                            [ HarmonicContext.init
+                                { pitch = Pitch.e4
+                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , scale = Scale.scale PitchClass.c ScaleClass.ionian
+                                }
+                            , HarmonicContext.init
+                                { pitch = Pitch.d4
+                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , scale = Scale.scale PitchClass.c ScaleClass.ionian
+                                }
+                            , HarmonicContext.init
+                                { pitch = Pitch.c4
+                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , scale = Scale.scale PitchClass.c ScaleClass.ionian
+                                }
+                            ]
+                                |> Harmonize.execute
+                                    { ifNonChordTone =
+                                        Harmonize.dominantApproach
+                                            [ ChordClass.dominantSeventh
+                                            ]
+                                    , ifNonScaleTone =
+                                        Harmonize.dominantApproach
+                                            [ ChordClass.dominantSeventh
+                                            ]
+                                    }
+                                |> List.map Harmonize.chordFromHarmonizedContext
+                    in
+                    Expect.equal expected result
             , describe "toneFromHarmonicContext"
                 [ test "should return nonScaleTone if the pitch is not in the scale" <|
                     \_ ->
