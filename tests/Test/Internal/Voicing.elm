@@ -28,7 +28,7 @@ all =
                             True
                     in
                     Expect.equal expected result
-            , test "voicings that do not violate low interval limits" <|
+            , test "voicing that violates low interval limits" <|
                 \_ ->
                     let
                         voicing =
@@ -59,6 +59,37 @@ all =
 
                         expected =
                             Just True
+
+                        result =
+                            Maybe.map
+                                FourPart.violatesLowIntervalLimits
+                                voicing
+                    in
+                    Expect.equal expected result
+            , test "voicing that does not violate low interval limits" <|
+                \_ ->
+                    let
+                        voicing =
+                            Voicing.config
+                                { ranges =
+                                    { voiceOne = InstrumentRanges.violin
+                                    , voiceTwo = InstrumentRanges.violin
+                                    , voiceThree = InstrumentRanges.viola
+                                    , voiceFour = InstrumentRanges.cello
+                                    }
+                                , techniques =
+                                    [ MusicTheory.Internal.Voicing.FourPart.Jazz.close
+                                    ]
+                                }
+                                |> Voicing.execute FourPart.allVoices
+                                    (Chord.chord
+                                        PitchClass.c
+                                        ChordClass.dominantSeventh
+                                    )
+                                |> List.head
+
+                        expected =
+                            Just False
 
                         result =
                             Maybe.map
