@@ -34,6 +34,7 @@ module MusicTheory.Internal.Interval exposing
     , indexToIntervalNumber
     , interval
     , intervalNumberIndex
+    , isEqualTo
     , isGreaterThan
     , isGreaterThanOrEqualTo
     , isLessThan
@@ -113,6 +114,11 @@ toSimple (Interval dir qual num) =
 
         _ ->
             Interval dir qual num
+
+
+isEqualTo : Interval -> Interval -> Bool
+isEqualTo a b =
+    semitones b == semitones a
 
 
 isGreaterThan : Interval -> Interval -> Bool

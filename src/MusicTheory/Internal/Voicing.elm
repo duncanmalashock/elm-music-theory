@@ -20,6 +20,7 @@ module MusicTheory.Internal.Voicing exposing
     , toString
     , totalSemitoneDistance
     , usesContraryMotion
+    , violatesLowIntervalLimits
     , voicing
     , voicingClass
     , withFilter
@@ -459,7 +460,7 @@ toString allVoices v =
 
 
 type alias LowIntervalLimit =
-    { intervalInSemitones : Interval.Interval
+    { interval : Interval.Interval
     , lowestAllowedPitch : Pitch.Pitch
     }
 
@@ -487,3 +488,17 @@ lowIntervalLimits =
     , lowIntervalLimitForInterval Interval.minorTenth Pitch.c2
     , lowIntervalLimitForInterval Interval.majorTenth Pitch.bFlat1
     ]
+
+
+violatesLowIntervalLimits : Interval.Interval -> Pitch.Pitch -> Bool
+violatesLowIntervalLimits intervalToTest pitchToTest =
+    List.map
+        (intervalViolatesLowIntervalLimit intervalToTest pitchToTest)
+        lowIntervalLimits
+        |> List.any identity
+
+
+intervalViolatesLowIntervalLimit : Interval.Interval -> Pitch.Pitch -> LowIntervalLimit -> Bool
+intervalViolatesLowIntervalLimit intervalToTest pitchToTest { interval, lowestAllowedPitch } =
+    Interval.isEqualTo intervalToTest interval
+        && Pitch.isLessThan pitchToTest lowestAllowedPitch

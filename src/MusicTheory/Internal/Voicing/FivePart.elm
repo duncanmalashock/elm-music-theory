@@ -16,6 +16,7 @@ module MusicTheory.Internal.Voicing.FivePart exposing
     , getVoiceTwo
     , placeFactors
     , toPitches
+    , violatesLowIntervalLimits
     )
 
 import MusicTheory.Internal.Interval as Interval
@@ -188,6 +189,29 @@ type alias IntervalList =
     , voiceThreeToVoiceTwo : Interval.Interval
     , voiceTwoToVoiceOne : Interval.Interval
     }
+
+
+violatesLowIntervalLimits : Voicing -> Bool
+violatesLowIntervalLimits theVoicing =
+    allIntervals (Voicing.voicingClass theVoicing)
+        |> (\{ voiceFiveToVoiceOne, voiceFiveToVoiceTwo, voiceFiveToVoiceThree, voiceFiveToVoiceFour, voiceFourToVoiceOne, voiceFourToVoiceTwo, voiceFourToVoiceThree, voiceThreeToVoiceOne, voiceThreeToVoiceTwo, voiceTwoToVoiceOne } ->
+                [ ( getVoiceFive theVoicing, voiceFiveToVoiceOne )
+                , ( getVoiceFive theVoicing, voiceFiveToVoiceTwo )
+                , ( getVoiceFive theVoicing, voiceFiveToVoiceThree )
+                , ( getVoiceFive theVoicing, voiceFiveToVoiceFour )
+                , ( getVoiceFour theVoicing, voiceFourToVoiceOne )
+                , ( getVoiceFour theVoicing, voiceFourToVoiceTwo )
+                , ( getVoiceFour theVoicing, voiceFourToVoiceThree )
+                , ( getVoiceThree theVoicing, voiceThreeToVoiceOne )
+                , ( getVoiceThree theVoicing, voiceThreeToVoiceTwo )
+                , ( getVoiceTwo theVoicing, voiceTwoToVoiceOne )
+                ]
+           )
+        |> List.map
+            (\( voice, interval ) ->
+                Voicing.violatesLowIntervalLimits interval voice
+            )
+        |> List.any identity
 
 
 

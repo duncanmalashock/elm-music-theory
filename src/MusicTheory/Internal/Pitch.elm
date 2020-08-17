@@ -199,6 +199,8 @@ module MusicTheory.Internal.Pitch exposing
     , gSharp7
     , gSharp8
     , intervalBetween
+    , isGreaterThan
+    , isLessThan
     , isWithin
     , natural
     , octave
@@ -251,6 +253,18 @@ letter (Pitch l o) =
 toString : Pitch -> String
 toString (Pitch l o) =
     PitchClass.toString l ++ Octave.toString o
+
+
+isLessThan : Pitch -> Pitch -> Bool
+isLessThan a b =
+    semitones a
+        < semitones b
+
+
+isGreaterThan : Pitch -> Pitch -> Bool
+isGreaterThan a b =
+    semitones a
+        > semitones b
 
 
 
