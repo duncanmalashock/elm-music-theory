@@ -1,6 +1,6 @@
 {
     "type": "package",
-    "name": "duncanmalashock/music-theory",
+    "name": "duncanmalashock/elm-music-theory",
     "summary": "Music theory",
     "license": "BSD-3-Clause",
     "version": "1.0.0",
