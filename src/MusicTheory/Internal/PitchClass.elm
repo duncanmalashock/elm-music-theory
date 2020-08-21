@@ -6,6 +6,7 @@ module MusicTheory.Internal.PitchClass exposing
     , aDoubleSharp
     , aFlat
     , aSharp
+    , accidentals
     , areEnharmonicEquivalents
     , b
     , bDoubleFlat
@@ -248,6 +249,11 @@ pitchClass l o =
 offset : PitchClass -> Int
 offset (PitchClass _ (Offset o)) =
     o
+
+
+accidentals : PitchClass -> Int
+accidentals thePitchClass =
+    offset thePitchClass
 
 
 letter : PitchClass -> Letter

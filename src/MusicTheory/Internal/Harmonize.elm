@@ -13,7 +13,6 @@ module MusicTheory.Internal.Harmonize exposing
     , toneFromHarmonicContext
     )
 
-import Maybe.Extra
 import MusicTheory.Internal.Chord as Chord
 import MusicTheory.Internal.ChordClass as ChordClass
 import MusicTheory.Internal.ChordScale as ChordScale

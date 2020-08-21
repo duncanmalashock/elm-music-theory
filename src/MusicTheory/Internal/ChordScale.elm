@@ -19,15 +19,15 @@ diatonicChordsAt { root, scale, chordClassesAllowed } =
         |> List.filter (chordIsInScale scale)
 
 
-allChordsInScale : Scale.Scale -> List Chord.Chord
-allChordsInScale scale =
+allChordsInScale : List ChordClass.ChordClass -> Scale.Scale -> List Chord.Chord
+allChordsInScale chordClassesAllowed scale =
     Scale.toList scale
         |> List.concatMap
             (\pitchClass ->
                 diatonicChordsAt
                     { root = pitchClass
                     , scale = scale
-                    , chordClassesAllowed = ChordClass.all
+                    , chordClassesAllowed = chordClassesAllowed
                     }
             )
 
@@ -38,4 +38,8 @@ chordIsInScale scale chord =
         pitchClasses =
             Chord.toPitchClasses chord
     in
-    List.all (\pc -> Scale.containsPitchClass pc scale { ignoreSpelling = True }) pitchClasses
+    List.all
+        (\pc ->
+            Scale.containsPitchClass pc scale { ignoreSpelling = True }
+        )
+        pitchClasses
