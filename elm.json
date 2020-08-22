@@ -7,7 +7,8 @@
     "exposed-modules": [
         "MusicTheory.Pitch",
         "MusicTheory.PitchClass",
-        "MusicTheory.Range"
+        "MusicTheory.Range",
+        "MusicTheory.Interval"
     ],
     "elm-version": "0.19.1 <= v < 0.20.0",
     "dependencies": {
