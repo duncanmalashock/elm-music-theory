@@ -1,5 +1,10 @@
 module MusicTheory.Interval exposing
     ( Interval
+    , betweenPitches
+    , isEqualTo, isGreaterThan, isLessThan
+    , add, subtract, simplify, addOctave
+    , reverse, isUp, isDown
+    , semitones, shortName
     , perfectUnison, minorSecond, majorSecond, minorThird, majorThird, perfectFourth, perfectFifth, minorSixth, majorSixth, minorSeventh, majorSeventh, perfectOctave
     , augmentedUnison, augmentedSecond, augmentedThird, augmentedFourth, augmentedFifth, augmentedSixth, augmentedSeventh
     , diminishedSecond, diminishedThird, diminishedFourth, diminishedFifth, diminishedSixth, diminishedSeventh, diminishedOctave
@@ -12,29 +17,43 @@ module MusicTheory.Interval exposing
 
 @docs Interval
 
+@docs betweenPitches
 
-# Interval constructors
 
-Note: if you're not familiar with the way intervals are classified, here's some explanation of the terminology here. Intervals can be:
+# Comparison
 
-**Simple or compound**:
+@docs isEqualTo, isGreaterThan, isLessThan
 
-[Simple intervals](https://en.wikipedia.org/wiki/Interval_%28music%29#Simple_and_compound) span a distance of an octave or less, and [compound intervals](https://en.wikipedia.org/wiki/Interval_%28music%29#Simple_and_compound) span a distance of more than one octave.
 
-**Diatonic or chromatic**:
+# Operations
 
-[Diatonic intervals](https://en.wikipedia.org/wiki/Interval_%28music%29#Diatonic_and_chromatic) are those found in diatonic scales (major, minor, and perfect intervals), and [chromatic intervals](https://en.wikipedia.org/wiki/Interval_%28music%29#Diatonic_and_chromatic) are those that aren't (augmented and diminished intervals).
+@docs add, subtract, simplify, addOctave
+
+
+# Direction
+
+Intervals have direction: a perfect fifth up is different from a perfect fifth down.
+
+@docs reverse, isUp, isDown
+
+
+# Conversion
+
+@docs semitones, shortName
+
+
+# Constructors
 
 
 ## Simple intervals
 
 
-### Simple diatonic
+### Diatonic
 
 @docs perfectUnison, minorSecond, majorSecond, minorThird, majorThird, perfectFourth, perfectFifth, minorSixth, majorSixth, minorSeventh, majorSeventh, perfectOctave
 
 
-### Simple chromatic
+### Chromatic
 
 @docs augmentedUnison, augmentedSecond, augmentedThird, augmentedFourth, augmentedFifth, augmentedSixth, augmentedSeventh
 @docs diminishedSecond, diminishedThird, diminishedFourth, diminishedFifth, diminishedSixth, diminishedSeventh, diminishedOctave
@@ -45,12 +64,12 @@ Note: if you're not familiar with the way intervals are classified, here's some 
 Note: This module includes constructors for compound intervals up to the thirteenth, which is the highest interval found in standard chords in tonal music. If you need larger compound intervals, take a look at the `add` or `addOctave` helper functions in this module.
 
 
-### Compound diatonic
+### Diatonic
 
 @docs minorNinth, majorNinth, minorTenth, majorTenth, perfectEleventh, perfectTwelfth, minorThirteenth, majorThirteenth
 
 
-### Compound chromatic
+### Chromatic
 
 @docs augmentedOctave, augmentedNinth, augmentedEleventh, augmentedTwelfth
 @docs diminishedTwelfth
@@ -58,11 +77,139 @@ Note: This module includes constructors for compound intervals up to the thirtee
 -}
 
 import MusicTheory.Internal.Interval as Interval
+import MusicTheory.Internal.Pitch as Pitch
 
 
 {-| -}
 type alias Interval =
     Interval.Interval
+
+
+{-| Get the interval between two pitches:
+
+    betweenPitches Pitch.c4 Pitch.g4 == perfectFifth
+
+-}
+betweenPitches : Pitch.Pitch -> Pitch.Pitch -> Interval
+betweenPitches a b =
+    Pitch.intervalBetween a b
+
+
+{-| Check whether two intervals are equivalent:
+
+    isEqualTo augmentedFourth diminishedFifth == True
+
+-}
+isEqualTo : Interval -> Interval -> Bool
+isEqualTo a b =
+    Interval.isEqualTo a b
+
+
+{-| Check whether the distance of one interval is greater than another:
+
+    isGreaterThan perfectFifth perfectUnison == True
+
+-}
+isGreaterThan : Interval -> Interval -> Bool
+isGreaterThan a b =
+    Interval.isGreaterThan a b
+
+
+{-| Check whether the distance of one interval is less than another:
+
+    isLessThan perfectFifth perfectUnison == False
+
+-}
+isLessThan : Interval -> Interval -> Bool
+isLessThan a b =
+    Interval.isLessThan a b
+
+
+{-| Add two intervals together:
+
+    add majorSecond majorThird == augmentedFourth
+
+-}
+add : Interval -> Interval -> Interval
+add a b =
+    Interval.add a b
+
+
+{-| Subtract two intervals:
+
+    subtract majorSecond majorThird == majorSecond
+
+-}
+subtract : Interval -> Interval -> Interval
+subtract a b =
+    Interval.subtract a b
+
+
+{-| Reverse the direction of an interval
+-}
+reverse : Interval -> Interval
+reverse interval =
+    Interval.reverse interval
+
+
+{-| Find out whether an interval is in the "up" direction:
+
+    isUp majorThird == True
+
+-}
+isUp : Interval -> Bool
+isUp interval =
+    Interval.isPositive interval
+
+
+{-| Find out whether an interval is in the "down" direction:
+
+    isDown (reverse majorThird) == True
+
+-}
+isDown : Interval -> Bool
+isDown interval =
+    Interval.isNegative interval
+
+
+{-| Get the [short name](https://en.wikipedia.org/wiki/Interval_%28music%29#Alternative_interval_naming_conventions) of an interval:
+
+    shortName perfectFifth == "P5"
+
+-}
+shortName : Interval -> String
+shortName interval =
+    Interval.shortName interval
+
+
+{-| Get the number of semitones an interval spans:
+
+    semitones majorThird == 4
+
+-}
+semitones : Interval -> Int
+semitones interval =
+    Interval.semitones interval
+
+
+{-| Convert any interval to its [simple](https://en.wikipedia.org/wiki/Interval_%28music%29#Simple_and_compound) form. A simple interval is one that spans an octave or less.
+
+    simplify majorThirteenth == majorSixth
+
+-}
+simplify : Interval -> Interval
+simplify interval =
+    Interval.toSimple interval
+
+
+{-| Add an octave to an interval:
+
+    addOctave majorSecond == majorNinth
+
+-}
+addOctave : Interval -> Interval
+addOctave interval =
+    Interval.addOctave interval
 
 
 {-| -}

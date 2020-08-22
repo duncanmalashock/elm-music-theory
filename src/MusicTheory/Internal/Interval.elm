@@ -39,6 +39,8 @@ module MusicTheory.Internal.Interval exposing
     , isGreaterThanOrEqualTo
     , isLessThan
     , isLessThanOrEqualTo
+    , isNegative
+    , isPositive
     , majorNinth
     , majorSecond
     , majorSeventh
@@ -64,6 +66,7 @@ module MusicTheory.Internal.Interval exposing
     , quality
     , reverse
     , semitones
+    , shortName
     , subtract
     , toSimple
     , up
@@ -359,6 +362,66 @@ directionToInteger dir =
 
         Down ->
             -1
+
+
+isPositive : Interval -> Bool
+isPositive i =
+    direction i
+        |> (==) Up
+
+
+isNegative : Interval -> Bool
+isNegative i =
+    direction i
+        |> (==) Down
+
+
+shortName : Interval -> String
+shortName (Interval dir intervalQuality intervalNumber) =
+    let
+        qualityAbbreviation =
+            case intervalQuality of
+                Perfect (Offset off) ->
+                    if off == 0 then
+                        "P"
+
+                    else if off > 0 then
+                        List.repeat off "A"
+                            |> String.join ""
+
+                    else
+                        List.repeat (abs off) "D"
+                            |> String.join ""
+
+                Imperfect (Offset off) ->
+                    case off of
+                        0 ->
+                            "M"
+
+                        _ ->
+                            if off == -1 then
+                                "m"
+
+                            else if off > 0 then
+                                List.repeat off "A"
+                                    |> String.join ""
+
+                            else
+                                List.repeat (abs off - 1) "D"
+                                    |> String.join ""
+
+        numberAbbreviation =
+            case intervalNumberToNumber intervalNumber of
+                1 ->
+                    "U"
+
+                8 ->
+                    "O"
+
+                anythingElse ->
+                    String.fromInt anythingElse
+    in
+    qualityAbbreviation ++ numberAbbreviation
 
 
 addOctave : Interval -> Interval
@@ -718,3 +781,31 @@ indexToIntervalNumber int =
 
             else
                 indexToIntervalNumber absoluteInt
+
+
+intervalNumberToNumber : IntervalNumber -> Int
+intervalNumberToNumber intervalNumber =
+    case intervalNumber of
+        Unison ->
+            1
+
+        Second ->
+            2
+
+        Third ->
+            3
+
+        Fourth ->
+            4
+
+        Fifth ->
+            5
+
+        Sixth ->
+            6
+
+        Seventh ->
+            7
+
+        Octave anotherIntervalNumber ->
+            7 + intervalNumberToNumber anotherIntervalNumber
