@@ -1,12 +1,12 @@
 module Test.Internal.ChordScale exposing (..)
 
 import Expect
-import Internal.Chord as Chord
-import Internal.ChordClass as ChordClass
-import Internal.ChordScale as ChordScale
-import Internal.PitchClass as PitchClass
-import Internal.Scale as Scale
-import Internal.ScaleClass as ScaleClass
+import MusicTheory.Internal.Chord as Chord
+import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordScale as ChordScale
+import MusicTheory.Internal.PitchClass as PitchClass
+import MusicTheory.Internal.Scale as Scale
+import MusicTheory.Internal.ScaleClass as ScaleClass
 import Test exposing (..)
 
 

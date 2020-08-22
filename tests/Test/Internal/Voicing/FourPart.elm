@@ -1,16 +1,16 @@
 module Test.Internal.Voicing.FourPart exposing (..)
 
 import Expect
-import Internal.Chord as Chord
-import Internal.ChordClass as ChordClass
-import Internal.InstrumentRanges as InstrumentRanges
-import Internal.Interval as Interval
-import Internal.Octave as Octave
-import Internal.Pitch as Pitch
-import Internal.PitchClass as PitchClass
-import Internal.Voicing as Voicing
-import Internal.Voicing.FourPart as FourPart
-import Internal.Voicing.FourPart.Classical as Classical
+import MusicTheory.Internal.Chord as Chord
+import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.InstrumentRanges as InstrumentRanges
+import MusicTheory.Internal.Interval as Interval
+import MusicTheory.Internal.Octave as Octave
+import MusicTheory.Internal.Pitch as Pitch
+import MusicTheory.Internal.PitchClass as PitchClass
+import MusicTheory.Internal.Voicing as Voicing
+import MusicTheory.Internal.Voicing.FourPart as FourPart
+import MusicTheory.Internal.Voicing.FourPart.Classical as Classical
 import Test exposing (..)
 
 

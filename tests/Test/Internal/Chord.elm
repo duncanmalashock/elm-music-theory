@@ -1,9 +1,9 @@
 module Test.Internal.Chord exposing (all)
 
 import Expect
-import Internal.Chord as Chord
-import Internal.ChordClass as ChordClass
-import Internal.PitchClass as PitchClass
+import MusicTheory.Internal.Chord as Chord
+import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.PitchClass as PitchClass
 import Test exposing (Test, describe, test)
 
 

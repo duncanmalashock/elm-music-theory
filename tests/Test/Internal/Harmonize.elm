@@ -1,14 +1,14 @@
 module Test.Internal.Harmonize exposing (..)
 
 import Expect
-import Internal.Chord as Chord
-import Internal.ChordClass as ChordClass
-import Internal.HarmonicContext as HarmonicContext
-import Internal.Harmonize as Harmonize
-import Internal.Pitch as Pitch
-import Internal.PitchClass as PitchClass
-import Internal.Scale as Scale
-import Internal.ScaleClass as ScaleClass
+import MusicTheory.Internal.Chord as Chord
+import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.HarmonicContext as HarmonicContext
+import MusicTheory.Internal.Harmonize as Harmonize
+import MusicTheory.Internal.Pitch as Pitch
+import MusicTheory.Internal.PitchClass as PitchClass
+import MusicTheory.Internal.Scale as Scale
+import MusicTheory.Internal.ScaleClass as ScaleClass
 import Test exposing (..)
 
 

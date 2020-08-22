@@ -1,9 +1,9 @@
 module Test.Internal.Spelling exposing (..)
 
 import Expect
-import Internal.Interval as Interval
-import Internal.Pitch as Pitch
-import Internal.Spelling as Spelling
+import MusicTheory.Internal.Interval as Interval
+import MusicTheory.Internal.Pitch as Pitch
+import MusicTheory.Internal.Spelling as Spelling
 import Test exposing (..)
 
 
