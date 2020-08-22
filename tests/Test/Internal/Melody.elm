@@ -1,15 +1,15 @@
 module Test.Internal.Melody exposing (all)
 
 import Expect
-import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
-import MusicTheory.Internal.Interval as Interval
-import MusicTheory.Internal.Melody as Melody
-import MusicTheory.Internal.Octave as Octave
-import MusicTheory.Internal.Pitch as Pitch
-import MusicTheory.Internal.PitchClass as PitchClass
-import MusicTheory.Internal.Scale as Scale
-import MusicTheory.Internal.ScaleClass as ScaleClass
+import Internal.Chord as Chord
+import Internal.ChordClass as ChordClass
+import Internal.Interval as Interval
+import Internal.Melody as Melody
+import Internal.Octave as Octave
+import Internal.Pitch as Pitch
+import Internal.PitchClass as PitchClass
+import Internal.Scale as Scale
+import Internal.ScaleClass as ScaleClass
 import Test exposing (Test, describe, skip, test)
 
 
