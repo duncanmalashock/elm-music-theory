@@ -59,6 +59,9 @@ module MusicTheory.Pitch exposing
 
 These are used less frequently in music. Most likely you want a pitch from the previous section.
 
+
+## Enharmonic equivalents of natural notes
+
 @docs cFlat1, cFlat2, cFlat3, cFlat4, cFlat5, cFlat6, cFlat7, cFlat8
 @docs eSharp0, eSharp1, eSharp2, eSharp3, eSharp4, eSharp5, eSharp6, eSharp7, eSharp8
 @docs fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8

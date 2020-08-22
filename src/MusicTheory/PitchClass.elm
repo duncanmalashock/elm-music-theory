@@ -25,12 +25,13 @@ module MusicTheory.PitchClass exposing
 
 These are used less frequently in music. Most likely you want a pitch from the previous section.
 
+
+## Enharmonic equivalents of natural notes
+
 @docs cFlat, eSharp, fFlat, bSharp
 
 
-# Pitch classes with two accidentals
-
-These are used very infrequently.
+## Pitch classes with [double accidentals](https://en.wikipedia.org/wiki/Accidental_%28music%29#Double_accidentals)
 
 @docs cDoubleSharp, cDoubleFlat, dDoubleSharp, dDoubleFlat, eDoubleSharp, eDoubleFlat, fDoubleSharp, fDoubleFlat, gDoubleSharp, gDoubleFlat, aDoubleSharp, aDoubleFlat, bDoubleSharp, bDoubleFlat
 

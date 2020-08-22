@@ -9,6 +9,10 @@ module MusicTheory.Range exposing
 {-| A range, like a range of numbers, represents an upper and lower boundary and all the pitches in between.
 
 @docs Range
+
+
+# Constructor
+
 @docs range
 
 
@@ -19,7 +23,14 @@ module MusicTheory.Range exposing
 
 # Common instrument ranges
 
+
+## Vocal ranges
+
 @docs sopranoVoice, altoVoice, tenorVoice, bassVoice
+
+
+## Stringed instruments
+
 @docs violin, viola, cello
 
 -}
