@@ -1,6 +1,5 @@
 module MusicTheory.Internal.Pitch exposing
     ( Pitch
-    , PitchError(..)
     , Range
     , a0
     , a1
@@ -167,8 +166,6 @@ module MusicTheory.Internal.Pitch exposing
     , fSharp6
     , fSharp7
     , fSharp8
-    , firstAbove
-    , firstBelow
     , flat
     , fromPitchClass
     , g0
@@ -210,7 +207,8 @@ module MusicTheory.Internal.Pitch exposing
     , semitones
     , sharp
     , sort
-    , toMidiNoteNumber
+    , toFrequency
+    , toMIDINoteNumber
     , toString
     , transposeDown
     , transposeUp
@@ -234,10 +232,6 @@ semitonesLowerLimit =
 
 type Pitch
     = Pitch PitchClass Octave
-
-
-type PitchError
-    = ValidPitchNotFound
 
 
 pitch : Letter -> Offset -> Octave -> Pitch
@@ -265,6 +259,11 @@ isGreaterThan : Pitch -> Pitch -> Bool
 isGreaterThan a b =
     semitones a
         > semitones b
+
+
+toFrequency : Pitch -> Float
+toFrequency thePitch =
+    2 ^ (toFloat (toMIDINoteNumber thePitch - 69) / 12) * 440
 
 
 
@@ -344,8 +343,8 @@ intervalBetween pitchA pitchB =
         |> Interval.addOffset semitoneError
 
 
-toMidiNoteNumber : Pitch -> Int
-toMidiNoteNumber thePitch =
+toMIDINoteNumber : Pitch -> Int
+toMIDINoteNumber thePitch =
     semitones thePitch + 12
 
 
@@ -415,47 +414,6 @@ allForPitchClass thePitchClass =
             (\theOctave ->
                 fromPitchClass theOctave thePitchClass
             )
-
-
-firstBelow : PitchClass -> Pitch -> Result PitchError Pitch
-firstBelow thePitchClass startPitch =
-    let
-        maybePitch =
-            allForPitchClass thePitchClass
-                |> List.filter
-                    (\thePitch ->
-                        semitones thePitch < semitones startPitch
-                    )
-                |> List.sortBy semitones
-                |> List.reverse
-                |> List.head
-    in
-    case maybePitch of
-        Nothing ->
-            Err ValidPitchNotFound
-
-        Just thePitch ->
-            Ok thePitch
-
-
-firstAbove : PitchClass -> Pitch -> Result PitchError Pitch
-firstAbove thePitchClass startPitch =
-    let
-        maybePitch =
-            allForPitchClass thePitchClass
-                |> List.filter
-                    (\thePitch ->
-                        semitones thePitch > semitones startPitch
-                    )
-                |> List.sortBy semitones
-                |> List.head
-    in
-    case maybePitch of
-        Nothing ->
-            Err ValidPitchNotFound
-
-        Just thePitch ->
-            Ok thePitch
 
 
 transposeUp :

@@ -1,17 +1,14 @@
 module MusicTheory.Pitch exposing
     ( Pitch
-    , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, semitones, toString
+    , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, semitones, toMIDINoteNumber, toFrequency, name
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
-    , cFlat1, cFlat2, cFlat3, cFlat4, cFlat5, cFlat6, cFlat7, cFlat8
     , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
     , d0, d1, d2, d3, d4, d5, d6, d7, d8
     , dFlat0, dFlat1, dFlat2, dFlat3, dFlat4, dFlat5, dFlat6, dFlat7, dFlat8
     , dSharp0, dSharp1, dSharp2, dSharp3, dSharp4, dSharp5, dSharp6, dSharp7, dSharp8
     , e0, e1, e2, e3, e4, e5, e6, e7, e8
     , eFlat0, eFlat1, eFlat2, eFlat3, eFlat4, eFlat5, eFlat6, eFlat7, eFlat8
-    , eSharp0, eSharp1, eSharp2, eSharp3, eSharp4, eSharp5, eSharp6, eSharp7, eSharp8
     , f0, f1, f2, f3, f4, f5, f6, f7, f8
-    , fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8
     , fSharp0, fSharp1, fSharp2, fSharp3, fSharp4, fSharp5, fSharp6, fSharp7, fSharp8
     , g0, g1, g2, g3, g4, g5, g6, g7, g8
     , gFlat0, gFlat1, gFlat2, gFlat3, gFlat4, gFlat5, gFlat6, gFlat7, gFlat8
@@ -21,6 +18,9 @@ module MusicTheory.Pitch exposing
     , aSharp0, aSharp1, aSharp2, aSharp3, aSharp4, aSharp5, aSharp6, aSharp7, aSharp8
     , b0, b1, b2, b3, b4, b5, b6, b7, b8
     , bFlat0, bFlat1, bFlat2, bFlat3, bFlat4, bFlat5, bFlat6, bFlat7, bFlat8
+    , cFlat1, cFlat2, cFlat3, cFlat4, cFlat5, cFlat6, cFlat7, cFlat8
+    , eSharp0, eSharp1, eSharp2, eSharp3, eSharp4, eSharp5, eSharp6, eSharp7, eSharp8
+    , fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8
     , bSharp0, bSharp1, bSharp2, bSharp3, bSharp4, bSharp5, bSharp6, bSharp7, bSharp8
     )
 
@@ -31,22 +31,19 @@ module MusicTheory.Pitch exposing
 
 # Helpers
 
-@docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, semitones, toString
+@docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, semitones, toMIDINoteNumber, toFrequency, name
 
 
 # Pitch constructors
 
 @docs c0, c1, c2, c3, c4, c5, c6, c7, c8
-@docs cFlat1, cFlat2, cFlat3, cFlat4, cFlat5, cFlat6, cFlat7, cFlat8
 @docs cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
 @docs d0, d1, d2, d3, d4, d5, d6, d7, d8
 @docs dFlat0, dFlat1, dFlat2, dFlat3, dFlat4, dFlat5, dFlat6, dFlat7, dFlat8
 @docs dSharp0, dSharp1, dSharp2, dSharp3, dSharp4, dSharp5, dSharp6, dSharp7, dSharp8
 @docs e0, e1, e2, e3, e4, e5, e6, e7, e8
 @docs eFlat0, eFlat1, eFlat2, eFlat3, eFlat4, eFlat5, eFlat6, eFlat7, eFlat8
-@docs eSharp0, eSharp1, eSharp2, eSharp3, eSharp4, eSharp5, eSharp6, eSharp7, eSharp8
 @docs f0, f1, f2, f3, f4, f5, f6, f7, f8
-@docs fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8
 @docs fSharp0, fSharp1, fSharp2, fSharp3, fSharp4, fSharp5, fSharp6, fSharp7, fSharp8
 @docs g0, g1, g2, g3, g4, g5, g6, g7, g8
 @docs gFlat0, gFlat1, gFlat2, gFlat3, gFlat4, gFlat5, gFlat6, gFlat7, gFlat8
@@ -56,6 +53,15 @@ module MusicTheory.Pitch exposing
 @docs aSharp0, aSharp1, aSharp2, aSharp3, aSharp4, aSharp5, aSharp6, aSharp7, aSharp8
 @docs b0, b1, b2, b3, b4, b5, b6, b7, b8
 @docs bFlat0, bFlat1, bFlat2, bFlat3, bFlat4, bFlat5, bFlat6, bFlat7, bFlat8
+
+
+# Less common pitches
+
+These are used less frequently in music. Most likely you want a pitch from the previous section.
+
+@docs cFlat1, cFlat2, cFlat3, cFlat4, cFlat5, cFlat6, cFlat7, cFlat8
+@docs eSharp0, eSharp1, eSharp2, eSharp3, eSharp4, eSharp5, eSharp6, eSharp7, eSharp8
+@docs fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8
 @docs bSharp0, bSharp1, bSharp2, bSharp3, bSharp4, bSharp5, bSharp6, bSharp7, bSharp8
 
 -}
@@ -71,7 +77,7 @@ type alias Pitch =
 
 {-| [Transpose](https://en.wikipedia.org/wiki/Transposition_%28music%29) a pitch upward by an interval.
 
-    transposeUp Interval.perfectFifth Pitch.c4 == Pitch.g4
+    transposeUp Interval.perfectFifth c4 == g4
 
 -}
 transposeUp : Interval.Interval -> Pitch -> Pitch
@@ -81,7 +87,7 @@ transposeUp interval pitch =
 
 {-| [Transpose](https://en.wikipedia.org/wiki/Transposition_%28music%29) a pitch downward by an interval.
 
-    transposeDown Interval.perfectFifth Pitch.c4 == Pitch.f3
+    transposeDown Interval.perfectFifth c4 == f3
 
 -}
 transposeDown : Interval.Interval -> Pitch -> Pitch
@@ -91,7 +97,7 @@ transposeDown interval pitch =
 
 {-| Get the interval between two pitches:
 
-    intervalBetween Pitch.c4 Pitch.g4 == Interval.perfectFifth
+    intervalBetween c4 g4 == Interval.perfectFifth
 
 -}
 intervalBetween : Pitch -> Pitch -> Interval.Interval
@@ -101,7 +107,7 @@ intervalBetween a b =
 
 {-| Check whether two pitches are enharmonic equivalents of each other. [Enharmonic equivalents](https://en.wikipedia.org/wiki/Enharmonic) are two pitches with different names but the same sound:
 
-    areEnharmonicEquivalents Pitch.cSharp4 Pitch.dFlat4 == True
+    areEnharmonicEquivalents cSharp4 dFlat4 == True
 
 -}
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool
@@ -109,9 +115,9 @@ areEnharmonicEquivalents a b =
     Pitch.areEnharmonicEquivalents a b
 
 
-{-| Distance in semitones up from C0. Useful for sorting.
+{-| Distance in semitones from C0. Useful for sorting.
 
-    semitones Pitch.c4 == 48
+    semitones c4 == 48
 
 -}
 semitones : Pitch -> Int
@@ -119,13 +125,33 @@ semitones pitch =
     Pitch.semitones pitch
 
 
-{-| Convert a pitch to a `String`:
+{-| Convert a pitch to a [MIDI](https://en.wikipedia.org/wiki/MIDI#Messages) number:
 
-    toString Pitch.cSharp4 == "C♯4"
+    toMIDINoteNumber c4 == 60
 
 -}
-toString : Pitch -> String
-toString pitch =
+toMIDINoteNumber : Pitch -> Int
+toMIDINoteNumber pitch =
+    Pitch.toMIDINoteNumber pitch
+
+
+{-| Convert a pitch to a frequency in [Hertz](https://en.wikipedia.org/wiki/Hertz):
+
+    toFrequency c4 == 261.6255653005986
+
+-}
+toFrequency : Pitch -> Float
+toFrequency pitch =
+    Pitch.toFrequency pitch
+
+
+{-| A pitch's letter name and accidental:
+
+    name cSharp4 == "C♯4"
+
+-}
+name : Pitch -> String
+name pitch =
     Pitch.toString pitch
 
 

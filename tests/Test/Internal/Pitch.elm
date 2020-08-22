@@ -4,7 +4,7 @@ import Expect
 import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Letter exposing (Letter(..))
 import MusicTheory.Internal.Octave as Octave
-import MusicTheory.Internal.Pitch as Pitch exposing (PitchError(..))
+import MusicTheory.Internal.Pitch as Pitch
 import MusicTheory.Internal.PitchClass as PitchClass
 import Test exposing (Test, describe, test)
 
@@ -59,34 +59,6 @@ all =
                     Pitch.allForPitchClass (PitchClass.pitchClass F Pitch.natural)
                         |> List.length
                         |> Expect.equal 9
-            ]
-        , describe "firstBelow"
-            [ test "should return D4 (first occurrence of D below F4)" <|
-                \_ ->
-                    Pitch.f4
-                        |> Pitch.firstBelow (PitchClass.pitchClass D Pitch.natural)
-                        |> Expect.equal
-                            (Ok Pitch.d4)
-            , test "should return nothing if no valid pitch exists below" <|
-                \_ ->
-                    Pitch.c0
-                        |> Pitch.firstBelow (PitchClass.pitchClass A Pitch.natural)
-                        |> Expect.equal
-                            (Err ValidPitchNotFound)
-            ]
-        , describe "firstAbove"
-            [ test "should return D5 (first occurrence of D below F4)" <|
-                \_ ->
-                    Pitch.f4
-                        |> Pitch.firstAbove (PitchClass.pitchClass D Pitch.natural)
-                        |> Expect.equal
-                            (Ok Pitch.d5)
-            , test "should return nothing if no valid pitch exists above" <|
-                \_ ->
-                    Pitch.b8
-                        |> Pitch.firstAbove (PitchClass.pitchClass A Pitch.natural)
-                        |> Expect.equal
-                            (Err ValidPitchNotFound)
             ]
         , describe "intervalBetween"
             [ test "interval between C4 and E4 should be a major third" <|

@@ -51,7 +51,7 @@ pitch (Note pit _ _) =
 
 toMidiNoteNumber : Note -> Int
 toMidiNoteNumber (Note pit dur dyn) =
-    Pitch.toMidiNoteNumber pit
+    Pitch.toMIDINoteNumber pit
 
 
 toMidiVelocity : Note -> Int
