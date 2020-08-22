@@ -2,7 +2,7 @@ module Test.Internal.Voicing.FourPart.Classical exposing (..)
 
 import Expect
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.InstrumentRanges as InstrumentRanges
 import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Octave as Octave
@@ -38,7 +38,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                                 |> List.map Test.Internal.Util.voicingToString
                                 |> List.isEmpty
@@ -56,7 +56,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -72,7 +72,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.major
+                                        ChordType.major
                                 }
                     in
                     results
@@ -88,7 +88,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -106,7 +106,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                                 |> List.map Test.Internal.Util.voicingToString
                                 |> List.isEmpty
@@ -124,7 +124,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -140,7 +140,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.major
+                                        ChordType.major
                                 }
                     in
                     results
@@ -156,7 +156,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -172,7 +172,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -190,7 +190,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                                 |> List.map Test.Internal.Util.voicingToString
                                 |> List.isEmpty
@@ -208,7 +208,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -224,7 +224,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.major
+                                        ChordType.major
                                 }
                     in
                     results
@@ -240,7 +240,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -258,7 +258,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                                 |> List.map Test.Internal.Util.voicingToString
                                 |> List.isEmpty
@@ -276,7 +276,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.major
+                                        ChordType.major
                                 }
                                 |> List.map Test.Internal.Util.voicingToString
                     in
@@ -291,7 +291,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -307,7 +307,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -323,7 +323,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -339,7 +339,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                 }
                     in
                     results
@@ -352,7 +352,7 @@ all =
                     let
                         d7voicing =
                             Voicing.voicing
-                                (Chord.chord PitchClass.d ChordClass.dominantSeventh)
+                                (Chord.chord PitchClass.d ChordType.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
                                 , voiceTwo = Interval.perfectTwelfth
@@ -362,7 +362,7 @@ all =
 
                         gVoicing =
                             Voicing.voicing
-                                (Chord.chord PitchClass.g ChordClass.major)
+                                (Chord.chord PitchClass.g ChordType.major)
                                 Octave.three
                                 { voiceOne = Interval.perfectOctave |> Interval.addOctave
                                 , voiceTwo = Interval.perfectTwelfth
@@ -382,7 +382,7 @@ all =
                     let
                         d7voicing =
                             Voicing.voicing
-                                (Chord.chord PitchClass.d ChordClass.dominantSeventh)
+                                (Chord.chord PitchClass.d ChordType.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
                                 , voiceTwo = Interval.perfectTwelfth
@@ -392,7 +392,7 @@ all =
 
                         gMinorVoicing =
                             Voicing.voicing
-                                (Chord.chord PitchClass.g ChordClass.minor)
+                                (Chord.chord PitchClass.g ChordType.minor)
                                 Octave.three
                                 { voiceOne = Interval.perfectOctave |> Interval.addOctave
                                 , voiceTwo = Interval.perfectTwelfth
@@ -412,7 +412,7 @@ all =
                     let
                         d7voicing =
                             Voicing.voicing
-                                (Chord.chord PitchClass.d ChordClass.dominantSeventh)
+                                (Chord.chord PitchClass.d ChordType.dominantSeventh)
                                 Octave.three
                                 { voiceOne = Interval.majorTenth |> Interval.addOctave
                                 , voiceTwo = Interval.perfectTwelfth
@@ -422,7 +422,7 @@ all =
 
                         gMinorVoicing =
                             Voicing.voicing
-                                (Chord.chord PitchClass.g ChordClass.minor)
+                                (Chord.chord PitchClass.g ChordType.minor)
                                 Octave.three
                                 { voiceOne = Interval.perfectTwelfth
                                 , voiceTwo = Interval.perfectOctave

@@ -2,7 +2,7 @@ module Test.Internal.Melody exposing (all)
 
 import Expect
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Melody as Melody
 import MusicTheory.Internal.Octave as Octave
@@ -29,7 +29,7 @@ all =
                                 Melody.fragment
                                     { startingDegree = ( 1, Octave.four )
                                     , scaleAndChord =
-                                        { chord = Chord.chord PitchClass.c ChordClass.major
+                                        { chord = Chord.chord PitchClass.c ChordType.major
                                         , scale = Scale.scale PitchClass.c ScaleClass.major
                                         }
                                     }
@@ -49,7 +49,7 @@ all =
                                     (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
-                                            { chord = Chord.chord PitchClass.c ChordClass.major
+                                            { chord = Chord.chord PitchClass.c ChordType.major
                                             , scale = Scale.scale PitchClass.c ScaleClass.major
                                             }
                                         }
@@ -72,7 +72,7 @@ all =
                                     (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
-                                            { chord = Chord.chord PitchClass.c ChordClass.major
+                                            { chord = Chord.chord PitchClass.c ChordType.major
                                             , scale = Scale.scale PitchClass.c ScaleClass.major
                                             }
                                         }
@@ -99,7 +99,7 @@ all =
                                     (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
-                                            { chord = Chord.chord PitchClass.c ChordClass.major
+                                            { chord = Chord.chord PitchClass.c ChordType.major
                                             , scale = Scale.scale PitchClass.c ScaleClass.major
                                             }
                                         }
@@ -127,7 +127,7 @@ all =
                                     (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
-                                            { chord = Chord.chord PitchClass.c ChordClass.major
+                                            { chord = Chord.chord PitchClass.c ChordType.major
                                             , scale = Scale.scale PitchClass.c ScaleClass.major
                                             }
                                         }

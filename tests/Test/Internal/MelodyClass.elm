@@ -2,7 +2,7 @@ module Test.Internal.MelodyClass exposing (all)
 
 import Expect
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Melody as Melody
 import MusicTheory.Internal.MelodyClass as MelodyClass
@@ -32,7 +32,7 @@ all =
                             (Melody.fragment
                                 { startingDegree = ( 1, Octave.four )
                                 , scaleAndChord =
-                                    { chord = Chord.chord PitchClass.c ChordClass.major
+                                    { chord = Chord.chord PitchClass.c ChordType.major
                                     , scale = Scale.scale PitchClass.c ScaleClass.major
                                     }
                                 }
@@ -56,7 +56,7 @@ all =
                             (Melody.fragment
                                 { startingDegree = ( 2, Octave.four )
                                 , scaleAndChord =
-                                    { chord = Chord.chord PitchClass.c ChordClass.major
+                                    { chord = Chord.chord PitchClass.c ChordType.major
                                     , scale = Scale.scale PitchClass.c ScaleClass.major
                                     }
                                 }
@@ -80,7 +80,7 @@ all =
                             (Melody.fragment
                                 { startingDegree = ( 1, Octave.four )
                                 , scaleAndChord =
-                                    { chord = Chord.chord PitchClass.c ChordClass.major
+                                    { chord = Chord.chord PitchClass.c ChordType.major
                                     , scale = Scale.scale PitchClass.c ScaleClass.major
                                     }
                                 }
@@ -109,7 +109,7 @@ all =
                             (Melody.fragment
                                 { startingDegree = ( 1, Octave.four )
                                 , scaleAndChord =
-                                    { chord = Chord.chord PitchClass.c ChordClass.major
+                                    { chord = Chord.chord PitchClass.c ChordType.major
                                     , scale = Scale.scale PitchClass.c ScaleClass.major
                                     }
                                 }
@@ -121,7 +121,7 @@ all =
                                     (Melody.fragment
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
-                                            { chord = Chord.chord PitchClass.f ChordClass.major
+                                            { chord = Chord.chord PitchClass.f ChordType.major
                                             , scale = Scale.scale PitchClass.f ScaleClass.major
                                             }
                                         }
@@ -145,7 +145,7 @@ all =
                                                 (Melody.fragment
                                                     { startingDegree = ( degree, Octave.four )
                                                     , scaleAndChord =
-                                                        { chord = Chord.chord PitchClass.c ChordClass.major
+                                                        { chord = Chord.chord PitchClass.c ChordType.major
                                                         , scale = Scale.scale PitchClass.c ScaleClass.major
                                                         }
                                                     }
@@ -157,7 +157,7 @@ all =
                                 Melody.fragment
                                     { startingDegree = ( 1, Octave.four )
                                     , scaleAndChord =
-                                        { chord = Chord.chord PitchClass.c ChordClass.major
+                                        { chord = Chord.chord PitchClass.c ChordType.major
                                         , scale = Scale.scale PitchClass.c ScaleClass.major
                                         }
                                     }
@@ -168,7 +168,7 @@ all =
                                 MelodyClass.config
                                     { melodyClass = melodyClass
                                     , scalesAndChords =
-                                        ( { chord = Chord.chord PitchClass.c ChordClass.major
+                                        ( { chord = Chord.chord PitchClass.c ChordType.major
                                           , scale = Scale.scale PitchClass.c ScaleClass.major
                                           }
                                         , []
@@ -189,7 +189,7 @@ all =
                                                 (Melody.fragment
                                                     { startingDegree = ( degree, Octave.four )
                                                     , scaleAndChord =
-                                                        { chord = Chord.chord PitchClass.c ChordClass.major
+                                                        { chord = Chord.chord PitchClass.c ChordType.major
                                                         , scale = Scale.scale PitchClass.c ScaleClass.major
                                                         }
                                                     }
@@ -201,7 +201,7 @@ all =
                                 Melody.fragment
                                     { startingDegree = ( 2, Octave.four )
                                     , scaleAndChord =
-                                        { chord = Chord.chord PitchClass.c ChordClass.major
+                                        { chord = Chord.chord PitchClass.c ChordType.major
                                         , scale = Scale.scale PitchClass.c ScaleClass.major
                                         }
                                     }
@@ -212,7 +212,7 @@ all =
                                 MelodyClass.config
                                     { melodyClass = melodyClass
                                     , scalesAndChords =
-                                        ( { chord = Chord.chord PitchClass.c ChordClass.major
+                                        ( { chord = Chord.chord PitchClass.c ChordType.major
                                           , scale = Scale.scale PitchClass.c ScaleClass.major
                                           }
                                         , []

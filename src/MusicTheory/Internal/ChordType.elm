@@ -1,5 +1,5 @@
-module MusicTheory.Internal.ChordClass exposing
-    ( ChordClass
+module MusicTheory.Internal.ChordType exposing
+    ( ChordType
     , all
     , augmented
     , diminished
@@ -45,18 +45,18 @@ module MusicTheory.Internal.ChordClass exposing
 import MusicTheory.Internal.Interval as Interval exposing (Interval)
 
 
-type ChordClass
-    = ChordClass (List Interval)
+type ChordType
+    = ChordType (List Interval)
 
 
-toIntervals : ChordClass -> List Interval
-toIntervals theChordClass =
-    case theChordClass of
-        ChordClass chordFactors ->
+toIntervals : ChordType -> List Interval
+toIntervals theChordType =
+    case theChordType of
+        ChordType chordFactors ->
             chordFactors
 
 
-all : List ChordClass
+all : List ChordType
 all =
     [ augmented
     , diminished
@@ -97,39 +97,39 @@ all =
     ]
 
 
-isDominant : ChordClass -> Bool
-isDominant theChordClass =
+isDominant : ChordType -> Bool
+isDominant theChordType =
     includesAll
         [ Interval.majorThird
         , Interval.minorSeventh
         ]
-        theChordClass
+        theChordType
         || includesAll
             [ Interval.perfectFourth
             , Interval.minorSeventh
             ]
-            theChordClass
+            theChordType
 
 
-isDiminished : ChordClass -> Bool
-isDiminished theChordClass =
+isDiminished : ChordType -> Bool
+isDiminished theChordType =
     includesAll
         [ Interval.minorThird
         , Interval.diminishedFifth
         ]
-        theChordClass
+        theChordType
 
 
-includes : Interval.Interval -> ChordClass -> Bool
-includes theInterval (ChordClass intervals) =
+includes : Interval.Interval -> ChordType -> Bool
+includes theInterval (ChordType intervals) =
     List.member theInterval intervals
 
 
-includesAll : List Interval.Interval -> ChordClass -> Bool
-includesAll intervals theChordClass =
+includesAll : List Interval.Interval -> ChordType -> Bool
+includesAll intervals theChordType =
     List.all
         (\interval ->
-            includes interval theChordClass
+            includes interval theChordType
         )
         intervals
 
@@ -138,44 +138,44 @@ includesAll intervals theChordClass =
 -- Triads
 
 
-major : ChordClass
+major : ChordType
 major =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
 
 
-minor : ChordClass
+minor : ChordType
 minor =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFifth
 
 
-augmented : ChordClass
+augmented : ChordType
 augmented =
-    chordClass
+    chordType
         |> withMajorThird
         |> withSharpFifth
 
 
-diminished : ChordClass
+diminished : ChordType
 diminished =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFlatFifth
 
 
-sus2 : ChordClass
+sus2 : ChordType
 sus2 =
-    chordClass
+    chordType
         |> withSuspendedSecond
         |> withFifth
 
 
-sus4 : ChordClass
+sus4 : ChordType
 sus4 =
-    chordClass
+    chordType
         |> withSuspendedFourth
         |> withFifth
 
@@ -184,17 +184,17 @@ sus4 =
 -- Add9 Chords
 
 
-majorAddNine : ChordClass
+majorAddNine : ChordType
 majorAddNine =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withNinth
 
 
-minorAddNine : ChordClass
+minorAddNine : ChordType
 minorAddNine =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFifth
         |> withNinth
@@ -204,34 +204,34 @@ minorAddNine =
 -- Sixth Chords
 
 
-majorSix : ChordClass
+majorSix : ChordType
 majorSix =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withSixth
 
 
-minorSix : ChordClass
+minorSix : ChordType
 minorSix =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFifth
         |> withSixth
 
 
-majorSixNine : ChordClass
+majorSixNine : ChordType
 majorSixNine =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withSixth
         |> withNinth
 
 
-minorSixNine : ChordClass
+minorSixNine : ChordType
 minorSixNine =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFifth
         |> withSixth
@@ -242,99 +242,99 @@ minorSixNine =
 -- Seventh Chords
 
 
-majorSeventh : ChordClass
+majorSeventh : ChordType
 majorSeventh =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMajorSeventh
 
 
-majorSeventhSharpEleven : ChordClass
+majorSeventhSharpEleven : ChordType
 majorSeventhSharpEleven =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMajorSeventh
         |> withSharpEleventh
 
 
-minorSeventh : ChordClass
+minorSeventh : ChordType
 minorSeventh =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFifth
         |> withMinorSeventh
 
 
-minorNinth : ChordClass
+minorNinth : ChordType
 minorNinth =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFifth
         |> withMinorSeventh
         |> withNinth
 
 
-dominantSeventh : ChordClass
+dominantSeventh : ChordType
 dominantSeventh =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
 
 
-dominantSeventhSharpFive : ChordClass
+dominantSeventhSharpFive : ChordType
 dominantSeventhSharpFive =
-    chordClass
+    chordType
         |> withMajorThird
         |> withSharpFifth
         |> withMinorSeventh
 
 
-dominantSeventhFlatFive : ChordClass
+dominantSeventhFlatFive : ChordType
 dominantSeventhFlatFive =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFlatFifth
         |> withMinorSeventh
 
 
-dominantSeventhSus4 : ChordClass
+dominantSeventhSus4 : ChordType
 dominantSeventhSus4 =
-    chordClass
+    chordType
         |> withSuspendedFourth
         |> withFifth
         |> withMinorSeventh
 
 
-minorMajorSeventh : ChordClass
+minorMajorSeventh : ChordType
 minorMajorSeventh =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFifth
         |> withMajorSeventh
 
 
-halfDiminished : ChordClass
+halfDiminished : ChordType
 halfDiminished =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFlatFifth
         |> withMinorSeventh
 
 
-diminishedSeventh : ChordClass
+diminishedSeventh : ChordType
 diminishedSeventh =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFlatFifth
         |> withDiminishedSeventh
 
 
-diminishedSeventhElevenFlatThirteen : ChordClass
+diminishedSeventhElevenFlatThirteen : ChordType
 diminishedSeventhElevenFlatThirteen =
-    chordClass
+    chordType
         |> withMinorThird
         |> withFlatFifth
         |> withDiminishedSeventh
@@ -345,18 +345,18 @@ diminishedSeventhElevenFlatThirteen =
 -- Extended Dominants, no altered tones
 
 
-dominantNinth : ChordClass
+dominantNinth : ChordType
 dominantNinth =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
         |> withNinth
 
 
-dominantEleventh : ChordClass
+dominantEleventh : ChordType
 dominantEleventh =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -364,9 +364,9 @@ dominantEleventh =
         |> withEleventh
 
 
-dominantThirteenth : ChordClass
+dominantThirteenth : ChordType
 dominantThirteenth =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -379,27 +379,27 @@ dominantThirteenth =
 -- -- Dominant Seventh Chords, Altered
 
 
-dominantSeventhSharpNine : ChordClass
+dominantSeventhSharpNine : ChordType
 dominantSeventhSharpNine =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
         |> withSharpNinth
 
 
-dominantSeventhFlatNine : ChordClass
+dominantSeventhFlatNine : ChordType
 dominantSeventhFlatNine =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
         |> withFlatNinth
 
 
-dominantSeventhFlatNineSharpNine : ChordClass
+dominantSeventhFlatNineSharpNine : ChordType
 dominantSeventhFlatNineSharpNine =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -407,9 +407,9 @@ dominantSeventhFlatNineSharpNine =
         |> withSharpNinth
 
 
-dominantSeventhSharpNineFlatThirteen : ChordClass
+dominantSeventhSharpNineFlatThirteen : ChordType
 dominantSeventhSharpNineFlatThirteen =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -417,9 +417,9 @@ dominantSeventhSharpNineFlatThirteen =
         |> withFlatThirteenth
 
 
-dominantSeventhFlatNineFlatThirteen : ChordClass
+dominantSeventhFlatNineFlatThirteen : ChordType
 dominantSeventhFlatNineFlatThirteen =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -427,9 +427,9 @@ dominantSeventhFlatNineFlatThirteen =
         |> withFlatThirteenth
 
 
-dominantSeventhFlatNineSharpNineFlatThirteen : ChordClass
+dominantSeventhFlatNineSharpNineFlatThirteen : ChordType
 dominantSeventhFlatNineSharpNineFlatThirteen =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -438,9 +438,9 @@ dominantSeventhFlatNineSharpNineFlatThirteen =
         |> withFlatThirteenth
 
 
-dominantThirteenthFlatNine : ChordClass
+dominantThirteenthFlatNine : ChordType
 dominantThirteenthFlatNine =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -448,9 +448,9 @@ dominantThirteenthFlatNine =
         |> withThirteenth
 
 
-dominantThirteenthSharpNine : ChordClass
+dominantThirteenthSharpNine : ChordType
 dominantThirteenthSharpNine =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -458,9 +458,9 @@ dominantThirteenthSharpNine =
         |> withThirteenth
 
 
-dominantThirteenthSharpNineFlatNine : ChordClass
+dominantThirteenthSharpNineFlatNine : ChordType
 dominantThirteenthSharpNineFlatNine =
-    chordClass
+    chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
@@ -473,7 +473,7 @@ dominantThirteenthSharpNineFlatNine =
 -- Builder functions for chord factors
 
 
-withMajorThird : ChordClass -> ChordClass
+withMajorThird : ChordType -> ChordType
 withMajorThird factors =
     factors
         |> remove Interval.minorThird
@@ -482,7 +482,7 @@ withMajorThird factors =
         |> add Interval.majorThird
 
 
-withMinorThird : ChordClass -> ChordClass
+withMinorThird : ChordType -> ChordType
 withMinorThird factors =
     factors
         |> remove Interval.majorThird
@@ -491,7 +491,7 @@ withMinorThird factors =
         |> add Interval.minorThird
 
 
-withSuspendedSecond : ChordClass -> ChordClass
+withSuspendedSecond : ChordType -> ChordType
 withSuspendedSecond factors =
     factors
         |> remove Interval.majorThird
@@ -500,7 +500,7 @@ withSuspendedSecond factors =
         |> add Interval.majorSecond
 
 
-withSuspendedFourth : ChordClass -> ChordClass
+withSuspendedFourth : ChordType -> ChordType
 withSuspendedFourth factors =
     factors
         |> remove Interval.majorThird
@@ -509,7 +509,7 @@ withSuspendedFourth factors =
         |> add Interval.perfectFourth
 
 
-withFifth : ChordClass -> ChordClass
+withFifth : ChordType -> ChordType
 withFifth factors =
     factors
         |> remove Interval.diminishedFifth
@@ -517,21 +517,21 @@ withFifth factors =
         |> add Interval.perfectFifth
 
 
-withFlatFifth : ChordClass -> ChordClass
+withFlatFifth : ChordType -> ChordType
 withFlatFifth factors =
     factors
         |> remove Interval.perfectFifth
         |> add Interval.diminishedFifth
 
 
-withSharpFifth : ChordClass -> ChordClass
+withSharpFifth : ChordType -> ChordType
 withSharpFifth factors =
     factors
         |> remove Interval.perfectFifth
         |> add Interval.augmentedFifth
 
 
-withSixth : ChordClass -> ChordClass
+withSixth : ChordType -> ChordType
 withSixth factors =
     factors
         |> remove Interval.minorThirteenth
@@ -539,7 +539,7 @@ withSixth factors =
         |> add Interval.majorSixth
 
 
-withDiminishedSeventh : ChordClass -> ChordClass
+withDiminishedSeventh : ChordType -> ChordType
 withDiminishedSeventh factors =
     factors
         |> remove Interval.majorSeventh
@@ -548,7 +548,7 @@ withDiminishedSeventh factors =
         |> add Interval.diminishedSeventh
 
 
-withMinorSeventh : ChordClass -> ChordClass
+withMinorSeventh : ChordType -> ChordType
 withMinorSeventh factors =
     factors
         |> remove Interval.majorSeventh
@@ -557,7 +557,7 @@ withMinorSeventh factors =
         |> add Interval.minorSeventh
 
 
-withMajorSeventh : ChordClass -> ChordClass
+withMajorSeventh : ChordType -> ChordType
 withMajorSeventh factors =
     factors
         |> remove Interval.minorSeventh
@@ -566,7 +566,7 @@ withMajorSeventh factors =
         |> add Interval.majorSeventh
 
 
-withNinth : ChordClass -> ChordClass
+withNinth : ChordType -> ChordType
 withNinth factors =
     factors
         |> remove Interval.augmentedNinth
@@ -574,35 +574,35 @@ withNinth factors =
         |> add Interval.majorNinth
 
 
-withFlatNinth : ChordClass -> ChordClass
+withFlatNinth : ChordType -> ChordType
 withFlatNinth factors =
     factors
         |> remove Interval.majorNinth
         |> add Interval.minorNinth
 
 
-withSharpNinth : ChordClass -> ChordClass
+withSharpNinth : ChordType -> ChordType
 withSharpNinth factors =
     factors
         |> remove Interval.majorNinth
         |> add Interval.augmentedNinth
 
 
-withEleventh : ChordClass -> ChordClass
+withEleventh : ChordType -> ChordType
 withEleventh factors =
     factors
         |> remove Interval.augmentedEleventh
         |> add Interval.perfectEleventh
 
 
-withSharpEleventh : ChordClass -> ChordClass
+withSharpEleventh : ChordType -> ChordType
 withSharpEleventh factors =
     factors
         |> remove Interval.perfectEleventh
         |> add Interval.augmentedEleventh
 
 
-withThirteenth : ChordClass -> ChordClass
+withThirteenth : ChordType -> ChordType
 withThirteenth factors =
     factors
         |> remove Interval.majorSixth
@@ -610,7 +610,7 @@ withThirteenth factors =
         |> add Interval.majorThirteenth
 
 
-withFlatThirteenth : ChordClass -> ChordClass
+withFlatThirteenth : ChordType -> ChordType
 withFlatThirteenth factors =
     factors
         |> remove Interval.majorSixth
@@ -619,19 +619,19 @@ withFlatThirteenth factors =
         |> add Interval.minorThirteenth
 
 
-chordClass : ChordClass
-chordClass =
-    ChordClass [ Interval.perfectUnison ]
+chordType : ChordType
+chordType =
+    ChordType [ Interval.perfectUnison ]
 
 
-remove : Interval -> ChordClass -> ChordClass
-remove factorToRemove (ChordClass factorList) =
+remove : Interval -> ChordType -> ChordType
+remove factorToRemove (ChordType factorList) =
     List.filter ((==) factorToRemove >> not) factorList
-        |> ChordClass
+        |> ChordType
 
 
-add : Interval -> ChordClass -> ChordClass
-add factorToAdd (ChordClass factorList) =
+add : Interval -> ChordType -> ChordType
+add factorToAdd (ChordType factorList) =
     factorToAdd
         :: factorList
-        |> ChordClass
+        |> ChordType

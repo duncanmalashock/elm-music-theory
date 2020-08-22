@@ -2,7 +2,7 @@ module Test.Internal.Voicing.FourPart.Jazz exposing (..)
 
 import Expect
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.InstrumentRanges as InstrumentRanges
 import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Internal.Voicing.FourPart as FourPart
@@ -33,7 +33,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.minorSeventh
+                                        ChordType.minorSeventh
                                 }
                                 |> List.length
                     in
@@ -50,7 +50,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.majorSeventh
+                                        ChordType.majorSeventh
                                 }
                                 |> List.length
                     in
@@ -67,7 +67,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.halfDiminished
+                                        ChordType.halfDiminished
                                 }
                                 |> List.length
                     in
@@ -84,7 +84,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.minorSeventh
+                                        ChordType.minorSeventh
                                 }
                                 |> List.length
                     in
@@ -101,7 +101,7 @@ all =
                                 , chord =
                                     Chord.chord
                                         PitchClass.c
-                                        ChordClass.minorSeventh
+                                        ChordType.minorSeventh
                                 }
                                 |> List.length
                     in

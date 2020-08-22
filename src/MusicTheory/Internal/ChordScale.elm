@@ -1,7 +1,7 @@
 module MusicTheory.Internal.ChordScale exposing (allChordsInScale, chordIsInScale, diatonicChordsAt)
 
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Internal.Scale as Scale
 
@@ -9,25 +9,25 @@ import MusicTheory.Internal.Scale as Scale
 diatonicChordsAt :
     { root : PitchClass.PitchClass
     , scale : Scale.Scale
-    , chordClassesAllowed : List ChordClass.ChordClass
+    , chordTypesAllowed : List ChordType.ChordType
     }
     -> List Chord.Chord
-diatonicChordsAt { root, scale, chordClassesAllowed } =
+diatonicChordsAt { root, scale, chordTypesAllowed } =
     List.map
         (Chord.chord root)
-        chordClassesAllowed
+        chordTypesAllowed
         |> List.filter (chordIsInScale scale)
 
 
-allChordsInScale : List ChordClass.ChordClass -> Scale.Scale -> List Chord.Chord
-allChordsInScale chordClassesAllowed scale =
+allChordsInScale : List ChordType.ChordType -> Scale.Scale -> List Chord.Chord
+allChordsInScale chordTypesAllowed scale =
     Scale.toList scale
         |> List.concatMap
             (\pitchClass ->
                 diatonicChordsAt
                     { root = pitchClass
                     , scale = scale
-                    , chordClassesAllowed = chordClassesAllowed
+                    , chordTypesAllowed = chordTypesAllowed
                     }
             )
 

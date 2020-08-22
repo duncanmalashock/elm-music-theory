@@ -8,7 +8,7 @@ module MusicTheory.Internal.Voicing.FourPart.Jazz exposing
 
 import List.Extra
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Octave as Octave
 import MusicTheory.Internal.Voicing as Voicing
@@ -18,7 +18,7 @@ import MusicTheory.Internal.VoicingClass as VoicingClass
 
 close : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 close { ranges, chord } =
-    case availables (Chord.chordClass chord) of
+    case availables (Chord.chordType chord) of
         Just available ->
             voicingClassesforAllOctaves allCloseVoicingClasses chord ranges available
 
@@ -28,7 +28,7 @@ close { ranges, chord } =
 
 drop2 : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 drop2 { ranges, chord } =
-    case availables (Chord.chordClass chord) of
+    case availables (Chord.chordType chord) of
         Just available ->
             voicingClassesforAllOctaves allDrop2VoicingClasses chord ranges available
 
@@ -38,7 +38,7 @@ drop2 { ranges, chord } =
 
 drop3 : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 drop3 { ranges, chord } =
-    case availables (Chord.chordClass chord) of
+    case availables (Chord.chordType chord) of
         Just available ->
             voicingClassesforAllOctaves allDrop3VoicingClasses chord ranges available
 
@@ -48,7 +48,7 @@ drop3 { ranges, chord } =
 
 drop2and4 : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 drop2and4 { ranges, chord } =
-    case availables (Chord.chordClass chord) of
+    case availables (Chord.chordType chord) of
         Just available ->
             voicingClassesforAllOctaves allDrop2and4VoicingClasses chord ranges available
 
@@ -58,7 +58,7 @@ drop2and4 { ranges, chord } =
 
 spread : Voicing.TechniqueInput FourPart.Ranges -> List FourPart.Voicing
 spread { ranges, chord } =
-    case availables (Chord.chordClass chord) of
+    case availables (Chord.chordType chord) of
         Just available ->
             voicingClassesforAllOctaves spreadVoicings chord ranges available
 
@@ -298,23 +298,23 @@ type alias AvailableTensions =
     }
 
 
-availables : ChordClass.ChordClass -> Maybe AvailableTensions
-availables chordClass =
+availables : ChordType.ChordType -> Maybe AvailableTensions
+availables chordType =
     let
         maybeQuality =
-            determineJazzChordQuality chordClass
+            determineJazzChordQuality chordType
 
         maybeRoot =
-            Maybe.andThen (chordToneForClass chordClass Root) maybeQuality
+            Maybe.andThen (chordToneForClass chordType Root) maybeQuality
 
         maybeThird =
-            Maybe.andThen (chordToneForClass chordClass Third) maybeQuality
+            Maybe.andThen (chordToneForClass chordType Third) maybeQuality
 
         maybeFifth =
-            Maybe.andThen (chordToneForClass chordClass Fifth) maybeQuality
+            Maybe.andThen (chordToneForClass chordType Fifth) maybeQuality
 
         maybeSeventh =
-            Maybe.andThen (chordToneForClass chordClass Seventh) maybeQuality
+            Maybe.andThen (chordToneForClass chordType Seventh) maybeQuality
 
         chordToneWithSubstitutes :
             VoiceCategory
@@ -327,7 +327,7 @@ availables chordClass =
         chordToneWithSubstitutes voiceCategory chordTone chordQuality =
             { true = chordTone
             , substitutes =
-                availableTensionsForChordQuality chordClass voiceCategory chordQuality
+                availableTensionsForChordQuality chordType voiceCategory chordQuality
                     |> List.filter ((==) chordTone >> not)
             }
 
@@ -359,14 +359,14 @@ availables chordClass =
 
 
 availableTensionsForChordQuality :
-    ChordClass.ChordClass
+    ChordType.ChordType
     -> VoiceCategory
     -> JazzChordQuality
     -> List Interval.Interval
-availableTensionsForChordQuality chordClass voiceCategory jazzChordQuality =
+availableTensionsForChordQuality chordType voiceCategory jazzChordQuality =
     let
         chordIntervals =
-            ChordClass.toIntervals chordClass
+            ChordType.toIntervals chordType
 
         includesAll intervals =
             List.map
@@ -583,11 +583,11 @@ availableTensionsForChordQuality chordClass voiceCategory jazzChordQuality =
                     ]
 
 
-determineJazzChordQuality : ChordClass.ChordClass -> Maybe JazzChordQuality
-determineJazzChordQuality chordClass =
+determineJazzChordQuality : ChordType.ChordType -> Maybe JazzChordQuality
+determineJazzChordQuality chordType =
     let
         intervals =
-            ChordClass.toIntervals chordClass
+            ChordType.toIntervals chordType
 
         containsAll intervalsToCheck =
             List.map
@@ -676,17 +676,17 @@ minimumIntervalsForJazzChordQuality jazzChordQuality =
 
 
 chordToneForClass :
-    ChordClass.ChordClass
+    ChordType.ChordType
     -> VoiceCategory
     -> JazzChordQuality
     -> Maybe Interval.Interval
-chordToneForClass chordClass voiceCategory jazzChordQuality =
+chordToneForClass chordType voiceCategory jazzChordQuality =
     let
         intervals =
-            ChordClass.toIntervals chordClass
+            ChordType.toIntervals chordType
 
         takeFirst available =
             List.filter (\item -> List.member item intervals) available
                 |> List.head
     in
-    takeFirst (availableTensionsForChordQuality chordClass voiceCategory jazzChordQuality)
+    takeFirst (availableTensionsForChordQuality chordType voiceCategory jazzChordQuality)

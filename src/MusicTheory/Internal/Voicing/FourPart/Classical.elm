@@ -10,7 +10,7 @@ module MusicTheory.Internal.Voicing.FourPart.Classical exposing
 
 import List.Extra
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass exposing (ChordClass(..))
+import MusicTheory.Internal.ChordType as ChordType exposing (ChordType(..))
 import MusicTheory.Internal.Interval as Interval exposing (IntervalNumber(..))
 import MusicTheory.Internal.Octave as Octave
 import MusicTheory.Internal.Pitch as Pitch
@@ -56,8 +56,8 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
                 |> List.all
                     (\factor ->
                         Voicing.chord chord
-                            |> Chord.chordClass
-                            |> ChordClass.toIntervals
+                            |> Chord.chordType
+                            |> ChordType.toIntervals
                             |> (\i -> List.member factor i)
                     )
 
@@ -68,8 +68,8 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
                 |> List.all
                     (\factor ->
                         Voicing.chord chord
-                            |> Chord.chordClass
-                            |> ChordClass.toIntervals
+                            |> Chord.chordType
+                            |> ChordType.toIntervals
                             |> (\i -> List.member factor i)
                     )
 
@@ -80,8 +80,8 @@ resolvesTendencyTonesCorrectly lastVoicing nextVoicing =
                 |> List.all
                     (\factor ->
                         Voicing.chord chord
-                            |> Chord.chordClass
-                            |> ChordClass.toIntervals
+                            |> Chord.chordType
+                            |> ChordType.toIntervals
                             |> (\i -> List.member factor i)
                     )
     in

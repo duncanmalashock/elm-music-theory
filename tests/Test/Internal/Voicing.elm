@@ -2,7 +2,7 @@ module Test.Internal.Voicing exposing (..)
 
 import Expect
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.InstrumentRanges as InstrumentRanges
 import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Pitch as Pitch
@@ -53,7 +53,7 @@ all =
                                 |> Voicing.execute FourPart.allVoices
                                     (Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                     )
                                 |> List.head
 
@@ -84,7 +84,7 @@ all =
                                 |> Voicing.execute FourPart.allVoices
                                     (Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                     )
                                 |> List.head
 
@@ -125,7 +125,7 @@ all =
                                 |> Voicing.execute FourPart.allVoices
                                     (Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                     )
                                 |> List.all
                                     (\voicing ->
@@ -172,7 +172,7 @@ all =
                                 |> Voicing.execute FourPart.allVoices
                                     (Chord.chord
                                         PitchClass.c
-                                        ChordClass.dominantSeventh
+                                        ChordType.dominantSeventh
                                     )
                                 |> List.all
                                     (\voicing ->

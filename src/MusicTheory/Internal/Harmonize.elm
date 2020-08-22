@@ -14,8 +14,8 @@ module MusicTheory.Internal.Harmonize exposing
     )
 
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
 import MusicTheory.Internal.ChordScale as ChordScale
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.HarmonicContext as HarmonicContext
 import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Pitch as Pitch
@@ -186,11 +186,11 @@ step { ifNonChordTone, ifNonScaleTone } harmonizedContext maybeNext =
 
 
 diatonicApproach :
-    List ChordClass.ChordClass
+    List ChordType.ChordType
     -> HarmonizedContext
     -> Maybe HarmonizedContext
     -> Maybe Chord.Chord
-diatonicApproach chordClassesAllowed harmonized maybeNext =
+diatonicApproach chordTypesAllowed harmonized maybeNext =
     -- 1. get the interval between the pitch of the current and next context's pitch
     -- 2. get the root of the next harmonized context's chord if it exists
     -- 3. transpose the root of that chord down by the interval in step 1
@@ -215,7 +215,7 @@ diatonicApproach chordClassesAllowed harmonized maybeNext =
                             ChordScale.diatonicChordsAt
                                 { root = newRoot
                                 , scale = HarmonicContext.scale harmonized.context
-                                , chordClassesAllowed = chordClassesAllowed
+                                , chordTypesAllowed = chordTypesAllowed
                                 }
                                 |> List.head
                         )
@@ -249,7 +249,7 @@ parallelApproach harmonized maybeNext =
                                         (Chord.root nextChord)
                             in
                             HarmonicContext.chord nextContext.context
-                                |> Chord.chordClass
+                                |> Chord.chordType
                                 |> Chord.chord newRoot
                                 |> Just
                         )
@@ -283,18 +283,18 @@ diminishedApproach harmonized maybeNext =
                                         (Chord.root nextChord)
                             in
                             Chord.chord newRoot
-                                ChordClass.diminishedSeventh
+                                ChordType.diminishedSeventh
                                 |> Just
                         )
             )
 
 
 dominantApproach :
-    List ChordClass.ChordClass
+    List ChordType.ChordType
     -> HarmonizedContext
     -> Maybe HarmonizedContext
     -> Maybe Chord.Chord
-dominantApproach chordClassesAllowed harmonized maybeNext =
+dominantApproach chordTypesAllowed harmonized maybeNext =
     -- 1. get the interval between the pitch of the current and next context's pitch
     -- 2. get the root of the next harmonized context's chord if it exists
     -- 3. transpose the root of that chord down by a fifth
@@ -314,7 +314,7 @@ dominantApproach chordClassesAllowed harmonized maybeNext =
                             in
                             List.map
                                 (Chord.chord newRoot)
-                                chordClassesAllowed
+                                chordTypesAllowed
                                 |> List.filter
                                     (\chord ->
                                         Chord.containsPitchClass

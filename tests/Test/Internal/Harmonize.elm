@@ -2,7 +2,7 @@ module Test.Internal.Harmonize exposing (..)
 
 import Expect
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.HarmonicContext as HarmonicContext
 import MusicTheory.Internal.Harmonize as Harmonize
 import MusicTheory.Internal.Pitch as Pitch
@@ -20,7 +20,7 @@ all =
                 \_ ->
                     let
                         cMajor6 =
-                            Chord.chord PitchClass.c ChordClass.majorSix
+                            Chord.chord PitchClass.c ChordType.majorSix
 
                         expected : List (Maybe Chord.Chord)
                         expected =
@@ -42,22 +42,22 @@ all =
                                 }
                                 [ HarmonicContext.init
                                     { pitch = Pitch.c4
-                                    , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                    , chord = Chord.chord PitchClass.c ChordType.majorSix
                                     , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                     }
                                 , HarmonicContext.init
                                     { pitch = Pitch.d4
-                                    , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                    , chord = Chord.chord PitchClass.c ChordType.majorSix
                                     , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                     }
                                 , HarmonicContext.init
                                     { pitch = Pitch.dSharp4
-                                    , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                    , chord = Chord.chord PitchClass.c ChordType.majorSix
                                     , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                     }
                                 , HarmonicContext.init
                                     { pitch = Pitch.e4
-                                    , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                    , chord = Chord.chord PitchClass.c ChordType.majorSix
                                     , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                     }
                                 ]
@@ -68,13 +68,13 @@ all =
                 \_ ->
                     let
                         cMajor6 =
-                            Chord.chord PitchClass.c ChordClass.majorSix
+                            Chord.chord PitchClass.c ChordType.majorSix
 
                         bFlatMajor6 =
-                            Chord.chord PitchClass.bFlat ChordClass.majorSix
+                            Chord.chord PitchClass.bFlat ChordType.majorSix
 
                         bMajor6 =
-                            Chord.chord PitchClass.b ChordClass.majorSix
+                            Chord.chord PitchClass.b ChordType.majorSix
 
                         expected : List (Maybe Chord.Chord)
                         expected =
@@ -88,22 +88,22 @@ all =
                         result =
                             [ HarmonicContext.init
                                 { pitch = Pitch.c4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.d4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.dSharp4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.e4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             ]
@@ -120,10 +120,10 @@ all =
                 \_ ->
                     let
                         cMajor6 =
-                            Chord.chord PitchClass.c ChordClass.majorSix
+                            Chord.chord PitchClass.c ChordType.majorSix
 
                         dMinor7 =
-                            Chord.chord PitchClass.d ChordClass.minorSeventh
+                            Chord.chord PitchClass.d ChordType.minorSeventh
 
                         expected : List (Maybe Chord.Chord)
                         expected =
@@ -136,28 +136,28 @@ all =
                         result =
                             [ HarmonicContext.init
                                 { pitch = Pitch.e4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.d4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.c4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             ]
                                 |> Harmonize.execute
                                     { ifNonChordTone =
                                         Harmonize.diatonicApproach
-                                            [ ChordClass.majorSix
-                                            , ChordClass.majorSeventh
-                                            , ChordClass.minorSeventh
-                                            , ChordClass.halfDiminished
-                                            , ChordClass.dominantSeventh
+                                            [ ChordType.majorSix
+                                            , ChordType.majorSeventh
+                                            , ChordType.minorSeventh
+                                            , ChordType.halfDiminished
+                                            , ChordType.dominantSeventh
                                             ]
                                     , ifNonScaleTone =
                                         Harmonize.parallelApproach
@@ -169,10 +169,10 @@ all =
                 \_ ->
                     let
                         cMajor6 =
-                            Chord.chord PitchClass.c ChordClass.majorSix
+                            Chord.chord PitchClass.c ChordType.majorSix
 
                         dDiminishedSeventh =
-                            Chord.chord PitchClass.d ChordClass.diminishedSeventh
+                            Chord.chord PitchClass.d ChordType.diminishedSeventh
 
                         expected : List (Maybe Chord.Chord)
                         expected =
@@ -185,17 +185,17 @@ all =
                         result =
                             [ HarmonicContext.init
                                 { pitch = Pitch.e4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.d4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.c4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             ]
@@ -212,10 +212,10 @@ all =
                 \_ ->
                     let
                         cMajor6 =
-                            Chord.chord PitchClass.c ChordClass.majorSix
+                            Chord.chord PitchClass.c ChordType.majorSix
 
                         gDominantSeventh =
-                            Chord.chord PitchClass.g ChordClass.dominantSeventh
+                            Chord.chord PitchClass.g ChordType.dominantSeventh
 
                         expected : List (Maybe Chord.Chord)
                         expected =
@@ -228,28 +228,28 @@ all =
                         result =
                             [ HarmonicContext.init
                                 { pitch = Pitch.e4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.d4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             , HarmonicContext.init
                                 { pitch = Pitch.c4
-                                , chord = Chord.chord PitchClass.c ChordClass.majorSix
+                                , chord = Chord.chord PitchClass.c ChordType.majorSix
                                 , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                 }
                             ]
                                 |> Harmonize.execute
                                     { ifNonChordTone =
                                         Harmonize.dominantApproach
-                                            [ ChordClass.dominantSeventh
+                                            [ ChordType.dominantSeventh
                                             ]
                                     , ifNonScaleTone =
                                         Harmonize.dominantApproach
-                                            [ ChordClass.dominantSeventh
+                                            [ ChordType.dominantSeventh
                                             ]
                                     }
                                 |> List.map Harmonize.chordFromHarmonizedContext
@@ -266,7 +266,7 @@ all =
                                 Harmonize.toneFromHarmonicContext
                                     (HarmonicContext.init
                                         { pitch = Pitch.dFlat1
-                                        , chord = Chord.chord PitchClass.c ChordClass.major
+                                        , chord = Chord.chord PitchClass.c ChordType.major
                                         , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                         }
                                     )
@@ -282,7 +282,7 @@ all =
                                 Harmonize.toneFromHarmonicContext
                                     (HarmonicContext.init
                                         { pitch = Pitch.d1
-                                        , chord = Chord.chord PitchClass.c ChordClass.major
+                                        , chord = Chord.chord PitchClass.c ChordType.major
                                         , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                         }
                                     )
@@ -298,7 +298,7 @@ all =
                                 Harmonize.toneFromHarmonicContext
                                     (HarmonicContext.init
                                         { pitch = Pitch.e1
-                                        , chord = Chord.chord PitchClass.c ChordClass.major
+                                        , chord = Chord.chord PitchClass.c ChordType.major
                                         , scale = Scale.scale PitchClass.c ScaleClass.ionian
                                         }
                                     )

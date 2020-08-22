@@ -1,23 +1,23 @@
 module MusicTheory.Internal.Chord exposing
     ( Chord
     , chord
-    , chordClass
+    , chordType
     , containsPitchClass
     , root
     , toPitchClasses
     )
 
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.PitchClass as PitchClass
 
 
 type Chord
-    = Chord PitchClass.PitchClass ChordClass.ChordClass
+    = Chord PitchClass.PitchClass ChordType.ChordType
 
 
-chord : PitchClass.PitchClass -> ChordClass.ChordClass -> Chord
-chord rootPitchClass theChordClass =
-    Chord rootPitchClass theChordClass
+chord : PitchClass.PitchClass -> ChordType.ChordType -> Chord
+chord rootPitchClass theChordType =
+    Chord rootPitchClass theChordType
 
 
 root : Chord -> PitchClass.PitchClass
@@ -25,18 +25,18 @@ root (Chord rootPitchClass _) =
     rootPitchClass
 
 
-chordClass : Chord -> ChordClass.ChordClass
-chordClass (Chord _ theChordClass) =
-    theChordClass
+chordType : Chord -> ChordType.ChordType
+chordType (Chord _ theChordType) =
+    theChordType
 
 
 toPitchClasses : Chord -> List PitchClass.PitchClass
-toPitchClasses (Chord rootPitchClass theChordClass) =
+toPitchClasses (Chord rootPitchClass theChordType) =
     List.map
         (\interval ->
             PitchClass.transpose interval rootPitchClass
         )
-        (ChordClass.toIntervals theChordClass)
+        (ChordType.toIntervals theChordType)
 
 
 containsPitchClass : PitchClass.PitchClass -> Chord -> Bool

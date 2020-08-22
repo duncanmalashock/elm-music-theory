@@ -2,8 +2,8 @@ module Test.Internal.ChordScale exposing (..)
 
 import Expect
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
 import MusicTheory.Internal.ChordScale as ChordScale
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Internal.Scale as Scale
 import MusicTheory.Internal.ScaleClass as ScaleClass
@@ -21,14 +21,14 @@ all =
                             Scale.scale PitchClass.c ScaleClass.ionian
 
                         expected =
-                            [ Chord.chord PitchClass.b ChordClass.halfDiminished
+                            [ Chord.chord PitchClass.b ChordType.halfDiminished
                             ]
 
                         actual =
                             ChordScale.diatonicChordsAt
                                 { scale = cMajorScale
                                 , root = PitchClass.b
-                                , chordClassesAllowed = [ ChordClass.halfDiminished ]
+                                , chordTypesAllowed = [ ChordType.halfDiminished ]
                                 }
                     in
                     Expect.equal expected actual
@@ -39,14 +39,14 @@ all =
                             Scale.scale PitchClass.c ScaleClass.ionian
 
                         expected =
-                            [ Chord.chord PitchClass.d ChordClass.minorSeventh
+                            [ Chord.chord PitchClass.d ChordType.minorSeventh
                             ]
 
                         actual =
                             ChordScale.diatonicChordsAt
                                 { scale = cMajorScale
                                 , root = PitchClass.d
-                                , chordClassesAllowed = [ ChordClass.minorSeventh ]
+                                , chordTypesAllowed = [ ChordType.minorSeventh ]
                                 }
                     in
                     Expect.equal expected actual
@@ -63,7 +63,7 @@ all =
                             ChordScale.diatonicChordsAt
                                 { scale = cMajorScale
                                 , root = PitchClass.bFlat
-                                , chordClassesAllowed = ChordClass.all
+                                , chordTypesAllowed = ChordType.all
                                 }
                     in
                     Expect.equal expected actual

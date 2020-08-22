@@ -2,7 +2,7 @@ module Test.Internal.Chord exposing (all)
 
 import Expect
 import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordClass as ChordClass
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.PitchClass as PitchClass
 import Test exposing (Test, describe, test)
 
@@ -17,7 +17,7 @@ all =
                         cMajorSeventh =
                             Chord.chord
                                 PitchClass.c
-                                ChordClass.majorSeventh
+                                ChordType.majorSeventh
 
                         bNatural =
                             PitchClass.b
@@ -32,7 +32,7 @@ all =
                         cMajorSeventh =
                             Chord.chord
                                 PitchClass.c
-                                ChordClass.major
+                                ChordType.major
 
                         bNatural =
                             PitchClass.b
