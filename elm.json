@@ -1,14 +1,16 @@
 {
     "type": "package",
     "name": "duncanmalashock/elm-music-theory",
-    "summary": "Music theory",
+    "summary": "Work with musical concepts",
     "license": "BSD-3-Clause",
     "version": "1.0.0",
     "exposed-modules": [
         "MusicTheory.Pitch",
         "MusicTheory.PitchClass",
         "MusicTheory.Range",
-        "MusicTheory.Interval"
+        "MusicTheory.Interval",
+        
+        "MusicTheory.ChordType"
     ],
     "elm-version": "0.19.1 <= v < 0.20.0",
     "dependencies": {

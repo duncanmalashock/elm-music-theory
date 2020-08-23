@@ -34,7 +34,7 @@ module MusicTheory.Pitch exposing
 @docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, semitones, toMIDINoteNumber, toFrequency, name
 
 
-# Pitch constructors
+# Constructors
 
 @docs c0, c1, c2, c3, c4, c5, c6, c7, c8
 @docs cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8

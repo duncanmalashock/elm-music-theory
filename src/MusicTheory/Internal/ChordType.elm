@@ -26,12 +26,14 @@ module MusicTheory.Internal.ChordType exposing
     , isDominant
     , major
     , majorAddNine
+    , majorNinth
     , majorSeventh
     , majorSeventhSharpEleven
     , majorSix
     , majorSixNine
     , minor
     , minorAddNine
+    , minorEleventh
     , minorMajorSeventh
     , minorNinth
     , minorSeventh
@@ -267,15 +269,6 @@ minorSeventh =
         |> withMinorSeventh
 
 
-minorNinth : ChordType
-minorNinth =
-    chordType
-        |> withMinorThird
-        |> withFifth
-        |> withMinorSeventh
-        |> withNinth
-
-
 dominantSeventh : ChordType
 dominantSeventh =
     chordType
@@ -345,6 +338,24 @@ diminishedSeventhElevenFlatThirteen =
 -- Extended Dominants, no altered tones
 
 
+majorNinth : ChordType
+majorNinth =
+    chordType
+        |> withMajorThird
+        |> withFifth
+        |> withMajorSeventh
+        |> withNinth
+
+
+minorNinth : ChordType
+minorNinth =
+    chordType
+        |> withMinorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withNinth
+
+
 dominantNinth : ChordType
 dominantNinth =
     chordType
@@ -352,6 +363,16 @@ dominantNinth =
         |> withFifth
         |> withMinorSeventh
         |> withNinth
+
+
+minorEleventh : ChordType
+minorEleventh =
+    chordType
+        |> withMinorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withNinth
+        |> withEleventh
 
 
 dominantEleventh : ChordType

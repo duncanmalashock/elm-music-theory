@@ -16,7 +16,7 @@ module MusicTheory.PitchClass exposing
 @docs fromPitch, areEnharmonicEquivalents
 
 
-# PitchClass constructors
+# Constructors
 
 @docs c, cSharp, d, dSharp, dFlat, e, eFlat, f, fSharp, g, gSharp, gFlat, a, aSharp, aFlat, b, bFlat
 
