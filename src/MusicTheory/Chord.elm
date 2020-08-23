@@ -1,0 +1,313 @@
+module MusicTheory.Chord exposing
+    ( Chord
+    , chordType, root, contains
+    , toPitchClasses
+    , major, minor, augmented, diminished, sus2, sus4
+    , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
+    , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
+    , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
+    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen
+    )
+
+{-| A chord is a set of pitch classes that are sounded together to create harmony.
+
+@docs Chord
+
+
+# Helpers
+
+@docs chordType, root, contains
+
+
+# Conversion
+
+@docs toPitchClasses
+
+
+# Constructors
+
+
+## Triads
+
+@docs major, minor, augmented, diminished, sus2, sus4
+
+
+## Added-tone chords
+
+@docs majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
+
+
+## Seventh chords
+
+@docs majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
+
+
+## Chords with extensions
+
+@docs majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
+
+
+## Altered dominant chords
+
+@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen
+
+-}
+
+import MusicTheory.Internal.Chord as Chord
+import MusicTheory.Internal.ChordType as ChordType
+import MusicTheory.Internal.PitchClass as PitchClass
+
+
+{-| -}
+type alias Chord =
+    Chord.Chord
+
+
+{-| Get a chord's chord type:
+
+    chordType (dominantSeventh PitchClass.a) == dominantSeventh
+
+-}
+chordType : Chord -> ChordType.ChordType
+chordType theChord =
+    Chord.chordType theChord
+
+
+{-| Get a chord's root:
+
+    chordType (dominantSeventh PitchClass.a) == PitchClass.a
+
+-}
+root : Chord -> PitchClass.PitchClass
+root theChord =
+    Chord.root theChord
+
+
+{-| Determine whether a chord contains a pitch class:
+
+    contains PitchClass.cSharp (major PitchClass.a) == True
+
+-}
+contains : PitchClass.PitchClass -> Chord -> Bool
+contains pitchClass theChord =
+    Chord.containsPitchClass pitchClass theChord
+
+
+{-| Get the pitch classes in a chord:
+
+    toPitchClasses (major PitchClass.a) == [ PitchClass.a, PitchClass.cSharp, PitchClass.e ]
+
+-}
+toPitchClasses : Chord -> List PitchClass.PitchClass
+toPitchClasses theChord =
+    Chord.toPitchClasses theChord
+
+
+{-| -}
+major : PitchClass.PitchClass -> Chord
+major pitchClass =
+    Chord.chord pitchClass ChordType.major
+
+
+{-| -}
+minor : PitchClass.PitchClass -> Chord
+minor pitchClass =
+    Chord.chord pitchClass ChordType.minor
+
+
+{-| -}
+augmented : PitchClass.PitchClass -> Chord
+augmented pitchClass =
+    Chord.chord pitchClass ChordType.augmented
+
+
+{-| -}
+diminished : PitchClass.PitchClass -> Chord
+diminished pitchClass =
+    Chord.chord pitchClass ChordType.diminished
+
+
+{-| -}
+sus2 : PitchClass.PitchClass -> Chord
+sus2 pitchClass =
+    Chord.chord pitchClass ChordType.sus2
+
+
+{-| -}
+sus4 : PitchClass.PitchClass -> Chord
+sus4 pitchClass =
+    Chord.chord pitchClass ChordType.sus4
+
+
+{-| -}
+majorSix : PitchClass.PitchClass -> Chord
+majorSix pitchClass =
+    Chord.chord pitchClass ChordType.majorSix
+
+
+{-| -}
+majorSixNine : PitchClass.PitchClass -> Chord
+majorSixNine pitchClass =
+    Chord.chord pitchClass ChordType.majorSixNine
+
+
+{-| -}
+minorSix : PitchClass.PitchClass -> Chord
+minorSix pitchClass =
+    Chord.chord pitchClass ChordType.minorSix
+
+
+{-| -}
+minorSixNine : PitchClass.PitchClass -> Chord
+minorSixNine pitchClass =
+    Chord.chord pitchClass ChordType.minorSixNine
+
+
+{-| -}
+majorAddNine : PitchClass.PitchClass -> Chord
+majorAddNine pitchClass =
+    Chord.chord pitchClass ChordType.majorAddNine
+
+
+{-| -}
+minorAddNine : PitchClass.PitchClass -> Chord
+minorAddNine pitchClass =
+    Chord.chord pitchClass ChordType.minorAddNine
+
+
+{-| -}
+majorSeventh : PitchClass.PitchClass -> Chord
+majorSeventh pitchClass =
+    Chord.chord pitchClass ChordType.majorSeventh
+
+
+{-| -}
+minorSeventh : PitchClass.PitchClass -> Chord
+minorSeventh pitchClass =
+    Chord.chord pitchClass ChordType.minorSeventh
+
+
+{-| -}
+dominantSeventh : PitchClass.PitchClass -> Chord
+dominantSeventh pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventh
+
+
+{-| -}
+diminishedSeventh : PitchClass.PitchClass -> Chord
+diminishedSeventh pitchClass =
+    Chord.chord pitchClass ChordType.diminishedSeventh
+
+
+{-| -}
+halfDiminished : PitchClass.PitchClass -> Chord
+halfDiminished pitchClass =
+    Chord.chord pitchClass ChordType.halfDiminished
+
+
+{-| -}
+majorSeventhSharpEleven : PitchClass.PitchClass -> Chord
+majorSeventhSharpEleven pitchClass =
+    Chord.chord pitchClass ChordType.majorSeventhSharpEleven
+
+
+{-| -}
+minorMajorSeventh : PitchClass.PitchClass -> Chord
+minorMajorSeventh pitchClass =
+    Chord.chord pitchClass ChordType.minorMajorSeventh
+
+
+{-| -}
+majorNinth : PitchClass.PitchClass -> Chord
+majorNinth pitchClass =
+    Chord.chord pitchClass ChordType.majorNinth
+
+
+{-| -}
+minorNinth : PitchClass.PitchClass -> Chord
+minorNinth pitchClass =
+    Chord.chord pitchClass ChordType.minorNinth
+
+
+{-| -}
+dominantNinth : PitchClass.PitchClass -> Chord
+dominantNinth pitchClass =
+    Chord.chord pitchClass ChordType.dominantNinth
+
+
+{-| -}
+minorEleventh : PitchClass.PitchClass -> Chord
+minorEleventh pitchClass =
+    Chord.chord pitchClass ChordType.minorEleventh
+
+
+{-| -}
+dominantEleventh : PitchClass.PitchClass -> Chord
+dominantEleventh pitchClass =
+    Chord.chord pitchClass ChordType.dominantEleventh
+
+
+{-| -}
+dominantThirteenth : PitchClass.PitchClass -> Chord
+dominantThirteenth pitchClass =
+    Chord.chord pitchClass ChordType.dominantThirteenth
+
+
+{-| -}
+augmentedDominantSeventh : PitchClass.PitchClass -> Chord
+augmentedDominantSeventh pitchClass =
+    Chord.chord pitchClass ChordType.augmentedDominantSeventh
+
+
+{-| -}
+dominantSeventhSus4 : PitchClass.PitchClass -> Chord
+dominantSeventhSus4 pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhSus4
+
+
+{-| -}
+dominantSeventhFlatNine : PitchClass.PitchClass -> Chord
+dominantSeventhFlatNine pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhFlatNine
+
+
+{-| -}
+dominantSeventhSharpNine : PitchClass.PitchClass -> Chord
+dominantSeventhSharpNine pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhSharpNine
+
+
+{-| -}
+dominantSeventhFlatNineSharpNine : PitchClass.PitchClass -> Chord
+dominantSeventhFlatNineSharpNine pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhFlatNineSharpNine
+
+
+{-| -}
+dominantSeventhFlatNineSharpEleven : PitchClass.PitchClass -> Chord
+dominantSeventhFlatNineSharpEleven pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhFlatNineSharpEleven
+
+
+{-| -}
+dominantSeventhSharpNineSharpEleven : PitchClass.PitchClass -> Chord
+dominantSeventhSharpNineSharpEleven pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhSharpNineSharpEleven
+
+
+{-| -}
+dominantSeventhSharpEleven : PitchClass.PitchClass -> Chord
+dominantSeventhSharpEleven pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhSharpEleven
+
+
+{-| -}
+dominantSeventhFlatNineFlatThirteen : PitchClass.PitchClass -> Chord
+dominantSeventhFlatNineFlatThirteen pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhFlatNineFlatThirteen
+
+
+{-| -}
+dominantSeventhSharpNineFlatThirteen : PitchClass.PitchClass -> Chord
+dominantSeventhSharpNineFlatThirteen pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhSharpNineFlatThirteen

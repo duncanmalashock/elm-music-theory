@@ -16,7 +16,7 @@ all =
                             [ ChordType.dominantEleventh
                             , ChordType.dominantNinth
                             , ChordType.dominantSeventh
-                            , ChordType.dominantSeventhSharpFive
+                            , ChordType.augmentedDominantSeventh
                             , ChordType.dominantSeventhFlatFive
                             , ChordType.dominantSeventhFlatNine
                             , ChordType.dominantSeventhFlatNineFlatThirteen

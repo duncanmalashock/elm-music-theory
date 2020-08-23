@@ -2,6 +2,7 @@ module MusicTheory.Internal.ChordType exposing
     ( ChordType
     , all
     , augmented
+    , augmentedDominantSeventh
     , diminished
     , diminishedSeventh
     , diminishedSeventhElevenFlatThirteen
@@ -11,11 +12,14 @@ module MusicTheory.Internal.ChordType exposing
     , dominantSeventhFlatFive
     , dominantSeventhFlatNine
     , dominantSeventhFlatNineFlatThirteen
+    , dominantSeventhFlatNineSharpEleven
     , dominantSeventhFlatNineSharpNine
     , dominantSeventhFlatNineSharpNineFlatThirteen
-    , dominantSeventhSharpFive
+    , dominantSeventhSharpEleven
+    , dominantSeventhSharpElevenFlatThirteen
     , dominantSeventhSharpNine
     , dominantSeventhSharpNineFlatThirteen
+    , dominantSeventhSharpNineSharpEleven
     , dominantSeventhSus4
     , dominantThirteenth
     , dominantThirteenthFlatNine
@@ -67,7 +71,7 @@ all =
     , dominantEleventh
     , dominantNinth
     , dominantSeventh
-    , dominantSeventhSharpFive
+    , augmentedDominantSeventh
     , dominantSeventhFlatFive
     , dominantSeventhFlatNine
     , dominantSeventhFlatNineFlatThirteen
@@ -277,8 +281,8 @@ dominantSeventh =
         |> withMinorSeventh
 
 
-dominantSeventhSharpFive : ChordType
-dominantSeventhSharpFive =
+augmentedDominantSeventh : ChordType
+augmentedDominantSeventh =
     chordType
         |> withMajorThird
         |> withSharpFifth
@@ -400,15 +404,6 @@ dominantThirteenth =
 -- -- Dominant Seventh Chords, Altered
 
 
-dominantSeventhSharpNine : ChordType
-dominantSeventhSharpNine =
-    chordType
-        |> withMajorThird
-        |> withFifth
-        |> withMinorSeventh
-        |> withSharpNinth
-
-
 dominantSeventhFlatNine : ChordType
 dominantSeventhFlatNine =
     chordType
@@ -416,6 +411,15 @@ dominantSeventhFlatNine =
         |> withFifth
         |> withMinorSeventh
         |> withFlatNinth
+
+
+dominantSeventhSharpNine : ChordType
+dominantSeventhSharpNine =
+    chordType
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withSharpNinth
 
 
 dominantSeventhFlatNineSharpNine : ChordType
@@ -428,6 +432,45 @@ dominantSeventhFlatNineSharpNine =
         |> withSharpNinth
 
 
+dominantSeventhFlatNineSharpEleven : ChordType
+dominantSeventhFlatNineSharpEleven =
+    chordType
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withFlatNinth
+        |> withSharpEleventh
+
+
+dominantSeventhSharpNineSharpEleven : ChordType
+dominantSeventhSharpNineSharpEleven =
+    chordType
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withSharpNinth
+        |> withSharpEleventh
+
+
+dominantSeventhSharpEleven : ChordType
+dominantSeventhSharpEleven =
+    chordType
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withSharpEleventh
+
+
+dominantSeventhFlatNineFlatThirteen : ChordType
+dominantSeventhFlatNineFlatThirteen =
+    chordType
+        |> withMajorThird
+        |> withFifth
+        |> withMinorSeventh
+        |> withFlatNinth
+        |> withFlatThirteenth
+
+
 dominantSeventhSharpNineFlatThirteen : ChordType
 dominantSeventhSharpNineFlatThirteen =
     chordType
@@ -438,13 +481,13 @@ dominantSeventhSharpNineFlatThirteen =
         |> withFlatThirteenth
 
 
-dominantSeventhFlatNineFlatThirteen : ChordType
-dominantSeventhFlatNineFlatThirteen =
+dominantSeventhSharpElevenFlatThirteen : ChordType
+dominantSeventhSharpElevenFlatThirteen =
     chordType
         |> withMajorThird
         |> withFifth
         |> withMinorSeventh
-        |> withFlatNinth
+        |> withSharpEleventh
         |> withFlatThirteenth
 
 

@@ -9,7 +9,7 @@
         "MusicTheory.PitchClass",
         "MusicTheory.Range",
         "MusicTheory.Interval",
-        
+        "MusicTheory.Chord",
         "MusicTheory.ChordType"
     ],
     "elm-version": "0.19.1 <= v < 0.20.0",
