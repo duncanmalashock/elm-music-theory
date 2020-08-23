@@ -9,7 +9,7 @@ import MusicTheory.Internal.Octave as Octave
 import MusicTheory.Internal.Pitch as Pitch
 import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Internal.Scale as Scale
-import MusicTheory.Internal.ScaleClass as ScaleClass
+import MusicTheory.Internal.ScaleType as ScaleType
 import Test exposing (Test, describe, skip, test)
 
 
@@ -30,7 +30,7 @@ all =
                                     { startingDegree = ( 1, Octave.four )
                                     , scaleAndChord =
                                         { chord = Chord.chord PitchClass.c ChordType.major
-                                        , scale = Scale.scale PitchClass.c ScaleClass.major
+                                        , scale = Scale.scale PitchClass.c ScaleType.major
                                         }
                                     }
                                     |> Melody.melody
@@ -50,7 +50,7 @@ all =
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
                                             { chord = Chord.chord PitchClass.c ChordType.major
-                                            , scale = Scale.scale PitchClass.c ScaleClass.major
+                                            , scale = Scale.scale PitchClass.c ScaleType.major
                                             }
                                         }
                                         |> Melody.startWithIntervalOffset Interval.augmentedUnison
@@ -73,7 +73,7 @@ all =
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
                                             { chord = Chord.chord PitchClass.c ChordType.major
-                                            , scale = Scale.scale PitchClass.c ScaleClass.major
+                                            , scale = Scale.scale PitchClass.c ScaleType.major
                                             }
                                         }
                                         |> Melody.startWithIntervalOffset Interval.augmentedUnison
@@ -100,7 +100,7 @@ all =
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
                                             { chord = Chord.chord PitchClass.c ChordType.major
-                                            , scale = Scale.scale PitchClass.c ScaleClass.major
+                                            , scale = Scale.scale PitchClass.c ScaleType.major
                                             }
                                         }
                                         |> Melody.moveByScaleSteps 2
@@ -128,7 +128,7 @@ all =
                                         { startingDegree = ( 1, Octave.four )
                                         , scaleAndChord =
                                             { chord = Chord.chord PitchClass.c ChordType.major
-                                            , scale = Scale.scale PitchClass.c ScaleClass.major
+                                            , scale = Scale.scale PitchClass.c ScaleType.major
                                             }
                                         }
                                         |> Melody.startWithIntervalOffset Interval.augmentedUnison

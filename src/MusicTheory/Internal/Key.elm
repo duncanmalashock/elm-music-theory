@@ -35,7 +35,7 @@ module MusicTheory.Internal.Key exposing
 import MusicTheory.Internal.Letter exposing (Letter(..))
 import MusicTheory.Internal.PitchClass as PitchClass exposing (PitchClass, pitchClass)
 import MusicTheory.Internal.Scale as Scale exposing (Scale)
-import MusicTheory.Internal.ScaleClass as ScaleClass
+import MusicTheory.Internal.ScaleType as ScaleType
 
 
 type Key
@@ -61,10 +61,10 @@ scale : Key -> Scale
 scale (Key root majorOrMinor) =
     case majorOrMinor of
         Major ->
-            Scale.scale root ScaleClass.ionian
+            Scale.scale root ScaleType.ionian
 
         Minor ->
-            Scale.scale root ScaleClass.aeolian
+            Scale.scale root ScaleType.aeolian
 
 
 tonic : Key -> PitchClass

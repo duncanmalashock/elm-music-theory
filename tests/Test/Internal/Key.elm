@@ -5,7 +5,7 @@ import MusicTheory.Internal.Key as Key
 import MusicTheory.Internal.Letter exposing (Letter(..))
 import MusicTheory.Internal.PitchClass exposing (natural, pitchClass)
 import MusicTheory.Internal.Scale as Scale
-import MusicTheory.Internal.ScaleClass as ScaleClass
+import MusicTheory.Internal.ScaleType as ScaleType
 import Test exposing (..)
 
 
@@ -16,7 +16,7 @@ all =
             \_ ->
                 let
                     cMajorScale =
-                        Scale.scale (pitchClass C natural) ScaleClass.ionian
+                        Scale.scale (pitchClass C natural) ScaleType.ionian
                 in
                 Key.major (pitchClass C natural)
                     |> Key.scale

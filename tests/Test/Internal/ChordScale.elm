@@ -6,7 +6,7 @@ import MusicTheory.Internal.ChordScale as ChordScale
 import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.PitchClass as PitchClass
 import MusicTheory.Internal.Scale as Scale
-import MusicTheory.Internal.ScaleClass as ScaleClass
+import MusicTheory.Internal.ScaleType as ScaleType
 import Test exposing (..)
 
 
@@ -18,7 +18,7 @@ all =
                 \_ ->
                     let
                         cMajorScale =
-                            Scale.scale PitchClass.c ScaleClass.ionian
+                            Scale.scale PitchClass.c ScaleType.ionian
 
                         expected =
                             [ Chord.chord PitchClass.b ChordType.halfDiminished
@@ -36,7 +36,7 @@ all =
                 \_ ->
                     let
                         cMajorScale =
-                            Scale.scale PitchClass.c ScaleClass.ionian
+                            Scale.scale PitchClass.c ScaleType.ionian
 
                         expected =
                             [ Chord.chord PitchClass.d ChordType.minorSeventh
@@ -54,7 +54,7 @@ all =
                 \_ ->
                     let
                         cMajorScale =
-                            Scale.scale PitchClass.c ScaleClass.ionian
+                            Scale.scale PitchClass.c ScaleType.ionian
 
                         expected =
                             []

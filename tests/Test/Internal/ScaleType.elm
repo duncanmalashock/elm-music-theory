@@ -1,14 +1,14 @@
-module Test.Internal.ScaleClass exposing (all)
+module Test.Internal.ScaleType exposing (all)
 
 import Expect
 import MusicTheory.Internal.Interval as Interval
-import MusicTheory.Internal.ScaleClass as ScaleClass
+import MusicTheory.Internal.ScaleType as ScaleType
 import Test exposing (Test, describe, test)
 
 
 all : Test
 all =
-    describe "ScaleClass Tests"
+    describe "ScaleType Tests"
         [ describe "toList"
             [ test "should contain the intervals of the scale in order" <|
                 \_ ->
@@ -24,7 +24,7 @@ all =
                             ]
 
                         result =
-                            ScaleClass.toList ScaleClass.ionian
+                            ScaleType.toList ScaleType.ionian
                     in
                     Expect.equal expected result
             ]

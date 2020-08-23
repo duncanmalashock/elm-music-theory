@@ -1,9 +1,9 @@
-module MusicTheory.Internal.ScaleClass exposing
+module MusicTheory.Internal.ScaleType exposing
     ( HeptatonicIntervals
     , HexatonicIntervals
     , OctatonicIntervals
     , PentatonicIntervals
-    , ScaleClass(..)
+    , ScaleType(..)
     , acoustic
     , aeolian
     , aeolianHarmonic
@@ -37,7 +37,7 @@ module MusicTheory.Internal.ScaleClass exposing
 import MusicTheory.Internal.Interval as Interval exposing (Interval)
 
 
-type ScaleClass
+type ScaleType
     = Pentatonic PentatonicIntervals
     | Hexatonic HexatonicIntervals
     | Heptatonic HeptatonicIntervals
@@ -82,9 +82,9 @@ type alias OctatonicIntervals =
     }
 
 
-toList : ScaleClass -> List Interval
-toList theScaleClass =
-    case theScaleClass of
+toList : ScaleType -> List Interval
+toList theScaleType =
+    case theScaleType of
         Pentatonic intervals ->
             [ Interval.perfectUnison
             , intervals.rootToSecond
@@ -124,7 +124,7 @@ toList theScaleClass =
             ]
 
 
-mode : Int -> ScaleClass -> ScaleClass
+mode : Int -> ScaleType -> ScaleType
 mode modeShiftIndex scale =
     if modeShiftIndex <= 1 then
         scale
@@ -133,7 +133,7 @@ mode modeShiftIndex scale =
         mode (modeShiftIndex - 1) (modeShift scale)
 
 
-modeShift : ScaleClass -> ScaleClass
+modeShift : ScaleType -> ScaleType
 modeShift scale =
     case scale of
         Pentatonic pent ->
@@ -199,7 +199,7 @@ modeShift scale =
 -- Modes of major
 
 
-ionian : ScaleClass
+ionian : ScaleType
 ionian =
     Heptatonic
         { rootToSecond = Interval.majorSecond
@@ -211,42 +211,42 @@ ionian =
         }
 
 
-major : ScaleClass
+major : ScaleType
 major =
     ionian
 
 
-dorian : ScaleClass
+dorian : ScaleType
 dorian =
     ionian
         |> mode 2
 
 
-phrygian : ScaleClass
+phrygian : ScaleType
 phrygian =
     ionian
         |> mode 3
 
 
-lydian : ScaleClass
+lydian : ScaleType
 lydian =
     ionian
         |> mode 4
 
 
-mixolydian : ScaleClass
+mixolydian : ScaleType
 mixolydian =
     ionian
         |> mode 5
 
 
-aeolian : ScaleClass
+aeolian : ScaleType
 aeolian =
     ionian
         |> mode 6
 
 
-locrian : ScaleClass
+locrian : ScaleType
 locrian =
     ionian
         |> mode 7
@@ -256,7 +256,7 @@ locrian =
 ---- Modes of melodic minor
 
 
-melodicMinor : ScaleClass
+melodicMinor : ScaleType
 melodicMinor =
     Heptatonic
         { rootToSecond = Interval.majorSecond
@@ -268,37 +268,37 @@ melodicMinor =
         }
 
 
-dorianFlat2 : ScaleClass
+dorianFlat2 : ScaleType
 dorianFlat2 =
     melodicMinor
         |> mode 2
 
 
-lydianAugmented : ScaleClass
+lydianAugmented : ScaleType
 lydianAugmented =
     melodicMinor
         |> mode 3
 
 
-acoustic : ScaleClass
+acoustic : ScaleType
 acoustic =
     melodicMinor
         |> mode 4
 
 
-majorMinor : ScaleClass
+majorMinor : ScaleType
 majorMinor =
     melodicMinor
         |> mode 5
 
 
-minorLocrian : ScaleClass
+minorLocrian : ScaleType
 minorLocrian =
     melodicMinor
         |> mode 6
 
 
-superlocrian : ScaleClass
+superlocrian : ScaleType
 superlocrian =
     melodicMinor
         |> mode 7
@@ -308,7 +308,7 @@ superlocrian =
 ---- Modes of harmonic minor
 
 
-harmonicMinor : ScaleClass
+harmonicMinor : ScaleType
 harmonicMinor =
     Heptatonic
         { rootToSecond = Interval.majorSecond
@@ -320,37 +320,37 @@ harmonicMinor =
         }
 
 
-locrianNatural6 : ScaleClass
+locrianNatural6 : ScaleType
 locrianNatural6 =
     harmonicMinor
         |> mode 2
 
 
-majorAugmented : ScaleClass
+majorAugmented : ScaleType
 majorAugmented =
     harmonicMinor
         |> mode 3
 
 
-lydianDiminished : ScaleClass
+lydianDiminished : ScaleType
 lydianDiminished =
     harmonicMinor
         |> mode 4
 
 
-phrygianDominant : ScaleClass
+phrygianDominant : ScaleType
 phrygianDominant =
     harmonicMinor
         |> mode 5
 
 
-aeolianHarmonic : ScaleClass
+aeolianHarmonic : ScaleType
 aeolianHarmonic =
     harmonicMinor
         |> mode 6
 
 
-ultralocrian : ScaleClass
+ultralocrian : ScaleType
 ultralocrian =
     harmonicMinor
         |> mode 7
@@ -360,7 +360,7 @@ ultralocrian =
 ---- Symmetrical scales
 
 
-diminishedWholeToneHalfTone : ScaleClass
+diminishedWholeToneHalfTone : ScaleType
 diminishedWholeToneHalfTone =
     Octatonic
         { rootToSecond = Interval.majorSecond
@@ -373,7 +373,7 @@ diminishedWholeToneHalfTone =
         }
 
 
-diminishedHalfToneWholeTone : ScaleClass
+diminishedHalfToneWholeTone : ScaleType
 diminishedHalfToneWholeTone =
     Octatonic
         { rootToSecond = Interval.minorSecond
@@ -386,7 +386,7 @@ diminishedHalfToneWholeTone =
         }
 
 
-wholeTone : ScaleClass
+wholeTone : ScaleType
 wholeTone =
     Hexatonic
         { rootToSecond = Interval.majorSecond
@@ -401,7 +401,7 @@ wholeTone =
 ---- Western pentatonic scales
 
 
-majorPentatonic : ScaleClass
+majorPentatonic : ScaleType
 majorPentatonic =
     Pentatonic
         { rootToSecond = Interval.majorSecond
@@ -411,7 +411,7 @@ majorPentatonic =
         }
 
 
-minorPentatonic : ScaleClass
+minorPentatonic : ScaleType
 minorPentatonic =
     Pentatonic
         { rootToSecond = Interval.minorThird

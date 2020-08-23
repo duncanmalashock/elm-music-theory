@@ -5,7 +5,7 @@ import MusicTheory.Internal.Letter exposing (Letter(..))
 import MusicTheory.Internal.Pitch as Pitch
 import MusicTheory.Internal.PitchClass as PitchClass exposing (natural, pitchClass)
 import MusicTheory.Internal.Scale as Scale
-import MusicTheory.Internal.ScaleClass as ScaleClass
+import MusicTheory.Internal.ScaleType as ScaleType
 import Test exposing (Test, describe, test)
 
 
@@ -14,7 +14,7 @@ all =
     describe "Scale Tests"
         [ test "C major scale should have C root" <|
             \_ ->
-                Scale.scale (pitchClass C natural) ScaleClass.ionian
+                Scale.scale (pitchClass C natural) ScaleType.ionian
                     |> Scale.root
                     |> Expect.equal (pitchClass C natural)
         , test "C ionian should have correct pitch classes" <|
@@ -30,7 +30,7 @@ all =
                         , pitchClass B natural
                         ]
                 in
-                Scale.scale (pitchClass C natural) ScaleClass.ionian
+                Scale.scale (pitchClass C natural) ScaleType.ionian
                     |> Scale.toList
                     |> Expect.equal pitchClassesInCIonian
         , test "D dorian should have correct pitch classes" <|
@@ -46,7 +46,7 @@ all =
                         , pitchClass C natural
                         ]
                 in
-                Scale.scale (pitchClass D natural) ScaleClass.dorian
+                Scale.scale (pitchClass D natural) ScaleType.dorian
                     |> Scale.toList
                     |> Expect.equal pitchClassesInCDorian
         , test "E phrygian should have correct pitch classes" <|
@@ -62,7 +62,7 @@ all =
                         , pitchClass D natural
                         ]
                 in
-                Scale.scale (pitchClass E natural) ScaleClass.phrygian
+                Scale.scale (pitchClass E natural) ScaleType.phrygian
                     |> Scale.toList
                     |> Expect.equal pitchClassesInCPhrygian
         , test "F lydian should have correct pitch classes" <|
@@ -78,7 +78,7 @@ all =
                         , pitchClass E natural
                         ]
                 in
-                Scale.scale (pitchClass F natural) ScaleClass.lydian
+                Scale.scale (pitchClass F natural) ScaleType.lydian
                     |> Scale.toList
                     |> Expect.equal pitchClassesInFLydian
         , test "G mixolydian should have correct pitch classes" <|
@@ -94,7 +94,7 @@ all =
                         , pitchClass F natural
                         ]
                 in
-                Scale.scale (pitchClass G natural) ScaleClass.mixolydian
+                Scale.scale (pitchClass G natural) ScaleType.mixolydian
                     |> Scale.toList
                     |> Expect.equal pitchClassesInGMixolydian
         , test "A aeolian should have correct pitch classes" <|
@@ -110,7 +110,7 @@ all =
                         , pitchClass G natural
                         ]
                 in
-                Scale.scale (pitchClass A natural) ScaleClass.aeolian
+                Scale.scale (pitchClass A natural) ScaleType.aeolian
                     |> Scale.toList
                     |> Expect.equal pitchClassesInAAeolian
         , test "B locrian should have correct pitch classes" <|
@@ -126,13 +126,13 @@ all =
                         , pitchClass A natural
                         ]
                 in
-                Scale.scale (pitchClass B natural) ScaleClass.locrian
+                Scale.scale (pitchClass B natural) ScaleType.locrian
                     |> Scale.toList
                     |> Expect.equal pitchClassesInBLocrian
         , describe "degree"
             [ test "Fourth degree of C major is F" <|
                 \_ ->
-                    Scale.scale PitchClass.c ScaleClass.ionian
+                    Scale.scale PitchClass.c ScaleType.ionian
                         |> Scale.degree 4
                         |> Expect.equal PitchClass.f
             ]
@@ -201,7 +201,7 @@ all =
 
                         result =
                             Scale.toListThroughAllOctaves
-                                (Scale.scale PitchClass.f ScaleClass.lydian)
+                                (Scale.scale PitchClass.f ScaleType.lydian)
                     in
                     Expect.equal expected result
             ]
