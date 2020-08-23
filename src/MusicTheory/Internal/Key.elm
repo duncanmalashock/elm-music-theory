@@ -1,29 +1,29 @@
 module MusicTheory.Internal.Key exposing
     ( Key
     , MajorOrMinor(..)
-    , aFlatMajor
-    , aMajor
+    , a
+    , aFlat
     , aMinor
-    , bFlatMajor
+    , b
+    , bFlat
     , bFlatMinor
-    , bMajor
     , bMinor
-    , cMajor
+    , c
     , cMinor
     , cSharpMinor
-    , dFlatMajor
-    , dMajor
+    , d
+    , dFlat
     , dMinor
-    , eFlatMajor
+    , e
+    , eFlat
     , eFlatMinor
-    , eMajor
     , eMinor
-    , fMajor
+    , f
     , fMinor
-    , fSharpMajor
+    , fSharp
     , fSharpMinor
-    , gFlatMajor
-    , gMajor
+    , g
+    , gFlat
     , gMinor
     , gSharpMinor
     , major
@@ -76,68 +76,68 @@ tonic (Key root _) =
 ---- MAJOR KEYS
 
 
-gFlatMajor : Key
-gFlatMajor =
+gFlat : Key
+gFlat =
     major <| pitchClass G PitchClass.flat
 
 
-dFlatMajor : Key
-dFlatMajor =
+dFlat : Key
+dFlat =
     major <| pitchClass D PitchClass.flat
 
 
-aFlatMajor : Key
-aFlatMajor =
+aFlat : Key
+aFlat =
     major <| pitchClass A PitchClass.flat
 
 
-eFlatMajor : Key
-eFlatMajor =
+eFlat : Key
+eFlat =
     major <| pitchClass E PitchClass.flat
 
 
-bFlatMajor : Key
-bFlatMajor =
+bFlat : Key
+bFlat =
     major <| pitchClass B PitchClass.flat
 
 
-fMajor : Key
-fMajor =
+f : Key
+f =
     major <| pitchClass F PitchClass.natural
 
 
-cMajor : Key
-cMajor =
+c : Key
+c =
     major <| pitchClass C PitchClass.natural
 
 
-gMajor : Key
-gMajor =
+g : Key
+g =
     major <| pitchClass G PitchClass.natural
 
 
-dMajor : Key
-dMajor =
+d : Key
+d =
     major <| pitchClass D PitchClass.natural
 
 
-aMajor : Key
-aMajor =
+a : Key
+a =
     major <| pitchClass A PitchClass.natural
 
 
-eMajor : Key
-eMajor =
+e : Key
+e =
     major <| pitchClass E PitchClass.natural
 
 
-bMajor : Key
-bMajor =
+b : Key
+b =
     major <| pitchClass B PitchClass.natural
 
 
-fSharpMajor : Key
-fSharpMajor =
+fSharp : Key
+fSharp =
     major <| pitchClass F PitchClass.sharp
 
 
