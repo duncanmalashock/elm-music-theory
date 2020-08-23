@@ -9,7 +9,7 @@ module MusicTheory.Chord exposing
     , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen
     )
 
-{-| A chord is a set of pitch classes that are sounded together to create harmony.
+{-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are sounded together to create harmony.
 
 @docs Chord
 
