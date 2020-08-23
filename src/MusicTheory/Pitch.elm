@@ -1,6 +1,7 @@
 module MusicTheory.Pitch exposing
     ( Pitch
-    , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, semitones, toMIDINoteNumber, toFrequency, name
+    , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
+    , semitones, toMIDINoteNumber, toFrequency, name
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
     , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
     , d0, d1, d2, d3, d4, d5, d6, d7, d8
@@ -31,7 +32,12 @@ module MusicTheory.Pitch exposing
 
 # Helpers
 
-@docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, semitones, toMIDINoteNumber, toFrequency, name
+@docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
+
+
+# Conversion
+
+@docs semitones, toMIDINoteNumber, toFrequency, name
 
 
 # Constructors
@@ -148,7 +154,7 @@ toFrequency pitch =
     Pitch.toFrequency pitch
 
 
-{-| A pitch's letter name and accidental:
+{-| A pitch's letter name, accidental, and octave number:
 
     name cSharp4 == "C♯4"
 

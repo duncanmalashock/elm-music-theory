@@ -1,6 +1,7 @@
 module MusicTheory.PitchClass exposing
     ( PitchClass
     , fromPitch, areEnharmonicEquivalents
+    , name
     , c, cSharp, d, dSharp, dFlat, e, eFlat, f, fSharp, g, gSharp, gFlat, a, aSharp, aFlat, b, bFlat
     , cFlat, eSharp, fFlat, bSharp
     , cDoubleSharp, cDoubleFlat, dDoubleSharp, dDoubleFlat, eDoubleSharp, eDoubleFlat, fDoubleSharp, fDoubleFlat, gDoubleSharp, gDoubleFlat, aDoubleSharp, aDoubleFlat, bDoubleSharp, bDoubleFlat
@@ -14,6 +15,11 @@ module MusicTheory.PitchClass exposing
 # Helpers
 
 @docs fromPitch, areEnharmonicEquivalents
+
+
+# Conversion
+
+@docs name
 
 
 # Constructors
@@ -54,6 +60,16 @@ type alias PitchClass =
 fromPitch : Pitch.Pitch -> PitchClass
 fromPitch pitch =
     Pitch.pitchClass pitch
+
+
+{-| A pitch class's letter name and accidental:
+
+    name bFlat == "B♭"
+
+-}
+name : PitchClass -> String
+name pitch =
+    PitchClass.toString pitch
 
 
 {-| Check whether two pitch classes are enharmonic equivalents of each other. [Enharmonic equivalents](https://en.wikipedia.org/wiki/Enharmonic) are two pitch classes with different names but the same sound:
