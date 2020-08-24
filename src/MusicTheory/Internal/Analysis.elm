@@ -2,15 +2,28 @@ module MusicTheory.Internal.Analysis exposing
     ( Analysis
     , fromChord
     , i
+    , iSharp
     , ii
+    , iiFlat
+    , iiSharp
     , iii
+    , iiiFlat
+    , iiiSharp
     , iv
+    , ivFlat
+    , ivSharp
     , seventhsByDefault
     , toChord
     , triadsByDefault
     , v
+    , vFlat
+    , vSharp
     , vi
+    , viFlat
+    , viSharp
     , vii
+    , viiFlat
+    , viiSharp
     , withChordType
     )
 
@@ -32,9 +45,24 @@ i =
     Analysis I (PitchClass.offsetFromInt 0) Nothing
 
 
+iSharp : ChordType.ChordType -> Analysis
+iSharp chordType =
+    Analysis I (PitchClass.offsetFromInt 1) (Just chordType)
+
+
 ii : Analysis
 ii =
     Analysis II (PitchClass.offsetFromInt 0) Nothing
+
+
+iiSharp : ChordType.ChordType -> Analysis
+iiSharp chordType =
+    Analysis II (PitchClass.offsetFromInt 1) (Just chordType)
+
+
+iiFlat : ChordType.ChordType -> Analysis
+iiFlat chordType =
+    Analysis II (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 iii : Analysis
@@ -42,9 +70,29 @@ iii =
     Analysis III (PitchClass.offsetFromInt 0) Nothing
 
 
+iiiSharp : ChordType.ChordType -> Analysis
+iiiSharp chordType =
+    Analysis III (PitchClass.offsetFromInt 1) (Just chordType)
+
+
+iiiFlat : ChordType.ChordType -> Analysis
+iiiFlat chordType =
+    Analysis III (PitchClass.offsetFromInt -1) (Just chordType)
+
+
 iv : Analysis
 iv =
     Analysis IV (PitchClass.offsetFromInt 0) Nothing
+
+
+ivSharp : ChordType.ChordType -> Analysis
+ivSharp chordType =
+    Analysis IV (PitchClass.offsetFromInt 1) (Just chordType)
+
+
+ivFlat : ChordType.ChordType -> Analysis
+ivFlat chordType =
+    Analysis IV (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 v : Analysis
@@ -52,14 +100,44 @@ v =
     Analysis V (PitchClass.offsetFromInt 0) Nothing
 
 
+vSharp : ChordType.ChordType -> Analysis
+vSharp chordType =
+    Analysis V (PitchClass.offsetFromInt 1) (Just chordType)
+
+
+vFlat : ChordType.ChordType -> Analysis
+vFlat chordType =
+    Analysis V (PitchClass.offsetFromInt -1) (Just chordType)
+
+
 vi : Analysis
 vi =
     Analysis VI (PitchClass.offsetFromInt 0) Nothing
 
 
+viSharp : ChordType.ChordType -> Analysis
+viSharp chordType =
+    Analysis VI (PitchClass.offsetFromInt 1) (Just chordType)
+
+
+viFlat : ChordType.ChordType -> Analysis
+viFlat chordType =
+    Analysis VI (PitchClass.offsetFromInt -1) (Just chordType)
+
+
 vii : Analysis
 vii =
     Analysis VII (PitchClass.offsetFromInt 0) Nothing
+
+
+viiFlat : ChordType.ChordType -> Analysis
+viiFlat chordType =
+    Analysis VII (PitchClass.offsetFromInt -1) (Just chordType)
+
+
+viiSharp : ChordType.ChordType -> Analysis
+viiSharp chordType =
+    Analysis VII (PitchClass.offsetFromInt 1) (Just chordType)
 
 
 withChordType : ChordType.ChordType -> Analysis -> Analysis
