@@ -26,6 +26,8 @@ module MusicTheory.Internal.Key exposing
     , gFlat
     , gMinor
     , gSharpMinor
+    , isMajor
+    , isMinor
     , major
     , minor
     , scale
@@ -45,6 +47,16 @@ type Key
 type MajorOrMinor
     = Major
     | Minor
+
+
+isMajor : Key -> Bool
+isMajor (Key _ majorOrMinor) =
+    majorOrMinor == Major
+
+
+isMinor : Key -> Bool
+isMinor (Key _ majorOrMinor) =
+    majorOrMinor == Minor
 
 
 major : PitchClass -> Key

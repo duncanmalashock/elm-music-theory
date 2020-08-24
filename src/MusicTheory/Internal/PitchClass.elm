@@ -7,6 +7,7 @@ module MusicTheory.Internal.PitchClass exposing
     , aFlat
     , aSharp
     , accidentals
+    , addOffset
     , areEnharmonicEquivalents
     , b
     , bDoubleFlat
@@ -44,6 +45,7 @@ module MusicTheory.Internal.PitchClass exposing
     , letter
     , natural
     , offset
+    , offsetFromInt
     , pitchClass
     , semitones
     , sharp
@@ -241,6 +243,11 @@ type Offset
     = Offset Int
 
 
+offsetFromInt : Int -> Offset
+offsetFromInt int =
+    Offset int
+
+
 pitchClass : Letter -> Offset -> PitchClass
 pitchClass l o =
     PitchClass l o
@@ -249,6 +256,11 @@ pitchClass l o =
 offset : PitchClass -> Int
 offset (PitchClass _ (Offset o)) =
     o
+
+
+addOffset : Offset -> PitchClass -> PitchClass
+addOffset (Offset newO) (PitchClass l (Offset o)) =
+    PitchClass l (Offset (o + newO))
 
 
 accidentals : PitchClass -> Int

@@ -103,7 +103,7 @@ toPitchClasses theChord =
     Chord.toPitchClasses theChord
 
 
-{-| Get the chord symbol for a chord type:
+{-| Get the chord symbol for a chord:
 
     symbol (dominantNinth PitchClass.a) == "A9"
 
