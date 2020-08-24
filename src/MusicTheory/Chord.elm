@@ -6,7 +6,7 @@ module MusicTheory.Chord exposing
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
     , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
-    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen
+    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
     )
 
 {-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are sounded together to create harmony.
@@ -49,7 +49,7 @@ module MusicTheory.Chord exposing
 
 ## Altered dominant chords
 
-@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen
+@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
 
 -}
 
@@ -321,3 +321,9 @@ dominantSeventhFlatNineFlatThirteen pitchClass =
 dominantSeventhSharpNineFlatThirteen : PitchClass.PitchClass -> Chord
 dominantSeventhSharpNineFlatThirteen pitchClass =
     Chord.chord pitchClass ChordType.dominantSeventhSharpNineFlatThirteen
+
+
+{-| -}
+dominantSeventhSharpElevenFlatThirteen : PitchClass.PitchClass -> Chord
+dominantSeventhSharpElevenFlatThirteen pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhSharpElevenFlatThirteen
