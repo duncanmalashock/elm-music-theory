@@ -4,6 +4,7 @@ module MusicTheory.Internal.Chord exposing
     , chordType
     , containsPitchClass
     , root
+    , symbol
     , toPitchClasses
     )
 
@@ -23,6 +24,11 @@ chord rootPitchClass theChordType =
 root : Chord -> PitchClass.PitchClass
 root (Chord rootPitchClass _) =
     rootPitchClass
+
+
+symbol : Chord -> String
+symbol (Chord rootPitchClass theChordType) =
+    PitchClass.toString rootPitchClass ++ ChordType.symbol theChordType
 
 
 chordType : Chord -> ChordType.ChordType

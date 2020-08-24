@@ -1,7 +1,7 @@
 module MusicTheory.Chord exposing
     ( Chord
     , chordType, root, contains
-    , toPitchClasses
+    , toPitchClasses, symbol
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
@@ -21,7 +21,7 @@ module MusicTheory.Chord exposing
 
 # Conversion
 
-@docs toPitchClasses
+@docs toPitchClasses, symbol
 
 
 # Constructors
@@ -101,6 +101,16 @@ contains pitchClass theChord =
 toPitchClasses : Chord -> List PitchClass.PitchClass
 toPitchClasses theChord =
     Chord.toPitchClasses theChord
+
+
+{-| Get the chord symbol for a chord type:
+
+    symbol (dominantNinth PitchClass.a) == "A9"
+
+-}
+symbol : Chord -> String
+symbol chord =
+    Chord.symbol chord
 
 
 {-| -}

@@ -1,11 +1,11 @@
 module MusicTheory.ChordType exposing
     ( ChordType
-    , toIntervals
+    , toIntervals, symbol
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
-    , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
+    , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminishedSeventh, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
     , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
-    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen
+    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
     )
 
 {-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the intervals contained in a chord, with no specific root pitch class.
@@ -15,7 +15,7 @@ module MusicTheory.ChordType exposing
 
 # Conversion
 
-@docs toIntervals
+@docs toIntervals, symbol
 
 
 # Constructors
@@ -33,7 +33,7 @@ module MusicTheory.ChordType exposing
 
 ## Seventh chords
 
-@docs majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
+@docs majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminishedSeventh, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
 
 
 ## Chords with extensions
@@ -43,7 +43,7 @@ module MusicTheory.ChordType exposing
 
 ## Altered dominant chords
 
-@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen
+@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
 
 -}
 
@@ -64,6 +64,16 @@ type alias ChordType =
 toIntervals : ChordType -> List Interval.Interval
 toIntervals chordType =
     ChordType.toIntervals chordType
+
+
+{-| Get the chord symbol for a chord type:
+
+    symbol majorSeventh == "M7"
+
+-}
+symbol : ChordType -> String
+symbol chordType =
+    ChordType.symbol chordType
 
 
 {-| -}
@@ -163,8 +173,8 @@ diminishedSeventh =
 
 
 {-| -}
-halfDiminished : ChordType
-halfDiminished =
+halfDiminishedSeventh : ChordType
+halfDiminishedSeventh =
     ChordType.halfDiminished
 
 
@@ -274,3 +284,9 @@ dominantSeventhFlatNineFlatThirteen =
 dominantSeventhSharpNineFlatThirteen : ChordType
 dominantSeventhSharpNineFlatThirteen =
     ChordType.dominantSeventhSharpNineFlatThirteen
+
+
+{-| -}
+dominantSeventhSharpElevenFlatThirteen : ChordType
+dominantSeventhSharpElevenFlatThirteen =
+    ChordType.dominantSeventhSharpElevenFlatThirteen

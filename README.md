@@ -14,4 +14,4 @@ This API is preliminary and subject to change. Don't depend on it for your produ
 
 ### Gitbook
 
-This project has a [Gitbook](https://duncanmalashock.gitbook.io/music-theory/), which attempts not only to explain the concepts of music theory, but also how they've been modeled here and why.
+This project has a [Gitbook](https://duncanmalashock.gitbook.io/music-theory/), which attempts to explain not only the concepts of music theory, but also how they've been modeled here and why.

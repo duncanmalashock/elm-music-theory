@@ -45,6 +45,7 @@ module MusicTheory.Internal.ChordType exposing
     , minorSixNine
     , sus2
     , sus4
+    , symbol
     , toIntervals
     )
 
@@ -126,6 +127,16 @@ isDiminished theChordType =
         theChordType
 
 
+isSeventh : ChordType -> Bool
+isSeventh theChordType =
+    includesAny
+        [ Interval.majorSeventh
+        , Interval.minorSeventh
+        , Interval.diminishedSeventh
+        ]
+        theChordType
+
+
 includes : Interval.Interval -> ChordType -> Bool
 includes theInterval (ChordType intervals) =
     List.member theInterval intervals
@@ -138,6 +149,133 @@ includesAll intervals theChordType =
             includes interval theChordType
         )
         intervals
+
+
+includesAny : List Interval.Interval -> ChordType -> Bool
+includesAny intervals theChordType =
+    List.any
+        (\interval ->
+            includes interval theChordType
+        )
+        intervals
+
+
+symbol : ChordType -> String
+symbol ((ChordType intervals) as theChordType) =
+    case premadeSymbol theChordType of
+        Just theSymbol ->
+            theSymbol
+
+        Nothing ->
+            case seventhSymbol theChordType of
+                Just theSymbol ->
+                    theSymbol
+
+                Nothing ->
+                    "?"
+
+
+premadeSymbol : ChordType -> Maybe String
+premadeSymbol theChordType =
+    let
+        allSymbols =
+            [ ( major, "" )
+            , ( minor, "m" )
+            , ( augmented, "aug" )
+            , ( diminished, "dim" )
+            , ( sus2, "sus2" )
+            , ( sus4, "sus4" )
+            , ( majorSix, "6" )
+            , ( majorSixNine, "6/9" )
+            , ( minorSix, "m6" )
+            , ( minorSixNine, "m6/9" )
+            , ( majorAddNine, "(add9)" )
+            , ( minorAddNine, "m(add9)" )
+            ]
+    in
+    allSymbols
+        |> List.filterMap
+            (\( key, value ) ->
+                if theChordType == key then
+                    Just value
+
+                else
+                    Nothing
+            )
+        |> List.head
+
+
+seventhSymbol : ChordType -> Maybe String
+seventhSymbol theChordType =
+    if isSeventh theChordType then
+        if includesAll [ Interval.majorThird, Interval.majorSeventh ] theChordType then
+            Just <| "M" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
+
+        else if includesAll [ Interval.minorThird, Interval.perfectFifth, Interval.minorSeventh ] theChordType then
+            Just <| "m" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
+
+        else if
+            includesAll [ Interval.majorThird, Interval.minorSeventh ] theChordType
+                || includesAll [ Interval.perfectFourth, Interval.minorSeventh ] theChordType
+        then
+            Just <| "" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
+
+        else if includesAll [ Interval.minorThird, Interval.diminishedFifth, Interval.diminishedSeventh ] theChordType then
+            Just <| "o" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
+
+        else if includesAll [ Interval.minorThird, Interval.diminishedFifth, Interval.minorSeventh ] theChordType then
+            Just <| "ø" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
+
+        else if includesAll [ Interval.minorThird, Interval.majorSeventh ] theChordType then
+            Just <| "m/M" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
+
+        else
+            Nothing
+
+    else
+        Nothing
+
+
+highestUnalteredExtensionSymbol : ChordType -> String
+highestUnalteredExtensionSymbol theChordType =
+    if includes Interval.majorThirteenth theChordType then
+        "13"
+
+    else if includes Interval.perfectEleventh theChordType then
+        "11"
+
+    else if includes Interval.majorNinth theChordType then
+        "9"
+
+    else
+        "7"
+
+
+alterationSymbols : ChordType -> String
+alterationSymbols theChordType =
+    let
+        alterations =
+            [ ( Interval.perfectFourth, "sus4" )
+            , ( Interval.augmentedFifth, "♯5" )
+            , ( Interval.minorNinth, "♭9" )
+            , ( Interval.augmentedNinth, "♯9" )
+            , ( Interval.augmentedEleventh, "♯11" )
+            , ( Interval.minorThirteenth, "♭13" )
+            ]
+                |> List.filterMap
+                    (\( key, value ) ->
+                        if includes key theChordType then
+                            Just value
+
+                        else
+                            Nothing
+                    )
+    in
+    if not <| List.isEmpty alterations then
+        "(" ++ String.join "," alterations ++ ")"
+
+    else
+        ""
 
 
 
