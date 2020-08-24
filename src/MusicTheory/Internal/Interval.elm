@@ -390,7 +390,7 @@ shortName (Interval dir intervalQuality intervalNumber) =
                             |> String.join ""
 
                     else
-                        List.repeat (abs off) "D"
+                        List.repeat (abs off) "d"
                             |> String.join ""
 
                 Imperfect (Offset off) ->
@@ -407,7 +407,7 @@ shortName (Interval dir intervalQuality intervalNumber) =
                                     |> String.join ""
 
                             else
-                                List.repeat (abs off - 1) "D"
+                                List.repeat (abs off - 1) "d"
                                     |> String.join ""
 
         numberAbbreviation =

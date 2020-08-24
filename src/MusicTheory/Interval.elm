@@ -4,7 +4,7 @@ module MusicTheory.Interval exposing
     , isEqualTo, isGreaterThan, isLessThan
     , add, subtract, simplify, addOctave
     , reverse, isUp, isDown
-    , semitones, shortName
+    , semitones, symbol
     , perfectUnison, minorSecond, majorSecond, minorThird, majorThird, perfectFourth, perfectFifth, minorSixth, majorSixth, minorSeventh, majorSeventh, perfectOctave
     , augmentedUnison, augmentedSecond, augmentedThird, augmentedFourth, augmentedFifth, augmentedSixth, augmentedSeventh
     , diminishedSecond, diminishedThird, diminishedFourth, diminishedFifth, diminishedSixth, diminishedSeventh, diminishedOctave
@@ -39,7 +39,7 @@ Intervals have direction: a perfect fifth up is different from a perfect fifth d
 
 # Conversion
 
-@docs semitones, shortName
+@docs semitones, symbol
 
 
 # Constructors
@@ -172,13 +172,13 @@ isDown interval =
     Interval.isNegative interval
 
 
-{-| Get the [short name](https://en.wikipedia.org/wiki/Interval_%28music%29#Alternative_interval_naming_conventions) of an interval:
+{-| Get the [symbol](https://en.wikipedia.org/wiki/Interval_%28music%29#Alternative_interval_naming_conventions) for an interval:
 
-    shortName perfectFifth == "P5"
+    symbol perfectFifth == "P5"
 
 -}
-shortName : Interval -> String
-shortName interval =
+symbol : Interval -> String
+symbol interval =
     Interval.shortName interval
 
 
