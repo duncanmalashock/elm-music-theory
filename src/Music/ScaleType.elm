@@ -2,7 +2,8 @@ module Music.ScaleType exposing
     ( ScaleType
     , mode
     , toList
-    , ionian, major, dorian, phrygian, lydian, mixolydian, aeolian, locrian
+    , major, minor
+    , ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian
     , melodicMinor, dorianFlat2, lydianAugmented, acoustic, majorMinor, minorLocrian, superlocrian
     , harmonicMinor, locrianNatural6, majorAugmented, lydianDiminished, phrygianDominant, aeolianHarmonic, ultralocrian
     , diminishedWholeToneHalfTone, diminishedHalfToneWholeTone, wholeTone
@@ -26,10 +27,12 @@ module Music.ScaleType exposing
 
 # Constructors
 
+@docs major, minor
+
 
 ## Modes of the major scale
 
-@docs ionian, major, dorian, phrygian, lydian, mixolydian, aeolian, locrian
+@docs ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian
 
 
 ## Modes of the melodic minor scale
@@ -98,7 +101,8 @@ ionian =
     ScaleType.ionian
 
 
-{-| -}
+{-| Same as `ionian`
+-}
 major : ScaleType
 major =
     ScaleType.major
@@ -131,6 +135,13 @@ mixolydian =
 {-| -}
 aeolian : ScaleType
 aeolian =
+    ScaleType.aeolian
+
+
+{-| Also known as the "natural minor" scale. Same as `aeolian`
+-}
+minor : ScaleType
+minor =
     ScaleType.aeolian
 
 
