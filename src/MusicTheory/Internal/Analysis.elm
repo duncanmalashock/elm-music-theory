@@ -1,5 +1,6 @@
 module MusicTheory.Internal.Analysis exposing
     ( Analysis
+    , DefaultChordTypes
     , fromChord
     , i
     , iSharp
