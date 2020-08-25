@@ -23,6 +23,8 @@ module Music.Range exposing
 
 # Common instrument ranges
 
+All instrument ranges here are defined in [concert pitch](https://en.wikipedia.org/wiki/Concert_pitch).
+
 
 ## Vocal ranges
 

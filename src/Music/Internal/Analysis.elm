@@ -3,6 +3,7 @@ module Music.Internal.Analysis exposing
     , DefaultChordTypes
     , fromChord
     , i
+    , iFlat
     , iSharp
     , ii
     , iiFlat
@@ -50,6 +51,11 @@ i =
 iSharp : ChordType.ChordType -> Analysis
 iSharp chordType =
     Analysis I (PitchClass.offsetFromInt 1) (Just chordType)
+
+
+iFlat : ChordType.ChordType -> Analysis
+iFlat chordType =
+    Analysis I (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 ii : Analysis

@@ -83,11 +83,11 @@ toList scaleType =
     ScaleType.toList scaleType
 
 
-{-| Get a mode of a scale type:
+{-| Get a [mode](https://en.wikipedia.org/wiki/Mode_%28music%29#Modern_modes) of a scale type by shifting the order of its intervals. For example, the Phrygian mode is the third mode of the major scale:
 
-    mode 3 major == phyrgian
+    mode 3 major == phrygian
 
-Note: like many numbers in music theory, modes are 1-based; passing `2` means the second mode of the scale type. 0 and negative integers are ignored.
+Note: like many numbers in music theory, modes are 1-based; `2` means the second mode of the scale type. 0 and negative integers are ignored.
 
 -}
 mode : Int -> ScaleType -> ScaleType

@@ -4,6 +4,7 @@ module Music.Internal.Scale exposing
     , degree
     , root
     , scale
+    , scaleType
     , toList
     , toListThroughAllOctaves
     )
@@ -69,8 +70,8 @@ type alias OctatonicDegrees =
 
 
 scale : PitchClass -> ScaleType -> Scale
-scale scaleRoot scaleType =
-    Scale scaleRoot scaleType
+scale scaleRoot theScaleType =
+    Scale scaleRoot theScaleType
 
 
 root : Scale -> PitchClass
@@ -78,8 +79,13 @@ root (Scale scaleRoot _) =
     scaleRoot
 
 
+scaleType : Scale -> ScaleType
+scaleType (Scale _ theScaleType) =
+    theScaleType
+
+
 toListThroughAllOctaves : Scale -> List Pitch
-toListThroughAllOctaves (Scale scaleRoot scaleType) =
+toListThroughAllOctaves (Scale scaleRoot theScaleType) =
     Octave.allValid
         |> List.take 8
         |> List.concatMap
@@ -88,7 +94,7 @@ toListThroughAllOctaves (Scale scaleRoot scaleType) =
                     tonic =
                         Pitch.fromPitchClass octave scaleRoot
                 in
-                ScaleType.toList scaleType
+                ScaleType.toList theScaleType
                     |> List.map
                         (\interval ->
                             Pitch.transposeUp interval tonic
@@ -165,8 +171,8 @@ degree degreeNumber theScale =
 
 
 toScaleDegrees : Scale -> ScaleDegrees
-toScaleDegrees (Scale scaleRoot scaleType) =
-    case scaleType of
+toScaleDegrees (Scale scaleRoot theScaleType) =
+    case theScaleType of
         ScaleType.Pentatonic scaleTypeIntervals ->
             Pentatonic
                 { root = scaleRoot
