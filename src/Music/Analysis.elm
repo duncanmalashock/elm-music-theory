@@ -5,7 +5,8 @@ module Music.Analysis exposing
     , symbol
     , i, ii, iii, iv, v, vi, vii
     , withChordType
-    , iSharp, iiFlat, iiSharp, iiiFlat, iiiSharp, ivFlat, ivSharp, vFlat, vSharp, viFlat, viSharp, viiFlat, viiSharp
+    , iSharp, iiSharp, iiiSharp, ivSharp, vSharp, viSharp, viiSharp
+    , iFlat, iiFlat, iiiFlat, ivFlat, vFlat, viFlat, viiFlat
     )
 
 {-| [Roman numeral analysis](https://en.wikipedia.org/wiki/Roman_numeral_analysis) describes the relationship of a chord to a key.
@@ -31,16 +32,24 @@ module Music.Analysis exposing
 # Constructors
 
 
-## Diatonic
+## Diatonic scale degrees
 
 @docs i, ii, iii, iv, v, vi, vii
 
 @docs withChordType
 
 
-## Chromatic
+## Chromatic scale degrees
 
-@docs iSharp, iiFlat, iiSharp, iiiFlat, iiiSharp, ivFlat, ivSharp, vFlat, vSharp, viFlat, viSharp, viiFlat, viiSharp
+Chromatic scale degrees require a chord type to be specified, since they have no defaults:
+
+@docs iSharp, iiSharp, iiiSharp, ivSharp, vSharp, viSharp, viiSharp
+@docs iFlat, iiFlat, iiiFlat, ivFlat, vFlat, viFlat, viiFlat
+
+
+## Secondary dominants
+
+TK
 
 -}
 
@@ -117,6 +126,12 @@ i =
 iSharp : ChordType.ChordType -> Analysis
 iSharp =
     Analysis.iSharp
+
+
+{-| -}
+iFlat : ChordType.ChordType -> Analysis
+iFlat =
+    Analysis.iFlat
 
 
 {-| -}
