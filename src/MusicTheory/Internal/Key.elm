@@ -29,7 +29,9 @@ module MusicTheory.Internal.Key exposing
     , isMajor
     , isMinor
     , major
+    , majorKey
     , minor
+    , minorKey
     , scale
     , tonic
     )
@@ -47,6 +49,16 @@ type Key
 type MajorOrMinor
     = Major
     | Minor
+
+
+majorKey : MajorOrMinor
+majorKey =
+    Major
+
+
+minorKey : MajorOrMinor
+minorKey =
+    Minor
 
 
 isMajor : Key -> Bool

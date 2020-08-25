@@ -46,6 +46,7 @@ module MusicTheory.Internal.PitchClass exposing
     , natural
     , offset
     , offsetFromInt
+    , offsetToString
     , pitchClass
     , semitones
     , sharp
@@ -314,17 +315,20 @@ tripleSharp =
 
 
 toString : PitchClass -> String
-toString pc =
-    case pc of
-        PitchClass l (Offset o) ->
-            if o == 0 then
-                Letter.toString l
+toString (PitchClass l o) =
+    Letter.toString l ++ offsetToString o
 
-            else if o < 0 then
-                Letter.toString l ++ (List.repeat (abs o) "♭" |> String.join "")
 
-            else
-                Letter.toString l ++ (List.repeat (abs o) "♯" |> String.join "")
+offsetToString : Offset -> String
+offsetToString (Offset o) =
+    if o == 0 then
+        ""
+
+    else if o < 0 then
+        List.repeat (abs o) "♭" |> String.join ""
+
+    else
+        List.repeat (abs o) "♯" |> String.join ""
 
 
 transpose : Interval -> PitchClass -> PitchClass

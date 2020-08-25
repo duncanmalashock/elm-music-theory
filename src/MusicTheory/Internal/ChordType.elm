@@ -28,6 +28,7 @@ module MusicTheory.Internal.ChordType exposing
     , halfDiminished
     , isDiminished
     , isDominant
+    , isMajor
     , major
     , majorAddNine
     , majorNinth
@@ -116,6 +117,12 @@ isDominant theChordType =
             , Interval.minorSeventh
             ]
             theChordType
+
+
+isMajor : ChordType -> Bool
+isMajor theChordType =
+    includes Interval.majorThird theChordType
+        && (not <| includes Interval.minorSeventh theChordType)
 
 
 isDiminished : ChordType -> Bool

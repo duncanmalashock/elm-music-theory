@@ -13,6 +13,7 @@ module MusicTheory.Internal.Analysis exposing
     , ivFlat
     , ivSharp
     , seventhsByDefault
+    , symbol
     , toChord
     , triadsByDefault
     , v
@@ -28,8 +29,8 @@ module MusicTheory.Internal.Analysis exposing
     )
 
 import MusicTheory.Chord as Chord
-import MusicTheory.ChordType as ChordType
 import MusicTheory.Internal.Chord as InternalChord
+import MusicTheory.Internal.ChordType as ChordType
 import MusicTheory.Internal.Interval as Interval
 import MusicTheory.Internal.Key as Key
 import MusicTheory.Internal.PitchClass as PitchClass
@@ -143,6 +144,100 @@ viiSharp chordType =
 withChordType : ChordType.ChordType -> Analysis -> Analysis
 withChordType chordType (Analysis numeral offset _) =
     Analysis numeral offset (Just chordType)
+
+
+symbol : Key.Key -> Analysis -> String
+symbol key (Analysis numeral offset maybeChordType) =
+    let
+        keyIsMajor =
+            Key.isMajor key
+
+        chordType =
+            case maybeChordType of
+                Just theChordType ->
+                    theChordType
+
+                Nothing ->
+                    if keyIsMajor then
+                        defaultChordType triadsByDefault.major numeral
+
+                    else
+                        defaultChordType triadsByDefault.minor numeral
+
+        usingDefaultChordType =
+            case maybeChordType of
+                Just theChordType ->
+                    False
+
+                Nothing ->
+                    True
+    in
+    PitchClass.offsetToString offset
+        ++ numeralToString numeral chordType
+        ++ (if usingDefaultChordType then
+                ""
+
+            else
+                ChordType.symbol chordType
+           )
+
+
+numeralToString : RomanNumeral -> ChordType.ChordType -> String
+numeralToString numeral chordType =
+    let
+        isMajorOrDominant =
+            ChordType.isDominant chordType
+                || ChordType.isMajor chordType
+    in
+    case numeral of
+        I ->
+            if isMajorOrDominant then
+                "I"
+
+            else
+                "i"
+
+        II ->
+            if isMajorOrDominant then
+                "II"
+
+            else
+                "ii"
+
+        III ->
+            if isMajorOrDominant then
+                "III"
+
+            else
+                "iii"
+
+        IV ->
+            if isMajorOrDominant then
+                "IV"
+
+            else
+                "iv"
+
+        V ->
+            if isMajorOrDominant then
+                "V"
+
+            else
+                "v"
+
+        VI ->
+            if isMajorOrDominant then
+                "VI"
+
+            else
+                "vi"
+
+        VII ->
+            if isMajorOrDominant then
+                "VII"
+
+            else
+                "vii"
 
 
 type RomanNumeral
@@ -314,11 +409,11 @@ seventhsByDefault =
         , iv = ChordType.majorSeventh
         , v = ChordType.dominantSeventh
         , vi = ChordType.minorSeventh
-        , vii = ChordType.halfDiminishedSeventh
+        , vii = ChordType.halfDiminished
         }
     , minor =
         { i = ChordType.minorSeventh
-        , ii = ChordType.halfDiminishedSeventh
+        , ii = ChordType.halfDiminished
         , iii = ChordType.majorSeventh
         , iv = ChordType.minorSeventh
         , v = ChordType.minorSeventh
@@ -326,6 +421,31 @@ seventhsByDefault =
         , vii = ChordType.dominantSeventh
         }
     }
+
+
+defaultChordType : DefaultChordTypesForMode -> RomanNumeral -> ChordType.ChordType
+defaultChordType defaultChordTypes numeral =
+    case numeral of
+        I ->
+            .i defaultChordTypes
+
+        II ->
+            .ii defaultChordTypes
+
+        III ->
+            .iii defaultChordTypes
+
+        IV ->
+            .iv defaultChordTypes
+
+        V ->
+            .v defaultChordTypes
+
+        VI ->
+            .vi defaultChordTypes
+
+        VII ->
+            .vii defaultChordTypes
 
 
 isDefaultChordType : List DefaultChordTypesForMode -> ChordType.ChordType -> RomanNumeral -> Bool
