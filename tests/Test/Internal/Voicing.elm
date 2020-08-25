@@ -1,16 +1,16 @@
 module Test.Internal.Voicing exposing (..)
 
 import Expect
-import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordType as ChordType
-import MusicTheory.Internal.InstrumentRanges as InstrumentRanges
-import MusicTheory.Internal.Interval as Interval
-import MusicTheory.Internal.Pitch as Pitch
-import MusicTheory.Internal.PitchClass as PitchClass
-import MusicTheory.Internal.Voicing as Voicing
-import MusicTheory.Internal.Voicing.FourPart as FourPart
-import MusicTheory.Internal.Voicing.FourPart.Classical
-import MusicTheory.Internal.Voicing.FourPart.Jazz
+import Music.Internal.Chord as Chord
+import Music.Internal.ChordType as ChordType
+import Music.Internal.InstrumentRanges as InstrumentRanges
+import Music.Internal.Interval as Interval
+import Music.Internal.Pitch as Pitch
+import Music.Internal.PitchClass as PitchClass
+import Music.Internal.Voicing as Voicing
+import Music.Internal.Voicing.FourPart as FourPart
+import Music.Internal.Voicing.FourPart.Classical
+import Music.Internal.Voicing.FourPart.Jazz
 import Test exposing (Test, describe, test)
 
 
@@ -40,7 +40,7 @@ all =
                                     , voiceFour = InstrumentRanges.cello
                                     }
                                 , techniques =
-                                    [ MusicTheory.Internal.Voicing.FourPart.Jazz.spread
+                                    [ Music.Internal.Voicing.FourPart.Jazz.spread
                                     ]
                                 }
                                 |> Voicing.withMinimumRange
@@ -78,7 +78,7 @@ all =
                                     , voiceFour = InstrumentRanges.cello
                                     }
                                 , techniques =
-                                    [ MusicTheory.Internal.Voicing.FourPart.Jazz.close
+                                    [ Music.Internal.Voicing.FourPart.Jazz.close
                                     ]
                                 }
                                 |> Voicing.execute FourPart.allVoices
@@ -112,7 +112,7 @@ all =
                                     , voiceFour = InstrumentRanges.cello
                                     }
                                 , techniques =
-                                    [ MusicTheory.Internal.Voicing.FourPart.Classical.rootPosition
+                                    [ Music.Internal.Voicing.FourPart.Classical.rootPosition
                                     ]
                                 }
                                 |> Voicing.withMinimumRange
@@ -159,7 +159,7 @@ all =
                                     , voiceFour = InstrumentRanges.cello
                                     }
                                 , techniques =
-                                    [ MusicTheory.Internal.Voicing.FourPart.Classical.rootPosition
+                                    [ Music.Internal.Voicing.FourPart.Classical.rootPosition
                                     ]
                                 }
                                 |> Voicing.withMaximumRange

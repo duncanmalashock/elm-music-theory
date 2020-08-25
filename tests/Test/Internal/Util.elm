@@ -1,8 +1,8 @@
 module Test.Internal.Util exposing (..)
 
 import Expect
-import MusicTheory.Internal.Pitch as Pitch
-import MusicTheory.Internal.Voicing.FourPart as FourPart
+import Music.Internal.Pitch as Pitch
+import Music.Internal.Voicing.FourPart as FourPart
 
 
 expectAllInList : (a -> Maybe String) -> List a -> Expect.Expectation

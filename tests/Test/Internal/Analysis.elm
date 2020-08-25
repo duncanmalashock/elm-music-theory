@@ -1,11 +1,11 @@
 module Test.Internal.Analysis exposing (all)
 
 import Expect
-import MusicTheory.Chord as Chord
-import MusicTheory.ChordType as ChordType
-import MusicTheory.Internal.Analysis as Analysis
-import MusicTheory.Internal.Key as Key
-import MusicTheory.Internal.PitchClass as PitchClass
+import Music.Chord as Chord
+import Music.ChordType as ChordType
+import Music.Internal.Analysis as Analysis
+import Music.Internal.Key as Key
+import Music.Internal.PitchClass as PitchClass
 import Test exposing (..)
 
 

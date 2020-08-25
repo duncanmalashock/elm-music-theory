@@ -1,12 +1,12 @@
 module Test.Internal.Voicing.FourPart.Jazz exposing (..)
 
 import Expect
-import MusicTheory.Internal.Chord as Chord
-import MusicTheory.Internal.ChordType as ChordType
-import MusicTheory.Internal.InstrumentRanges as InstrumentRanges
-import MusicTheory.Internal.PitchClass as PitchClass
-import MusicTheory.Internal.Voicing.FourPart as FourPart
-import MusicTheory.Internal.Voicing.FourPart.Jazz as JazzFourPart
+import Music.Internal.Chord as Chord
+import Music.Internal.ChordType as ChordType
+import Music.Internal.InstrumentRanges as InstrumentRanges
+import Music.Internal.PitchClass as PitchClass
+import Music.Internal.Voicing.FourPart as FourPart
+import Music.Internal.Voicing.FourPart.Jazz as JazzFourPart
 import Test exposing (..)
 
 

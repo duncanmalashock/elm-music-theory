@@ -1,9 +1,9 @@
 module Test.Internal.VoicingClass exposing (..)
 
 import Expect
-import MusicTheory.Internal.Interval as Interval
-import MusicTheory.Internal.Voicing.FourPart as FourPart
-import MusicTheory.Internal.VoicingClass as VoicingClass
+import Music.Internal.Interval as Interval
+import Music.Internal.Voicing.FourPart as FourPart
+import Music.Internal.VoicingClass as VoicingClass
 import Test exposing (Test, describe, test)
 
 

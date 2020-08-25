@@ -1,7 +1,7 @@
 module Test.Internal.ChordType exposing (..)
 
 import Expect
-import MusicTheory.Internal.ChordType as ChordType
+import Music.Internal.ChordType as ChordType
 import Test exposing (Test, describe, test)
 
 

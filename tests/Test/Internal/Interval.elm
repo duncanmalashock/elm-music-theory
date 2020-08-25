@@ -1,7 +1,7 @@
 module Test.Internal.Interval exposing (all)
 
 import Expect
-import MusicTheory.Internal.Interval as Interval
+import Music.Internal.Interval as Interval
 import Test exposing (Test, describe, only, test)
 
 

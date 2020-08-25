@@ -1,11 +1,11 @@
 module Test.Internal.Scale exposing (all)
 
 import Expect
-import MusicTheory.Internal.Letter exposing (Letter(..))
-import MusicTheory.Internal.Pitch as Pitch
-import MusicTheory.Internal.PitchClass as PitchClass exposing (natural, pitchClass)
-import MusicTheory.Internal.Scale as Scale
-import MusicTheory.Internal.ScaleType as ScaleType
+import Music.Internal.Letter exposing (Letter(..))
+import Music.Internal.Pitch as Pitch
+import Music.Internal.PitchClass as PitchClass exposing (natural, pitchClass)
+import Music.Internal.Scale as Scale
+import Music.Internal.ScaleType as ScaleType
 import Test exposing (Test, describe, test)
 
 

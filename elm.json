@@ -5,14 +5,14 @@
     "license": "BSD-3-Clause",
     "version": "1.0.0",
     "exposed-modules": [
-        "MusicTheory.Pitch",
-        "MusicTheory.PitchClass",
-        "MusicTheory.Range",
-        "MusicTheory.Interval",
-        "MusicTheory.Chord",
-        "MusicTheory.ChordType",
-        "MusicTheory.Analysis",
-        "MusicTheory.Key"
+        "Music.Pitch",
+        "Music.PitchClass",
+        "Music.Range",
+        "Music.Interval",
+        "Music.Chord",
+        "Music.ChordType",
+        "Music.Analysis",
+        "Music.Key"
     ],
     "elm-version": "0.19.1 <= v < 0.20.0",
     "dependencies": {
