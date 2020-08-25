@@ -8,7 +8,7 @@ module MusicTheory.Analysis exposing
     , iSharp, iiFlat, iiSharp, iiiFlat, iiiSharp, ivFlat, ivSharp, vFlat, vSharp, viFlat, viSharp, viiFlat, viiSharp
     )
 
-{-| Roman numeral analysis describes the relationship of a chord to a key.
+{-| [Roman numeral analysis](https://en.wikipedia.org/wiki/Roman_numeral_analysis) describes the relationship of a chord to a key.
 
 @docs Analysis
 
