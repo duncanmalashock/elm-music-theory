@@ -26,6 +26,7 @@ module Music.Internal.ScaleType exposing
     , minorLocrian
     , minorPentatonic
     , mixolydian
+    , mode
     , phrygian
     , phrygianDominant
     , superlocrian

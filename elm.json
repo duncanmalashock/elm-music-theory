@@ -12,7 +12,8 @@
         "Music.Chord",
         "Music.ChordType",
         "Music.Analysis",
-        "Music.Key"
+        "Music.Key",
+        "Music.ScaleType"
     ],
     "elm-version": "0.19.1 <= v < 0.20.0",
     "dependencies": {
