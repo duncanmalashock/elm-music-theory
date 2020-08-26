@@ -32,12 +32,14 @@ module Music.Internal.Key exposing
     , majorKey
     , minor
     , minorKey
+    , relative
     , scale
     , signature
     , symbol
     , tonic
     )
 
+import Music.Internal.Interval as Interval
 import Music.Internal.Letter exposing (Letter(..))
 import Music.Internal.PitchClass as PitchClass exposing (PitchClass, pitchClass)
 import Music.Internal.Scale as Scale exposing (Scale)
@@ -61,6 +63,28 @@ majorKey =
 minorKey : MajorOrMinor
 minorKey =
     Minor
+
+
+relative : Key -> Key
+relative (Key pc majorOrMinor) =
+    case majorOrMinor of
+        Minor ->
+            Key
+                (PitchClass.transpose
+                    Interval.minorThird
+                    pc
+                )
+                Major
+
+        Major ->
+            Key
+                (PitchClass.transpose
+                    (Interval.minorThird
+                        |> Interval.reverse
+                    )
+                    pc
+                )
+                Minor
 
 
 signature : Key -> List PitchClass.PitchClass

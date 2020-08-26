@@ -1,6 +1,7 @@
 module Music.Key exposing
     ( Key
-    , signature, scale, tonic, isMajor, isMinor, symbol
+    , tonic, scale, isMajor, isMinor, signature, relative
+    , symbol
     , c, f, bFlat, eFlat, aFlat, dFlat, gFlat
     , g, d, a, e, b, fSharp
     , aMinor, dMinor, gMinor, cMinor, fMinor, bFlatMinor, eFlatMinor
@@ -14,7 +15,12 @@ module Music.Key exposing
 
 # Helpers
 
-@docs signature, scale, tonic, isMajor, isMinor, symbol
+@docs tonic, scale, isMajor, isMinor, signature, relative
+
+
+# Conversion
+
+@docs symbol
 
 
 # Constructors
@@ -93,6 +99,18 @@ isMinor key =
 scale : Key -> Scale.Scale
 scale key =
     Key.scale key
+
+
+{-| Get the [relative minor or relative major](https://en.wikipedia.org/wiki/Relative_key) of a key:
+
+    relative f == dMinor
+
+    relative cSharpMinor == e
+
+-}
+relative : Key -> Key
+relative key =
+    Key.relative key
 
 
 {-| Get the tonic pitch class for a key:
