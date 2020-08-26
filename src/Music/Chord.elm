@@ -2,6 +2,7 @@ module Music.Chord exposing
     ( Chord
     , chordType, root, containsPitchClass
     , toPitchClasses, symbol
+    , voiceFourParts, voiceFiveParts
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
@@ -23,6 +24,20 @@ module Music.Chord exposing
 # Conversion
 
 @docs toPitchClasses, symbol
+
+
+# Voicing
+
+A chord is a set of pitch classes. But pitch classes can't be heard; only pitches can! ["Voicing"](https://en.wikipedia.org/wiki/Voicing_%28music%29) a chord is the process of:
+
+1.  choosing some number of its pitch classes, and
+2.  turning them into pitches within specific octaves, so that they can be played or sung.
+
+But which pitch classes to choose, and where to place them? Voicing chords is a deep and nuanced topic, with rules and conventions that are heavily dependent on musical style. A method for voicing any given chord will almost never be sufficiently constrained to produce a single optimal solution, so I have chosen an approach that generates a list of possibilities based on some initial constraints.
+
+You can then refine further, using helper functions in the appropriate modules to filter and sort this list to find voicings that work best for your application.
+
+@docs voiceFourParts, voiceFiveParts
 
 
 # Constructors
@@ -62,11 +77,69 @@ module Music.Chord exposing
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
 import Music.Internal.PitchClass as PitchClass
+import Music.Internal.Voicing as Voicing
+import Music.Internal.Voicing.FivePart as FivePart
+import Music.Internal.Voicing.FourPart as FourPart
+import Music.Range as Range
 
 
 {-| -}
 type alias Chord =
     Chord.Chord
+
+
+type alias FourPartRanges =
+    { voiceOne : Range.Range
+    , voiceTwo : Range.Range
+    , voiceThree : Range.Range
+    , voiceFour : Range.Range
+    }
+
+
+{-| -}
+voiceFourParts :
+    { voiceOne : Range.Range
+    , voiceTwo : Range.Range
+    , voiceThree : Range.Range
+    , voiceFour : Range.Range
+    }
+    -> List FourPart.VoicingMethod
+    -> Chord
+    -> List FourPart.Voicing
+voiceFourParts voiceRanges techniques chord =
+    Voicing.config
+        { ranges = voiceRanges
+        , techniques = techniques
+        }
+        |> Voicing.execute FourPart.allVoices chord
+
+
+type alias FivePartRanges =
+    { voiceOne : Range.Range
+    , voiceTwo : Range.Range
+    , voiceThree : Range.Range
+    , voiceFour : Range.Range
+    , voiceFive : Range.Range
+    }
+
+
+{-| -}
+voiceFiveParts :
+    { voiceOne : Range.Range
+    , voiceTwo : Range.Range
+    , voiceThree : Range.Range
+    , voiceFour : Range.Range
+    , voiceFive : Range.Range
+    }
+    -> List FivePart.VoicingMethod
+    -> Chord
+    -> List FivePart.Voicing
+voiceFiveParts voiceRanges techniques chord =
+    Voicing.config
+        { ranges = voiceRanges
+        , techniques = techniques
+        }
+        |> Voicing.execute FivePart.allVoices chord
 
 
 {-| Get a chord's chord type:
@@ -101,7 +174,13 @@ containsPitchClass pitchClass theChord =
 
 {-| Get the pitch classes in a chord:
 
-    toPitchClasses (major PitchClass.a) == [ PitchClass.a, PitchClass.cSharp, PitchClass.e ]
+    toPitchClasses (major PitchClass.a)
+        == [ PitchClass.a
+           , PitchClass.cSharp
+           , PitchClass.e
+           ]
+
+Note: for converting a chord to pitches, I recommend looking at the functions in the **Voicing** section below.
 
 -}
 toPitchClasses : Chord -> List PitchClass.PitchClass

@@ -4,6 +4,7 @@ module Music.Internal.Voicing.FivePart exposing
     , VoiceIntervalLimits
     , Voicing
     , VoicingClass
+    , VoicingMethod
     , adjustToBeAboveMinimum
     , allFactors
     , allIntervals
@@ -19,11 +20,26 @@ module Music.Internal.Voicing.FivePart exposing
     , violatesLowIntervalLimits
     )
 
+import Music.Internal.Chord as Chord
 import Music.Internal.Interval as Interval
 import Music.Internal.Pitch as Pitch
 import Music.Internal.Voicing as Voicing
 import Music.Internal.VoicingClass as VoicingClass
+import Music.Range as Range
 import Util.Basic
+
+
+type alias VoicingMethod =
+    { ranges :
+        { voiceOne : Range.Range
+        , voiceTwo : Range.Range
+        , voiceThree : Range.Range
+        , voiceFour : Range.Range
+        , voiceFive : Range.Range
+        }
+    , chord : Chord.Chord
+    }
+    -> List Voicing
 
 
 type alias Voicing =

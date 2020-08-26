@@ -100,7 +100,7 @@ toIntervals chordType =
 
 Note: turning chords into symbols is a complicated topic, because:
 
-1.  There are multiple chord categorization ideas that can interact and conflict with each other in unspecified ways. Can a non-tertian added-tone chord like m6 have extensions, as in a m6(♭13)? I have personally never seen such a chord, but I have also never seen a rule that says why it cannot be!
+1.  There are multiple chord categorization ideas that can interact and conflict with each other in unspecified ways. Can a non-tertian added-tone chord like m6 have extensions, as in a m6(♭13)? I have personally never seen such a chord, but I have also never seen a rule that says why it cannot be done!
 2.  Chord symbol conventions vary with musical idiom, teaching style, and even personal preference.
 
 I've done my best to cover what I consider the usual cases, with symbols that are likely to be recognized by a majority of musicians. But my choices may not appeal to you!
