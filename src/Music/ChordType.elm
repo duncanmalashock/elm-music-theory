@@ -82,7 +82,11 @@ containsInterval interval theChordType =
 
 {-| Get the intervals contained in a chord type:
 
-    toIntervals minor == [ Interval.perfectUnison, Interval.minorThird, Interval.perfectFifth ]
+    toIntervals minor
+        == [ Interval.perfectUnison
+           , Interval.minorThird
+           , Interval.perfectFifth
+           ]
 
 -}
 toIntervals : ChordType -> List Interval.Interval

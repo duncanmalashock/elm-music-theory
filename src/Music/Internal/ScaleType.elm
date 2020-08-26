@@ -7,6 +7,10 @@ module Music.Internal.ScaleType exposing
     , acoustic
     , aeolian
     , aeolianHarmonic
+    , customHeptatonic
+    , customHexatonic
+    , customOctatonic
+    , customPentatonic
     , diminishedHalfToneWholeTone
     , diminishedWholeToneHalfTone
     , dorian
@@ -81,6 +85,56 @@ type alias OctatonicIntervals =
     , rootToSeventh : Interval
     , rootToEighth : Interval
     }
+
+
+customPentatonic :
+    { rootToSecond : Interval
+    , rootToThird : Interval
+    , rootToFourth : Interval
+    , rootToFifth : Interval
+    }
+    -> ScaleType
+customPentatonic intervals =
+    Pentatonic intervals
+
+
+customHexatonic :
+    { rootToSecond : Interval
+    , rootToThird : Interval
+    , rootToFourth : Interval
+    , rootToFifth : Interval
+    , rootToSixth : Interval
+    }
+    -> ScaleType
+customHexatonic intervals =
+    Hexatonic intervals
+
+
+customHeptatonic :
+    { rootToSecond : Interval
+    , rootToThird : Interval
+    , rootToFourth : Interval
+    , rootToFifth : Interval
+    , rootToSixth : Interval
+    , rootToSeventh : Interval
+    }
+    -> ScaleType
+customHeptatonic intervals =
+    Heptatonic intervals
+
+
+customOctatonic :
+    { rootToSecond : Interval
+    , rootToThird : Interval
+    , rootToFourth : Interval
+    , rootToFifth : Interval
+    , rootToSixth : Interval
+    , rootToSeventh : Interval
+    , rootToEighth : Interval
+    }
+    -> ScaleType
+customOctatonic intervals =
+    Octatonic intervals
 
 
 toList : ScaleType -> List Interval

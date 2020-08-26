@@ -110,6 +110,10 @@ seventhsByDefault =
 
     symbol Key.cMinor iv == "iv"
 
+    symbol Key.c (viiFlat ChordType.majorSeventh) == "♭VIIM7"
+
+The Key parameter is used to determine whether to render the symbol in the context of a major or minor key.
+
 -}
 symbol : Key.Key -> Analysis -> String
 symbol key analysis =

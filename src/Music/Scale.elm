@@ -7,6 +7,7 @@ module Music.Scale exposing
     , harmonicMinor, locrianNatural6, majorAugmented, lydianDiminished, phrygianDominant, aeolianHarmonic, ultralocrian
     , diminishedWholeToneHalfTone, diminishedHalfToneWholeTone, wholeTone
     , majorPentatonic, minorPentatonic
+    , custom
     )
 
 {-| A [scale](https://en.wikipedia.org/wiki/Scale_%28music%29) is a set of pitch classes in a certain order.
@@ -47,6 +48,11 @@ module Music.Scale exposing
 ## Pentatonic scales
 
 @docs majorPentatonic, minorPentatonic
+
+
+# Custom scales
+
+@docs custom
 
 -}
 
@@ -327,3 +333,24 @@ majorPentatonic scaleRoot =
 minorPentatonic : PitchClass.PitchClass -> Scale
 minorPentatonic scaleRoot =
     Scale.scale scaleRoot ScaleType.minorPentatonic
+
+
+{-| Create a scale from a custom scale type. For use with `ScaleType.customPentatonic`, `ScaleType.customHexatonic`, `ScaleType.customHeptatonic`, and `ScaleType.customOctatonic`:
+
+    myCustomScaleType =
+        customPentatonic
+            { rootToSecond = Interval.minorThird
+            , rootToThird = Interval.perfectFourth
+            , rootToFourth = Interval.perfectFifth
+            , rootToFifth = Interval.minorSeventh
+            }
+
+    myCustomScale =
+        |> custom PitchClass.c myCustomScaleType
+
+    -- Equivalent to `minorPentatonic PitchClass.c`
+
+-}
+custom : PitchClass.PitchClass -> ScaleType.ScaleType -> Scale
+custom pitchClass customScaleType =
+    Scale.scale pitchClass customScaleType

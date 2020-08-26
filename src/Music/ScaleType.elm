@@ -8,6 +8,7 @@ module Music.ScaleType exposing
     , harmonicMinor, locrianNatural6, majorAugmented, lydianDiminished, phrygianDominant, aeolianHarmonic, ultralocrian
     , diminishedWholeToneHalfTone, diminishedHalfToneWholeTone, wholeTone
     , majorPentatonic, minorPentatonic
+    , customPentatonic, customHexatonic, customHeptatonic, customOctatonic
     )
 
 {-| A scale type describes the intervals contained in a [scale](https://en.wikipedia.org/wiki/Scale_%28music%29), with no specific root pitch class.
@@ -53,6 +54,11 @@ module Music.ScaleType exposing
 ## Pentatonic scales
 
 @docs majorPentatonic, minorPentatonic
+
+
+# Custom scale types
+
+@docs customPentatonic, customHexatonic, customHeptatonic, customOctatonic
 
 -}
 
@@ -263,3 +269,103 @@ majorPentatonic =
 minorPentatonic : ScaleType
 minorPentatonic =
     ScaleType.minorPentatonic
+
+
+{-| Define a custom scale type with 5 degrees:
+
+    customPentatonic
+        { rootToSecond = Interval.minorThird
+        , rootToThird = Interval.perfectFourth
+        , rootToFourth = Interval.perfectFifth
+        , rootToFifth = Interval.minorSeventh
+        }
+        == minorPentatonic
+
+-}
+customPentatonic :
+    { rootToSecond : Interval
+    , rootToThird : Interval
+    , rootToFourth : Interval
+    , rootToFifth : Interval
+    }
+    -> ScaleType
+customPentatonic intervals =
+    ScaleType.customPentatonic intervals
+
+
+{-| Define a custom scale type with 6 degrees:
+
+    customHexatonic
+        { rootToSecond = Interval.majorSecond
+        , rootToThird = Interval.majorThird
+        , rootToFourth = Interval.augmentedFourth
+        , rootToFifth = Interval.minorSixth
+        , rootToSixth = Interval.minorSeventh
+        }
+        == wholeTone
+
+-}
+customHexatonic :
+    { rootToSecond : Interval
+    , rootToThird : Interval
+    , rootToFourth : Interval
+    , rootToFifth : Interval
+    , rootToSixth : Interval
+    }
+    -> ScaleType
+customHexatonic intervals =
+    ScaleType.customHexatonic intervals
+
+
+{-| Define a custom scale type with 7 degrees:
+
+    customHeptatonic
+        { rootToSecond = Interval.majorSecond
+        , rootToThird = Interval.minorThird
+        , rootToFourth = Interval.perfectFourth
+        , rootToFifth = Interval.perfectFifth
+        , rootToSixth = Interval.majorSixth
+        , rootToSeventh = Interval.minorSeventh
+        }
+        == dorian
+
+-}
+customHeptatonic :
+    { rootToSecond : Interval
+    , rootToThird : Interval
+    , rootToFourth : Interval
+    , rootToFifth : Interval
+    , rootToSixth : Interval
+    , rootToSeventh : Interval
+    }
+    -> ScaleType
+customHeptatonic intervals =
+    ScaleType.customHeptatonic intervals
+
+
+{-| Define a custom scale type with 8 degrees:
+
+    customOctatonic
+        { rootToSecond = Interval.majorSecond
+        , rootToThird = Interval.minorThird
+        , rootToFourth = Interval.perfectFourth
+        , rootToFifth = Interval.diminishedFifth
+        , rootToSixth = Interval.minorSixth
+        , rootToSeventh = Interval.majorSixth
+        , rootToEighth = Interval.majorSeventh
+        }
+        == diminishedWholeToneHalfTone
+
+-}
+customOctatonic :
+    { rootToSecond : Interval
+    , rootToThird : Interval
+    , rootToFourth : Interval
+    , rootToFifth : Interval
+    , rootToSixth : Interval
+    , rootToSeventh : Interval
+    , rootToEighth : Interval
+    }
+    -> ScaleType
+customOctatonic intervals =
+    ScaleType.customOctatonic intervals
