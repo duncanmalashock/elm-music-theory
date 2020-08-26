@@ -1,5 +1,6 @@
 module Music.ChordType exposing
     ( ChordType
+    , containsInterval
     , toIntervals, symbol
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
@@ -11,6 +12,11 @@ module Music.ChordType exposing
 {-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the intervals contained in a chord, with no specific root pitch class.
 
 @docs ChordType
+
+
+# Helpers
+
+@docs containsInterval
 
 
 # Conversion
@@ -54,6 +60,16 @@ import Music.Internal.Interval as Interval
 {-| -}
 type alias ChordType =
     ChordType.ChordType
+
+
+{-| Determine whether a chord type contains a given interval:
+
+    containsInterval Interval.diminishedFifth halfDiminishedSeventh == True
+
+-}
+containsInterval : Interval.Interval -> ChordType.ChordType -> Bool
+containsInterval interval theChordType =
+    ChordType.includes interval theChordType
 
 
 {-| Get the intervals contained in a chord type:
