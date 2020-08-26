@@ -33,6 +33,8 @@ module Music.Internal.Key exposing
     , minor
     , minorKey
     , scale
+    , signature
+    , symbol
     , tonic
     )
 
@@ -59,6 +61,71 @@ majorKey =
 minorKey : MajorOrMinor
 minorKey =
     Minor
+
+
+signature : Key -> List PitchClass.PitchClass
+signature theKey =
+    scale theKey
+        |> Scale.toList
+        |> List.filter (\pc -> PitchClass.accidentals pc /= 0)
+        |> List.sortBy orderByAppearanceInKeySignature
+
+
+orderByAppearanceInKeySignature : PitchClass.PitchClass -> Int
+orderByAppearanceInKeySignature pitchClass =
+    if pitchClass == PitchClass.bFlat then
+        0
+
+    else if pitchClass == PitchClass.eFlat then
+        1
+
+    else if pitchClass == PitchClass.aFlat then
+        2
+
+    else if pitchClass == PitchClass.dFlat then
+        3
+
+    else if pitchClass == PitchClass.gFlat then
+        4
+
+    else if pitchClass == PitchClass.fFlat then
+        5
+
+    else if pitchClass == PitchClass.fSharp then
+        6
+
+    else if pitchClass == PitchClass.cSharp then
+        7
+
+    else if pitchClass == PitchClass.gSharp then
+        8
+
+    else if pitchClass == PitchClass.dSharp then
+        9
+
+    else if pitchClass == PitchClass.aSharp then
+        10
+
+    else if pitchClass == PitchClass.eSharp then
+        11
+
+    else if pitchClass == PitchClass.bSharp then
+        12
+
+    else
+        99
+
+
+symbol : Key -> String
+symbol (Key pc majorOrMinor) =
+    PitchClass.toString pc
+        ++ (case majorOrMinor of
+                Minor ->
+                    "m"
+
+                Major ->
+                    ""
+           )
 
 
 isMajor : Key -> Bool

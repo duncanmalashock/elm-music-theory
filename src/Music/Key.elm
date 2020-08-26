@@ -1,6 +1,6 @@
 module Music.Key exposing
     ( Key
-    , scale, tonic, isMajor, isMinor
+    , signature, scale, tonic, isMajor, isMinor, symbol
     , c, f, bFlat, eFlat, aFlat, dFlat, gFlat
     , g, d, a, e, b, fSharp
     , aMinor, dMinor, gMinor, cMinor, fMinor, bFlatMinor, eFlatMinor
@@ -14,7 +14,7 @@ module Music.Key exposing
 
 # Helpers
 
-@docs scale, tonic, isMajor, isMinor
+@docs signature, scale, tonic, isMajor, isMinor, symbol
 
 
 # Constructors
@@ -41,6 +41,28 @@ import Music.PitchClass as PitchClass
 {-| -}
 type alias Key =
     Key.Key
+
+
+{-| Get the [key signature](https://en.wikipedia.org/wiki/Key_signature) for a key as a list of the pitch classes that are sharpened or flattened:
+
+    signature bFlat == [ PitchClass.bFlat, PitchClass.eFlat ]
+
+-}
+signature : Key -> List PitchClass.PitchClass
+signature key =
+    Key.signature key
+
+
+{-| Get the symbol for a key:
+
+    symbol eFlat == "E♭"
+
+    symbol aMinor == "Am"
+
+-}
+symbol : Key -> String
+symbol key =
+    Key.symbol key
 
 
 {-| Check whether a key is major:
