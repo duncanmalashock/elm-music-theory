@@ -9,7 +9,7 @@ module Music.Scale exposing
     , majorPentatonic, minorPentatonic
     )
 
-{-|
+{-| A [scale](https://en.wikipedia.org/wiki/Scale_%28music%29) is a set of pitch classes in a certain order.
 
 @docs Scale
 
