@@ -98,6 +98,17 @@ toIntervals chordType =
 
     symbol majorSeventh == "M7"
 
+Note: turning chords into symbols is a complicated topic, because:
+
+1.  There are multiple chord categorization ideas that can interact and conflict with each other in unspecified ways. Can a non-tertian added-tone chord like m6 have extensions, as in a m6(♭13)? I have personally never seen such a chord, but I have also never seen a rule that says why it cannot be!
+2.  Chord symbol conventions vary with musical idiom, teaching style, and even personal preference.
+
+I've done my best to cover what I consider the usual cases, with symbols that are likely to be recognized by a majority of musicians. But my choices may not appeal to you!
+
+Maybe, for example, you want to use jazz lead sheet-style symbols like "∆7(+11)" and "7(+9-13)". Or maybe you want to write them out in plain English like "dominant seventh, sharp nine flat thirteen". You may even want to convert to a more complex view than a `String` can express, like SVG or elm-ui.
+
+If that's the case, you're not out of luck. You do have the option to use the `toIntervals` and `containsInterval` functions to write your own custom chord symbol function. A good place to start would be to take a look at the source for `ChordType.symbol` to see how I did it.
+
 -}
 symbol : ChordType -> String
 symbol chordType =

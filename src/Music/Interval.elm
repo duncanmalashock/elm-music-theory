@@ -182,7 +182,7 @@ symbol interval =
     Interval.shortName interval
 
 
-{-| Get the number of semitones an interval spans:
+{-| Get the number of [semitones](https://en.wikipedia.org/wiki/Semitone) an interval spans:
 
     semitones majorThird == 4
 
