@@ -101,7 +101,7 @@ toList theScale =
     Scale.toList theScale
 
 
-{-| Find out whether a scale contains a certain pitch class:
+{-| Find out whether a scale contains a given pitch class:
 
     containsPitchClass PitchClass.f
         { ignoreSpelling = False }
@@ -121,7 +121,7 @@ containsPitchClass pitchClass ignoreSpelling theScale =
     Scale.containsPitchClass pitchClass theScale ignoreSpelling
 
 
-{-| Find out whether a scale contains a certain chord:
+{-| Find out whether a scale contains a given chord:
 
     containsChord (Chord.majorSeventhSharpEleven PitchClass.f)
         (major PitchClass.c)

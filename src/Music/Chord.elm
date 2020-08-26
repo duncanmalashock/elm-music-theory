@@ -1,6 +1,6 @@
 module Music.Chord exposing
     ( Chord
-    , chordType, root, contains
+    , chordType, root, containsPitchClass
     , toPitchClasses, symbol
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
@@ -16,7 +16,7 @@ module Music.Chord exposing
 
 # Helpers
 
-@docs chordType, root, contains
+@docs chordType, root, containsPitchClass
 
 
 # Conversion
@@ -83,13 +83,13 @@ root theChord =
     Chord.root theChord
 
 
-{-| Determine whether a chord contains a pitch class:
+{-| Determine whether a chord contains a given pitch class:
 
-    contains PitchClass.cSharp (major PitchClass.a) == True
+    containsPitchClass PitchClass.cSharp (major PitchClass.a) == True
 
 -}
-contains : PitchClass.PitchClass -> Chord -> Bool
-contains pitchClass theChord =
+containsPitchClass : PitchClass.PitchClass -> Chord -> Bool
+containsPitchClass pitchClass theChord =
     Chord.containsPitchClass pitchClass theChord
 
 
