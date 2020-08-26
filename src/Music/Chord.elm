@@ -7,6 +7,7 @@ module Music.Chord exposing
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
     , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
     , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
+    , custom
     )
 
 {-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are sounded together to create harmony.
@@ -50,6 +51,11 @@ module Music.Chord exposing
 ## Altered dominant chords
 
 @docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
+
+
+# Custom chord types
+
+@docs custom
 
 -}
 
@@ -327,3 +333,22 @@ dominantSeventhSharpNineFlatThirteen pitchClass =
 dominantSeventhSharpElevenFlatThirteen : PitchClass.PitchClass -> Chord
 dominantSeventhSharpElevenFlatThirteen pitchClass =
     Chord.chord pitchClass ChordType.dominantSeventhSharpElevenFlatThirteen
+
+
+{-| Create a chord from a custom chord type. For use with `ChordType.custom`:
+
+    myCustomChordType =
+        ChordType.custom
+            |> ChordType.withMinorThird
+            |> ChordType.withDiminishedFifth
+            |> ChordType.withMinorSeventh
+
+    myCustomChord =
+        |> custom PitchClass.c myCustomChordType
+
+    -- Equivalent to `halfDiminishedSeventh PitchClass.c`
+
+-}
+custom : PitchClass.PitchClass -> ChordType.ChordType -> Chord
+custom pitchClass customChordType =
+    Chord.chord pitchClass customChordType
