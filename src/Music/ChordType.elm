@@ -7,6 +7,8 @@ module Music.ChordType exposing
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminishedSeventh, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
     , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
     , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
+    , custom
+    , withMajorThird, withMinorThird, withSuspendedSecond, withSuspendedFourth, withFifth, withFlatFifth, withSharpFifth, withSixth, withDiminishedSeventh, withMinorSeventh, withMajorSeventh, withNinth, withFlatNinth, withSharpNinth, withEleventh, withSharpEleventh, withThirteenth, withFlatThirteenth
     )
 
 {-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the intervals contained in a chord, with no specific root pitch class.
@@ -50,6 +52,12 @@ module Music.ChordType exposing
 ## Altered dominant chords
 
 @docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
+
+
+# Custom chord types
+
+@docs custom
+@docs withMajorThird, withMinorThird, withSuspendedSecond, withSuspendedFourth, withFifth, withFlatFifth, withSharpFifth, withSixth, withDiminishedSeventh, withMinorSeventh, withMajorSeventh, withNinth, withFlatNinth, withSharpNinth, withEleventh, withSharpEleventh, withThirteenth, withFlatThirteenth
 
 -}
 
@@ -306,3 +314,131 @@ dominantSeventhSharpNineFlatThirteen =
 dominantSeventhSharpElevenFlatThirteen : ChordType
 dominantSeventhSharpElevenFlatThirteen =
     ChordType.dominantSeventhSharpElevenFlatThirteen
+
+
+
+--
+
+
+{-| Define a custom chord type. Start with `custom` and apply the chord factor functions below:
+
+    custom
+        |> withMinorThird
+        |> withDiminishedFifth
+        |> withMinorSeventh
+    -- equivalent to `halfDiminishedSeventh`
+
+Note: because there is no unified model for naming any given chord, your custom chord may not work with the `symbol` function in this module.
+
+-}
+custom : ChordType
+custom =
+    ChordType.custom
+
+
+{-| -}
+withMajorThird : ChordType -> ChordType
+withMajorThird chordType =
+    ChordType.withMajorThird chordType
+
+
+{-| -}
+withMinorThird : ChordType -> ChordType
+withMinorThird chordType =
+    ChordType.withMinorThird chordType
+
+
+{-| -}
+withSuspendedSecond : ChordType -> ChordType
+withSuspendedSecond chordType =
+    ChordType.withSuspendedSecond chordType
+
+
+{-| -}
+withSuspendedFourth : ChordType -> ChordType
+withSuspendedFourth chordType =
+    ChordType.withSuspendedFourth chordType
+
+
+{-| -}
+withFifth : ChordType -> ChordType
+withFifth chordType =
+    ChordType.withFifth chordType
+
+
+{-| -}
+withFlatFifth : ChordType -> ChordType
+withFlatFifth chordType =
+    ChordType.withFlatFifth chordType
+
+
+{-| -}
+withSharpFifth : ChordType -> ChordType
+withSharpFifth chordType =
+    ChordType.withSharpFifth chordType
+
+
+{-| -}
+withSixth : ChordType -> ChordType
+withSixth chordType =
+    ChordType.withSixth chordType
+
+
+{-| -}
+withDiminishedSeventh : ChordType -> ChordType
+withDiminishedSeventh chordType =
+    ChordType.withDiminishedSeventh chordType
+
+
+{-| -}
+withMinorSeventh : ChordType -> ChordType
+withMinorSeventh chordType =
+    ChordType.withMinorSeventh chordType
+
+
+{-| -}
+withMajorSeventh : ChordType -> ChordType
+withMajorSeventh chordType =
+    ChordType.withMajorSeventh chordType
+
+
+{-| -}
+withNinth : ChordType -> ChordType
+withNinth chordType =
+    ChordType.withNinth chordType
+
+
+{-| -}
+withFlatNinth : ChordType -> ChordType
+withFlatNinth chordType =
+    ChordType.withFlatNinth chordType
+
+
+{-| -}
+withSharpNinth : ChordType -> ChordType
+withSharpNinth chordType =
+    ChordType.withSharpNinth chordType
+
+
+{-| -}
+withEleventh : ChordType -> ChordType
+withEleventh chordType =
+    ChordType.withEleventh chordType
+
+
+{-| -}
+withSharpEleventh : ChordType -> ChordType
+withSharpEleventh chordType =
+    ChordType.withSharpEleventh chordType
+
+
+{-| -}
+withThirteenth : ChordType -> ChordType
+withThirteenth chordType =
+    ChordType.withThirteenth chordType
+
+
+{-| -}
+withFlatThirteenth : ChordType -> ChordType
+withFlatThirteenth chordType =
+    ChordType.withFlatThirteenth chordType

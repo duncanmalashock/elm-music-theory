@@ -3,6 +3,7 @@ module Music.Internal.ChordType exposing
     , all
     , augmented
     , augmentedDominantSeventh
+    , custom
     , diminished
     , diminishedSeventh
     , diminishedSeventhElevenFlatThirteen
@@ -49,6 +50,24 @@ module Music.Internal.ChordType exposing
     , sus4
     , symbol
     , toIntervals
+    , withDiminishedSeventh
+    , withEleventh
+    , withFifth
+    , withFlatFifth
+    , withFlatNinth
+    , withFlatThirteenth
+    , withMajorSeventh
+    , withMajorThird
+    , withMinorSeventh
+    , withMinorThird
+    , withNinth
+    , withSharpEleventh
+    , withSharpFifth
+    , withSharpNinth
+    , withSixth
+    , withSuspendedFourth
+    , withSuspendedSecond
+    , withThirteenth
     )
 
 import Music.Internal.Interval as Interval exposing (Interval)
@@ -827,6 +846,11 @@ withFlatThirteenth factors =
         |> remove Interval.perfectFifth
         |> remove Interval.majorThirteenth
         |> add Interval.minorThirteenth
+
+
+custom : ChordType
+custom =
+    chordType
 
 
 chordType : ChordType
