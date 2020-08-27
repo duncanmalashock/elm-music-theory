@@ -8,7 +8,7 @@ module Music.ChordType exposing
     , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
     , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
     , custom
-    , withMajorThird, withMinorThird, withSuspendedSecond, withSuspendedFourth, withFifth, withFlatFifth, withSharpFifth, withSixth, withDiminishedSeventh, withMinorSeventh, withMajorSeventh, withNinth, withFlatNinth, withSharpNinth, withEleventh, withSharpEleventh, withThirteenth, withFlatThirteenth
+    , withMajorThird, withMinorThird, withSuspendedSecond, withSuspendedFourth, withFifth, withSharpFifth, withFlatFifth, withSixth, withMajorSeventh, withMinorSeventh, withDiminishedSeventh, withNinth, withSharpNinth, withFlatNinth, withEleventh, withSharpEleventh, withThirteenth, withFlatThirteenth
     )
 
 {-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the intervals contained in a chord, with no specific root pitch class.
@@ -57,7 +57,7 @@ module Music.ChordType exposing
 # Custom chord types
 
 @docs custom
-@docs withMajorThird, withMinorThird, withSuspendedSecond, withSuspendedFourth, withFifth, withFlatFifth, withSharpFifth, withSixth, withDiminishedSeventh, withMinorSeventh, withMajorSeventh, withNinth, withFlatNinth, withSharpNinth, withEleventh, withSharpEleventh, withThirteenth, withFlatThirteenth
+@docs withMajorThird, withMinorThird, withSuspendedSecond, withSuspendedFourth, withFifth, withSharpFifth, withFlatFifth, withSixth, withMajorSeventh, withMinorSeventh, withDiminishedSeventh, withNinth, withSharpNinth, withFlatNinth, withEleventh, withSharpEleventh, withThirteenth, withFlatThirteenth
 
 -}
 
