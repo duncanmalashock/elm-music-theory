@@ -11,7 +11,7 @@ module Music.Chord exposing
     , custom
     )
 
-{-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are sounded together to create harmony.
+{-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are sounded together to create harmony. E.g. a "G dominant seventh" chord.
 
 @docs Chord
 

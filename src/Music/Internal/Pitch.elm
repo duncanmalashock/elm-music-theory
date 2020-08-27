@@ -168,6 +168,7 @@ module Music.Internal.Pitch exposing
     , fSharp8
     , flat
     , fromPitchClass
+    , fromPitchClassWithInt
     , g0
     , g1
     , g2
@@ -390,6 +391,11 @@ octave (Pitch _ o) =
 fromPitchClass : Octave -> PitchClass -> Pitch
 fromPitchClass o p =
     Pitch p o
+
+
+fromPitchClassWithInt : Int -> PitchClass -> Pitch
+fromPitchClassWithInt o p =
+    Pitch p (Octave.octave o)
 
 
 sort : List Pitch -> List Pitch

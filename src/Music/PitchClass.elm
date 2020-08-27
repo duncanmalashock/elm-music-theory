@@ -7,7 +7,7 @@ module Music.PitchClass exposing
     , cDoubleSharp, cDoubleFlat, dDoubleSharp, dDoubleFlat, eDoubleSharp, eDoubleFlat, fDoubleSharp, fDoubleFlat, gDoubleSharp, gDoubleFlat, aDoubleSharp, aDoubleFlat, bDoubleSharp, bDoubleFlat
     )
 
-{-| A [pitch class](https://en.wikipedia.org/wiki/Pitch_class) is like a pitch, but with no octave specified. It's used to determine musical relationships like the names of chords, keys, and scales.
+{-| A [pitch class](https://en.wikipedia.org/wiki/Pitch_class) is like a pitch, but with no octave specified. E.g. the pitch class "B♭".
 
 @docs PitchClass
 

@@ -202,39 +202,6 @@ symbol ((ChordType intervals) as theChordType) =
                     "?"
 
 
-type Classification
-    = Classification ThirdType FifthType (Maybe SixthOrSeventh) (List Extension)
-
-
-type ThirdType
-    = Major
-    | Minor
-    | Sus2
-    | Sus4
-
-
-type FifthType
-    = Perfect
-    | Augmented
-    | Diminished
-
-
-type SixthOrSeventh
-    = Sixth
-    | MajorSeventh
-    | MinorSeventh
-
-
-type Extension
-    = MajorNinth
-    | MinorNinth
-    | AugmentedNinth
-    | PerfectEleventh
-    | AugmentedEleventh
-    | MajorThirteenth
-    | MinorThirteenth
-
-
 premadeSymbol : ChordType -> Maybe String
 premadeSymbol theChordType =
     let

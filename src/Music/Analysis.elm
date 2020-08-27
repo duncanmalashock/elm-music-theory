@@ -9,7 +9,7 @@ module Music.Analysis exposing
     , iFlat, iiFlat, iiiFlat, ivFlat, vFlat, viFlat, viiFlat
     )
 
-{-| [Roman numeral analysis](https://en.wikipedia.org/wiki/Roman_numeral_analysis) describes the relationship of a chord to a key.
+{-| [Roman numeral analysis](https://en.wikipedia.org/wiki/Roman_numeral_analysis) describes the relationship of a chord to a key. E.g. E minor is the "iii" chord in the key of C major.
 
 @docs Analysis
 

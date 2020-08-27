@@ -6,7 +6,7 @@ module Music.Range exposing
     , violin, viola, cello
     )
 
-{-| A range, like a range of numbers, represents an upper and lower boundary and all the pitches in between.
+{-| A range, like a range of numbers, represents an upper and lower boundary and all the pitches in between. E.g. "C4–C6."
 
 @docs Range
 

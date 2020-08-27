@@ -20,7 +20,7 @@ module Music.Voicing.FourPart exposing
 
 ## Jazz
 
-These methods have been used to harmonize brass and saxophone sections since the 1930s (and maybe even earlier), but they are very versatile!
+These methods have been used to harmonize brass and saxophone sections since the 1930s (and maybe even earlier). They are very versatile!
 
 Note: jazz voicing methods can involve substitutions of related chords with the same function, so don't be surprised when you see voicings that include a pitch class that isn't strictly in the chord you specified.
 

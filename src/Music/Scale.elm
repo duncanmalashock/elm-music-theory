@@ -10,7 +10,7 @@ module Music.Scale exposing
     , custom
     )
 
-{-| A [scale](https://en.wikipedia.org/wiki/Scale_%28music%29) is a set of pitch classes in a certain order.
+{-| A [scale](https://en.wikipedia.org/wiki/Scale_%28music%29) is a set of pitch classes in a certain order. E.g. the "C major scale."
 
 @docs Scale
 

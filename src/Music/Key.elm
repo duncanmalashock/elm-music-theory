@@ -8,7 +8,7 @@ module Music.Key exposing
     , eMinor, bMinor, fSharpMinor, cSharpMinor, gSharpMinor
     )
 
-{-| A [key](https://en.wikipedia.org/wiki/Key_%28music%29) defines a relationship between a set of pitch classes in a composition.
+{-| A [key](https://en.wikipedia.org/wiki/Key_%28music%29) defines a relationship between a set of pitch classes in a composition. E.g. the "key of D major".
 
 @docs Key
 

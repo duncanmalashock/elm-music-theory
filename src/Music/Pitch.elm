@@ -1,7 +1,7 @@
 module Music.Pitch exposing
     ( Pitch
     , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
-    , semitones, toMIDINoteNumber, toFrequency, name
+    , semitones, toMIDINoteNumber, toFrequency, name, fromPitchClassInOctave
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
     , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
     , d0, d1, d2, d3, d4, d5, d6, d7, d8
@@ -25,7 +25,7 @@ module Music.Pitch exposing
     , bSharp0, bSharp1, bSharp2, bSharp3, bSharp4, bSharp5, bSharp6, bSharp7, bSharp8
     )
 
-{-| A [pitch](https://en.wikipedia.org/wiki/Pitch_%28music%29) represents a specific frequency of sound with a letter name, octave, and accidental.
+{-| A [pitch](https://en.wikipedia.org/wiki/Pitch_%28music%29) represents a specific frequency of sound with a letter name, octave, and accidental. E.g. the pitch "B♭4".
 
 @docs Pitch
 
@@ -37,7 +37,7 @@ module Music.Pitch exposing
 
 # Conversion
 
-@docs semitones, toMIDINoteNumber, toFrequency, name
+@docs semitones, toMIDINoteNumber, toFrequency, name, fromPitchClassInOctave
 
 
 # Constructors
@@ -77,11 +77,22 @@ These are used less frequently in music. Most likely you want a pitch from the p
 
 import Music.Internal.Interval as Interval
 import Music.Internal.Pitch as Pitch
+import Music.Internal.PitchClass as PitchClass
 
 
 {-| -}
 type alias Pitch =
     Pitch.Pitch
+
+
+{-| Create a pitch from a pitch class and octave number:
+
+    fromPitchClassInOctave 4 c == c4
+
+-}
+fromPitchClassInOctave : Int -> PitchClass.PitchClass -> Pitch
+fromPitchClassInOctave octave pc =
+    Pitch.fromPitchClassWithInt octave pc
 
 
 {-| [Transpose](https://en.wikipedia.org/wiki/Transposition_%28music%29) a pitch upward by an interval.

@@ -11,7 +11,7 @@ module Music.ScaleType exposing
     , customPentatonic, customHexatonic, customHeptatonic, customOctatonic
     )
 
-{-| A scale type describes the intervals contained in a [scale](https://en.wikipedia.org/wiki/Scale_%28music%29), with no specific root pitch class.
+{-| A scale type describes the intervals contained in a [scale](https://en.wikipedia.org/wiki/Scale_%28music%29), with no specific root pitch class. E.g. the "major scale."
 
 @docs ScaleType
 

@@ -13,7 +13,7 @@ module Music.Interval exposing
     , diminishedTwelfth
     )
 
-{-| An [interval](https://en.wikipedia.org/wiki/Interval_%28music%29) is a measure of the relationship between two pitches.
+{-| An [interval](https://en.wikipedia.org/wiki/Interval_%28music%29) is a measure of the distance between two pitches. E.g. a "perfect fifth".
 
 @docs Interval
 
