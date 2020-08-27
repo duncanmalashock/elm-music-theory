@@ -28,7 +28,7 @@ module Music.Chord exposing
 
 # Voicing
 
-A chord is a set of pitch classes. But pitch classes can't be heard; only pitches can! ["Voicing"](https://en.wikipedia.org/wiki/Voicing_%28music%29) a chord is the process of:
+A chord is defined by a set of pitch classes. But pitch classes can't be heard; only pitches can! ["Voicing"](https://en.wikipedia.org/wiki/Voicing_%28music%29) a chord is the process of:
 
 1.  choosing some number of its pitch classes, and
 2.  turning them into pitches within specific octaves, so that they can be played or sung.
@@ -88,14 +88,6 @@ type alias Chord =
     Chord.Chord
 
 
-type alias FourPartRanges =
-    { voiceOne : Range.Range
-    , voiceTwo : Range.Range
-    , voiceThree : Range.Range
-    , voiceFour : Range.Range
-    }
-
-
 {-| -}
 voiceFourParts :
     { voiceOne : Range.Range
@@ -112,15 +104,6 @@ voiceFourParts voiceRanges techniques chord =
         , techniques = techniques
         }
         |> Voicing.execute FourPart.allVoices chord
-
-
-type alias FivePartRanges =
-    { voiceOne : Range.Range
-    , voiceTwo : Range.Range
-    , voiceThree : Range.Range
-    , voiceFour : Range.Range
-    , voiceFive : Range.Range
-    }
 
 
 {-| -}
