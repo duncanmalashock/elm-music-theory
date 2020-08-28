@@ -3,6 +3,7 @@ module Music.Internal.ChordType exposing
     , all
     , augmented
     , augmentedDominantSeventh
+    , classify
     , custom
     , diminished
     , diminishedSeventh
@@ -70,6 +71,7 @@ module Music.Internal.ChordType exposing
     , withThirteenth
     )
 
+import Music.Chord.Classification as Classification exposing (..)
 import Music.Internal.Interval as Interval exposing (Interval)
 
 
@@ -185,6 +187,12 @@ includesAny intervals theChordType =
             includes interval theChordType
         )
         intervals
+
+
+classify : ChordType -> Classification
+classify theChordType =
+    -- TODO
+    Unclassifiable []
 
 
 symbol : ChordType -> String

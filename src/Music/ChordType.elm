@@ -9,7 +9,7 @@ module Music.ChordType exposing
     , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
     , custom
     , withMajorThird, withMinorThird, withSuspendedSecond, withSuspendedFourth, withFifth, withSharpFifth, withFlatFifth, withSixth, withMajorSeventh, withMinorSeventh, withDiminishedSeventh, withNinth, withSharpNinth, withFlatNinth, withEleventh, withSharpEleventh, withThirteenth, withFlatThirteenth
-    , classify, Classification(..), FifthClass(..), ThirdClass(..), SixthOrSeventhClass(..), NinthClass(..), EleventhClass(..), ThirteenthClass(..)
+    , classify
     )
 
 {-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the intervals contained in a chord, with no specific root pitch class. E.g. a "dominant seventh" chord.
@@ -63,10 +63,11 @@ module Music.ChordType exposing
 
 # Custom chord symbols
 
-@docs classify, Classification, FifthClass, ThirdClass, SixthOrSeventhClass, NinthClass, EleventhClass, ThirteenthClass
+@docs classify
 
 -}
 
+import Music.Chord.Classification as Classification exposing (..)
 import Music.Internal.ChordType as ChordType
 import Music.Internal.Interval as Interval
 
@@ -104,7 +105,7 @@ toIntervals chordType =
 
     symbol majorSeventh == "M7"
 
-Want more control over chord symbols? See `classify` in the **Custom chord symbols** section.
+Want more control over chord symbols? See `classify` in the `Chord.Classification` module.
 
 -}
 symbol : ChordType -> String
@@ -117,161 +118,10 @@ symbol chordType =
     classify majorSeventh
         == Classification MajorThird (Just PerfectFifth) (Just MajorSeventh) Nothing Nothing Nothing
 
-Turning chords into symbols is a complicated topic, because:
-
-1.  There are multiple chord classification ideas that can interact with each other in unspecified ways. For instance, non-tertian added-tone chords and chordal extensions on 7th chords belong to separate models of chord categorization. Can added-tone chords like m6 have extensions, as in a m6(♭13)? I have personally never seen such a chord, but I have also never seen a rule that says why it cannot be done!
-2.  Chord symbol conventions vary with musical idiom, teaching style, and even personal preference.
-
-In my implementation of the `symbol` function, I've done my best to cover what I consider the usual cases, with symbols that are likely to be recognized by a majority of musicians. But my choices may not appeal to you!
-
-Maybe, for example. you want to use jazz lead sheet-style symbols like "∆7(+11)" and "7(+9-13)". Or maybe you want to write them out in plain English like "dominant seventh, sharp nine flat thirteen". You may even want to convert to a more complex view than a `String` can express, like SVG or elm-ui.
-
-If that's the case, you can use the `Classification` type to write your own custom chord symbol function. A good place to start would be to take a look at the source for `symbol` to see how I did it.
-
-You may disagree with my interpretation of chord classification too! In that case, you can go as far as writing your own custom classification function using `toIntervals` as a starting point.
-
 -}
 classify : ChordType -> Classification
 classify theChordType =
-    let
-        maybeThirdClass : Maybe ThirdClass
-        maybeThirdClass =
-            if ChordType.includes Interval.majorThird theChordType then
-                Just MajorThird
-
-            else if ChordType.includes Interval.minorThird theChordType then
-                Just MinorThird
-
-            else if ChordType.includes Interval.majorSecond theChordType then
-                Just Sus2
-
-            else if ChordType.includes Interval.perfectFourth theChordType then
-                Just Sus4
-
-            else
-                Nothing
-
-        maybeFifthClass : Maybe FifthClass
-        maybeFifthClass =
-            if ChordType.includes Interval.perfectFifth theChordType then
-                Just PerfectFifth
-
-            else if ChordType.includes Interval.augmentedFifth theChordType then
-                Just AugmentedFifth
-
-            else if ChordType.includes Interval.diminishedFifth theChordType then
-                Just DiminishedFifth
-
-            else
-                Nothing
-
-        maybeSixthOrSeventhClass : Maybe SixthOrSeventhClass
-        maybeSixthOrSeventhClass =
-            if ChordType.includes Interval.majorSixth theChordType then
-                Just Sixth
-
-            else if ChordType.includes Interval.majorSeventh theChordType then
-                Just MajorSeventh
-
-            else if ChordType.includes Interval.minorSeventh theChordType then
-                Just MinorSeventh
-
-            else if ChordType.includes Interval.diminishedSeventh theChordType then
-                Just DiminishedSeventh
-
-            else
-                Nothing
-
-        maybeNinthClass : Maybe NinthClass
-        maybeNinthClass =
-            if ChordType.includes Interval.majorNinth theChordType then
-                Just MajorNinth
-
-            else if ChordType.includes Interval.majorNinth theChordType then
-                Just MinorNinth
-
-            else if ChordType.includes Interval.augmentedNinth theChordType then
-                Just AugmentedNinth
-
-            else
-                Nothing
-
-        maybeEleventhClass : Maybe EleventhClass
-        maybeEleventhClass =
-            if ChordType.includes Interval.perfectEleventh theChordType then
-                Just PerfectEleventh
-
-            else if ChordType.includes Interval.augmentedEleventh theChordType then
-                Just AugmentedEleventh
-
-            else
-                Nothing
-
-        maybeThirteenthClass : Maybe ThirteenthClass
-        maybeThirteenthClass =
-            if ChordType.includes Interval.majorThirteenth theChordType then
-                Just MajorThirteenth
-
-            else if ChordType.includes Interval.minorThirteenth theChordType then
-                Just MinorThirteenth
-
-            else
-                Nothing
-    in
-    case maybeThirdClass of
-        Nothing ->
-            Unclassifiable (toIntervals theChordType)
-
-        Just third ->
-            Classification third maybeFifthClass maybeSixthOrSeventhClass maybeNinthClass maybeEleventhClass maybeThirteenthClass
-
-
-{-| -}
-type Classification
-    = Classification ThirdClass (Maybe FifthClass) (Maybe SixthOrSeventhClass) (Maybe NinthClass) (Maybe EleventhClass) (Maybe ThirteenthClass)
-    | Unclassifiable (List Interval.Interval)
-
-
-{-| -}
-type FifthClass
-    = PerfectFifth
-    | AugmentedFifth
-    | DiminishedFifth
-
-
-{-| -}
-type ThirdClass
-    = MajorThird
-    | MinorThird
-    | Sus2
-    | Sus4
-
-
-{-| -}
-type SixthOrSeventhClass
-    = Sixth
-    | MajorSeventh
-    | MinorSeventh
-    | DiminishedSeventh
-
-
-{-| -}
-type NinthClass
-    = MajorNinth
-    | MinorNinth
-    | AugmentedNinth
-
-
-{-| -}
-type EleventhClass
-    = PerfectEleventh
-    | AugmentedEleventh
-
-
-{-| -}
-type ThirteenthClass
-    = MajorThirteenth
-    | MinorThirteenth
+    ChordType.classify theChordType
 
 
 {-| -}

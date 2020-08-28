@@ -10,6 +10,7 @@
         "Music.Range",
         "Music.Interval",
         "Music.Chord",
+        "Music.Chord.Classification",
         "Music.Voicing.FourPart",
         "Music.ChordType",
         "Music.Analysis",
