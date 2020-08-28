@@ -191,126 +191,278 @@ includesAny intervals theChordType =
 
 classify : ChordType -> Classification
 classify theChordType =
-    -- TODO
-    Unclassifiable []
+    let
+        triad =
+            if includesAll [ Interval.majorThird, Interval.perfectFifth ] theChordType then
+                Just MajorTriad
 
+            else if includesAll [ Interval.minorThird, Interval.perfectFifth ] theChordType then
+                Just MinorTriad
 
-symbol : ChordType -> String
-symbol ((ChordType intervals) as theChordType) =
-    case premadeSymbol theChordType of
-        Just theSymbol ->
-            theSymbol
+            else if includesAll [ Interval.majorThird, Interval.augmentedFifth ] theChordType then
+                Just AugmentedTriad
+
+            else if includesAll [ Interval.minorThird, Interval.diminishedFifth ] theChordType then
+                Just DiminishedTriad
+
+            else if includesAll [ Interval.majorSecond, Interval.perfectFifth ] theChordType then
+                Just Sus2Triad
+
+            else if includesAll [ Interval.perfectFourth, Interval.perfectFifth ] theChordType then
+                Just Sus4Triad
+
+            else
+                Nothing
+
+        sixthOrSeventh =
+            if includes Interval.majorSixth theChordType then
+                Just Sixth
+
+            else if includes Interval.majorSeventh theChordType then
+                Just MajorSeventh
+
+            else if includes Interval.minorSeventh theChordType then
+                Just MinorSeventh
+
+            else if includes Interval.diminishedSeventh theChordType then
+                Just DiminishedSeventh
+
+            else
+                Nothing
+
+        unalteredExtension =
+            if includes Interval.majorThirteenth theChordType then
+                Just Thirteenth
+
+            else if includes Interval.perfectEleventh theChordType then
+                Just Eleventh
+
+            else if includes Interval.majorNinth theChordType then
+                Just Ninth
+
+            else
+                Nothing
+
+        alteredExtensions =
+            List.filterMap
+                (\( interval, alteration ) ->
+                    if includes interval theChordType then
+                        Just alteration
+
+                    else
+                        Nothing
+                )
+                [ ( Interval.minorNinth, MinorNinth )
+                , ( Interval.augmentedNinth, AugmentedNinth )
+                , ( Interval.augmentedEleventh, AugmentedEleventh )
+                , ( Interval.minorThirteenth, MinorThirteenth )
+                ]
+    in
+    case triad of
+        Just theTriad ->
+            Classification theTriad sixthOrSeventh unalteredExtension alteredExtensions
 
         Nothing ->
-            case seventhSymbol theChordType of
-                Just theSymbol ->
-                    theSymbol
-
-                Nothing ->
-                    "?"
+            Unclassifiable (toIntervals theChordType)
 
 
-premadeSymbol : ChordType -> Maybe String
-premadeSymbol theChordType =
-    let
-        allSymbols =
-            [ ( major, "" )
-            , ( minor, "m" )
-            , ( augmented, "aug" )
-            , ( diminished, "dim" )
-            , ( sus2, "sus2" )
-            , ( sus4, "sus4" )
-            , ( majorSix, "6" )
-            , ( majorSixNine, "6/9" )
-            , ( minorSix, "m6" )
-            , ( minorSixNine, "m6/9" )
-            , ( majorAddNine, "(add9)" )
-            , ( minorAddNine, "m(add9)" )
-            ]
-    in
-    allSymbols
-        |> List.filterMap
-            (\( key, value ) ->
-                if theChordType == key then
-                    Just value
+sixOrSixNineSymbol : ChordType -> String
+sixOrSixNineSymbol theChordType =
+    if includesAll [ Interval.majorSixth, Interval.majorNinth ] theChordType then
+        "6/9"
 
-                else
-                    Nothing
-            )
-        |> List.head
-
-
-seventhSymbol : ChordType -> Maybe String
-seventhSymbol theChordType =
-    if isSeventh theChordType then
-        if includesAll [ Interval.majorThird, Interval.majorSeventh ] theChordType then
-            Just <| "M" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
-
-        else if includesAll [ Interval.minorThird, Interval.perfectFifth, Interval.minorSeventh ] theChordType then
-            Just <| "m" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
-
-        else if
-            includesAll [ Interval.majorThird, Interval.minorSeventh ] theChordType
-                || includesAll [ Interval.perfectFourth, Interval.minorSeventh ] theChordType
-        then
-            Just <| "" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
-
-        else if includesAll [ Interval.minorThird, Interval.diminishedFifth, Interval.diminishedSeventh ] theChordType then
-            Just <| "o" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
-
-        else if includesAll [ Interval.minorThird, Interval.diminishedFifth, Interval.minorSeventh ] theChordType then
-            Just <| "ø" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
-
-        else if includesAll [ Interval.minorThird, Interval.majorSeventh ] theChordType then
-            Just <| "m/M" ++ highestUnalteredExtensionSymbol theChordType ++ alterationSymbols theChordType
-
-        else
-            Nothing
-
-    else
-        Nothing
-
-
-highestUnalteredExtensionSymbol : ChordType -> String
-highestUnalteredExtensionSymbol theChordType =
-    if includes Interval.majorThirteenth theChordType then
-        "13"
-
-    else if includes Interval.perfectEleventh theChordType then
-        "11"
+    else if includes Interval.majorSixth theChordType then
+        "6"
 
     else if includes Interval.majorNinth theChordType then
-        "9"
-
-    else
-        "7"
-
-
-alterationSymbols : ChordType -> String
-alterationSymbols theChordType =
-    let
-        alterations =
-            [ ( Interval.perfectFourth, "sus4" )
-            , ( Interval.augmentedFifth, "♯5" )
-            , ( Interval.minorNinth, "♭9" )
-            , ( Interval.augmentedNinth, "♯9" )
-            , ( Interval.augmentedEleventh, "♯11" )
-            , ( Interval.minorThirteenth, "♭13" )
-            ]
-                |> List.filterMap
-                    (\( key, value ) ->
-                        if includes key theChordType then
-                            Just value
-
-                        else
-                            Nothing
-                    )
-    in
-    if not <| List.isEmpty alterations then
-        "(" ++ String.join "," alterations ++ ")"
+        "(add9)"
 
     else
         ""
+
+
+unknownChordSymbol : String
+unknownChordSymbol =
+    "?"
+
+
+highestUnalteredExtensionSymbol : Maybe UnalteredExtension -> String
+highestUnalteredExtensionSymbol maybeUnalteredExtension =
+    case maybeUnalteredExtension of
+        Just Thirteenth ->
+            "13"
+
+        Just Eleventh ->
+            "11"
+
+        Just Ninth ->
+            "9"
+
+        Nothing ->
+            "7"
+
+
+alterationsSymbols : List SpecialCaseAlterations -> List AlteredExtension -> String
+alterationsSymbols specialCaseAlterations alterations =
+    (List.map specialCaseAlterationsToSymbol specialCaseAlterations
+        ++ List.map alteredExtensionToSymbol alterations
+    )
+        |> (\symbols ->
+                if List.isEmpty symbols then
+                    ""
+
+                else
+                    "(" ++ String.join "," symbols ++ ")"
+           )
+
+
+type SpecialCaseAlterations
+    = SharpFive
+    | FlatFive
+    | AddNine
+
+
+specialCaseAlterationsToSymbol : SpecialCaseAlterations -> String
+specialCaseAlterationsToSymbol alteration =
+    case alteration of
+        FlatFive ->
+            "♭5"
+
+        SharpFive ->
+            "♯5"
+
+        AddNine ->
+            "add9"
+
+
+alteredExtensionToSymbol : AlteredExtension -> String
+alteredExtensionToSymbol alteration =
+    case alteration of
+        MinorNinth ->
+            "♭9"
+
+        AugmentedNinth ->
+            "♯9"
+
+        AugmentedEleventh ->
+            "♯11"
+
+        MinorThirteenth ->
+            "♭13"
+
+
+symbol : ChordType -> String
+symbol theChordType =
+    case classify theChordType of
+        Classification triad maybeSixthOrSeventh maybeUnalteredExtension alteredExtensions ->
+            case triad of
+                MajorTriad ->
+                    case maybeSixthOrSeventh of
+                        Just Sixth ->
+                            sixOrSixNineSymbol theChordType
+                                ++ alterationsSymbols [] alteredExtensions
+
+                        Just MajorSeventh ->
+                            "M" ++ highestUnalteredExtensionSymbol maybeUnalteredExtension ++ alterationsSymbols [] alteredExtensions
+
+                        Just MinorSeventh ->
+                            highestUnalteredExtensionSymbol maybeUnalteredExtension ++ alterationsSymbols [] alteredExtensions
+
+                        Just DiminishedSeventh ->
+                            unknownChordSymbol
+
+                        Nothing ->
+                            sixOrSixNineSymbol theChordType ++ alterationsSymbols [] alteredExtensions
+
+                AugmentedTriad ->
+                    case maybeSixthOrSeventh of
+                        Just Sixth ->
+                            sixOrSixNineSymbol theChordType ++ alterationsSymbols [ SharpFive ] alteredExtensions
+
+                        Just MajorSeventh ->
+                            "M" ++ highestUnalteredExtensionSymbol maybeUnalteredExtension ++ alterationsSymbols [ SharpFive ] alteredExtensions
+
+                        Just MinorSeventh ->
+                            highestUnalteredExtensionSymbol maybeUnalteredExtension ++ alterationsSymbols [ SharpFive ] alteredExtensions
+
+                        Just DiminishedSeventh ->
+                            unknownChordSymbol
+
+                        Nothing ->
+                            "aug"
+
+                MinorTriad ->
+                    case maybeSixthOrSeventh of
+                        Just Sixth ->
+                            "m"
+                                ++ sixOrSixNineSymbol theChordType
+                                ++ alterationsSymbols [] alteredExtensions
+
+                        Just MajorSeventh ->
+                            "m/M" ++ highestUnalteredExtensionSymbol maybeUnalteredExtension ++ alterationsSymbols [] alteredExtensions
+
+                        Just MinorSeventh ->
+                            "m" ++ highestUnalteredExtensionSymbol maybeUnalteredExtension ++ alterationsSymbols [] alteredExtensions
+
+                        Just DiminishedSeventh ->
+                            unknownChordSymbol
+
+                        Nothing ->
+                            "m" ++ sixOrSixNineSymbol theChordType ++ alterationsSymbols [] alteredExtensions
+
+                DiminishedTriad ->
+                    case maybeSixthOrSeventh of
+                        Just Sixth ->
+                            unknownChordSymbol
+
+                        Just MajorSeventh ->
+                            "m/M" ++ highestUnalteredExtensionSymbol maybeUnalteredExtension ++ alterationsSymbols [ FlatFive ] alteredExtensions
+
+                        Just MinorSeventh ->
+                            "ø" ++ highestUnalteredExtensionSymbol maybeUnalteredExtension ++ alterationsSymbols [] alteredExtensions
+
+                        Just DiminishedSeventh ->
+                            "o7"
+
+                        Nothing ->
+                            "dim" ++ alterationsSymbols [] alteredExtensions
+
+                Sus2Triad ->
+                    case maybeSixthOrSeventh of
+                        Just Sixth ->
+                            sixOrSixNineSymbol theChordType ++ "sus2" ++ alterationsSymbols [] alteredExtensions
+
+                        Just MajorSeventh ->
+                            "M" ++ highestUnalteredExtensionSymbol maybeUnalteredExtension ++ "sus2" ++ alterationsSymbols [] alteredExtensions
+
+                        Just MinorSeventh ->
+                            highestUnalteredExtensionSymbol maybeUnalteredExtension ++ "sus2" ++ alterationsSymbols [] alteredExtensions
+
+                        Just DiminishedSeventh ->
+                            unknownChordSymbol
+
+                        Nothing ->
+                            "sus2" ++ alterationsSymbols [] alteredExtensions
+
+                Sus4Triad ->
+                    case maybeSixthOrSeventh of
+                        Just Sixth ->
+                            sixOrSixNineSymbol theChordType ++ "sus4" ++ alterationsSymbols [] alteredExtensions
+
+                        Just MajorSeventh ->
+                            "M" ++ highestUnalteredExtensionSymbol maybeUnalteredExtension ++ "sus4" ++ alterationsSymbols [] alteredExtensions
+
+                        Just MinorSeventh ->
+                            highestUnalteredExtensionSymbol maybeUnalteredExtension ++ "sus4" ++ alterationsSymbols [] alteredExtensions
+
+                        Just DiminishedSeventh ->
+                            unknownChordSymbol
+
+                        Nothing ->
+                            "sus4" ++ alterationsSymbols [] alteredExtensions
+
+        Unclassifiable list ->
+            unknownChordSymbol
 
 
 
@@ -851,7 +1003,6 @@ withFlatThirteenth : ChordType -> ChordType
 withFlatThirteenth factors =
     factors
         |> remove Interval.majorSixth
-        |> remove Interval.perfectFifth
         |> remove Interval.majorThirteenth
         |> add Interval.minorThirteenth
 
