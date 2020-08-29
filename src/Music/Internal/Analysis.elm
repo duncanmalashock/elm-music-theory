@@ -40,124 +40,146 @@ import Music.Internal.Scale as Scale
 
 
 type Analysis
-    = Analysis RomanNumeral PitchClass.Offset (Maybe ChordType.ChordType)
+    = Degree RomanNumeral PitchClass.Offset (Maybe ChordType.ChordType)
+    | SecondaryDominant RomanNumeral (Maybe ChordType.ChordType)
 
 
 i : Analysis
 i =
-    Analysis I (PitchClass.offsetFromInt 0) Nothing
+    Degree I (PitchClass.offsetFromInt 0) Nothing
 
 
 iSharp : ChordType.ChordType -> Analysis
 iSharp chordType =
-    Analysis I (PitchClass.offsetFromInt 1) (Just chordType)
+    Degree I (PitchClass.offsetFromInt 1) (Just chordType)
 
 
 iFlat : ChordType.ChordType -> Analysis
 iFlat chordType =
-    Analysis I (PitchClass.offsetFromInt -1) (Just chordType)
+    Degree I (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 ii : Analysis
 ii =
-    Analysis II (PitchClass.offsetFromInt 0) Nothing
+    Degree II (PitchClass.offsetFromInt 0) Nothing
 
 
 iiSharp : ChordType.ChordType -> Analysis
 iiSharp chordType =
-    Analysis II (PitchClass.offsetFromInt 1) (Just chordType)
+    Degree II (PitchClass.offsetFromInt 1) (Just chordType)
 
 
 iiFlat : ChordType.ChordType -> Analysis
 iiFlat chordType =
-    Analysis II (PitchClass.offsetFromInt -1) (Just chordType)
+    Degree II (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 iii : Analysis
 iii =
-    Analysis III (PitchClass.offsetFromInt 0) Nothing
+    Degree III (PitchClass.offsetFromInt 0) Nothing
 
 
 iiiSharp : ChordType.ChordType -> Analysis
 iiiSharp chordType =
-    Analysis III (PitchClass.offsetFromInt 1) (Just chordType)
+    Degree III (PitchClass.offsetFromInt 1) (Just chordType)
 
 
 iiiFlat : ChordType.ChordType -> Analysis
 iiiFlat chordType =
-    Analysis III (PitchClass.offsetFromInt -1) (Just chordType)
+    Degree III (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 iv : Analysis
 iv =
-    Analysis IV (PitchClass.offsetFromInt 0) Nothing
+    Degree IV (PitchClass.offsetFromInt 0) Nothing
 
 
 ivSharp : ChordType.ChordType -> Analysis
 ivSharp chordType =
-    Analysis IV (PitchClass.offsetFromInt 1) (Just chordType)
+    Degree IV (PitchClass.offsetFromInt 1) (Just chordType)
 
 
 ivFlat : ChordType.ChordType -> Analysis
 ivFlat chordType =
-    Analysis IV (PitchClass.offsetFromInt -1) (Just chordType)
+    Degree IV (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 v : Analysis
 v =
-    Analysis V (PitchClass.offsetFromInt 0) Nothing
+    Degree V (PitchClass.offsetFromInt 0) Nothing
 
 
 vSharp : ChordType.ChordType -> Analysis
 vSharp chordType =
-    Analysis V (PitchClass.offsetFromInt 1) (Just chordType)
+    Degree V (PitchClass.offsetFromInt 1) (Just chordType)
 
 
 vFlat : ChordType.ChordType -> Analysis
 vFlat chordType =
-    Analysis V (PitchClass.offsetFromInt -1) (Just chordType)
+    Degree V (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 vi : Analysis
 vi =
-    Analysis VI (PitchClass.offsetFromInt 0) Nothing
+    Degree VI (PitchClass.offsetFromInt 0) Nothing
 
 
 viSharp : ChordType.ChordType -> Analysis
 viSharp chordType =
-    Analysis VI (PitchClass.offsetFromInt 1) (Just chordType)
+    Degree VI (PitchClass.offsetFromInt 1) (Just chordType)
 
 
 viFlat : ChordType.ChordType -> Analysis
 viFlat chordType =
-    Analysis VI (PitchClass.offsetFromInt -1) (Just chordType)
+    Degree VI (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 vii : Analysis
 vii =
-    Analysis VII (PitchClass.offsetFromInt 0) Nothing
+    Degree VII (PitchClass.offsetFromInt 0) Nothing
 
 
 viiFlat : ChordType.ChordType -> Analysis
 viiFlat chordType =
-    Analysis VII (PitchClass.offsetFromInt -1) (Just chordType)
+    Degree VII (PitchClass.offsetFromInt -1) (Just chordType)
 
 
 viiSharp : ChordType.ChordType -> Analysis
 viiSharp chordType =
-    Analysis VII (PitchClass.offsetFromInt 1) (Just chordType)
+    Degree VII (PitchClass.offsetFromInt 1) (Just chordType)
 
 
 withChordType : ChordType.ChordType -> Analysis -> Analysis
-withChordType chordType (Analysis numeral offset _) =
-    Analysis numeral offset (Just chordType)
+withChordType chordType analysis =
+    case analysis of
+        Degree numeral offset _ ->
+            Degree numeral offset (Just chordType)
+
+        SecondaryDominant romanNumeral _ ->
+            SecondaryDominant romanNumeral (Just chordType)
 
 
 symbol : Key.Key -> Analysis -> String
-symbol key (Analysis numeral offset maybeChordType) =
+symbol key analysis =
     let
         keyIsMajor =
             Key.isMajor key
+
+        maybeChordType =
+            case analysis of
+                Degree _ _ maybeChordType_ ->
+                    maybeChordType_
+
+                SecondaryDominant _ maybeChordType_ ->
+                    maybeChordType_
+
+        numeral =
+            case analysis of
+                Degree romanNumeral _ _ ->
+                    romanNumeral
+
+                SecondaryDominant romanNumeral _ ->
+                    romanNumeral
 
         chordType =
             case maybeChordType of
@@ -179,14 +201,27 @@ symbol key (Analysis numeral offset maybeChordType) =
                 Nothing ->
                     True
     in
-    PitchClass.offsetToString offset
-        ++ numeralToString numeral chordType
-        ++ (if usingDefaultChordType then
-                ""
+    case analysis of
+        Degree _ offset _ ->
+            PitchClass.offsetToString offset
+                ++ numeralToString numeral chordType
+                ++ (if usingDefaultChordType then
+                        ""
 
-            else
-                ChordType.symbol chordType
-           )
+                    else
+                        ChordType.symbol chordType
+                   )
+
+        SecondaryDominant _ _ ->
+            (if usingDefaultChordType then
+                "V"
+
+             else
+                "V" ++ ChordType.symbol chordType
+            )
+                ++ "/"
+                ++ numeralToString numeral
+                    (defaultChordType triadsByDefault.major numeral)
 
 
 numeralToString : RomanNumeral -> ChordType.ChordType -> String
@@ -263,7 +298,8 @@ fromChord key chord =
         ( numeral, offset ) =
             numeralAndOffset key (Chord.root chord)
     in
-    Analysis numeral offset (maybeChordTypeFromContext key numeral offset (Chord.chordType chord))
+    -- TODO: detect secondary dominants
+    Degree numeral offset (maybeChordTypeFromContext key numeral offset (Chord.chordType chord))
 
 
 pitchClassFromNumeralAndOffset : Key.Key -> RomanNumeral -> PitchClass.Offset -> PitchClass.PitchClass
@@ -321,48 +357,71 @@ pitchClassFromNumeralAndOffset key numeral offset =
 
 
 toChord : DefaultChordTypes -> Key.Key -> Analysis -> Chord.Chord
-toChord defaults key (Analysis numeral offset maybeChordType) =
+toChord defaults key analysis =
     let
         root : PitchClass.PitchClass
         root =
-            pitchClassFromNumeralAndOffset key numeral offset
+            case analysis of
+                Degree romanNumeral offset maybeChordType ->
+                    pitchClassFromNumeralAndOffset key romanNumeral offset
+
+                SecondaryDominant romanNumeral maybeChordType ->
+                    pitchClassFromNumeralAndOffset key romanNumeral (PitchClass.offsetFromInt 0)
+                        |> PitchClass.transpose Interval.perfectFourth
 
         newChordType : ChordType.ChordType
         newChordType =
-            case maybeChordType of
-                Just chordType ->
-                    chordType
+            case analysis of
+                Degree romanNumeral offset maybeChordType ->
+                    case maybeChordType of
+                        Just chordType ->
+                            chordType
 
-                Nothing ->
-                    defaults
-                        |> (if Key.isMajor key then
-                                .major
+                        Nothing ->
+                            defaults
+                                |> (if Key.isMajor key then
+                                        .major
 
-                            else
-                                .minor
-                           )
-                        |> (case numeral of
-                                I ->
-                                    .i
+                                    else
+                                        .minor
+                                   )
+                                |> (case romanNumeral of
+                                        I ->
+                                            .i
 
-                                II ->
-                                    .ii
+                                        II ->
+                                            .ii
 
-                                III ->
-                                    .iii
+                                        III ->
+                                            .iii
 
-                                IV ->
-                                    .iv
+                                        IV ->
+                                            .iv
 
-                                V ->
-                                    .v
+                                        V ->
+                                            .v
 
-                                VI ->
-                                    .vi
+                                        VI ->
+                                            .vi
 
-                                VII ->
-                                    .vii
-                           )
+                                        VII ->
+                                            .vii
+                                   )
+
+                SecondaryDominant romanNumeral maybeChordType ->
+                    case maybeChordType of
+                        Just chordType ->
+                            chordType
+
+                        Nothing ->
+                            defaults
+                                |> (if Key.isMajor key then
+                                        .major
+
+                                    else
+                                        .minor
+                                   )
+                                |> .secondaryDominant
     in
     InternalChord.chord root newChordType
 
@@ -381,6 +440,7 @@ type alias DefaultChordTypesForMode =
     , v : ChordType.ChordType
     , vi : ChordType.ChordType
     , vii : ChordType.ChordType
+    , secondaryDominant : ChordType.ChordType
     }
 
 
@@ -394,6 +454,7 @@ triadsByDefault =
         , v = ChordType.major
         , vi = ChordType.minor
         , vii = ChordType.diminished
+        , secondaryDominant = ChordType.major
         }
     , minor =
         { i = ChordType.minor
@@ -403,6 +464,7 @@ triadsByDefault =
         , v = ChordType.minor
         , vi = ChordType.major
         , vii = ChordType.major
+        , secondaryDominant = ChordType.major
         }
     }
 
@@ -417,6 +479,7 @@ seventhsByDefault =
         , v = ChordType.dominantSeventh
         , vi = ChordType.minorSeventh
         , vii = ChordType.halfDiminished
+        , secondaryDominant = ChordType.dominantSeventh
         }
     , minor =
         { i = ChordType.minorSeventh
@@ -426,6 +489,7 @@ seventhsByDefault =
         , v = ChordType.minorSeventh
         , vi = ChordType.majorSeventh
         , vii = ChordType.dominantSeventh
+        , secondaryDominant = ChordType.dominantSeventh
         }
     }
 
