@@ -57,7 +57,10 @@ module Music.Voicing.FourPart exposing
 
 These methods have been used to harmonize brass and saxophone sections since at least the 1930s.
 
-Note: jazz voicing methods can involve substitutions of related chords with the same function, so don't be surprised when you see voicings that include a pitch class that isn't strictly in the chord you specified.
+Notes:
+
+  - Jazz voicing methods can involve substitutions within families of related chords, so don't be surprised when you see voicings that include a pitch class that isn't strictly in the chord you specified.
+  - Not all chords are compatible with these methods; incompatible chord types will return an empty list.
 
 These methods were adapted from [Jazz Arranging Techniques](http://lindsayjazz.com/jazz-arranging-techniques/) by Gary Lindsay.
 
