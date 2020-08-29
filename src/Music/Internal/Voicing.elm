@@ -3,6 +3,7 @@ module Music.Internal.Voicing exposing
     , TechniqueInput
     , Voicing
     , chord
+    , commonToneCount
     , commonTones
     , compareByCommonTones
     , compareByContraryMotion
@@ -13,6 +14,7 @@ module Music.Internal.Voicing exposing
     , containsParallelFifths
     , containsParallelOctaves
     , containsPitch
+    , containsPitchInVoice
     , execute
     , range
     , root
@@ -276,8 +278,8 @@ forEachVoice allVoices voicingA voicingB fn =
         |> List.map (\( a, b ) -> fn a b)
 
 
-commonTones : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> Int
-commonTones allVoices voicingA voicingB =
+commonToneCount : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> Int
+commonToneCount allVoices voicingA voicingB =
     forEachVoice allVoices
         voicingA
         voicingB
@@ -291,13 +293,29 @@ commonTones allVoices voicingA voicingB =
         |> List.sum
 
 
+commonTones : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> List Pitch.Pitch
+commonTones allVoices voicingA voicingB =
+    forEachVoice allVoices
+        voicingA
+        voicingB
+        (\a b ->
+            if a == b then
+                Just a
+
+            else
+                Nothing
+        )
+        |> List.filterMap identity
+        |> List.sortBy Pitch.semitones
+
+
 compareByCommonTones :
     List (Voicing voicingClass -> Pitch.Pitch)
     -> Voicing voicingClass
     -> (Voicing voicingClass -> Voicing voicingClass -> Order)
 compareByCommonTones allVoices from =
     \a b ->
-        compare (commonTones allVoices from b) (commonTones allVoices from a)
+        compare (commonToneCount allVoices from b) (commonToneCount allVoices from a)
 
 
 semitoneDistance : Pitch.Pitch -> Pitch.Pitch -> Int

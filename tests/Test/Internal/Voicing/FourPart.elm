@@ -51,7 +51,7 @@ all =
                                 }
 
                         result =
-                            Voicing.commonTones FourPart.allVoices voicingA voicingB
+                            Voicing.commonToneCount FourPart.allVoices voicingA voicingB
 
                         expected =
                             3
@@ -81,7 +81,7 @@ all =
                                 }
 
                         result =
-                            Voicing.commonTones FourPart.allVoices voicingA voicingB
+                            Voicing.commonToneCount FourPart.allVoices voicingA voicingB
 
                         expected =
                             0
@@ -111,7 +111,7 @@ all =
                                 }
 
                         result =
-                            Voicing.commonTones FourPart.allVoices voicingA voicingB
+                            Voicing.commonToneCount FourPart.allVoices voicingA voicingB
 
                         expected =
                             0

@@ -1,18 +1,50 @@
 module Music.Voicing.FourPart exposing
-    ( Voicing, VoicingMethod
-    , toString
+    ( Voicing, VoicingMethod, Pitches
+    , chord, span
+    , voiceOne, voiceTwo, voiceThree, voiceFour
+    , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
+    , commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
+    , commonTonesOrder, contraryMotionOrder, totalSemitoneDistancesOrder
+    , toPitches, toPitchList, toString
+    , Intervals, toIntervals, toIntervalList
     , close, drop2, drop3, drop2and4, spread
     , rootPosition, firstInversion, secondInversion, thirdInversion
     )
 
 {-|
 
-@docs Voicing, VoicingMethod
+@docs Voicing, VoicingMethod, Pitches
+
+
+# Helpers
+
+@docs chord, span
+
+
+# Voices
+
+@docs voiceOne, voiceTwo, voiceThree, voiceFour
+@docs containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
+
+
+# Comparing voicings
+
+@docs commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
+
+
+# Ordering voicings
+
+@docs commonTonesOrder, contraryMotionOrder, totalSemitoneDistancesOrder
 
 
 # Conversion
 
-@docs toString
+@docs toPitches, toPitchList, toString
+
+
+## Intervals
+
+@docs Intervals, toIntervals, toIntervalList
 
 
 # Voicing methods
@@ -35,10 +67,17 @@ Note: these classical methods were developed before jazz harmony, and so chord e
 
 @docs rootPosition, firstInversion, secondInversion, thirdInversion
 
+
+# Custom voicing methods
+
+TK
+
 -}
 
 import Music.Internal.Chord as Chord
+import Music.Internal.Interval as Interval
 import Music.Internal.Pitch as Pitch
+import Music.Internal.Voicing as Voicing
 import Music.Internal.Voicing.FourPart as FourPart
 import Music.Internal.Voicing.FourPart.Classical as FourPartClassical
 import Music.Internal.Voicing.FourPart.Jazz as FourPartJazz
@@ -51,6 +90,7 @@ type alias Voicing =
 
 {-| -}
 type alias VoicingMethod =
+    --TODO: make this opaque and create helper functions for constructing it
     { ranges :
         { voiceOne : Pitch.Range
         , voiceTwo : Pitch.Range
@@ -62,21 +102,184 @@ type alias VoicingMethod =
     -> List Voicing
 
 
+{-| The pitches contained in a voicing.
+-}
+type alias Pitches =
+    { voiceOne : Pitch.Pitch
+    , voiceTwo : Pitch.Pitch
+    , voiceThree : Pitch.Pitch
+    , voiceFour : Pitch.Pitch
+    }
+
+
 {-| -}
-toPitches : Voicing -> { voiceOne : Pitch.Pitch, voiceTwo : Pitch.Pitch, voiceThree : Pitch.Pitch, voiceFour : Pitch.Pitch }
-toPitches voicing =
-    FourPart.toPitches voicing
+chord : Voicing -> Chord.Chord
+chord voicing =
+    Voicing.chord voicing
+
+
+{-| -}
+span : Voicing -> Interval.Interval
+span voicing =
+    Voicing.range
+        { getTopVoice = FourPart.getVoiceOne
+        , getBottomVoice = FourPart.getVoiceFour
+        }
+        voicing
+
+
+{-| -}
+voiceOne : Voicing -> Pitch.Pitch
+voiceOne voicing =
+    FourPart.getVoiceOne voicing
+
+
+{-| -}
+voiceTwo : Voicing -> Pitch.Pitch
+voiceTwo voicing =
+    FourPart.getVoiceTwo voicing
+
+
+{-| -}
+voiceThree : Voicing -> Pitch.Pitch
+voiceThree voicing =
+    FourPart.getVoiceThree voicing
+
+
+{-| -}
+voiceFour : Voicing -> Pitch.Pitch
+voiceFour voicing =
+    FourPart.getVoiceFour voicing
+
+
+{-| -}
+containsPitchInVoiceOne : Pitch.Pitch -> Voicing -> Bool
+containsPitchInVoiceOne pitch voicing =
+    Voicing.containsPitchInVoice pitch FourPart.getVoiceOne voicing
+
+
+{-| -}
+containsPitchInVoiceTwo : Pitch.Pitch -> Voicing -> Bool
+containsPitchInVoiceTwo pitch voicing =
+    Voicing.containsPitchInVoice pitch FourPart.getVoiceTwo voicing
+
+
+{-| -}
+containsPitchInVoiceThree : Pitch.Pitch -> Voicing -> Bool
+containsPitchInVoiceThree pitch voicing =
+    Voicing.containsPitchInVoice pitch FourPart.getVoiceThree voicing
+
+
+{-| -}
+containsPitchInVoiceFour : Pitch.Pitch -> Voicing -> Bool
+containsPitchInVoiceFour pitch voicing =
+    Voicing.containsPitchInVoice pitch FourPart.getVoiceFour voicing
+
+
+{-| -}
+commonTones : Voicing -> Voicing -> List Pitch.Pitch
+commonTones a b =
+    Voicing.commonTones FourPart.allVoices a b
+
+
+{-| -}
+usesContraryMotion : Voicing -> Voicing -> Bool
+usesContraryMotion a b =
+    Voicing.usesContraryMotion FourPart.getVoiceFour FourPart.getVoiceOne a b
+
+
+{-| -}
+containsParallelFifths : Voicing -> Voicing -> Bool
+containsParallelFifths a b =
+    Voicing.containsParallelFifths Voicing.root FourPart.allFactors a b
+
+
+{-| -}
+containsParallelOctaves : Voicing -> Voicing -> Bool
+containsParallelOctaves a b =
+    Voicing.containsParallelOctaves Voicing.root FourPart.allFactors a b
+
+
+{-| -}
+totalSemitoneDistances : Voicing -> Voicing -> Int
+totalSemitoneDistances a b =
+    Voicing.totalSemitoneDistance FourPart.allVoices a b
+
+
+{-| -}
+commonTonesOrder : Voicing -> (Voicing -> Voicing -> Order)
+commonTonesOrder from =
+    Voicing.compareByCommonTones FourPart.allVoices from
+
+
+{-| -}
+contraryMotionOrder : Voicing -> (Voicing -> Voicing -> Order)
+contraryMotionOrder from =
+    Voicing.compareByContraryMotion FourPart.getVoiceFour FourPart.getVoiceOne from
+
+
+{-| -}
+totalSemitoneDistancesOrder : Voicing -> (Voicing -> Voicing -> Order)
+totalSemitoneDistancesOrder from =
+    Voicing.compareByTotalSemitoneDistance FourPart.allVoices from
 
 
 {-| -}
 toString : Voicing -> String
 toString voicing =
-    toPitches voicing
+    voicing
+        |> toPitchList
+        |> List.map Pitch.toString
+        |> String.join ", "
+
+
+{-| -}
+toPitches : Voicing -> Pitches
+toPitches voicing =
+    FourPart.toPitches voicing
+
+
+{-| -}
+toPitchList : Voicing -> List Pitch.Pitch
+toPitchList voicing =
+    FourPart.toPitches voicing
         |> (\v ->
                 [ v.voiceOne, v.voiceTwo, v.voiceThree, v.voiceFour ]
-                    |> List.map Pitch.toString
-                    |> String.join ", "
            )
+
+
+{-| -}
+toIntervals : Voicing -> Intervals
+toIntervals voicing =
+    Voicing.voicingClass voicing
+        |> FourPart.allIntervals
+
+
+{-| -}
+toIntervalList : Voicing -> List Interval.Interval
+toIntervalList voicing =
+    toIntervals voicing
+        |> (\i ->
+                [ i.fourToOne
+                , i.fourToTwo
+                , i.threeToOne
+                , i.fourToThree
+                , i.threeToTwo
+                , i.twoToOne
+                ]
+           )
+        |> List.sortBy Interval.semitones
+
+
+{-| -}
+type alias Intervals =
+    { fourToOne : Interval.Interval
+    , fourToTwo : Interval.Interval
+    , threeToOne : Interval.Interval
+    , fourToThree : Interval.Interval
+    , threeToTwo : Interval.Interval
+    , twoToOne : Interval.Interval
+    }
 
 
 {-| Voice a chord using the "four-way close" method:
