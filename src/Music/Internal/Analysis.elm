@@ -149,6 +149,31 @@ viiSharp chordType =
     Degree VII (PitchClass.offsetFromInt 1) (Just chordType)
 
 
+vOfii : Analysis
+vOfii =
+    SecondaryDominant II Nothing
+
+
+vOfiii : Analysis
+vOfiii =
+    SecondaryDominant III Nothing
+
+
+vOfiv : Analysis
+vOfiv =
+    SecondaryDominant IV Nothing
+
+
+vOfv : Analysis
+vOfv =
+    SecondaryDominant V Nothing
+
+
+vOfvi : Analysis
+vOfvi =
+    SecondaryDominant VI Nothing
+
+
 withChordType : ChordType.ChordType -> Analysis -> Analysis
 withChordType chordType analysis =
     case analysis of
