@@ -1,19 +1,20 @@
 module Music.Voicing.FourPart exposing
-    ( Voicing, VoicingMethod, Pitches
+    ( Voicing
     , chord, span
     , voiceOne, voiceTwo, voiceThree, voiceFour
     , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
     , commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
     , commonTonesOrder, contraryMotionOrder, totalSemitoneDistancesOrder
-    , toPitches, toPitchList, toString
+    , Pitches, toPitches, toPitchList, toString
     , Intervals, toIntervals, toIntervalList
+    , VoicingMethod
     , close, drop2, drop3, drop2and4, spread
     , rootPosition, firstInversion, secondInversion, thirdInversion
     )
 
 {-|
 
-@docs Voicing, VoicingMethod, Pitches
+@docs Voicing
 
 
 # Helpers
@@ -39,7 +40,7 @@ module Music.Voicing.FourPart exposing
 
 # Conversion
 
-@docs toPitches, toPitchList, toString
+@docs Pitches, toPitches, toPitchList, toString
 
 
 ## Intervals
@@ -48,6 +49,8 @@ module Music.Voicing.FourPart exposing
 
 
 # Voicing methods
+
+@docs VoicingMethod
 
 
 ## Jazz
@@ -103,6 +106,9 @@ type alias VoicingMethod =
 
 
 {-| The pitches contained in a voicing.
+
+These are in order from highest (`voiceOne`) to lowest (`voiceFour`), the way you might read them on a staff.
+
 -}
 type alias Pitches =
     { voiceOne : Pitch.Pitch
@@ -112,13 +118,21 @@ type alias Pitches =
     }
 
 
-{-| -}
+{-| Get the chord being voiced:
+
+    chord myVoicing == Chord.majorSixNine PitchClass.c
+
+-}
 chord : Voicing -> Chord.Chord
 chord voicing =
     Voicing.chord voicing
 
 
-{-| -}
+{-| Get the interval from the lowest to the highest pitch in the voicing:
+
+     span myVoicing == Interval.minorSeventh
+
+-}
 span : Voicing -> Interval.Interval
 span voicing =
     Voicing.range
@@ -128,103 +142,171 @@ span voicing =
         voicing
 
 
-{-| -}
+{-| Get the first (highest) pitch of the voicing:
+
+    voiceOne myVoicing == Pitch.d5
+
+-}
 voiceOne : Voicing -> Pitch.Pitch
 voiceOne voicing =
     FourPart.getVoiceOne voicing
 
 
-{-| -}
+{-| Get the second pitch of the voicing:
+
+    voiceTwo myVoicing == Pitch.a4
+
+-}
 voiceTwo : Voicing -> Pitch.Pitch
 voiceTwo voicing =
     FourPart.getVoiceTwo voicing
 
 
-{-| -}
+{-| Get the third pitch of the voicing:
+
+    voiceThree myVoicing == Pitch.g4
+
+-}
 voiceThree : Voicing -> Pitch.Pitch
 voiceThree voicing =
     FourPart.getVoiceThree voicing
 
 
-{-| -}
+{-| Get the fourth (lowest) pitch of the voicing:
+
+    voiceFour myVoicing == Pitch.e4
+
+-}
 voiceFour : Voicing -> Pitch.Pitch
 voiceFour voicing =
     FourPart.getVoiceFour voicing
 
 
-{-| -}
+{-| Find out whether a voicing has a specific pitch in the first voice:
+
+     containsPitchInVoiceOne Pitch.d5 myVoicing == True
+
+-}
 containsPitchInVoiceOne : Pitch.Pitch -> Voicing -> Bool
 containsPitchInVoiceOne pitch voicing =
     Voicing.containsPitchInVoice pitch FourPart.getVoiceOne voicing
 
 
-{-| -}
+{-| Find out whether a voicing has a specific pitch in the second voice:
+
+     containsPitchInVoiceTwo Pitch.a4 myVoicing == True
+
+-}
 containsPitchInVoiceTwo : Pitch.Pitch -> Voicing -> Bool
 containsPitchInVoiceTwo pitch voicing =
     Voicing.containsPitchInVoice pitch FourPart.getVoiceTwo voicing
 
 
-{-| -}
+{-| Find out whether a voicing has a specific pitch in the third voice:
+
+     containsPitchInVoiceThree Pitch.g4 myVoicing == True
+
+-}
 containsPitchInVoiceThree : Pitch.Pitch -> Voicing -> Bool
 containsPitchInVoiceThree pitch voicing =
     Voicing.containsPitchInVoice pitch FourPart.getVoiceThree voicing
 
 
-{-| -}
+{-| Find out whether a voicing has a specific pitch in the fourth voice:
+
+     containsPitchInVoiceFour Pitch.e4 myVoicing == True
+
+-}
 containsPitchInVoiceFour : Pitch.Pitch -> Voicing -> Bool
 containsPitchInVoiceFour pitch voicing =
     Voicing.containsPitchInVoice pitch FourPart.getVoiceFour voicing
 
 
-{-| -}
+{-| Get all pitches in common between two voicings:
+
+    commonTones bFlatVoicing bDimVoicing
+        == [ Pitch.d4
+           , Pitch.f4
+           ]
+
+-}
 commonTones : Voicing -> Voicing -> List Pitch.Pitch
 commonTones a b =
     Voicing.commonTones FourPart.allVoices a b
 
 
-{-| -}
+{-| Find out whether the first and fourth voices move in opposite directions.
+-}
 usesContraryMotion : Voicing -> Voicing -> Bool
 usesContraryMotion a b =
     Voicing.usesContraryMotion FourPart.getVoiceFour FourPart.getVoiceOne a b
 
 
-{-| -}
+{-| Find out whether any two moving voices maintain a perfect fifth interval between them.
+
+Avoiding parallel fifths and octaves was very important in Mozart's time! Checking for instances of them may help you if you want to write in a period style.
+
+-}
 containsParallelFifths : Voicing -> Voicing -> Bool
 containsParallelFifths a b =
     Voicing.containsParallelFifths Voicing.root FourPart.allFactors a b
 
 
-{-| -}
+{-| Find out whether any two moving voices maintain a perfect octave interval between them.
+-}
 containsParallelOctaves : Voicing -> Voicing -> Bool
 containsParallelOctaves a b =
     Voicing.containsParallelOctaves Voicing.root FourPart.allFactors a b
 
 
-{-| -}
+{-| Find out the absolute difference in semitones, in all voices, between two voicings.
+-}
 totalSemitoneDistances : Voicing -> Voicing -> Int
 totalSemitoneDistances a b =
     Voicing.totalSemitoneDistance FourPart.allVoices a b
 
 
-{-| -}
+{-| Compare voicings by how many pitches they have in common with a previous voicing:
+
+    myVoicingList
+        |> List.sortWith (commonTonesOrder previousVoicing)
+
+-}
 commonTonesOrder : Voicing -> (Voicing -> Voicing -> Order)
 commonTonesOrder from =
     Voicing.compareByCommonTones FourPart.allVoices from
 
 
-{-| -}
+{-| Compare voicings by whether they use contrary motion from a previous voicing:
+
+    myVoicingList
+        |> List.sortWith (commonTonesOrder previousVoicing)
+
+"Contrary motion" here is in respect to the top and bottom voices.
+
+-}
 contraryMotionOrder : Voicing -> (Voicing -> Voicing -> Order)
 contraryMotionOrder from =
     Voicing.compareByContraryMotion FourPart.getVoiceFour FourPart.getVoiceOne from
 
 
-{-| -}
+{-| Compare voicings by absolute difference in semitones from a previous voicing:
+
+    myVoicingList
+        |> List.sortWith (commonTonesOrder previousVoicing)
+
+-}
 totalSemitoneDistancesOrder : Voicing -> (Voicing -> Voicing -> Order)
 totalSemitoneDistancesOrder from =
     Voicing.compareByTotalSemitoneDistance FourPart.allVoices from
 
 
-{-| -}
+{-| Get all pitches contained in a voicing, as a stringified list:
+
+    toPitchList myVoicing
+        == "D5, A4, G4, E4"
+
+-}
 toString : Voicing -> String
 toString voicing =
     voicing
@@ -233,13 +315,31 @@ toString voicing =
         |> String.join ", "
 
 
-{-| -}
+{-| Get all pitches contained in a voicing:
+
+    toPitches myVoicing
+        == { voiceOne = Pitch.d5
+           , voiceTwo = Pitch.a4
+           , voiceThree = Pitch.g4
+           , voiceFour = Pitch.e4
+           }
+
+-}
 toPitches : Voicing -> Pitches
 toPitches voicing =
     FourPart.toPitches voicing
 
 
-{-| -}
+{-| Get all pitches contained in a voicing, as a `List`:
+
+    toPitchList myVoicing
+        == [ Pitch.d5
+           , Pitch.a4
+           , Pitch.g4
+           , Pitch.e4
+           ]
+
+-}
 toPitchList : Voicing -> List Pitch.Pitch
 toPitchList voicing =
     FourPart.toPitches voicing
@@ -248,14 +348,36 @@ toPitchList voicing =
            )
 
 
-{-| -}
+{-| Get all intervals between each pitch in a voicing:
+
+    toIntervals myVoicing
+        == { fourToOne = Interval.majorSixth
+           , fourToTwo = Interval.majorSecond
+           , fourToThree = Interval.majorThird
+           , threeToOne = Interval.perfectFifth
+           , threeToTwo = Interval.majorSecond
+           , twoToOne = Interval.perfectFourth
+           }
+
+-}
 toIntervals : Voicing -> Intervals
 toIntervals voicing =
     Voicing.voicingClass voicing
         |> FourPart.allIntervals
 
 
-{-| -}
+{-| Get all intervals between each pitch in a voicing as a `List`:
+
+    toIntervalList myVoicing
+        == [ Interval.majorSecond
+           , Interval.majorSecond
+           , Interval.majorThird
+           , Interval.perfectFourth
+           , Interval.perfectFifth
+           , Interval.majorSixth
+           ]
+
+-}
 toIntervalList : Voicing -> List Interval.Interval
 toIntervalList voicing =
     toIntervals voicing
@@ -275,8 +397,8 @@ toIntervalList voicing =
 type alias Intervals =
     { fourToOne : Interval.Interval
     , fourToTwo : Interval.Interval
-    , threeToOne : Interval.Interval
     , fourToThree : Interval.Interval
+    , threeToOne : Interval.Interval
     , threeToTwo : Interval.Interval
     , twoToOne : Interval.Interval
     }
