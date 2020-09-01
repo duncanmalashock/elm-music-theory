@@ -3,7 +3,12 @@ module Music.Range exposing
     , range
     , isWithin
     , sopranoVoice, altoVoice, tenorVoice, bassVoice
-    , violin, viola, cello
+    , violin, viola, cello, contrabass
+    , bassoon, clarinet, oboe
+    , flute, piccolo
+    , tuba, frenchHorn, trombone, trumpet
+    , altoSax, baritoneSax, tenorSax
+    , marimba, vibraphone, glockenspiel, xylophone
     )
 
 {-| A range, like a range of numbers, represents an upper and lower boundary and all the pitches in between. E.g. "C4–C6."
@@ -33,7 +38,32 @@ All instrument ranges here are defined in [concert pitch](https://en.wikipedia.o
 
 ## Stringed instruments
 
-@docs violin, viola, cello
+@docs violin, viola, cello, contrabass
+
+
+## Reed instruments
+
+@docs bassoon, clarinet, oboe
+
+
+## Wind instruments
+
+@docs flute, piccolo
+
+
+## Brass instruments
+
+@docs tuba, frenchHorn, trombone, trumpet
+
+
+## Saxophones
+
+@docs altoSax, baritoneSax, tenorSax
+
+
+## Pitched percussion
+
+@docs marimba, vibraphone, glockenspiel, xylophone
 
 -}
 
@@ -71,42 +101,144 @@ isWithin theRange thePitch =
 
 
 {-| -}
-sopranoVoice : Range
+sopranoVoice : Pitch.Range
 sopranoVoice =
-    InstrumentRanges.sopranoVoice
+    range Pitch.c4 Pitch.c6
 
 
 {-| -}
-altoVoice : Range
+altoVoice : Pitch.Range
 altoVoice =
-    InstrumentRanges.altoVoice
+    range Pitch.f3 Pitch.f5
 
 
 {-| -}
-tenorVoice : Range
+tenorVoice : Pitch.Range
 tenorVoice =
-    InstrumentRanges.tenorVoice
+    range Pitch.c3 Pitch.c5
 
 
 {-| -}
-bassVoice : Range
+bassVoice : Pitch.Range
 bassVoice =
-    InstrumentRanges.bassVoice
+    range Pitch.e2 Pitch.e4
 
 
 {-| -}
-violin : Range
+violin : Pitch.Range
 violin =
-    InstrumentRanges.violin
+    range Pitch.g3 Pitch.a7
 
 
 {-| -}
-viola : Range
+viola : Pitch.Range
 viola =
-    InstrumentRanges.viola
+    range Pitch.c3 Pitch.e6
 
 
 {-| -}
-cello : Range
+cello : Pitch.Range
 cello =
-    InstrumentRanges.cello
+    range Pitch.c2 Pitch.c6
+
+
+{-| -}
+contrabass : Pitch.Range
+contrabass =
+    range Pitch.c1 Pitch.c5
+
+
+{-| -}
+trumpet : Pitch.Range
+trumpet =
+    range Pitch.e3 Pitch.c6
+
+
+{-| -}
+trombone : Pitch.Range
+trombone =
+    range Pitch.e2 Pitch.f5
+
+
+{-| -}
+frenchHorn : Pitch.Range
+frenchHorn =
+    range Pitch.b1 Pitch.f5
+
+
+{-| -}
+tuba : Pitch.Range
+tuba =
+    range Pitch.d1 Pitch.f4
+
+
+{-| -}
+piccolo : Pitch.Range
+piccolo =
+    range Pitch.d5 Pitch.b7
+
+
+{-| -}
+flute : Pitch.Range
+flute =
+    range Pitch.c4 Pitch.d7
+
+
+{-| -}
+oboe : Pitch.Range
+oboe =
+    range Pitch.b3 Pitch.a6
+
+
+{-| -}
+clarinet : Pitch.Range
+clarinet =
+    range Pitch.b3 Pitch.a6
+
+
+{-| -}
+altoSax : Pitch.Range
+altoSax =
+    range Pitch.d3 Pitch.a5
+
+
+{-| -}
+tenorSax : Pitch.Range
+tenorSax =
+    range Pitch.a2 Pitch.f5
+
+
+{-| -}
+baritoneSax : Pitch.Range
+baritoneSax =
+    range Pitch.d2 Pitch.a4
+
+
+{-| -}
+bassoon : Pitch.Range
+bassoon =
+    range Pitch.b1 Pitch.d5
+
+
+{-| -}
+xylophone : Pitch.Range
+xylophone =
+    range Pitch.g4 Pitch.c7
+
+
+{-| -}
+glockenspiel : Pitch.Range
+glockenspiel =
+    range Pitch.g3 Pitch.c6
+
+
+{-| -}
+vibraphone : Pitch.Range
+vibraphone =
+    range Pitch.f3 Pitch.f6
+
+
+{-| -}
+marimba : Pitch.Range
+marimba =
+    range Pitch.c2 Pitch.c7
