@@ -6,13 +6,12 @@ module Music.ChordType exposing
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminishedSeventh, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
     , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
-    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
+    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen, dominantSeventhFlatThirteen
+    , dominantNinthSharpEleven, dominantNinthFlatThirteen, dominantNinthSharpElevenFlatThirteen
+    , dominantThirteenthFlatNine, dominantThirteenthSharpNine, dominantThirteenthFlatNineSharpNine, dominantThirteenthFlatNineSharpEleven, dominantThirteenthSharpNineSharpEleven, dominantThirteenthSharpEleven
     , custom
     , withMajorThird, withMinorThird, withSuspendedSecond, withSuspendedFourth, withFifth, withSharpFifth, withFlatFifth, withSixth, withMajorSeventh, withMinorSeventh, withDiminishedSeventh, withNinth, withSharpNinth, withFlatNinth, withEleventh, withSharpEleventh, withThirteenth, withFlatThirteenth
     , classify
-    --, dominantNinthSharpEleven, dominantNinthFlatThirteen, dominantNinthSharpElevenFlatThirteen
-    --, dominantThirteenthFlatNine, dominantThirteenthSharpNine, dominantThirteenthFlatNineSharpNine, dominantThirteenthFlatNineSharpEleven, dominantThirteenthSharpNineSharpEleven, dominantThirteenthSharpEleven, dominantThirteenthSharpElevenFlatThirteen
-    --, dominantSeventhFlatThirteen
     )
 
 {-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the intervals contained in a chord, with no specific root pitch class. E.g. a "dominant seventh" chord.
@@ -55,7 +54,20 @@ module Music.ChordType exposing
 
 ## Altered dominant chords
 
-@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
+
+### Seventh
+
+@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen, dominantSeventhFlatThirteen
+
+
+### Ninth
+
+@docs dominantNinthSharpEleven, dominantNinthFlatThirteen, dominantNinthSharpElevenFlatThirteen
+
+
+### Thirteenth
+
+@docs dominantThirteenthFlatNine, dominantThirteenthSharpNine, dominantThirteenthFlatNineSharpNine, dominantThirteenthFlatNineSharpEleven, dominantThirteenthSharpNineSharpEleven, dominantThirteenthSharpEleven
 
 
 # Custom chord types
@@ -356,6 +368,66 @@ dominantSeventhSharpNineFlatThirteen =
 dominantSeventhSharpElevenFlatThirteen : ChordType
 dominantSeventhSharpElevenFlatThirteen =
     ChordType.dominantSeventhSharpElevenFlatThirteen
+
+
+{-| -}
+dominantSeventhFlatThirteen : ChordType
+dominantSeventhFlatThirteen =
+    ChordType.dominantSeventhFlatThirteen
+
+
+{-| -}
+dominantNinthSharpEleven : ChordType
+dominantNinthSharpEleven =
+    ChordType.dominantNinthSharpEleven
+
+
+{-| -}
+dominantNinthFlatThirteen : ChordType
+dominantNinthFlatThirteen =
+    ChordType.dominantNinthFlatThirteen
+
+
+{-| -}
+dominantNinthSharpElevenFlatThirteen : ChordType
+dominantNinthSharpElevenFlatThirteen =
+    ChordType.dominantNinthSharpElevenFlatThirteen
+
+
+{-| -}
+dominantThirteenthFlatNine : ChordType
+dominantThirteenthFlatNine =
+    ChordType.dominantThirteenthFlatNine
+
+
+{-| -}
+dominantThirteenthSharpNine : ChordType
+dominantThirteenthSharpNine =
+    ChordType.dominantThirteenthSharpNine
+
+
+{-| -}
+dominantThirteenthFlatNineSharpNine : ChordType
+dominantThirteenthFlatNineSharpNine =
+    ChordType.dominantThirteenthFlatNineSharpNine
+
+
+{-| -}
+dominantThirteenthFlatNineSharpEleven : ChordType
+dominantThirteenthFlatNineSharpEleven =
+    ChordType.dominantThirteenthFlatNineSharpEleven
+
+
+{-| -}
+dominantThirteenthSharpNineSharpEleven : ChordType
+dominantThirteenthSharpNineSharpEleven =
+    ChordType.dominantThirteenthSharpNineSharpEleven
+
+
+{-| -}
+dominantThirteenthSharpEleven : ChordType
+dominantThirteenthSharpEleven =
+    ChordType.dominantThirteenthSharpEleven
 
 
 
