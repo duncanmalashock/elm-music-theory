@@ -19,7 +19,16 @@ module Music.Voicing.FourPart exposing
     , rootPosition, firstInversion, secondInversion, thirdInversion
     )
 
-{-|
+{-| A chord voicing is an instance of a chord that can be played or sung.
+
+This module allows for:
+
+  - Getting properties of a voicing like its chord, its interval span, and its voices
+  - Comparing voicings to determine common tones, contrary or parallel motion, and voice distance
+  - Sorting voicings by various criteria such as voice leading concerns
+  - Determining whether a voicing is within low interval limits
+  - Using common voicing methods in the classical and jazz idioms
+  - Defining custom voicing methods
 
 @docs Voicing
 
@@ -101,11 +110,6 @@ These methods were adapted from [Jazz Arranging Techniques](http://lindsayjazz.c
 Note: these classical methods were developed before jazz harmony, and so chord extensions and added tones will not be included.
 
 @docs rootPosition, firstInversion, secondInversion, thirdInversion
-
-
-# Custom voicing methods
-
-TK
 
 -}
 

@@ -9,6 +9,12 @@ module Music.PitchClass exposing
 
 {-| A [pitch class](https://en.wikipedia.org/wiki/Pitch_class) is like a pitch, but with no octave specified. E.g. the pitch class "B♭".
 
+This module allows for:
+
+  - Converting to a pitch class from a pitch
+  - Comparing pitch classes
+  - Converting a pitch class to a symbol
+
 @docs PitchClass
 
 

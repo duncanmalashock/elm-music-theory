@@ -32,6 +32,7 @@ module Music.Internal.Key exposing
     , majorKey
     , minor
     , minorKey
+    , parallel
     , relative
     , scale
     , signature
@@ -85,6 +86,16 @@ relative (Key pc majorOrMinor) =
                     pc
                 )
                 Minor
+
+
+parallel : Key -> Key
+parallel (Key pc majorOrMinor) =
+    case majorOrMinor of
+        Minor ->
+            Key pc Major
+
+        Major ->
+            Key pc Minor
 
 
 signature : Key -> List PitchClass.PitchClass

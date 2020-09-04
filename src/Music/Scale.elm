@@ -12,6 +12,13 @@ module Music.Scale exposing
 
 {-| A [scale](https://en.wikipedia.org/wiki/Scale_%28music%29) is a set of pitch classes in a certain order. E.g. the "C major scale."
 
+This module allows for:
+
+  - Creating scales from a pitch class and scale type
+  - Determining whether a pitch class or chord is in a scale
+  - Getting properties of a scale like its root, scale type, and its degrees
+  - Creating a scale from a custom scale type
+
 @docs Scale
 
 

@@ -27,6 +27,13 @@ module Music.Pitch exposing
 
 {-| A [pitch](https://en.wikipedia.org/wiki/Pitch_%28music%29) represents a specific frequency of sound with a letter name, octave, and accidental. E.g. the pitch "B♭4".
 
+This module allows for:
+
+  - Transposing a pitch by interval
+  - Comparing and sorting pitches by "height"
+  - Converting to semitones, MIDI, and frequency
+  - Converting a pitch to a symbol
+
 @docs Pitch
 
 

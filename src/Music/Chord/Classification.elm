@@ -1,12 +1,12 @@
 module Music.Chord.Classification exposing (Classification(..), Triad(..), SixthOrSeventh(..), UnalteredExtension(..), AlteredExtension(..))
 
-{-| This module contains a `Classification` type you can use to make custom chord symbols. If `ChordType.symbol` works for your purposes, then you don't need this. But I have included it to provide more options than `ChordType.symbol` offers.
+{-| Note: Try using `ChordType.symbol` first. If it works for your purposes, then you don't need this module. It contains a type you can use for making custom chord symbols.
 
 
 # Disclaimer
 
 
-## Classifying chords exhaustively is hard! I did my best
+## Classifying chords exhaustively is hard and weird! I did my best
 
 Different chord classification methods have accumulated since at least the 17th century, and they mainly serve to describe the most usual cases in a particular idiom. To my knowledge, there is no unified method for classifying chord types into a taxonomy that is also used by practicing musicians.
 

@@ -13,6 +13,13 @@ module Music.Chord exposing
 
 {-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are sounded together to create harmony. E.g. a "G dominant seventh" chord.
 
+This module allows for:
+
+  - Creating chords with a given root and chord type
+  - Getting the pitch classes contained in a chord
+  - Converting to chord symbols
+  - Turning chords into voicings
+
 @docs Chord
 
 

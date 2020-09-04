@@ -20,6 +20,13 @@ module Music.ChordType exposing
 
 {-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the intervals contained in a chord, with no specific root pitch class. E.g. a "dominant seventh" chord.
 
+This module allows for:
+
+  - Getting and categorizing the factors of a chord
+  - Creating a custom chord type
+  - Conversion to a symbol
+  - Creating a custom representation of a chord symbol
+
 @docs ChordType
 
 

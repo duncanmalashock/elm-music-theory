@@ -15,6 +15,13 @@ module Music.Interval exposing
 
 {-| An [interval](https://en.wikipedia.org/wiki/Interval_%28music%29) is a measure of the distance between two pitches. E.g. a "perfect fifth".
 
+This module allows for:
+
+  - Measuring the interval between pitches
+  - Comparing intervals to each other
+  - Operations on intervals like adding, subtracting, simplifying, and reversing
+  - Conversion to interval symbols
+
 @docs Interval
 
 @docs betweenPitches

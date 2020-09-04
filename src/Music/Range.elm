@@ -13,6 +13,12 @@ module Music.Range exposing
 
 {-| A range, like a range of numbers, represents an upper and lower boundary and all the pitches in between. E.g. "C4–C6."
 
+This module allows for:
+
+  - Creating ranges
+  - Determining whether a pitch is within a range
+  - Using the ranges of common musical instruments
+
 @docs Range
 
 

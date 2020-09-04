@@ -11,6 +11,11 @@ module Music.Analysis exposing
 
 {-| [Roman numeral analysis](https://en.wikipedia.org/wiki/Roman_numeral_analysis) describes the relationship of a chord to a key. E.g. E minor is the "iii" chord in the key of C major.
 
+This module allows for:
+
+  - Analyzing the functions of chords in a key
+  - Converting from Roman numeral analysis to chords in any key
+
 @docs Analysis
 
 
