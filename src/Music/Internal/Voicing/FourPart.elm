@@ -1,7 +1,7 @@
 module Music.Internal.Voicing.FourPart exposing
     ( Pitches
     , Ranges
-    , VoiceIntervalLimits
+    , SpacingLimits
     , Voicing
     , VoicingClass
     , VoicingMethod
@@ -10,34 +10,35 @@ module Music.Internal.Voicing.FourPart exposing
     , allIntervals
     , allRanges
     , allVoices
+    , combineVoicingMethods
+    , custom
     , getVoiceFour
     , getVoiceOne
     , getVoiceThree
     , getVoiceTwo
+    , noSelection
     , placeFactors
+    , placeSelectedFactors
+    , selectFactors
     , toPitches
     , violatesLowIntervalLimits
+    , voicingClassesFromMethod
+    , withFactor
+    , withFactorFrom
+    , withThreeFactorsFrom
+    , withTwoFactorsFrom
+    , withUniqueFactor
+    , withUniqueFactorFrom
+    , withUniqueThreeFactorsFrom
+    , withUniqueTwoFactorsFrom
     )
 
-import Music.Internal.Chord as Chord
+import Music.Internal.ChordType as ChordType
 import Music.Internal.Interval as Interval
 import Music.Internal.Pitch as Pitch
 import Music.Internal.Voicing as Voicing
 import Music.Internal.VoicingClass as VoicingClass
-import Music.Range as Range
 import Util.Basic
-
-
-type alias VoicingMethod =
-    { ranges :
-        { voiceOne : Range.Range
-        , voiceTwo : Range.Range
-        , voiceThree : Range.Range
-        , voiceFour : Range.Range
-        }
-    , chord : Chord.Chord
-    }
-    -> List Voicing
 
 
 type alias Voicing =
@@ -217,7 +218,7 @@ violatesLowIntervalLimits theVoicing =
 -- Generating voicings
 
 
-placeFactors : VoiceIntervalLimits -> VoicingClass -> List VoicingClass
+placeFactors : SpacingLimits -> VoicingClass -> List VoicingClass
 placeFactors intervalLimits voicingClass =
     let
         voiceFourInitial =
@@ -225,42 +226,42 @@ placeFactors intervalLimits voicingClass =
 
         voiceThreeInitial =
             adjustToBeAboveMinimum
-                { minimum = intervalLimits.fourToThree.min
+                { minimum = Interval.min intervalLimits.fourToThree
                 , lower = voiceFourInitial
                 , upper = Interval.toSimple voicingClass.voiceThree
                 }
 
         voiceTwoInitial =
             adjustToBeAboveMinimum
-                { minimum = intervalLimits.threeToTwo.min
+                { minimum = Interval.min intervalLimits.threeToTwo
                 , lower = voiceThreeInitial
                 , upper = Interval.toSimple voicingClass.voiceTwo
                 }
 
         voiceOneInitial =
             adjustToBeAboveMinimum
-                { minimum = intervalLimits.twoToOne.min
+                { minimum = Interval.min intervalLimits.twoToOne
                 , lower = voiceTwoInitial
                 , upper = Interval.toSimple voicingClass.voiceOne
                 }
 
         fourToThreeOctaveShifts =
             octaveShiftsAllowedBetween
-                { maximum = intervalLimits.fourToThree.max
+                { maximum = Interval.max intervalLimits.fourToThree
                 , lower = voiceFourInitial
                 , upper = voiceThreeInitial
                 }
 
         threeToTwoOctaveShifts =
             octaveShiftsAllowedBetween
-                { maximum = intervalLimits.threeToTwo.max
+                { maximum = Interval.max intervalLimits.threeToTwo
                 , lower = voiceThreeInitial
                 , upper = voiceTwoInitial
                 }
 
         twoToOneOctaveShifts =
             octaveShiftsAllowedBetween
-                { maximum = intervalLimits.twoToOne.max
+                { maximum = Interval.max intervalLimits.twoToOne
                 , lower = voiceTwoInitial
                 , upper = voiceOneInitial
                 }
@@ -281,7 +282,7 @@ placeFactors intervalLimits voicingClass =
         |> Maybe.withDefault []
 
 
-validateInitialVoicingClass : VoiceIntervalLimits -> VoicingClass -> Maybe VoicingClass
+validateInitialVoicingClass : SpacingLimits -> VoicingClass -> Maybe VoicingClass
 validateInitialVoicingClass intervalLimits voicingClass =
     let
         differenceMeetsMinimum l u minimum =
@@ -292,12 +293,12 @@ validateInitialVoicingClass intervalLimits voicingClass =
     in
     if
         List.all identity
-            [ differenceMeetsMinimum voicingClass.voiceFour voicingClass.voiceThree intervalLimits.fourToThree.min
-            , differenceMeetsMaximum voicingClass.voiceFour voicingClass.voiceThree intervalLimits.fourToThree.max
-            , differenceMeetsMinimum voicingClass.voiceThree voicingClass.voiceTwo intervalLimits.threeToTwo.min
-            , differenceMeetsMaximum voicingClass.voiceThree voicingClass.voiceTwo intervalLimits.threeToTwo.max
-            , differenceMeetsMinimum voicingClass.voiceTwo voicingClass.voiceOne intervalLimits.twoToOne.min
-            , differenceMeetsMaximum voicingClass.voiceTwo voicingClass.voiceOne intervalLimits.twoToOne.max
+            [ differenceMeetsMinimum voicingClass.voiceFour voicingClass.voiceThree (Interval.min intervalLimits.fourToThree)
+            , differenceMeetsMaximum voicingClass.voiceFour voicingClass.voiceThree (Interval.max intervalLimits.fourToThree)
+            , differenceMeetsMinimum voicingClass.voiceThree voicingClass.voiceTwo (Interval.min intervalLimits.threeToTwo)
+            , differenceMeetsMaximum voicingClass.voiceThree voicingClass.voiceTwo (Interval.max intervalLimits.threeToTwo)
+            , differenceMeetsMinimum voicingClass.voiceTwo voicingClass.voiceOne (Interval.min intervalLimits.twoToOne)
+            , differenceMeetsMaximum voicingClass.voiceTwo voicingClass.voiceOne (Interval.max intervalLimits.twoToOne)
             ]
     then
         Just voicingClass
@@ -438,8 +439,142 @@ shiftCountToIntervalList count =
         (List.range 0 count)
 
 
-type alias VoiceIntervalLimits =
-    { twoToOne : VoicingClass.IntervalRange
-    , threeToTwo : VoicingClass.IntervalRange
-    , fourToThree : VoicingClass.IntervalRange
+type VoicingMethod
+    = VoicingMethod (ChordType.ChordType -> List VoicingClass)
+
+
+voicingClassesFromMethod : ChordType.ChordType -> VoicingMethod -> List VoicingClass
+voicingClassesFromMethod chordType (VoicingMethod fn) =
+    fn chordType
+
+
+combineVoicingMethods : List VoicingMethod -> VoicingMethod
+combineVoicingMethods voicingMethodsToCombine =
+    (\chordType ->
+        List.concatMap
+            (\(VoicingMethod fn) ->
+                fn chordType
+            )
+            voicingMethodsToCombine
+    )
+        |> VoicingMethod
+
+
+type alias InstrumentRanges =
+    { voiceOne : Pitch.Range
+    , voiceTwo : Pitch.Range
+    , voiceThree : Pitch.Range
+    , voiceFour : Pitch.Range
     }
+
+
+type alias SpacingLimits =
+    { twoToOne : Interval.Range
+    , threeToTwo : Interval.Range
+    , fourToThree : Interval.Range
+    }
+
+
+custom :
+    (ChordType.ChordType -> Maybe categorized)
+    -> (categorized -> List VoicingClass)
+    -> VoicingMethod
+custom categorizeFn buildFromCategorized =
+    VoicingMethod
+        (categorizeFn
+            >> Maybe.map buildFromCategorized
+            >> Maybe.withDefault []
+        )
+
+
+withFactor :
+    Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withFactor factor builder =
+    VoicingClass.withFactor factor { mustBeUnique = False } builder
+
+
+withUniqueFactor :
+    Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withUniqueFactor factor builder =
+    VoicingClass.withFactor factor { mustBeUnique = True } builder
+
+
+withFactorFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withFactorFrom options builder =
+    VoicingClass.withFactorFrom options { mustBeUnique = False } builder
+
+
+withUniqueFactorFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withUniqueFactorFrom options builder =
+    VoicingClass.withFactorFrom options { mustBeUnique = True } builder
+
+
+withTwoFactorsFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withTwoFactorsFrom options builder =
+    VoicingClass.withTwoFactorsFrom options { mustBeUnique = False } builder
+
+
+withUniqueTwoFactorsFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withUniqueTwoFactorsFrom options builder =
+    VoicingClass.withTwoFactorsFrom options { mustBeUnique = True } builder
+
+
+withThreeFactorsFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withThreeFactorsFrom options builder =
+    VoicingClass.withThreeFactorsFrom options { mustBeUnique = False } builder
+
+
+withUniqueThreeFactorsFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withUniqueThreeFactorsFrom options builder =
+    VoicingClass.withThreeFactorsFrom options { mustBeUnique = True } builder
+
+
+selectFactors :
+    VoicingClass.VoicingClassBuilder
+        (Interval.Interval
+         -> Interval.Interval
+         -> Interval.Interval
+         -> Interval.Interval
+         -> VoicingClass
+        )
+selectFactors =
+    VoicingClass.builder VoicingClass
+
+
+noSelection : List VoicingClass
+noSelection =
+    []
+
+
+placeSelectedFactors :
+    SpacingLimits
+    -> VoicingClass.VoicingClassBuilder VoicingClass
+    -> List VoicingClass
+placeSelectedFactors voiceIntervalLimits builder =
+    VoicingClass.execute
+        { placeFactors =
+            placeFactors voiceIntervalLimits
+        }
+        builder

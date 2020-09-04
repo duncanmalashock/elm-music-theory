@@ -1,7 +1,9 @@
 module Music.Internal.VoicingClass exposing
     ( IntervalRange
+    , VoicingClassBuilder
     , builder
     , execute
+    , failBuilder
     , withFactor
     , withFactorFrom
     , withThreeFactorsFrom
@@ -19,6 +21,11 @@ type VoicingClassBuilder a
 builder : (a -> b) -> VoicingClassBuilder (a -> b)
 builder construct =
     VoicingClassBuilder [ ( construct, [] ) ]
+
+
+failBuilder : VoicingClassBuilder a
+failBuilder =
+    VoicingClassBuilder []
 
 
 withFactor :

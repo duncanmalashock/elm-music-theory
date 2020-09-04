@@ -8,6 +8,10 @@ module Music.Voicing.FourPart exposing
     , Pitches, toPitches, toPitchList, toString
     , Intervals, toIntervals, toIntervalList
     , VoicingMethod
+    , custom
+    , selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
+    , placeSelectedFactors, SpacingLimits
+    , combineVoicingMethods
     , close, drop2, drop3, drop2and4, spread
     , rootPosition, firstInversion, secondInversion, thirdInversion
     )
@@ -50,7 +54,14 @@ module Music.Voicing.FourPart exposing
 
 # Voicing methods
 
+
+## Custom voicing methods
+
 @docs VoicingMethod
+@docs custom
+@docs selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
+@docs placeSelectedFactors, SpacingLimits
+@docs combineVoicingMethods
 
 
 ## Jazz
@@ -81,12 +92,14 @@ TK
 -}
 
 import Music.Internal.Chord as Chord
+import Music.Internal.ChordType as ChordType
 import Music.Internal.Interval as Interval
 import Music.Internal.Pitch as Pitch
 import Music.Internal.Voicing as Voicing
 import Music.Internal.Voicing.FourPart as FourPart
 import Music.Internal.Voicing.FourPart.Classical as FourPartClassical
 import Music.Internal.Voicing.FourPart.Jazz as FourPartJazz
+import Music.Internal.VoicingClass as VoicingClass
 
 
 {-| -}
@@ -96,16 +109,132 @@ type alias Voicing =
 
 {-| -}
 type alias VoicingMethod =
-    --TODO: make this opaque and create helper functions for constructing it
-    { ranges :
-        { voiceOne : Pitch.Range
-        , voiceTwo : Pitch.Range
-        , voiceThree : Pitch.Range
-        , voiceFour : Pitch.Range
-        }
-    , chord : Chord.Chord
+    FourPart.VoicingMethod
+
+
+{-| -}
+combineVoicingMethods : List VoicingMethod -> VoicingMethod
+combineVoicingMethods voicingMethodsToCombine =
+    FourPart.combineVoicingMethods voicingMethodsToCombine
+
+
+type alias InstrumentRanges =
+    { voiceOne : Pitch.Range
+    , voiceTwo : Pitch.Range
+    , voiceThree : Pitch.Range
+    , voiceFour : Pitch.Range
     }
-    -> List Voicing
+
+
+{-| -}
+type alias SpacingLimits =
+    { twoToOne : Interval.Range
+    , threeToTwo : Interval.Range
+    , fourToThree : Interval.Range
+    }
+
+
+{-| -}
+custom :
+    (ChordType.ChordType -> Maybe categorized)
+    -> (categorized -> List FourPart.VoicingClass)
+    -> VoicingMethod
+custom categorizeFn buildFromCategorized =
+    FourPart.custom categorizeFn buildFromCategorized
+
+
+{-| -}
+withFactor :
+    Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withFactor factor builder =
+    FourPart.withFactor factor builder
+
+
+{-| -}
+withUniqueFactor :
+    Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withUniqueFactor factor builder =
+    FourPart.withUniqueFactor factor builder
+
+
+{-| -}
+withFactorFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withFactorFrom options builder =
+    FourPart.withFactorFrom options builder
+
+
+{-| -}
+withUniqueFactorFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withUniqueFactorFrom options builder =
+    FourPart.withUniqueFactorFrom options builder
+
+
+{-| -}
+withTwoFactorsFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withTwoFactorsFrom options builder =
+    FourPart.withTwoFactorsFrom options builder
+
+
+{-| -}
+withUniqueTwoFactorsFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withUniqueTwoFactorsFrom options builder =
+    FourPart.withUniqueTwoFactorsFrom options builder
+
+
+{-| -}
+withThreeFactorsFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withThreeFactorsFrom options builder =
+    FourPart.withThreeFactorsFrom options builder
+
+
+{-| -}
+withUniqueThreeFactorsFrom :
+    List Interval.Interval
+    -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> Interval.Interval -> a)
+    -> VoicingClass.VoicingClassBuilder a
+withUniqueThreeFactorsFrom options builder =
+    FourPart.withUniqueThreeFactorsFrom options builder
+
+
+{-| -}
+selectFactors :
+    VoicingClass.VoicingClassBuilder
+        (Interval.Interval
+         -> Interval.Interval
+         -> Interval.Interval
+         -> Interval.Interval
+         -> FourPart.VoicingClass
+        )
+selectFactors =
+    FourPart.selectFactors
+
+
+{-| -}
+placeSelectedFactors :
+    SpacingLimits
+    -> VoicingClass.VoicingClassBuilder FourPart.VoicingClass
+    -> List FourPart.VoicingClass
+placeSelectedFactors voiceIntervalLimits builder =
+    FourPart.placeSelectedFactors voiceIntervalLimits builder
 
 
 {-| The pitches contained in a voicing.

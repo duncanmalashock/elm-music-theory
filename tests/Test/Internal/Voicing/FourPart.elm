@@ -1,6 +1,7 @@
 module Test.Internal.Voicing.FourPart exposing (..)
 
 import Expect
+import Music.Chord as Chord
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
 import Music.Internal.InstrumentRanges as InstrumentRanges
@@ -133,14 +134,13 @@ all =
                                 }
 
                         result =
-                            Classical.rootPosition
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.g
-                                        ChordType.major
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.rootPosition ]
+                                (Chord.chord
+                                    PitchClass.g
+                                    ChordType.major
+                                )
                                 |> List.sortWith (Voicing.compareByCommonTones FourPart.allVoices voicingFrom)
                                 |> List.head
                                 |> Maybe.map (Voicing.toString FourPart.allVoices)
@@ -598,17 +598,14 @@ all =
                             }
                                 |> FourPart.placeFactors
                                     { twoToOne =
-                                        { min = Interval.augmentedUnison
-                                        , max = Interval.perfectOctave
-                                        }
+                                        Interval.range Interval.augmentedUnison
+                                            Interval.perfectOctave
                                     , threeToTwo =
-                                        { min = Interval.augmentedUnison
-                                        , max = Interval.perfectOctave
-                                        }
+                                        Interval.range Interval.augmentedUnison
+                                            Interval.perfectOctave
                                     , fourToThree =
-                                        { min = Interval.augmentedUnison
-                                        , max = Interval.perfectOctave
-                                        }
+                                        Interval.range Interval.augmentedUnison
+                                            Interval.perfectOctave
                                     }
                                 |> List.map
                                     (Voicing.voicing
@@ -645,17 +642,14 @@ all =
                             }
                                 |> FourPart.placeFactors
                                     { twoToOne =
-                                        { min = Interval.perfectUnison
-                                        , max = Interval.perfectOctave
-                                        }
+                                        Interval.range Interval.perfectUnison
+                                            Interval.perfectOctave
                                     , threeToTwo =
-                                        { min = Interval.perfectUnison
-                                        , max = Interval.perfectOctave
-                                        }
+                                        Interval.range Interval.perfectUnison
+                                            Interval.perfectOctave
                                     , fourToThree =
-                                        { min = Interval.perfectUnison
-                                        , max = Interval.perfectOctave
-                                        }
+                                        Interval.range Interval.perfectUnison
+                                            Interval.perfectOctave
                                     }
                                 |> List.map
                                     (Voicing.voicing

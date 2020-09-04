@@ -1,6 +1,7 @@
 module Test.Internal.Voicing.FourPart.Classical exposing (..)
 
 import Expect
+import Music.Chord as Chord
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
 import Music.Internal.InstrumentRanges as InstrumentRanges
@@ -32,14 +33,13 @@ all =
                 \_ ->
                     let
                         resultIsNonEmpty =
-                            Classical.rootPosition
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.rootPosition ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                                 |> List.map Test.Internal.Util.voicingToString
                                 |> List.isEmpty
                                 |> not
@@ -50,14 +50,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.rootPosition
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.rootPosition ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -66,14 +65,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.rootPosition
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.major
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.rootPosition ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.major
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -82,14 +80,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.rootPosition
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.rootPosition ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -100,14 +97,13 @@ all =
                 \_ ->
                     let
                         resultIsNonEmpty =
-                            Classical.firstInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.firstInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                                 |> List.map Test.Internal.Util.voicingToString
                                 |> List.isEmpty
                                 |> not
@@ -118,14 +114,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.firstInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.firstInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -134,14 +129,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.firstInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.major
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.firstInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.major
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -150,14 +144,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.firstInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.firstInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -166,14 +159,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.firstInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.firstInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -184,14 +176,13 @@ all =
                 \_ ->
                     let
                         resultIsNonEmpty =
-                            Classical.secondInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.secondInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                                 |> List.map Test.Internal.Util.voicingToString
                                 |> List.isEmpty
                                 |> not
@@ -202,14 +193,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.secondInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.secondInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -218,14 +208,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.secondInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.major
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.secondInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.major
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -234,14 +223,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.secondInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.secondInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -252,14 +240,13 @@ all =
                 \_ ->
                     let
                         resultIsNonEmpty =
-                            Classical.thirdInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.thirdInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                                 |> List.map Test.Internal.Util.voicingToString
                                 |> List.isEmpty
                                 |> not
@@ -270,14 +257,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.thirdInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.major
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.thirdInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.major
+                                )
                                 |> List.map Test.Internal.Util.voicingToString
                     in
                     Expect.equal results []
@@ -285,14 +271,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.thirdInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.thirdInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -301,14 +286,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.thirdInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.thirdInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -317,14 +301,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.thirdInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.thirdInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList
@@ -333,14 +316,13 @@ all =
                 \_ ->
                     let
                         results =
-                            Classical.thirdInversion
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.dominantSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ Classical.thirdInversion ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.dominantSeventh
+                                )
                     in
                     results
                         |> Test.Internal.Util.expectAllInList

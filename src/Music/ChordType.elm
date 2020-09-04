@@ -1,7 +1,9 @@
 module Music.ChordType exposing
     ( ChordType
     , containsInterval
-    , toIntervals, symbol
+    , symbol
+    , factors
+    , AvailableTensions, availableTensions
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminishedSeventh, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
@@ -26,7 +28,13 @@ module Music.ChordType exposing
 
 # Conversion
 
-@docs toIntervals, symbol
+@docs symbol
+
+
+# Chord factors
+
+@docs factors
+@docs AvailableTensions, availableTensions
 
 
 # Constructors
@@ -110,17 +118,17 @@ containsInterval interval theChordType =
     ChordType.includes interval theChordType
 
 
-{-| Get the intervals contained in a chord type:
+{-| Get the [chord factors](https://en.wikipedia.org/wiki/Factor_%28chord%29) contained in a chord type:
 
-    toIntervals minor
+    factors minor
         == [ Interval.perfectUnison
            , Interval.minorThird
            , Interval.perfectFifth
            ]
 
 -}
-toIntervals : ChordType -> List Interval.Interval
-toIntervals chordType =
+factors : ChordType -> List Interval.Interval
+factors chordType =
     ChordType.toIntervals chordType
 
 
@@ -551,3 +559,30 @@ withThirteenth chordType =
 withFlatThirteenth : ChordType -> ChordType
 withFlatThirteenth chordType =
     ChordType.withFlatThirteenth chordType
+
+
+{-| -}
+type alias AvailableTensions =
+    { root :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , third :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , fifth :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , seventh :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    }
+
+
+{-| -}
+availableTensions : ChordType -> Maybe AvailableTensions
+availableTensions chordType =
+    ChordType.availableTensions chordType

@@ -1,6 +1,7 @@
 module Test.Internal.Voicing.FourPart.Jazz exposing (..)
 
 import Expect
+import Music.Chord as Chord
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
 import Music.Internal.InstrumentRanges as InstrumentRanges
@@ -27,14 +28,13 @@ all =
                 \_ ->
                     let
                         result =
-                            JazzFourPart.close
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.minorSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ JazzFourPart.close ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.minorSeventh
+                                )
                                 |> List.length
                     in
                     Expect.equal 20 result
@@ -44,14 +44,13 @@ all =
                 \_ ->
                     let
                         result =
-                            JazzFourPart.drop2
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.majorSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ JazzFourPart.drop2 ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.majorSeventh
+                                )
                                 |> List.length
                     in
                     Expect.equal 56 result
@@ -61,14 +60,13 @@ all =
                 \_ ->
                     let
                         result =
-                            JazzFourPart.drop3
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.halfDiminished
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ JazzFourPart.drop3 ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.halfDiminished
+                                )
                                 |> List.length
                     in
                     Expect.equal 38 result
@@ -78,14 +76,13 @@ all =
                 \_ ->
                     let
                         result =
-                            JazzFourPart.drop2and4
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.minorSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ JazzFourPart.drop2and4 ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.minorSeventh
+                                )
                                 |> List.length
                     in
                     Expect.equal 29 result
@@ -95,14 +92,13 @@ all =
                 \_ ->
                     let
                         result =
-                            JazzFourPart.spread
-                                { ranges =
-                                    satbRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.minorSeventh
-                                }
+                            Chord.voiceFourParts
+                                satbRanges
+                                [ JazzFourPart.spread ]
+                                (Chord.chord
+                                    PitchClass.c
+                                    ChordType.minorSeventh
+                                )
                                 |> List.length
                     in
                     Expect.equal 17 result

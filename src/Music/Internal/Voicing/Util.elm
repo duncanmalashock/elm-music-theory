@@ -1,6 +1,5 @@
 module Music.Internal.Voicing.Util exposing (..)
 
-import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
 import Music.Internal.Interval as Interval
 
@@ -28,8 +27,8 @@ sevenths =
     ]
 
 
-getFactor : List Interval.Interval -> Chord.Chord -> Maybe Interval.Interval
-getFactor factorMembers chord =
-    ChordType.toIntervals (Chord.chordType chord)
+getFactor : List Interval.Interval -> ChordType.ChordType -> Maybe Interval.Interval
+getFactor factorMembers chordType =
+    ChordType.toIntervals chordType
         |> List.filter (\i -> List.member i factorMembers)
         |> List.head

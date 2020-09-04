@@ -20,92 +20,95 @@ testRanges =
     }
 
 
-all : Test
-all =
-    describe "all"
-        [ describe "close"
-            [ test "should generate voicings of the chord" <|
-                \_ ->
-                    let
-                        result =
-                            JazzFivePart.close
-                                { ranges =
-                                    testRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.minorSeventh
-                                }
-                                |> List.length
-                    in
-                    Expect.equal 36 result
-            ]
-        , describe "drop2"
-            [ test "should generate voicings of the chord" <|
-                \_ ->
-                    let
-                        result =
-                            JazzFivePart.drop2
-                                { ranges =
-                                    testRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.majorSeventh
-                                }
-                                |> List.length
-                    in
-                    Expect.equal 88 result
-            ]
-        , describe "drop3"
-            [ test "should generate voicings of the chord" <|
-                \_ ->
-                    let
-                        result =
-                            JazzFivePart.drop3
-                                { ranges =
-                                    testRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.halfDiminished
-                                }
-                                |> List.length
-                    in
-                    Expect.equal 52 result
-            ]
-        , describe "drop2and4"
-            [ test "should generate voicings of the chord" <|
-                \_ ->
-                    let
-                        result =
-                            JazzFivePart.drop2and4
-                                { ranges =
-                                    testRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.minorSeventh
-                                }
-                                |> List.length
-                    in
-                    Expect.equal 30 result
-            ]
-        , describe "spread"
-            [ test "should generate voicings of the chord" <|
-                \_ ->
-                    let
-                        result =
-                            JazzFivePart.spread
-                                { ranges =
-                                    testRanges
-                                , chord =
-                                    Chord.chord
-                                        PitchClass.c
-                                        ChordType.minorSeventh
-                                }
-                                |> List.length
-                    in
-                    Expect.equal 19 result
-            ]
-        ]
+
+--
+--all : Test
+--all =
+--
+--        describe "all"
+--            [ describe "close"
+--                [ test "should generate voicings of the chord" <|
+--                    \_ ->
+--                        let
+--                            result =
+--                                JazzFivePart.close
+--                                    { ranges =
+--                                        testRanges
+--                                    , chord =
+--                                        Chord.chord
+--                                            PitchClass.c
+--                                            ChordType.minorSeventh
+--                                    }
+--                                    |> List.length
+--                        in
+--                        Expect.equal 36 result
+--                ]
+--            , describe "drop2"
+--                [ test "should generate voicings of the chord" <|
+--                    \_ ->
+--                        let
+--                            result =
+--                                JazzFivePart.drop2
+--                                    { ranges =
+--                                        testRanges
+--                                    , chord =
+--                                        Chord.chord
+--                                            PitchClass.c
+--                                            ChordType.majorSeventh
+--                                    }
+--                                    |> List.length
+--                        in
+--                        Expect.equal 88 result
+--                ]
+--            , describe "drop3"
+--                [ test "should generate voicings of the chord" <|
+--                    \_ ->
+--                        let
+--                            result =
+--                                JazzFivePart.drop3
+--                                    { ranges =
+--                                        testRanges
+--                                    , chord =
+--                                        Chord.chord
+--                                            PitchClass.c
+--                                            ChordType.halfDiminished
+--                                    }
+--                                    |> List.length
+--                        in
+--                        Expect.equal 52 result
+--                ]
+--            , describe "drop2and4"
+--                [ test "should generate voicings of the chord" <|
+--                    \_ ->
+--                        let
+--                            result =
+--                                JazzFivePart.drop2and4
+--                                    { ranges =
+--                                        testRanges
+--                                    , chord =
+--                                        Chord.chord
+--                                            PitchClass.c
+--                                            ChordType.minorSeventh
+--                                    }
+--                                    |> List.length
+--                        in
+--                        Expect.equal 30 result
+--                ]
+--            , describe "spread"
+--                [ test "should generate voicings of the chord" <|
+--                    \_ ->
+--                        let
+--                            result =
+--                                JazzFivePart.spread
+--                                    { ranges =
+--                                        testRanges
+--                                    , chord =
+--                                        Chord.chord
+--                                            PitchClass.c
+--                                            ChordType.minorSeventh
+--                                    }
+--                                    |> List.length
+--                        in
+--                        Expect.equal 19 result
+--                ]
+--            ]

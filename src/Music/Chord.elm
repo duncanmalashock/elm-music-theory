@@ -74,8 +74,10 @@ You can then refine further, using helper functions in the appropriate modules t
 
 -}
 
+import List.Extra
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
+import Music.Internal.Octave as Octave
 import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Voicing as Voicing
 import Music.Internal.Voicing.FivePart as FivePart
@@ -98,12 +100,16 @@ voiceFourParts :
     -> List FourPart.VoicingMethod
     -> Chord
     -> List FourPart.Voicing
-voiceFourParts voiceRanges techniques chord =
-    Voicing.config
-        { ranges = voiceRanges
-        , techniques = techniques
-        }
-        |> Voicing.execute FourPart.allVoices chord
+voiceFourParts voiceRanges methods chord =
+    List.concatMap
+        (\oct ->
+            List.map
+                (\class -> Voicing.voicing chord oct class)
+                (List.concatMap (FourPart.voicingClassesFromMethod (chordType chord)) methods)
+        )
+        Octave.allValid
+        |> List.filter (Voicing.withInstrumentRanges FourPart.allVoices FourPart.allRanges voiceRanges)
+        |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
 
 
 {-| -}
@@ -117,12 +123,17 @@ voiceFiveParts :
     -> List FivePart.VoicingMethod
     -> Chord
     -> List FivePart.Voicing
-voiceFiveParts voiceRanges techniques chord =
-    Voicing.config
-        { ranges = voiceRanges
-        , techniques = techniques
-        }
-        |> Voicing.execute FivePart.allVoices chord
+voiceFiveParts voiceRanges methods chord =
+    List.concatMap
+        (\oct ->
+            List.map
+                (\class -> Voicing.voicing chord oct class)
+                -- TODO: fix this
+                []
+        )
+        Octave.allValid
+        |> List.filter (Voicing.withInstrumentRanges FivePart.allVoices FivePart.allRanges voiceRanges)
+        |> List.Extra.uniqueBy (Voicing.toString FivePart.allVoices)
 
 
 {-| Get a chord's chord type:

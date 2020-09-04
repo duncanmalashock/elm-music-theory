@@ -1,8 +1,10 @@
 module Music.Internal.ChordType exposing
-    ( ChordType
+    ( AvailableTensions
+    , ChordType
     , all
     , augmented
     , augmentedDominantSeventh
+    , availableTensions
     , classify
     , custom
     , diminished
@@ -1128,3 +1130,439 @@ add factorToAdd (ChordType factorList) =
     factorToAdd
         :: factorList
         |> ChordType
+
+
+
+-- Jazz analysis
+
+
+type VoiceCategory
+    = Root
+    | Third
+    | Fifth
+    | Seventh
+
+
+type JazzChordQuality
+    = Major6
+    | Major7
+    | Minor6
+    | Minor7
+    | HalfDiminished
+    | Dominant7
+    | Dominant7Sus
+    | Diminished7
+
+
+type alias AvailableTensions =
+    { root :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , third :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , fifth :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    , seventh :
+        { true : Interval.Interval
+        , substitutes : List Interval.Interval
+        }
+    }
+
+
+availableTensions : ChordType -> Maybe AvailableTensions
+availableTensions theChordType =
+    let
+        maybeQuality =
+            determineJazzChordQuality theChordType
+
+        maybeRoot =
+            Maybe.andThen (chordToneForClass theChordType Root) maybeQuality
+
+        maybeThird =
+            Maybe.andThen (chordToneForClass theChordType Third) maybeQuality
+
+        maybeFifth =
+            Maybe.andThen (chordToneForClass theChordType Fifth) maybeQuality
+
+        maybeSeventh =
+            Maybe.andThen (chordToneForClass theChordType Seventh) maybeQuality
+
+        chordToneWithSubstitutes :
+            VoiceCategory
+            -> Interval.Interval
+            -> JazzChordQuality
+            ->
+                { true : Interval.Interval
+                , substitutes : List Interval.Interval
+                }
+        chordToneWithSubstitutes voiceCategory chordTone chordQuality =
+            { true = chordTone
+            , substitutes =
+                availableTensionsForChordQuality theChordType voiceCategory chordQuality
+                    |> List.filter ((==) chordTone >> not)
+            }
+
+        toAvailables :
+            JazzChordQuality
+            -> Interval.Interval
+            -> Interval.Interval
+            -> Interval.Interval
+            -> Interval.Interval
+            -> AvailableTensions
+        toAvailables chordQuality root third fifth seventh =
+            { root = chordToneWithSubstitutes Root root chordQuality
+            , third = chordToneWithSubstitutes Third third chordQuality
+            , fifth = chordToneWithSubstitutes Fifth fifth chordQuality
+            , seventh = chordToneWithSubstitutes Seventh seventh chordQuality
+            }
+    in
+    case maybeQuality of
+        Nothing ->
+            Nothing
+
+        Just quality ->
+            Maybe.map4
+                (toAvailables quality)
+                maybeRoot
+                maybeThird
+                maybeFifth
+                maybeSeventh
+
+
+availableTensionsForChordQuality :
+    ChordType
+    -> VoiceCategory
+    -> JazzChordQuality
+    -> List Interval.Interval
+availableTensionsForChordQuality theChordType voiceCategory jazzChordQuality =
+    let
+        chordIntervals =
+            toIntervals theChordType
+
+        chordTypeIncludesAll intervals =
+            List.map
+                (\interval -> List.member interval chordIntervals)
+                intervals
+                |> List.all identity
+    in
+    case jazzChordQuality of
+        Major6 ->
+            case voiceCategory of
+                Root ->
+                    [ Interval.perfectUnison
+                    , Interval.majorNinth
+                    ]
+
+                Third ->
+                    [ Interval.majorThird
+                    ]
+
+                Fifth ->
+                    [ Interval.perfectFifth
+                    , Interval.augmentedEleventh
+                    ]
+
+                Seventh ->
+                    [ Interval.majorSixth
+                    , Interval.majorSeventh
+                    ]
+
+        Major7 ->
+            case voiceCategory of
+                Root ->
+                    [ Interval.perfectUnison
+                    , Interval.majorNinth
+                    ]
+
+                Third ->
+                    [ Interval.majorThird
+                    ]
+
+                Fifth ->
+                    [ Interval.perfectFifth
+                    , Interval.augmentedEleventh
+                    ]
+
+                Seventh ->
+                    [ Interval.majorSeventh
+                    , Interval.majorSixth
+                    ]
+
+        Minor6 ->
+            case voiceCategory of
+                Root ->
+                    [ Interval.perfectUnison
+                    , Interval.majorNinth
+                    ]
+
+                Third ->
+                    [ Interval.minorThird
+                    ]
+
+                Fifth ->
+                    [ Interval.perfectFifth
+                    , Interval.perfectEleventh
+                    ]
+
+                Seventh ->
+                    [ Interval.majorSixth
+                    ]
+
+        Minor7 ->
+            case voiceCategory of
+                Root ->
+                    [ Interval.perfectUnison
+                    , Interval.majorNinth
+                    ]
+
+                Third ->
+                    [ Interval.minorThird
+                    ]
+
+                Fifth ->
+                    [ Interval.perfectFifth
+                    , Interval.perfectEleventh
+                    ]
+
+                Seventh ->
+                    [ Interval.minorSeventh
+                    ]
+
+        HalfDiminished ->
+            case voiceCategory of
+                Root ->
+                    [ Interval.perfectUnison
+                    , Interval.majorNinth
+                    , Interval.perfectEleventh
+                    ]
+
+                Third ->
+                    [ Interval.minorThird
+                    ]
+
+                Fifth ->
+                    [ Interval.diminishedFifth
+                    , Interval.minorThirteenth
+                    ]
+
+                Seventh ->
+                    [ Interval.minorSeventh
+                    ]
+
+        Dominant7 ->
+            case voiceCategory of
+                Root ->
+                    Interval.perfectUnison
+                        :: (if chordTypeIncludesAll [ Interval.majorNinth ] then
+                                [ Interval.majorNinth
+                                ]
+
+                            else if chordTypeIncludesAll [ Interval.minorNinth ] then
+                                [ Interval.minorNinth
+                                , Interval.augmentedNinth
+                                ]
+
+                            else if chordTypeIncludesAll [ Interval.augmentedNinth ] then
+                                [ Interval.augmentedNinth
+                                , Interval.minorNinth
+                                ]
+
+                            else
+                                [ Interval.majorNinth ]
+                           )
+
+                Third ->
+                    [ Interval.majorThird
+                    , Interval.perfectFourth
+                    ]
+
+                Fifth ->
+                    if chordTypeIncludesAll [ Interval.augmentedEleventh, Interval.minorThirteenth ] then
+                        [ Interval.augmentedEleventh
+                        , Interval.minorThirteenth
+                        ]
+
+                    else if chordTypeIncludesAll [ Interval.augmentedEleventh, Interval.majorThirteenth ] then
+                        [ Interval.augmentedEleventh
+                        , Interval.majorThirteenth
+                        ]
+
+                    else if chordTypeIncludesAll [ Interval.augmentedEleventh ] then
+                        [ Interval.augmentedEleventh
+                        , Interval.minorThirteenth
+                        ]
+
+                    else if chordTypeIncludesAll [ Interval.minorThirteenth ] then
+                        [ Interval.minorThirteenth
+                        , Interval.augmentedEleventh
+                        ]
+
+                    else
+                        [ Interval.perfectFifth
+                        , Interval.majorThirteenth
+                        ]
+
+                Seventh ->
+                    [ Interval.minorSeventh
+                    ]
+
+        Dominant7Sus ->
+            case voiceCategory of
+                Root ->
+                    [ Interval.perfectUnison
+                    , Interval.majorNinth
+                    , Interval.minorNinth
+                    , Interval.augmentedNinth
+                    ]
+
+                Third ->
+                    [ Interval.perfectFourth
+                    , Interval.majorThird
+                    ]
+
+                Fifth ->
+                    [ Interval.perfectFifth
+                    , Interval.augmentedEleventh
+                    , Interval.majorThirteenth
+                    , Interval.minorThirteenth
+                    ]
+
+                Seventh ->
+                    [ Interval.minorSeventh
+                    ]
+
+        Diminished7 ->
+            case voiceCategory of
+                Root ->
+                    [ Interval.perfectUnison
+                    , Interval.majorNinth
+                    ]
+
+                Third ->
+                    [ Interval.minorThird
+                    , Interval.perfectFourth
+                    ]
+
+                Fifth ->
+                    [ Interval.diminishedFifth
+                    , Interval.minorThirteenth
+                    ]
+
+                Seventh ->
+                    [ Interval.diminishedSeventh
+                    , Interval.diminishedOctave
+                    ]
+
+
+determineJazzChordQuality : ChordType -> Maybe JazzChordQuality
+determineJazzChordQuality theChordType =
+    let
+        intervals =
+            toIntervals theChordType
+
+        containsAll intervalsToCheck =
+            List.map
+                (\interval ->
+                    List.member interval intervals
+                )
+                intervalsToCheck
+                |> List.all identity
+    in
+    if containsAll (minimumIntervalsForJazzChordQuality Major6) then
+        Just Major6
+
+    else if containsAll (minimumIntervalsForJazzChordQuality Major7) then
+        Just Major7
+
+    else if containsAll (minimumIntervalsForJazzChordQuality Minor6) then
+        Just Minor6
+
+    else if containsAll (minimumIntervalsForJazzChordQuality Minor7) then
+        Just Minor7
+
+    else if containsAll (minimumIntervalsForJazzChordQuality HalfDiminished) then
+        Just HalfDiminished
+
+    else if containsAll (minimumIntervalsForJazzChordQuality Dominant7) then
+        Just Dominant7
+
+    else if containsAll (minimumIntervalsForJazzChordQuality Dominant7Sus) then
+        Just Dominant7Sus
+
+    else if containsAll (minimumIntervalsForJazzChordQuality Diminished7) then
+        Just Diminished7
+
+    else
+        Nothing
+
+
+minimumIntervalsForJazzChordQuality : JazzChordQuality -> List Interval.Interval
+minimumIntervalsForJazzChordQuality jazzChordQuality =
+    case jazzChordQuality of
+        Major6 ->
+            [ Interval.majorThird
+            , Interval.perfectFifth
+            , Interval.majorSixth
+            ]
+
+        Major7 ->
+            [ Interval.majorThird
+            , Interval.perfectFifth
+            , Interval.majorSeventh
+            ]
+
+        Minor6 ->
+            [ Interval.minorThird
+            , Interval.perfectFifth
+            , Interval.majorSixth
+            ]
+
+        Minor7 ->
+            [ Interval.minorThird
+            , Interval.perfectFifth
+            , Interval.minorSeventh
+            ]
+
+        HalfDiminished ->
+            [ Interval.minorThird
+            , Interval.diminishedFifth
+            , Interval.minorSeventh
+            ]
+
+        Dominant7 ->
+            [ Interval.majorThird
+            , Interval.minorSeventh
+            ]
+
+        Dominant7Sus ->
+            [ Interval.perfectFourth
+            , Interval.minorSeventh
+            ]
+
+        Diminished7 ->
+            [ Interval.minorThird
+            , Interval.diminishedFifth
+            , Interval.diminishedSeventh
+            ]
+
+
+chordToneForClass :
+    ChordType
+    -> VoiceCategory
+    -> JazzChordQuality
+    -> Maybe Interval.Interval
+chordToneForClass theChordType voiceCategory jazzChordQuality =
+    let
+        intervals =
+            toIntervals theChordType
+
+        takeFirst available =
+            List.filter (\item -> List.member item intervals) available
+                |> List.head
+    in
+    takeFirst (availableTensionsForChordQuality theChordType voiceCategory jazzChordQuality)

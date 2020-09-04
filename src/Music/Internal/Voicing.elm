@@ -1,7 +1,5 @@
 module Music.Internal.Voicing exposing
-    ( Config
-    , TechniqueInput
-    , Voicing
+    ( Voicing
     , chord
     , commonToneCount
     , commonTones
@@ -10,12 +8,10 @@ module Music.Internal.Voicing exposing
     , compareByParallelOctave
     , compareByTotalSemitoneDistance
     , compareByVoiceSemitoneDistance
-    , config
     , containsParallelFifths
     , containsParallelOctaves
     , containsPitch
     , containsPitchInVoice
-    , execute
     , range
     , root
     , semitoneDistance
@@ -25,14 +21,9 @@ module Music.Internal.Voicing exposing
     , violatesLowIntervalLimits
     , voicing
     , voicingClass
-    , withFilter
     , withInstrumentRanges
-    , withMaximumRange
-    , withMinimumRange
-    , withSort
     )
 
-import List.Extra
 import Music.Internal.Chord as Chord
 import Music.Internal.Interval as Interval
 import Music.Internal.Octave as Octave
@@ -80,87 +71,6 @@ range { getTopVoice, getBottomVoice } theVoicing =
 -- Generating voicings
 
 
-type alias ConfigInput voicingClass ranges =
-    { ranges : ranges
-    , techniques : List (TechniqueInput ranges -> List (Voicing voicingClass))
-    }
-
-
-type Config voicingClass ranges
-    = Config
-        { ranges : ranges
-        , techniques : List (TechniqueInput ranges -> List (Voicing voicingClass))
-        , filter : List (Voicing voicingClass -> Bool)
-        , sort : Voicing voicingClass -> Voicing voicingClass -> Order
-        }
-
-
-type alias TechniqueInput ranges =
-    { ranges : ranges
-    , chord : Chord.Chord
-    }
-
-
-withMinimumRange :
-    Interval.Interval
-    ->
-        { getTopVoice : Voicing voicingClass -> Pitch.Pitch
-        , getBottomVoice : Voicing voicingClass -> Pitch.Pitch
-        }
-    -> Config voicingClass ranges
-    -> Config voicingClass ranges
-withMinimumRange minInterval { getTopVoice, getBottomVoice } (Config theConfig) =
-    let
-        hasRangeGreaterThanOrEqualTo theMin theVoicing =
-            let
-                theRange =
-                    range
-                        { getTopVoice = getTopVoice
-                        , getBottomVoice = getBottomVoice
-                        }
-                        theVoicing
-            in
-            Interval.isGreaterThanOrEqualTo theMin theRange
-    in
-    { theConfig
-        | filter =
-            theConfig.filter
-                ++ [ hasRangeGreaterThanOrEqualTo minInterval
-                   ]
-    }
-        |> Config
-
-
-withMaximumRange :
-    Interval.Interval
-    ->
-        { getTopVoice : Voicing voicingClass -> Pitch.Pitch
-        , getBottomVoice : Voicing voicingClass -> Pitch.Pitch
-        }
-    -> Config voicingClass ranges
-    -> Config voicingClass ranges
-withMaximumRange maxInterval { getTopVoice, getBottomVoice } (Config theConfig) =
-    let
-        hasRangeLessThanOrEqualTo theMin theVoicing =
-            let
-                theRange =
-                    range
-                        { getTopVoice = getTopVoice
-                        , getBottomVoice = getBottomVoice
-                        }
-                        theVoicing
-            in
-            Interval.isLessThanOrEqualTo theMin theRange
-    in
-    { theConfig
-        | filter =
-            theConfig.filter
-                ++ [ hasRangeLessThanOrEqualTo maxInterval
-                   ]
-    }
-        |> Config
-
-
 withInstrumentRanges :
     List (Voicing voicingClass -> Pitch.Pitch)
     -> List (ranges -> Pitch.Range)
@@ -175,55 +85,6 @@ withInstrumentRanges allVoices allRanges ranges theVoicing =
         (List.map (\fn -> fn theVoicing) allVoices)
         (List.map (\fn -> fn ranges) allRanges)
         |> List.all identity
-
-
-config : ConfigInput voicingClass ranges -> Config voicingClass ranges
-config { ranges, techniques } =
-    Config
-        { ranges = ranges
-        , techniques = techniques
-        , filter = []
-        , sort = \a b -> EQ
-        }
-
-
-withFilter : (Voicing voicingClass -> Bool) -> Config voicingClass ranges -> Config voicingClass ranges
-withFilter filterFn (Config theConfig) =
-    Config
-        { theConfig
-            | filter = theConfig.filter ++ [ filterFn ]
-        }
-
-
-withSort :
-    (Voicing voicingClass
-     -> Voicing voicingClass
-     -> Order
-    )
-    -> Config voicingClass ranges
-    -> Config voicingClass ranges
-withSort sortFn (Config theConfig) =
-    Config
-        { theConfig
-            | sort = sortFn
-        }
-
-
-execute : List (Voicing voicingClass -> Pitch.Pitch) -> Chord.Chord -> Config voicingClass ranges -> List (Voicing voicingClass)
-execute allVoices theChord (Config theConfig) =
-    theConfig.techniques
-        |> List.concatMap
-            (\technique ->
-                technique
-                    { ranges = theConfig.ranges
-                    , chord = theChord
-                    }
-            )
-        |> (\candidates ->
-                List.foldl List.filter candidates theConfig.filter
-           )
-        |> List.Extra.uniqueBy (toString allVoices)
-        |> List.sortWith theConfig.sort
 
 
 

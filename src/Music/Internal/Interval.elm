@@ -3,6 +3,7 @@ module Music.Internal.Interval exposing
     , Interval
     , IntervalNumber(..)
     , IntervalQuality(..)
+    , Range
     , add
     , addOctave
     , addOffset
@@ -48,6 +49,8 @@ module Music.Internal.Interval exposing
     , majorTenth
     , majorThird
     , majorThirteenth
+    , max
+    , min
     , minorNinth
     , minorSecond
     , minorSeventh
@@ -64,6 +67,7 @@ module Music.Internal.Interval exposing
     , perfectTwelfth
     , perfectUnison
     , quality
+    , range
     , reverse
     , semitones
     , shortName
@@ -102,6 +106,29 @@ type Interval
 type Direction
     = Up
     | Down
+
+
+type Range
+    = Range Interval Interval
+
+
+range : Interval -> Interval -> Range
+range a b =
+    if semitones a < semitones b then
+        Range a b
+
+    else
+        Range b a
+
+
+min : Range -> Interval
+min (Range rangeMin rangeMax) =
+    rangeMin
+
+
+max : Range -> Interval
+max (Range rangeMin rangeMax) =
+    rangeMax
 
 
 interval : Direction -> IntervalQuality -> IntervalNumber -> Interval
