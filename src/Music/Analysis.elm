@@ -96,7 +96,7 @@ triadsByDefault =
 
 {-| Use seventh chords when converting, if no chord type is specified:
 
-    toChord triadsByDefault Key.f iv == Chord.majorSeventh PitchClass.bFlat
+    toChord seventhsByDefault Key.f iv == Chord.majorSeventh PitchClass.bFlat
 
 -}
 seventhsByDefault : Analysis.DefaultChordTypes
