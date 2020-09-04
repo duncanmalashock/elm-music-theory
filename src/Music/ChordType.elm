@@ -2,6 +2,7 @@ module Music.ChordType exposing
     ( ChordType
     , containsInterval
     , all
+    , alteredDominantChords, dominantChords, minorChords, majorChords, sixthAndSeventhChords, triads
     , symbol
     , factors
     , AvailableTensions, availableTensions
@@ -27,9 +28,10 @@ module Music.ChordType exposing
 @docs containsInterval
 
 
-# Groups of chord types
+# Groups
 
 @docs all
+@docs alteredDominantChords, dominantChords, minorChords, majorChords, sixthAndSeventhChords, triads
 
 
 # Conversion
@@ -145,6 +147,120 @@ all =
     , dominantEleventh
     , dominantThirteenth
     , dominantSeventhFlatNine
+    , dominantSeventhSharpNine
+    , dominantSeventhFlatNineSharpNine
+    , dominantSeventhFlatNineSharpEleven
+    , dominantSeventhSharpNineSharpEleven
+    , dominantSeventhSharpEleven
+    , dominantSeventhFlatNineFlatThirteen
+    , dominantSeventhSharpNineFlatThirteen
+    , dominantSeventhSharpElevenFlatThirteen
+    , dominantSeventhFlatThirteen
+    , dominantNinthSharpEleven
+    , dominantNinthFlatThirteen
+    , dominantNinthSharpElevenFlatThirteen
+    , dominantThirteenthFlatNine
+    , dominantThirteenthSharpNine
+    , dominantThirteenthFlatNineSharpNine
+    , dominantThirteenthFlatNineSharpEleven
+    , dominantThirteenthSharpNineSharpEleven
+    , dominantThirteenthSharpEleven
+    ]
+
+
+{-| -}
+triads : List ChordType
+triads =
+    [ major
+    , minor
+    , augmented
+    , diminished
+    , sus2
+    , sus4
+    ]
+
+
+{-| -}
+sixthAndSeventhChords : List ChordType
+sixthAndSeventhChords =
+    [ majorSix
+    , minorSix
+    , majorSeventh
+    , minorSeventh
+    , dominantSeventh
+    , diminishedSeventh
+    , halfDiminishedSeventh
+    , augmentedDominantSeventh
+    , dominantSeventhSus4
+    , minorMajorSeventh
+    ]
+
+
+{-| -}
+majorChords : List ChordType
+majorChords =
+    [ major
+    , majorSix
+    , majorSixNine
+    , majorAddNine
+    , minorAddNine
+    , majorSeventh
+    , majorSeventhSharpEleven
+    , majorNinth
+    ]
+
+
+{-| -}
+minorChords : List ChordType
+minorChords =
+    [ minor
+    , minorSix
+    , minorSixNine
+    , minorAddNine
+    , minorSeventh
+    , minorMajorSeventh
+    , minorNinth
+    , minorEleventh
+    ]
+
+
+{-| -}
+dominantChords : List ChordType
+dominantChords =
+    [ major
+    , augmented
+    , dominantSeventh
+    , augmentedDominantSeventh
+    , dominantSeventhSus4
+    , dominantNinth
+    , dominantEleventh
+    , dominantThirteenth
+    , dominantSeventhFlatNine
+    , dominantSeventhSharpNine
+    , dominantSeventhFlatNineSharpNine
+    , dominantSeventhFlatNineSharpEleven
+    , dominantSeventhSharpNineSharpEleven
+    , dominantSeventhSharpEleven
+    , dominantSeventhFlatNineFlatThirteen
+    , dominantSeventhSharpNineFlatThirteen
+    , dominantSeventhSharpElevenFlatThirteen
+    , dominantSeventhFlatThirteen
+    , dominantNinthSharpEleven
+    , dominantNinthFlatThirteen
+    , dominantNinthSharpElevenFlatThirteen
+    , dominantThirteenthFlatNine
+    , dominantThirteenthSharpNine
+    , dominantThirteenthFlatNineSharpNine
+    , dominantThirteenthFlatNineSharpEleven
+    , dominantThirteenthSharpNineSharpEleven
+    , dominantThirteenthSharpEleven
+    ]
+
+
+{-| -}
+alteredDominantChords : List ChordType
+alteredDominantChords =
+    [ dominantSeventhFlatNine
     , dominantSeventhSharpNine
     , dominantSeventhFlatNineSharpNine
     , dominantSeventhFlatNineSharpEleven
