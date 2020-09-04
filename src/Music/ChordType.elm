@@ -1,6 +1,7 @@
 module Music.ChordType exposing
     ( ChordType
     , containsInterval
+    , all
     , symbol
     , factors
     , AvailableTensions, availableTensions
@@ -24,6 +25,11 @@ module Music.ChordType exposing
 # Helpers
 
 @docs containsInterval
+
+
+# Groups of chord types
+
+@docs all
 
 
 # Conversion
@@ -106,6 +112,58 @@ import Music.Internal.Interval as Interval
 {-| -}
 type alias ChordType =
     ChordType.ChordType
+
+
+{-| -}
+all : List ChordType
+all =
+    [ major
+    , minor
+    , augmented
+    , diminished
+    , sus2
+    , sus4
+    , majorSix
+    , majorSixNine
+    , minorSix
+    , minorSixNine
+    , majorAddNine
+    , minorAddNine
+    , majorSeventh
+    , majorSeventhSharpEleven
+    , minorSeventh
+    , dominantSeventh
+    , diminishedSeventh
+    , halfDiminishedSeventh
+    , augmentedDominantSeventh
+    , dominantSeventhSus4
+    , minorMajorSeventh
+    , majorNinth
+    , minorNinth
+    , dominantNinth
+    , minorEleventh
+    , dominantEleventh
+    , dominantThirteenth
+    , dominantSeventhFlatNine
+    , dominantSeventhSharpNine
+    , dominantSeventhFlatNineSharpNine
+    , dominantSeventhFlatNineSharpEleven
+    , dominantSeventhSharpNineSharpEleven
+    , dominantSeventhSharpEleven
+    , dominantSeventhFlatNineFlatThirteen
+    , dominantSeventhSharpNineFlatThirteen
+    , dominantSeventhSharpElevenFlatThirteen
+    , dominantSeventhFlatThirteen
+    , dominantNinthSharpEleven
+    , dominantNinthFlatThirteen
+    , dominantNinthSharpElevenFlatThirteen
+    , dominantThirteenthFlatNine
+    , dominantThirteenthSharpNine
+    , dominantThirteenthFlatNineSharpNine
+    , dominantThirteenthFlatNineSharpEleven
+    , dominantThirteenthSharpNineSharpEleven
+    , dominantThirteenthSharpEleven
+    ]
 
 
 {-| Determine whether a chord type contains a given interval:
