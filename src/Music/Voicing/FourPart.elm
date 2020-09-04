@@ -1,6 +1,7 @@
 module Music.Voicing.FourPart exposing
     ( Voicing
     , chord, span
+    , voicing
     , voiceOne, voiceTwo, voiceThree, voiceFour
     , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
     , sortWeighted
@@ -25,6 +26,11 @@ module Music.Voicing.FourPart exposing
 # Helpers
 
 @docs chord, span
+
+
+# Constructor
+
+@docs voicing
 
 
 # Voices
@@ -106,6 +112,7 @@ import Music.Internal.Voicing.FourPart as FourPart
 import Music.Internal.Voicing.FourPart.Classical as FourPartClassical
 import Music.Internal.Voicing.FourPart.Jazz as FourPartJazz
 import Music.Internal.VoicingClass as VoicingClass
+import Music.PitchClass as PitchClass
 
 
 {-| -}
@@ -262,8 +269,8 @@ type alias Pitches =
 
 -}
 chord : Voicing -> Chord.Chord
-chord voicing =
-    Voicing.chord voicing
+chord theVoicing =
+    Voicing.chord theVoicing
 
 
 {-| Get the interval from the lowest to the highest pitch in the voicing:
@@ -272,12 +279,12 @@ chord voicing =
 
 -}
 span : Voicing -> Interval.Interval
-span voicing =
+span theVoicing =
     Voicing.range
         { getTopVoice = FourPart.getVoiceOne
         , getBottomVoice = FourPart.getVoiceFour
         }
-        voicing
+        theVoicing
 
 
 {-| Get the first (highest) pitch of the voicing:
@@ -286,8 +293,8 @@ span voicing =
 
 -}
 voiceOne : Voicing -> Pitch.Pitch
-voiceOne voicing =
-    FourPart.getVoiceOne voicing
+voiceOne theVoicing =
+    FourPart.getVoiceOne theVoicing
 
 
 {-| Get the second pitch of the voicing:
@@ -296,8 +303,8 @@ voiceOne voicing =
 
 -}
 voiceTwo : Voicing -> Pitch.Pitch
-voiceTwo voicing =
-    FourPart.getVoiceTwo voicing
+voiceTwo theVoicing =
+    FourPart.getVoiceTwo theVoicing
 
 
 {-| Get the third pitch of the voicing:
@@ -306,8 +313,8 @@ voiceTwo voicing =
 
 -}
 voiceThree : Voicing -> Pitch.Pitch
-voiceThree voicing =
-    FourPart.getVoiceThree voicing
+voiceThree theVoicing =
+    FourPart.getVoiceThree theVoicing
 
 
 {-| Get the fourth (lowest) pitch of the voicing:
@@ -316,16 +323,23 @@ voiceThree voicing =
 
 -}
 voiceFour : Voicing -> Pitch.Pitch
-voiceFour voicing =
-    FourPart.getVoiceFour voicing
+voiceFour theVoicing =
+    FourPart.getVoiceFour theVoicing
 
 
 {-| -}
 sortWeighted :
     List ( Voicing -> Voicing -> Order, Float )
-    -> (Voicing -> Voicing -> Order)
-sortWeighted weightedSortFns =
-    FourPart.sortWeighted weightedSortFns
+    -> List Voicing
+    -> List Voicing
+sortWeighted weightedSortFns listToSort =
+    FourPart.sortWeighted weightedSortFns listToSort
+
+
+{-| -}
+voicing : Pitches -> Chord.Chord -> Result (List PitchClass.PitchClass) Voicing
+voicing pitches theChord =
+    FourPart.voicing pitches theChord
 
 
 {-| Find out whether a voicing has a specific pitch in the first voice:
@@ -334,8 +348,8 @@ sortWeighted weightedSortFns =
 
 -}
 containsPitchInVoiceOne : Pitch.Pitch -> Voicing -> Bool
-containsPitchInVoiceOne pitch voicing =
-    Voicing.containsPitchInVoice pitch FourPart.getVoiceOne voicing
+containsPitchInVoiceOne pitch theVoicing =
+    Voicing.containsPitchInVoice pitch FourPart.getVoiceOne theVoicing
 
 
 {-| Find out whether a voicing has a specific pitch in the second voice:
@@ -344,8 +358,8 @@ containsPitchInVoiceOne pitch voicing =
 
 -}
 containsPitchInVoiceTwo : Pitch.Pitch -> Voicing -> Bool
-containsPitchInVoiceTwo pitch voicing =
-    Voicing.containsPitchInVoice pitch FourPart.getVoiceTwo voicing
+containsPitchInVoiceTwo pitch theVoicing =
+    Voicing.containsPitchInVoice pitch FourPart.getVoiceTwo theVoicing
 
 
 {-| Find out whether a voicing has a specific pitch in the third voice:
@@ -354,8 +368,8 @@ containsPitchInVoiceTwo pitch voicing =
 
 -}
 containsPitchInVoiceThree : Pitch.Pitch -> Voicing -> Bool
-containsPitchInVoiceThree pitch voicing =
-    Voicing.containsPitchInVoice pitch FourPart.getVoiceThree voicing
+containsPitchInVoiceThree pitch theVoicing =
+    Voicing.containsPitchInVoice pitch FourPart.getVoiceThree theVoicing
 
 
 {-| Find out whether a voicing has a specific pitch in the fourth voice:
@@ -364,8 +378,8 @@ containsPitchInVoiceThree pitch voicing =
 
 -}
 containsPitchInVoiceFour : Pitch.Pitch -> Voicing -> Bool
-containsPitchInVoiceFour pitch voicing =
-    Voicing.containsPitchInVoice pitch FourPart.getVoiceFour voicing
+containsPitchInVoiceFour pitch theVoicing =
+    Voicing.containsPitchInVoice pitch FourPart.getVoiceFour theVoicing
 
 
 {-| Get all pitches in common between two voicings:
@@ -454,8 +468,8 @@ totalSemitoneDistancesOrder from =
 
 -}
 toString : Voicing -> String
-toString voicing =
-    voicing
+toString theVoicing =
+    theVoicing
         |> toPitchList
         |> List.map Pitch.toString
         |> String.join ", "
@@ -472,8 +486,8 @@ toString voicing =
 
 -}
 toPitches : Voicing -> Pitches
-toPitches voicing =
-    FourPart.toPitches voicing
+toPitches theVoicing =
+    FourPart.toPitches theVoicing
 
 
 {-| Get all pitches contained in a voicing, as a `List`:
@@ -487,8 +501,8 @@ toPitches voicing =
 
 -}
 toPitchList : Voicing -> List Pitch.Pitch
-toPitchList voicing =
-    FourPart.toPitches voicing
+toPitchList theVoicing =
+    FourPart.toPitches theVoicing
         |> (\v ->
                 [ v.voiceOne, v.voiceTwo, v.voiceThree, v.voiceFour ]
            )
@@ -507,8 +521,8 @@ toPitchList voicing =
 
 -}
 toIntervals : Voicing -> Intervals
-toIntervals voicing =
-    Voicing.voicingClass voicing
+toIntervals theVoicing =
+    Voicing.voicingClass theVoicing
         |> FourPart.allIntervals
 
 
@@ -525,8 +539,8 @@ toIntervals voicing =
 
 -}
 toIntervalList : Voicing -> List Interval.Interval
-toIntervalList voicing =
-    toIntervals voicing
+toIntervalList theVoicing =
+    toIntervals theVoicing
         |> (\i ->
                 [ i.fourToOne
                 , i.fourToTwo

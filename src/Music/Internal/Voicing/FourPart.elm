@@ -23,6 +23,7 @@ module Music.Internal.Voicing.FourPart exposing
     , sortWeighted
     , toPitches
     , violatesLowIntervalLimits
+    , voicing
     , voicingClassesFromMethod
     , withFactor
     , withFactorFrom
@@ -34,9 +35,12 @@ module Music.Internal.Voicing.FourPart exposing
     , withUniqueTwoFactorsFrom
     )
 
+import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
 import Music.Internal.Interval as Interval
+import Music.Internal.Octave exposing (Octave)
 import Music.Internal.Pitch as Pitch
+import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Voicing as Voicing
 import Music.Internal.VoicingClass as VoicingClass
 import Util.Basic
@@ -48,8 +52,9 @@ type alias Voicing =
 
 sortWeighted :
     List ( Voicing -> Voicing -> Order, Float )
-    -> (Voicing -> Voicing -> Order)
-sortWeighted weightedSortFns =
+    -> List Voicing
+    -> List Voicing
+sortWeighted weightedSortFns voicings =
     let
         orderToNumber : Order -> Float
         orderToNumber ord =
@@ -71,9 +76,50 @@ sortWeighted weightedSortFns =
                         orderToNumber (comp a b) * weight
                     )
                 |> List.sum
+
+        sortFn : Voicing -> Voicing -> Order
+        sortFn a b =
+            compare (score a b) 0
     in
-    \a b ->
-        compare (score a b) 0
+    List.sortWith sortFn voicings
+
+
+voicing : Pitches -> Chord.Chord -> Result (List PitchClass.PitchClass) Voicing
+voicing pitches theChord =
+    let
+        pitchClasses : List PitchClass.PitchClass
+        pitchClasses =
+            [ pitches.voiceOne
+            , pitches.voiceTwo
+            , pitches.voiceThree
+            , pitches.voiceFour
+            ]
+                |> List.map Pitch.pitchClass
+
+        rootOctave : Octave
+        rootOctave =
+            Pitch.octave pitches.voiceFour
+
+        newRoot : Pitch.Pitch
+        newRoot =
+            Chord.root theChord
+                |> Pitch.fromPitchClass rootOctave
+
+        newVoicingClass =
+            { voiceOne = Pitch.intervalBetween newRoot pitches.voiceOne
+            , voiceTwo = Pitch.intervalBetween newRoot pitches.voiceTwo
+            , voiceThree = Pitch.intervalBetween newRoot pitches.voiceThree
+            , voiceFour = Pitch.intervalBetween newRoot pitches.voiceFour
+            }
+
+        pitchClassesNotInChord =
+            List.filter (\pc -> Chord.containsPitchClass pc theChord |> not) pitchClasses
+    in
+    if List.isEmpty pitchClassesNotInChord then
+        Ok (Voicing.voicing theChord rootOctave newVoicingClass)
+
+    else
+        Err pitchClassesNotInChord
 
 
 
