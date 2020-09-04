@@ -375,6 +375,7 @@ violatesLowIntervalLimits intervalToTest pitchToTest =
         (intervalViolatesLowIntervalLimit intervalToTest pitchToTest)
         lowIntervalLimits
         |> List.any identity
+        |> not
 
 
 intervalViolatesLowIntervalLimit : Interval.Interval -> Pitch.Pitch -> LowIntervalLimit -> Bool

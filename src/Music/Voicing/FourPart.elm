@@ -6,6 +6,7 @@ module Music.Voicing.FourPart exposing
     , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
     , sortWeighted
     , commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
+    , isWithinLowIntervalLimits
     , commonTonesOrder, contraryMotionOrder, totalSemitoneDistancesOrder
     , Pitches, toPitches, toPitchList, toString
     , Intervals, toIntervals, toIntervalList
@@ -44,9 +45,14 @@ module Music.Voicing.FourPart exposing
 @docs sortWeighted
 
 
-# Comparison voicings
+# Comparing voicings
 
 @docs commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
+
+
+# Low interval limits
+
+@docs isWithinLowIntervalLimits
 
 
 # Ordering voicings
@@ -261,6 +267,13 @@ type alias Pitches =
     , voiceThree : Pitch.Pitch
     , voiceFour : Pitch.Pitch
     }
+
+
+{-| -}
+isWithinLowIntervalLimits : Voicing -> Bool
+isWithinLowIntervalLimits theVoicing =
+    FourPart.violatesLowIntervalLimits theVoicing
+        |> not
 
 
 {-| Get the chord being voiced:
