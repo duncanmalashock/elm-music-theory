@@ -20,6 +20,7 @@ module Music.Internal.Voicing.FourPart exposing
     , placeFactors
     , placeSelectedFactors
     , selectFactors
+    , sortWeighted
     , toPitches
     , violatesLowIntervalLimits
     , voicingClassesFromMethod
@@ -43,6 +44,36 @@ import Util.Basic
 
 type alias Voicing =
     Voicing.Voicing VoicingClass
+
+
+sortWeighted :
+    List ( Voicing -> Voicing -> Order, Float )
+    -> (Voicing -> Voicing -> Order)
+sortWeighted weightedSortFns =
+    let
+        orderToNumber : Order -> Float
+        orderToNumber ord =
+            case ord of
+                LT ->
+                    -1
+
+                EQ ->
+                    0
+
+                GT ->
+                    1
+
+        score : Voicing -> Voicing -> Float
+        score a b =
+            weightedSortFns
+                |> List.map
+                    (\( comp, weight ) ->
+                        orderToNumber (comp a b) * weight
+                    )
+                |> List.sum
+    in
+    \a b ->
+        compare (score a b) 0
 
 
 

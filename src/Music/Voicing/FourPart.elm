@@ -3,6 +3,7 @@ module Music.Voicing.FourPart exposing
     , chord, span
     , voiceOne, voiceTwo, voiceThree, voiceFour
     , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
+    , sortWeighted
     , commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
     , commonTonesOrder, contraryMotionOrder, totalSemitoneDistancesOrder
     , Pitches, toPitches, toPitchList, toString
@@ -32,7 +33,12 @@ module Music.Voicing.FourPart exposing
 @docs containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
 
 
-# Comparing voicings
+# Sorting voicings
+
+@docs sortWeighted
+
+
+# Comparison voicings
 
 @docs commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
 
@@ -312,6 +318,14 @@ voiceThree voicing =
 voiceFour : Voicing -> Pitch.Pitch
 voiceFour voicing =
     FourPart.getVoiceFour voicing
+
+
+{-| -}
+sortWeighted :
+    List ( Voicing -> Voicing -> Order, Float )
+    -> (Voicing -> Voicing -> Order)
+sortWeighted weightedSortFns =
+    FourPart.sortWeighted weightedSortFns
 
 
 {-| Find out whether a voicing has a specific pitch in the first voice:
