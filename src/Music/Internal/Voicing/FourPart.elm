@@ -11,6 +11,7 @@ module Music.Internal.Voicing.FourPart exposing
     , allRanges
     , allVoices
     , combineVoicingMethods
+    , containsParallelFifths
     , custom
     , getVoiceFour
     , getVoiceOne
@@ -289,6 +290,11 @@ violatesLowIntervalLimits theVoicing =
                 Voicing.violatesLowIntervalLimits interval voice
             )
         |> List.any identity
+
+
+containsParallelFifths : Voicing -> Voicing -> Bool
+containsParallelFifths a b =
+    Voicing.containsParallelFifths Voicing.root allFactors a b
 
 
 

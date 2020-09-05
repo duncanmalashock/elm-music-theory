@@ -279,7 +279,8 @@ containsParallelIntervals interval getRoot allFactors voicingA voicingB =
     in
     matchParallelIntervals
         |> List.filter identity
-        |> (\list -> List.length list > 0)
+        |> List.isEmpty
+        |> not
 
 
 compareByParallelOctave :

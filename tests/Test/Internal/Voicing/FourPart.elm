@@ -241,6 +241,37 @@ all =
                             True
                     in
                     Expect.equal expected result
+            , test "should return true for voicings that contain fifth intervals between non-adjacent voices" <|
+                \_ ->
+                    let
+                        voicingA =
+                            FourPart.voicing
+                                { voiceOne = Pitch.a4
+                                , voiceTwo = Pitch.f4
+                                , voiceThree = Pitch.d4
+                                , voiceFour = Pitch.d3
+                                }
+                                (Chord.chord PitchClass.d ChordType.minor)
+
+                        voicingB =
+                            FourPart.voicing
+                                { voiceOne = Pitch.g4
+                                , voiceTwo = Pitch.e4
+                                , voiceThree = Pitch.c4
+                                , voiceFour = Pitch.c3
+                                }
+                                (Chord.chord PitchClass.c ChordType.major)
+
+                        result =
+                            Result.map2
+                                FourPart.containsParallelFifths
+                                voicingA
+                                voicingB
+
+                        expected =
+                            Ok True
+                    in
+                    Expect.equal expected result
             ]
         , describe "containsParallelOctaves"
             [ test "should return true for voicing of chords (with octaves) a step apart" <|

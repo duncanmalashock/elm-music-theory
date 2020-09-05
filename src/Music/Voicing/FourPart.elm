@@ -426,7 +426,7 @@ Avoiding parallel fifths and octaves was very important in Mozart's time! Checki
 -}
 containsParallelFifths : Voicing -> Voicing -> Bool
 containsParallelFifths a b =
-    Voicing.containsParallelFifths Voicing.root FourPart.allFactors a b
+    FourPart.containsParallelFifths a b
 
 
 {-| Find out whether any two moving voices maintain a perfect octave interval between them.
