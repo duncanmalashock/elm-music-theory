@@ -4,19 +4,21 @@ module Music.Voicing.FourPart exposing
     , voicing
     , voiceOne, voiceTwo, voiceThree, voiceFour
     , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
-    , sortWeighted
-    , commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
+    , sortWeighted, orderWeighted
+    , commonTones
+    , usesContraryMotion, containsParallelFifths, containsParallelOctaves
+    , totalSemitoneDistance, semitoneDistanceVoiceOne, semitoneDistanceVoiceTwo, semitoneDistanceVoiceThree, semitoneDistanceVoiceFour
     , isWithinLowIntervalLimits
-    , commonTonesOrder, contraryMotionOrder, totalSemitoneDistancesOrder
+    , commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder
     , Pitches, toPitches, toPitchList, toString
     , Intervals, toIntervals, toIntervalList
+    , close, drop2, drop3, drop2and4, spread
+    , rootPosition, firstInversion, secondInversion, thirdInversion
     , VoicingMethod
-    , custom
+    , customVoicingMethod
     , selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
     , placeSelectedFactors, SpacingLimits
     , combineVoicingMethods
-    , close, drop2, drop3, drop2and4, spread
-    , rootPosition, firstInversion, secondInversion, thirdInversion
     )
 
 {-| A chord voicing is an instance of a chord that can be played or sung.
@@ -51,12 +53,25 @@ This module allows for:
 
 # Sorting voicings
 
-@docs sortWeighted
+@docs sortWeighted, orderWeighted
 
 
 # Comparing voicings
 
-@docs commonTones, usesContraryMotion, containsParallelFifths, containsParallelOctaves, totalSemitoneDistances
+
+## Common tones
+
+@docs commonTones
+
+
+## Direction
+
+@docs usesContraryMotion, containsParallelFifths, containsParallelOctaves
+
+
+## Distance
+
+@docs totalSemitoneDistance, semitoneDistanceVoiceOne, semitoneDistanceVoiceTwo, semitoneDistanceVoiceThree, semitoneDistanceVoiceFour
 
 
 # Low interval limits
@@ -66,7 +81,7 @@ This module allows for:
 
 # Ordering voicings
 
-@docs commonTonesOrder, contraryMotionOrder, totalSemitoneDistancesOrder
+@docs commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder
 
 
 # Conversion
@@ -82,15 +97,6 @@ This module allows for:
 # Voicing methods
 
 
-## Custom voicing methods
-
-@docs VoicingMethod
-@docs custom
-@docs selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
-@docs placeSelectedFactors, SpacingLimits
-@docs combineVoicingMethods
-
-
 ## Jazz
 
 These methods have been used to harmonize brass and saxophone sections since at least the 1930s.
@@ -98,7 +104,7 @@ These methods have been used to harmonize brass and saxophone sections since at 
 Notes:
 
   - Jazz voicing methods can involve substitutions within families of related chords, so don't be surprised when you see voicings that include a pitch class that isn't strictly in the chord you specified.
-  - Not all chords are compatible with these methods; incompatible chord types will return an empty list.
+  - Not all chords are compatible with these methods; in those cases this function will return an empty list.
 
 These methods were adapted from [Jazz Arranging Techniques](http://lindsayjazz.com/jazz-arranging-techniques/) by Gary Lindsay.
 
@@ -110,6 +116,15 @@ These methods were adapted from [Jazz Arranging Techniques](http://lindsayjazz.c
 Note: these classical methods were developed before jazz harmony, and so chord extensions and added tones will not be included.
 
 @docs rootPosition, firstInversion, secondInversion, thirdInversion
+
+
+## Custom voicing methods
+
+@docs VoicingMethod
+@docs customVoicingMethod
+@docs selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
+@docs placeSelectedFactors, SpacingLimits
+@docs combineVoicingMethods
 
 -}
 
@@ -158,11 +173,11 @@ type alias SpacingLimits =
 
 
 {-| -}
-custom :
+customVoicingMethod :
     (ChordType.ChordType -> Maybe categorized)
     -> (categorized -> List FourPart.VoicingClass)
     -> VoicingMethod
-custom categorizeFn buildFromCategorized =
+customVoicingMethod categorizeFn buildFromCategorized =
     FourPart.custom categorizeFn buildFromCategorized
 
 
@@ -354,6 +369,14 @@ sortWeighted weightedSortFns listToSort =
 
 
 {-| -}
+orderWeighted :
+    List ( Voicing -> Voicing -> Order, Float )
+    -> (Voicing -> Voicing -> Order)
+orderWeighted weightedSortFns =
+    FourPart.orderWeighted weightedSortFns
+
+
+{-| -}
 voicing : Pitches -> Chord.Chord -> Result (List PitchClass.PitchClass) Voicing
 voicing pitches theChord =
     FourPart.voicing pitches theChord
@@ -436,11 +459,39 @@ containsParallelOctaves a b =
     Voicing.containsParallelOctaves Voicing.root FourPart.allFactors a b
 
 
-{-| Find out the absolute difference in semitones, in all voices, between two voicings.
+{-| Given two voicings, find out how far in semitones all voices move.
 -}
-totalSemitoneDistances : Voicing -> Voicing -> Int
-totalSemitoneDistances a b =
+totalSemitoneDistance : Voicing -> Voicing -> Int
+totalSemitoneDistance a b =
     Voicing.totalSemitoneDistance FourPart.allVoices a b
+
+
+{-| Given two voicings, find out how far in semitones the first (top) voice moves.
+-}
+semitoneDistanceVoiceOne : Voicing -> Voicing -> Int
+semitoneDistanceVoiceOne a b =
+    Voicing.semitoneDistance (FourPart.getVoiceOne a) (FourPart.getVoiceOne b)
+
+
+{-| Given two voicings, find out how far in semitones the second voice moves.
+-}
+semitoneDistanceVoiceTwo : Voicing -> Voicing -> Int
+semitoneDistanceVoiceTwo a b =
+    Voicing.semitoneDistance (FourPart.getVoiceTwo a) (FourPart.getVoiceTwo b)
+
+
+{-| Given two voicings, find out how far in semitones the third voice moves.
+-}
+semitoneDistanceVoiceThree : Voicing -> Voicing -> Int
+semitoneDistanceVoiceThree a b =
+    Voicing.semitoneDistance (FourPart.getVoiceThree a) (FourPart.getVoiceOne b)
+
+
+{-| Given two voicings, find out how far in semitones the fourth (bottom) voice moves.
+-}
+semitoneDistanceVoiceFour : Voicing -> Voicing -> Int
+semitoneDistanceVoiceFour a b =
+    Voicing.semitoneDistance (FourPart.getVoiceFour a) (FourPart.getVoiceOne b)
 
 
 {-| Compare voicings by how many pitches they have in common with a previous voicing:
@@ -457,7 +508,7 @@ commonTonesOrder from =
 {-| Compare voicings by whether they use contrary motion from a previous voicing:
 
     myVoicingList
-        |> List.sortWith (commonTonesOrder previousVoicing)
+        |> List.sortWith (contraryMotionOrder previousVoicing)
 
 "Contrary motion" here is in respect to the top and bottom voices.
 
@@ -470,12 +521,56 @@ contraryMotionOrder from =
 {-| Compare voicings by absolute difference in semitones from a previous voicing:
 
     myVoicingList
-        |> List.sortWith (commonTonesOrder previousVoicing)
+        |> List.sortWith (totalSemitoneDistanceOrder previousVoicing)
 
 -}
-totalSemitoneDistancesOrder : Voicing -> (Voicing -> Voicing -> Order)
-totalSemitoneDistancesOrder from =
+totalSemitoneDistanceOrder : Voicing -> (Voicing -> Voicing -> Order)
+totalSemitoneDistanceOrder from =
     Voicing.compareByTotalSemitoneDistance FourPart.allVoices from
+
+
+{-| Compare voicings by absolute difference in semitones in voice one:
+
+    myVoicingList
+        |> List.sortWith (semitoneDistanceVoiceOneOrder previousVoicing)
+
+-}
+semitoneDistanceVoiceOneOrder : Voicing -> (Voicing -> Voicing -> Order)
+semitoneDistanceVoiceOneOrder from =
+    Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceOne from
+
+
+{-| Compare voicings by absolute difference in semitones in voice two:
+
+    myVoicingList
+        |> List.sortWith (semitoneDistanceVoiceTwoOrder previousVoicing)
+
+-}
+semitoneDistanceVoiceTwoOrder : Voicing -> (Voicing -> Voicing -> Order)
+semitoneDistanceVoiceTwoOrder from =
+    Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceTwo from
+
+
+{-| Compare voicings by absolute difference in semitones in voice three:
+
+    myVoicingList
+        |> List.sortWith (semitoneDistanceVoiceThreeOrder previousVoicing)
+
+-}
+semitoneDistanceVoiceThreeOrder : Voicing -> (Voicing -> Voicing -> Order)
+semitoneDistanceVoiceThreeOrder from =
+    Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceThree from
+
+
+{-| Compare voicings by absolute difference in semitones in voice four:
+
+    myVoicingList
+        |> List.sortWith (semitoneDistanceVoiceFourOrder previousVoicing)
+
+-}
+semitoneDistanceVoiceFourOrder : Voicing -> (Voicing -> Voicing -> Order)
+semitoneDistanceVoiceFourOrder from =
+    Voicing.compareByVoiceSemitoneDistance FourPart.getVoiceFour from
 
 
 {-| Get all pitches contained in a voicing, as a stringified list:

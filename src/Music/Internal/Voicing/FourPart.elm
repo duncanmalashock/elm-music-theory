@@ -18,6 +18,7 @@ module Music.Internal.Voicing.FourPart exposing
     , getVoiceThree
     , getVoiceTwo
     , noSelection
+    , orderWeighted
     , placeFactors
     , placeSelectedFactors
     , selectFactors
@@ -51,11 +52,10 @@ type alias Voicing =
     Voicing.Voicing VoicingClass
 
 
-sortWeighted :
+orderWeighted :
     List ( Voicing -> Voicing -> Order, Float )
-    -> List Voicing
-    -> List Voicing
-sortWeighted weightedSortFns voicings =
+    -> (Voicing -> Voicing -> Order)
+orderWeighted weightedSortFns =
     let
         orderToNumber : Order -> Float
         orderToNumber ord =
@@ -82,7 +82,15 @@ sortWeighted weightedSortFns voicings =
         sortFn a b =
             compare (score a b) 0
     in
-    List.sortWith sortFn voicings
+    sortFn
+
+
+sortWeighted :
+    List ( Voicing -> Voicing -> Order, Float )
+    -> List Voicing
+    -> List Voicing
+sortWeighted weightedSortFns voicings =
+    List.sortWith (orderWeighted weightedSortFns) voicings
 
 
 voicing : Pitches -> Chord.Chord -> Result (List PitchClass.PitchClass) Voicing
