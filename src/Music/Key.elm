@@ -13,7 +13,6 @@ module Music.Key exposing
 
 This module allows for:
 
-  - Creating major and minor keys
   - Getting a key's properties like tonic, scale, and key signature
   - Getting parallel and relative keys
   - Converting a key to a symbol
