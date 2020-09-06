@@ -1,7 +1,7 @@
 module Music.Voicing.FourPart exposing
     ( Voicing
-    , chord, span
     , voicing
+    , chord, span
     , voiceOne, voiceTwo, voiceThree, voiceFour
     , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
     , sortWeighted, orderWeighted
@@ -15,9 +15,10 @@ module Music.Voicing.FourPart exposing
     , close, drop2, drop3, drop2and4, spread
     , rootPosition, firstInversion, secondInversion, thirdInversion
     , VoicingMethod
-    , customVoicingMethod
+    , SpacingLimits
+    , custom
     , selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
-    , placeSelectedFactors, SpacingLimits
+    , placeSelectedFactors
     , combineVoicingMethods
     )
 
@@ -35,14 +36,16 @@ This module allows for:
 @docs Voicing
 
 
+# Constructing voicings
+
+Note: If you want to generate many possible voicings, look at `Chord.voiceFourParts` and the **Voicing methods** section here.
+
+@docs voicing
+
+
 # Helpers
 
 @docs chord, span
-
-
-# Constructor
-
-@docs voicing
 
 
 # Voices
@@ -120,10 +123,69 @@ Note: these classical methods were developed before jazz harmony, and so chord e
 
 ## Custom voicing methods
 
+Voicing methods are a deep and nuanced topic, that I hope to make approachable. I've modeled this API with three main concepts of chord voicing in mind:
+
+  - **Spacing**: how close together or far apart can each voice be from its neighbor?
+  - **Placement**: which factors from the chord can be used in which places?
+  - **Uniqueness**: can certain factors be repeated, or must they be used only once?
+
+Here are the steps in building a voicing method:
+
+
+### Categorize the factors in the chord
+
+Since chords can vary, use some method of categorizing the factors of a chord into groups that you can guarantee are present. Examples of this type of categorization function are `Chord.categorizeFactors` and `Chord.availableTensions`.
+
+
+### Specify the placement and uniqueness of factors
+
+Select factors using the `with...` functions in this section.
+
+
+### Finish and specify spacing limits
+
+Use the `placeSelectedFactors` function, passing a `SpacingLimits`.
+
+Example:
+
+    myCustomVoicingMethod : VoicingMethod
+    myCustomVoicingMethod =
+        custom
+            ChordType.availableTensions
+            (\available ->
+                FourPart.selectFactors
+                    |> FourPart.withFactor available.fifth.true
+                    |> FourPart.withUniqueFactorFrom
+                        [ available.third.true
+                        , available.seventh.true
+                        ]
+                    |> FourPart.withUniqueFactorFrom
+                        [ available.third.true
+                        , available.seventh.true
+                        ]
+                    |> FourPart.withUniqueFactor
+                        available.root.true
+                    |> FourPart.placeSelectedFactors
+                        { twoToOne =
+                            Interval.range
+                                Interval.augmentedUnison
+                                Interval.perfectOctave
+                        , threeToTwo =
+                            Interval.range
+                                Interval.augmentedUnison
+                                Interval.perfectOctave
+                        , fourToThree =
+                            Interval.range
+                                Interval.augmentedUnison
+                                Interval.perfectOctave
+                        }
+            )
+
 @docs VoicingMethod
-@docs customVoicingMethod
+@docs SpacingLimits
+@docs custom
 @docs selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
-@docs placeSelectedFactors, SpacingLimits
+@docs placeSelectedFactors
 @docs combineVoicingMethods
 
 -}
@@ -150,7 +212,14 @@ type alias VoicingMethod =
     FourPart.VoicingMethod
 
 
-{-| -}
+{-| Combine multiple `VoicingMethod`s together:
+
+    myComboVoicingMethod =
+        combineVoicingMethods [ voicingMethodOne, voicingMethodTwo, voicingMethodThree ]
+
+This is useful if you want to define multiple `VoicingMethod`s that act as a group (e.g. inversions or similar methods that use different chord factors).
+
+-}
 combineVoicingMethods : List VoicingMethod -> VoicingMethod
 combineVoicingMethods voicingMethodsToCombine =
     FourPart.combineVoicingMethods voicingMethodsToCombine
@@ -172,16 +241,24 @@ type alias SpacingLimits =
     }
 
 
-{-| -}
-customVoicingMethod :
+{-| Begin a custom voicing method:
+
+    custom Chord.categorizeFactors
+        (\categorized ->
+            ...
+        )
+
+-}
+custom :
     (ChordType.ChordType -> Maybe categorized)
     -> (categorized -> List FourPart.VoicingClass)
     -> VoicingMethod
-customVoicingMethod categorizeFn buildFromCategorized =
+custom categorizeFn buildFromCategorized =
     FourPart.custom categorizeFn buildFromCategorized
 
 
-{-| -}
+{-| Select a chord factor for use in a voice.
+-}
 withFactor :
     Interval.Interval
     -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
@@ -190,7 +267,8 @@ withFactor factor builder =
     FourPart.withFactor factor builder
 
 
-{-| -}
+{-| Select a factor that has not yet been used.
+-}
 withUniqueFactor :
     Interval.Interval
     -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
@@ -199,7 +277,8 @@ withUniqueFactor factor builder =
     FourPart.withUniqueFactor factor builder
 
 
-{-| -}
+{-| Select a factor from a list of options.
+-}
 withFactorFrom :
     List Interval.Interval
     -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
@@ -208,7 +287,8 @@ withFactorFrom options builder =
     FourPart.withFactorFrom options builder
 
 
-{-| -}
+{-| Select a factor that has not yet been used, from a list of options.
+-}
 withUniqueFactorFrom :
     List Interval.Interval
     -> VoicingClass.VoicingClassBuilder (Interval.Interval -> a)
@@ -217,7 +297,8 @@ withUniqueFactorFrom options builder =
     FourPart.withUniqueFactorFrom options builder
 
 
-{-| -}
+{-| Select two factors from a list of options.
+-}
 withTwoFactorsFrom :
     List Interval.Interval
     -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> a)
@@ -226,7 +307,8 @@ withTwoFactorsFrom options builder =
     FourPart.withTwoFactorsFrom options builder
 
 
-{-| -}
+{-| Select two factors that have not yet been used, from a list of options.
+-}
 withUniqueTwoFactorsFrom :
     List Interval.Interval
     -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> a)
@@ -235,7 +317,8 @@ withUniqueTwoFactorsFrom options builder =
     FourPart.withUniqueTwoFactorsFrom options builder
 
 
-{-| -}
+{-| Select three factors from a list of options.
+-}
 withThreeFactorsFrom :
     List Interval.Interval
     -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> Interval.Interval -> a)
@@ -244,7 +327,8 @@ withThreeFactorsFrom options builder =
     FourPart.withThreeFactorsFrom options builder
 
 
-{-| -}
+{-| Select two factors that have not yet been used, from a list of options.
+-}
 withUniqueThreeFactorsFrom :
     List Interval.Interval
     -> VoicingClass.VoicingClassBuilder (Interval.Interval -> Interval.Interval -> Interval.Interval -> a)
@@ -253,7 +337,8 @@ withUniqueThreeFactorsFrom options builder =
     FourPart.withUniqueThreeFactorsFrom options builder
 
 
-{-| -}
+{-| Begin selecting factors for a voicing method.
+-}
 selectFactors :
     VoicingClass.VoicingClassBuilder
         (Interval.Interval
@@ -266,7 +351,8 @@ selectFactors =
     FourPart.selectFactors
 
 
-{-| -}
+{-| Finish selecting factors for a voicing method and place them according to the spacing limits.
+-}
 placeSelectedFactors :
     SpacingLimits
     -> VoicingClass.VoicingClassBuilder FourPart.VoicingClass
@@ -288,7 +374,8 @@ type alias Pitches =
     }
 
 
-{-| -}
+{-| A low interval limit is the lowest pitch at which the character of an interval cannot be heard clearly. I have heard this explained in terms of the [harmonic series](https://en.wikipedia.org/wiki/Harmonic_series_%28music%29), but it seems to be taught as more of a [guideline for arrangers](https://www.berklee.edu/core/glossary.html#:~:text=Low%20Interval%20Limit%20%2D%20The%20lowest,within%20a%20normal%20harmonic%20context.) than a physical absolute.
+-}
 isWithinLowIntervalLimits : Voicing -> Bool
 isWithinLowIntervalLimits theVoicing =
     FourPart.violatesLowIntervalLimits theVoicing
@@ -359,7 +446,16 @@ voiceFour theVoicing =
     FourPart.getVoiceFour theVoicing
 
 
-{-| -}
+{-| Sort by multiple ordering functions:
+
+    sortWeighted
+        [ ( totalSemitoneDistanceOrder, 10.0 )
+        , ( contraryMotionOrder, 5.0 )
+        , ( commonTonesOrder, 2.0 )
+        ]
+        voicingList
+
+-}
 sortWeighted :
     List ( Voicing -> Voicing -> Order, Float )
     -> List Voicing
@@ -368,7 +464,16 @@ sortWeighted weightedSortFns listToSort =
     FourPart.sortWeighted weightedSortFns listToSort
 
 
-{-| -}
+{-| Combine multiple ordering functions:
+
+    orderWeighted
+        [ ( totalSemitoneDistanceOrder, 10.0 )
+        , ( contraryMotionOrder, 5.0 )
+        , ( commonTonesOrder, 2.0 )
+        ]
+        |> List.orderWith
+
+-}
 orderWeighted :
     List ( Voicing -> Voicing -> Order, Float )
     -> (Voicing -> Voicing -> Order)
@@ -376,7 +481,29 @@ orderWeighted weightedSortFns =
     FourPart.orderWeighted weightedSortFns
 
 
-{-| -}
+{-| Create a voicing from pitches and a chord:
+
+    voicing
+        { voiceOne = Pitch.c5
+        , voiceTwo = Pitch.a4
+        , voiceThree = Pitch.g4
+        , voiceFour = Pitch.e4
+        }
+        (Chord.majorSix PitchClass.c)
+        == Ok Voicing ...
+
+If the pitches given do not match the chord, this function will return `Err` with the erroneous pitch classes:
+
+    voicing
+        { voiceOne = Pitch.c5
+        , voiceTwo = Pitch.d4
+        , voiceThree = Pitch.g4
+        , voiceFour = Pitch.e4
+        }
+        (Chord.majorSix PitchClass.c)
+        == Err [ PitchClass.d ]
+
+-}
 voicing : Pitches -> Chord.Chord -> Result (List PitchClass.PitchClass) Voicing
 voicing pitches theChord =
     FourPart.voicing pitches theChord

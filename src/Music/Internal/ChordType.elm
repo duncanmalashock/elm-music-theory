@@ -1,10 +1,12 @@
 module Music.Internal.ChordType exposing
     ( AvailableTensions
+    , CategorizedFactors
     , ChordType
     , all
     , augmented
     , augmentedDominantSeventh
     , availableTensions
+    , categorizeFactors
     , classify
     , custom
     , diminished
@@ -197,6 +199,82 @@ includesAny intervals theChordType =
             includes interval theChordType
         )
         intervals
+
+
+pickFirst : List Interval.Interval -> ChordType -> Maybe Interval
+pickFirst choices theChordType =
+    choices
+        |> List.filter
+            (\factor ->
+                includes factor theChordType
+            )
+        |> List.head
+
+
+type alias CategorizedFactors =
+    { third : Interval
+    , fifth : Interval
+    , sixthOrSeventh : Maybe Interval
+    , ninth : List Interval
+    , eleventh : Maybe Interval
+    , thirteenth : Maybe Interval
+    }
+
+
+categorizeFactors : ChordType -> Maybe CategorizedFactors
+categorizeFactors theChordType =
+    let
+        maybeThird =
+            theChordType
+                |> pickFirst
+                    [ Interval.majorThird
+                    , Interval.minorThird
+                    , Interval.majorSecond
+                    , Interval.perfectFourth
+                    ]
+
+        maybeFifth =
+            theChordType
+                |> pickFirst
+                    [ Interval.perfectFifth
+                    , Interval.augmentedFifth
+                    , Interval.diminishedFifth
+                    ]
+    in
+    Maybe.map2
+        (\third fifth ->
+            { third = third
+            , fifth = fifth
+            , sixthOrSeventh =
+                theChordType
+                    |> pickFirst
+                        [ Interval.majorSixth
+                        , Interval.majorSeventh
+                        , Interval.minorSeventh
+                        , Interval.diminishedSeventh
+                        ]
+            , ninth =
+                [ Interval.majorNinth
+                , Interval.minorNinth
+                , Interval.augmentedNinth
+                ]
+                    |> List.filter (\interval -> includes interval theChordType)
+            , eleventh =
+                theChordType
+                    |> pickFirst
+                        [ Interval.perfectEleventh
+                        , Interval.augmentedEleventh
+                        ]
+            , thirteenth =
+                theChordType
+                    |> pickFirst
+                        [ Interval.majorThirteenth
+                        , Interval.minorThirteenth
+                        ]
+            }
+        )
+        maybeThird
+        maybeFifth
 
 
 classify : ChordType -> Classification

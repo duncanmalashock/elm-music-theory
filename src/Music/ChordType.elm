@@ -1,11 +1,12 @@
 module Music.ChordType exposing
     ( ChordType
-    , containsInterval
-    , all
-    , alteredDominantChords, dominantChords, minorChords, majorChords, sixthAndSeventhChords, triads
+    , factors, contains
+    , categorizeFactors, CategorizedFactors
+    , availableTensions, AvailableTensions
     , symbol
-    , factors
-    , AvailableTensions, availableTensions
+    , all
+    , triads, sixthAndSeventhChords
+    , majorChords, minorChords, dominantChords, alteredDominantChords
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminishedSeventh, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
@@ -18,7 +19,7 @@ module Music.ChordType exposing
     , classify
     )
 
-{-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the intervals contained in a chord, with no specific root pitch class. E.g. a "dominant seventh" chord.
+{-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the [factors](https://en.wikipedia.org/wiki/Factor_%28chord%29) contained in a chord, with no specific root pitch class. E.g. a "dominant seventh" chord.
 
 This module allows for:
 
@@ -30,15 +31,19 @@ This module allows for:
 @docs ChordType
 
 
-# Helpers
+# Chord factors
 
-@docs containsInterval
+Chord [factors](https://en.wikipedia.org/wiki/Factor_%28chord%29) (such as the "third", "fifth", etc. of a chord) are represented as `Interval`s.
+
+@docs factors, contains
 
 
-# Groups
+## Categorizing factors
 
-@docs all
-@docs alteredDominantChords, dominantChords, minorChords, majorChords, sixthAndSeventhChords, triads
+Categorize factors into certain useful data structures. Helpful when creating custom `VoicingMethod`s.
+
+@docs categorizeFactors, CategorizedFactors
+@docs availableTensions, AvailableTensions
 
 
 # Conversion
@@ -46,10 +51,13 @@ This module allows for:
 @docs symbol
 
 
-# Chord factors
+# Groups
 
-@docs factors
-@docs AvailableTensions, availableTensions
+Lists of commonly-grouped chord types. Note that these are incomplete, and only represent the chord types contained in this module, since there is no exhaustive list of all valid chord types in tonal music.
+
+@docs all
+@docs triads, sixthAndSeventhChords
+@docs majorChords, minorChords, dominantChords, alteredDominantChords
 
 
 # Constructors
@@ -123,7 +131,8 @@ type alias ChordType =
     ChordType.ChordType
 
 
-{-| -}
+{-| All the chord types listed in this module.
+-}
 all : List ChordType
 all =
     [ major
@@ -175,7 +184,8 @@ all =
     ]
 
 
-{-| -}
+{-| All chord types with only a root, third (or suspension), and fifth.
+-}
 triads : List ChordType
 triads =
     [ major
@@ -187,7 +197,8 @@ triads =
     ]
 
 
-{-| -}
+{-| All chord types with a sixth or seventh added to a triad.
+-}
 sixthAndSeventhChords : List ChordType
 sixthAndSeventhChords =
     [ majorSix
@@ -203,7 +214,8 @@ sixthAndSeventhChords =
     ]
 
 
-{-| -}
+{-| All chord types with a major quality.
+-}
 majorChords : List ChordType
 majorChords =
     [ major
@@ -217,7 +229,8 @@ majorChords =
     ]
 
 
-{-| -}
+{-| All chord types with a minor quality.
+-}
 minorChords : List ChordType
 minorChords =
     [ minor
@@ -231,7 +244,8 @@ minorChords =
     ]
 
 
-{-| -}
+{-| All chord types with a dominant quality.
+-}
 dominantChords : List ChordType
 dominantChords =
     [ major
@@ -264,7 +278,8 @@ dominantChords =
     ]
 
 
-{-| -}
+{-| All chord types with a dominant quality that also have [altered extensions](https://en.wikipedia.org/wiki/Altered_chord).
+-}
 alteredDominantChords : List ChordType
 alteredDominantChords =
     [ dominantSeventhFlatNine
@@ -289,17 +304,17 @@ alteredDominantChords =
     ]
 
 
-{-| Determine whether a chord type contains a given interval:
+{-| Determine whether a chord type contains a given factor:
 
-    containsInterval Interval.diminishedFifth halfDiminishedSeventh == True
+    contains Interval.diminishedFifth halfDiminishedSeventh == True
 
 -}
-containsInterval : Interval.Interval -> ChordType.ChordType -> Bool
-containsInterval interval theChordType =
+contains : Interval.Interval -> ChordType.ChordType -> Bool
+contains interval theChordType =
     ChordType.includes interval theChordType
 
 
-{-| Get the [chord factors](https://en.wikipedia.org/wiki/Factor_%28chord%29) contained in a chord type:
+{-| Get the factors contained in a chord type:
 
     factors minor
         == [ Interval.perfectUnison
@@ -311,6 +326,34 @@ containsInterval interval theChordType =
 factors : ChordType -> List Interval.Interval
 factors chordType =
     ChordType.toIntervals chordType
+
+
+{-| Categorize the factors in a chord type:
+
+    categorizeFactors minorSixth
+        == { third = Interval.minorThird
+           , fifth = Interval.perfectFifth
+           , sixthOrSeventh = Just Interval.majorSixth
+           , ninth = []
+           , eleventh = Nothing
+           , thirteenth = Nothing
+           }
+
+-}
+categorizeFactors : ChordType -> Maybe CategorizedFactors
+categorizeFactors chordType =
+    ChordType.categorizeFactors chordType
+
+
+{-| -}
+type alias CategorizedFactors =
+    { third : Interval.Interval
+    , fifth : Interval.Interval
+    , sixthOrSeventh : Maybe Interval.Interval
+    , ninth : List Interval.Interval
+    , eleventh : Maybe Interval.Interval
+    , thirteenth : Maybe Interval.Interval
+    }
 
 
 {-| Get the chord symbol for a chord type:
@@ -763,7 +806,28 @@ type alias AvailableTensions =
     }
 
 
-{-| -}
+{-| Organize the factors in a chord type into their jazz-theory category and their possible substitutes, often known referred to as "available tensions".
+
+    availableTensions majorSeventh =
+        { root =
+            { true = Interval.perfectUnison
+            , substitutes = [ Interval.majorSecond ]
+            }
+        , third =
+            { true = Interval.majorThird
+            , substitutes = []
+            }
+        , fifth =
+            { true = Interval.perfectFifth
+            , substitutes = [ Interval.augmentedEleventh ]
+            }
+        , seventh =
+            { true = Interval.majorSeventh
+            , substitutes = [ Interval.majorSixth ]
+            }
+        }
+
+-}
 availableTensions : ChordType -> Maybe AvailableTensions
 availableTensions chordType =
     ChordType.availableTensions chordType
