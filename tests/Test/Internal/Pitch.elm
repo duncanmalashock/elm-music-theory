@@ -166,4 +166,52 @@ all =
                         |> Pitch.isWithin (Pitch.range Pitch.c3 Pitch.c5)
                         |> Expect.equal False
             ]
+        , describe "chromaticRun"
+            [ test "upwards from C0 to C1" <|
+                \_ ->
+                    let
+                        expected =
+                            [ Pitch.c0
+                            , Pitch.cSharp0
+                            , Pitch.d0
+                            , Pitch.dSharp0
+                            , Pitch.e0
+                            , Pitch.f0
+                            , Pitch.fSharp0
+                            , Pitch.g0
+                            , Pitch.gSharp0
+                            , Pitch.a0
+                            , Pitch.aSharp0
+                            , Pitch.b0
+                            , Pitch.c1
+                            ]
+
+                        result =
+                            Pitch.chromaticRun Pitch.c0 Pitch.c1
+                    in
+                    Expect.equal expected result
+            , test "downwards from C1 to C0" <|
+                \_ ->
+                    let
+                        expected =
+                            [ Pitch.c1
+                            , Pitch.b0
+                            , Pitch.bFlat0
+                            , Pitch.a0
+                            , Pitch.aFlat0
+                            , Pitch.g0
+                            , Pitch.gFlat0
+                            , Pitch.f0
+                            , Pitch.e0
+                            , Pitch.eFlat0
+                            , Pitch.d0
+                            , Pitch.dFlat0
+                            , Pitch.c0
+                            ]
+
+                        result =
+                            Pitch.chromaticRun Pitch.c1 Pitch.c0
+                    in
+                    Expect.equal expected result
+            ]
         ]

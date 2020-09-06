@@ -9,6 +9,8 @@ module Music.Internal.PitchClass exposing
     , accidentals
     , addOffset
     , allInChromaticScale
+    , allInDownwardChromaticScale
+    , allInUpwardChromaticScale
     , areEnharmonicEquivalents
     , b
     , bDoubleFlat
@@ -79,6 +81,40 @@ allInChromaticScale =
     , aFlat
     , a
     , aSharp
+    , bFlat
+    , b
+    ]
+
+
+allInUpwardChromaticScale : List PitchClass
+allInUpwardChromaticScale =
+    [ c
+    , cSharp
+    , d
+    , dSharp
+    , e
+    , f
+    , fSharp
+    , g
+    , gSharp
+    , a
+    , aSharp
+    , b
+    ]
+
+
+allInDownwardChromaticScale : List PitchClass
+allInDownwardChromaticScale =
+    [ c
+    , dFlat
+    , d
+    , eFlat
+    , e
+    , f
+    , gFlat
+    , g
+    , aFlat
+    , a
     , bFlat
     , b
     ]

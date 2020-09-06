@@ -1,6 +1,7 @@
 module Music.Pitch exposing
     ( Pitch
     , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
+    , chromaticRun
     , semitones, toMIDINoteNumber, toFrequency, name, fromPitchClassInOctave
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
     , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
@@ -31,6 +32,7 @@ This module allows for:
 
   - Transposing a pitch by interval
   - Comparing and sorting pitches by "height"
+  - Generating "chromatic runs" between starting and ending pitches
   - Converting to semitones, MIDI, and frequency
   - Converting a pitch to a symbol
 
@@ -40,6 +42,11 @@ This module allows for:
 # Helpers
 
 @docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
+
+
+# Generating
+
+@docs chromaticRun
 
 
 # Conversion
@@ -140,6 +147,34 @@ intervalBetween a b =
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool
 areEnharmonicEquivalents a b =
     Pitch.areEnharmonicEquivalents a b
+
+
+{-| Generate a section of the ascending or descending chromatic scale between two pitches:
+
+    chromaticRun a4 d5
+        == [ a4
+           , aSharp4
+           , b4
+           , c5
+           , cSharp5
+           , d5
+           ]
+
+Ascending runs use sharps; descending runs use flats:
+
+    chromaticRun d5 a4
+        == [ d5
+           , dFlat5
+           , c5
+           , b4
+           , bFlat4
+           , a4
+           ]
+
+-}
+chromaticRun : Pitch -> Pitch -> List Pitch
+chromaticRun start end =
+    Pitch.chromaticRun start end
 
 
 {-| Distance in semitones from C0. Useful for sorting.

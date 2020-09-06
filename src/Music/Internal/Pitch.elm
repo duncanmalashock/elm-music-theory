@@ -83,6 +83,7 @@ module Music.Internal.Pitch exposing
     , cSharp6
     , cSharp7
     , cSharp8
+    , chromaticRun
     , d0
     , d1
     , d2
@@ -215,10 +216,12 @@ module Music.Internal.Pitch exposing
     , transposeUp
     )
 
+import List.Extra
 import Music.Internal.Interval as Interval exposing (Interval)
 import Music.Internal.Letter as Letter exposing (Letter(..))
 import Music.Internal.Octave as Octave exposing (Octave)
 import Music.Internal.PitchClass as PitchClass exposing (Offset, PitchClass)
+import Util.Basic
 
 
 semitonesUpperLimit : Int
@@ -233,6 +236,95 @@ semitonesLowerLimit =
 
 type Pitch
     = Pitch PitchClass Octave
+
+
+chromaticRun : Pitch -> Pitch -> List Pitch
+chromaticRun start end =
+    let
+        steps =
+            Interval.semitones (intervalBetween start end)
+
+        flatten nonEmptyList =
+            case nonEmptyList of
+                ( head, tail ) ->
+                    head :: tail
+    in
+    if steps >= 0 then
+        ( start, [] )
+            |> Util.Basic.applyNTimes steps (addNext getNextChromaticUpward)
+            |> flatten
+            |> List.reverse
+
+    else
+        ( start, [] )
+            |> Util.Basic.applyNTimes (steps * -1) (addNext getNextChromaticDownward)
+            |> flatten
+            |> List.reverse
+
+
+addNext : (Pitch -> Pitch) -> ( Pitch, List Pitch ) -> ( Pitch, List Pitch )
+addNext getNext ( head, tail ) =
+    ( getNext head, [ head ] ++ tail )
+
+
+getNextChromaticUpward : Pitch -> Pitch
+getNextChromaticUpward current =
+    let
+        currentOctave : Octave
+        currentOctave =
+            octave current
+
+        currentChromaticList : List Pitch
+        currentChromaticList =
+            List.map
+                (\pc ->
+                    Pitch pc currentOctave
+                )
+                PitchClass.allInUpwardChromaticScale
+
+        pitchesAtLeastAsHigh =
+            List.filter
+                (\p ->
+                    semitones p > semitones current
+                )
+                currentChromaticList
+    in
+    case List.head pitchesAtLeastAsHigh of
+        Just nextPitch ->
+            nextPitch
+
+        Nothing ->
+            Pitch PitchClass.c (Octave.add 1 currentOctave)
+
+
+getNextChromaticDownward : Pitch -> Pitch
+getNextChromaticDownward current =
+    let
+        currentOctave : Octave
+        currentOctave =
+            octave current
+
+        currentChromaticList : List Pitch
+        currentChromaticList =
+            List.map
+                (\pc ->
+                    Pitch pc currentOctave
+                )
+                PitchClass.allInDownwardChromaticScale
+
+        pitchesAtLeastAsLow =
+            List.filter
+                (\p ->
+                    semitones p < semitones current
+                )
+                currentChromaticList
+    in
+    case List.head (List.reverse pitchesAtLeastAsLow) of
+        Just nextPitch ->
+            nextPitch
+
+        Nothing ->
+            Pitch PitchClass.b (Octave.add -1 currentOctave)
 
 
 pitch : Letter -> Offset -> Octave -> Pitch
