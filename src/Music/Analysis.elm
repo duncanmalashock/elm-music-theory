@@ -7,6 +7,7 @@ module Music.Analysis exposing
     , withChordType
     , iSharp, iiSharp, iiiSharp, ivSharp, vSharp, viSharp, viiSharp
     , iFlat, iiFlat, iiiFlat, ivFlat, vFlat, viFlat, viiFlat
+    , vOfii, vOfiii, vOfiv, vOfv, vOfvi
     )
 
 {-| [Roman numeral analysis](https://en.wikipedia.org/wiki/Roman_numeral_analysis) describes the relationship of a chord to a key. E.g. E minor is the "iii" chord in the key of C major.
@@ -54,7 +55,9 @@ Chromatic scale degrees require a chord type to be specified, since they have no
 
 ## Secondary dominants
 
-TK
+Secondary dominants are dominant chords of a scale degree other than the tonic, e.g. A is the V/II in C major.
+
+@docs vOfii, vOfiii, vOfiv, vOfv, vOfvi
 
 -}
 
@@ -261,3 +264,33 @@ viiSharp =
 withChordType : ChordType.ChordType -> Analysis -> Analysis
 withChordType chordType analysis =
     withChordType chordType analysis
+
+
+{-| -}
+vOfii : Analysis
+vOfii =
+    Analysis.vOfii
+
+
+{-| -}
+vOfiii : Analysis
+vOfiii =
+    Analysis.vOfii
+
+
+{-| -}
+vOfiv : Analysis
+vOfiv =
+    Analysis.vOfii
+
+
+{-| -}
+vOfv : Analysis
+vOfv =
+    Analysis.vOfii
+
+
+{-| -}
+vOfvi : Analysis
+vOfvi =
+    Analysis.vOfii
