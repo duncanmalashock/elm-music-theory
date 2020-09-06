@@ -23,6 +23,27 @@ all =
                             Analysis.fromChord Key.c (Chord.minor PitchClass.e)
                     in
                     Expect.equal expected result
+            , test "V/ii" <|
+                \_ ->
+                    let
+                        expected =
+                            Analysis.vOfii
+
+                        result =
+                            Analysis.fromChord Key.c (Chord.major PitchClass.a)
+                    in
+                    Expect.equal expected result
+            , test "V7/IV" <|
+                \_ ->
+                    let
+                        expected =
+                            Analysis.vOfiv
+                                |> Analysis.withChordType ChordType.dominantSeventh
+
+                        result =
+                            Analysis.fromChord Key.c (Chord.dominantSeventh PitchClass.c)
+                    in
+                    Expect.equal expected result
             , test "alternate chord type" <|
                 \_ ->
                     let
@@ -66,6 +87,36 @@ all =
                             Analysis.toChord Analysis.triadsByDefault
                                 Key.c
                                 (Analysis.iii |> Analysis.withChordType ChordType.majorNinth)
+                    in
+                    Expect.equal expected result
+            , test "V/ii (triads default)" <|
+                \_ ->
+                    let
+                        expected =
+                            Chord.major PitchClass.a
+
+                        result =
+                            Analysis.toChord Analysis.triadsByDefault Key.c Analysis.vOfii
+                    in
+                    Expect.equal expected result
+            , test "V/IV (triads default)" <|
+                \_ ->
+                    let
+                        expected =
+                            Chord.major PitchClass.c
+
+                        result =
+                            Analysis.toChord Analysis.triadsByDefault Key.c Analysis.vOfiv
+                    in
+                    Expect.equal expected result
+            , test "V/v (triads default)" <|
+                \_ ->
+                    let
+                        expected =
+                            Chord.dominantSeventh PitchClass.d
+
+                        result =
+                            Analysis.toChord Analysis.seventhsByDefault Key.cMinor Analysis.vOfv
                     in
                     Expect.equal expected result
             ]
@@ -128,6 +179,36 @@ all =
 
                         result =
                             Analysis.symbol Key.cMinor (Analysis.v |> Analysis.withChordType ChordType.dominantSeventh)
+                    in
+                    Expect.equal expected result
+            , test "V/ii chord, major key" <|
+                \_ ->
+                    let
+                        expected =
+                            "V/ii"
+
+                        result =
+                            Analysis.symbol Key.c Analysis.vOfii
+                    in
+                    Expect.equal expected result
+            , test "V/III chord, minor key" <|
+                \_ ->
+                    let
+                        expected =
+                            "V/III"
+
+                        result =
+                            Analysis.symbol Key.cMinor Analysis.vOfiii
+                    in
+                    Expect.equal expected result
+            , test "V7/IV chord, major key" <|
+                \_ ->
+                    let
+                        expected =
+                            "V/IV"
+
+                        result =
+                            Analysis.symbol Key.c Analysis.vOfiv
                     in
                     Expect.equal expected result
             ]

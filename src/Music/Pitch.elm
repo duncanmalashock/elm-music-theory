@@ -184,7 +184,7 @@ chromaticRun start end =
     Pitch.chromaticRun start end
 
 
-{-| Simplify a pitch to a maximum of one accidental:
+{-| Respell a pitch with as few accidentals as possible:
 
     bDoubleSharp4 =
         transposeUp Interval.augmentedUnison bSharp4
@@ -192,7 +192,7 @@ chromaticRun start end =
     simplify bDoubleSharp
         == cSharp5
 
-Pitches with two or more accidentals are fairly rare, but possible. This function is helpful if you plan to use pitch data with software (for notation or playback, etc.) in which multiple accidentals are _not_ possible.
+Pitches with two or more accidentals are fairly rare, but possible. This function is helpful if you plan to use pitch data with software (for notation, etc.) in which multiple accidentals are _not_ possible.
 
 -}
 simplify : Pitch -> Pitch

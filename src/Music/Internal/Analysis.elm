@@ -20,6 +20,11 @@ module Music.Internal.Analysis exposing
     , triadsByDefault
     , v
     , vFlat
+    , vOfii
+    , vOfiii
+    , vOfiv
+    , vOfv
+    , vOfvi
     , vSharp
     , vi
     , viFlat
@@ -207,16 +212,26 @@ symbol key analysis =
                     romanNumeral
 
         chordType =
-            case maybeChordType of
-                Just theChordType ->
-                    theChordType
+            case analysis of
+                Degree _ _ _ ->
+                    case maybeChordType of
+                        Just theChordType ->
+                            theChordType
 
-                Nothing ->
-                    if keyIsMajor then
-                        defaultChordType triadsByDefault.major numeral
+                        Nothing ->
+                            if keyIsMajor then
+                                defaultChordType triadsByDefault.major numeral
 
-                    else
-                        defaultChordType triadsByDefault.minor numeral
+                            else
+                                defaultChordType triadsByDefault.minor numeral
+
+                SecondaryDominant _ _ ->
+                    case maybeChordType of
+                        Just theChordType ->
+                            theChordType
+
+                        Nothing ->
+                            ChordType.major
 
         usingDefaultChordType =
             case maybeChordType of
@@ -238,15 +253,18 @@ symbol key analysis =
                    )
 
         SecondaryDominant _ _ ->
-            (if usingDefaultChordType then
-                "V"
-
-             else
-                "V" ++ ChordType.symbol chordType
-            )
+            ("V" ++ ChordType.symbol chordType)
                 ++ "/"
                 ++ numeralToString numeral
-                    (defaultChordType triadsByDefault.major numeral)
+                    (defaultChordType
+                        (if keyIsMajor then
+                            triadsByDefault.major
+
+                         else
+                            triadsByDefault.minor
+                        )
+                        numeral
+                    )
 
 
 numeralToString : RomanNumeral -> ChordType.ChordType -> String
@@ -323,8 +341,69 @@ fromChord key chord =
         ( numeral, offset ) =
             numeralAndOffset key (Chord.root chord)
     in
-    -- TODO: detect secondary dominants
-    Degree numeral offset (maybeChordTypeFromContext key numeral offset (Chord.chordType chord))
+    case secondaryDominant key chord of
+        Just theSecondaryDominant ->
+            theSecondaryDominant
+
+        Nothing ->
+            Degree numeral offset (maybeChordTypeFromContext key numeral offset (Chord.chordType chord))
+
+
+secondaryDominant : Key.Key -> Chord.Chord -> Maybe Analysis
+secondaryDominant key chord =
+    let
+        noOffset =
+            PitchClass.offsetFromInt 0
+
+        secondaryDominantInfo =
+            [ ( II, pitchClassFromNumeralAndOffset key VI noOffset, canFunctionAsSecondaryDominant )
+            , ( III, pitchClassFromNumeralAndOffset key VII noOffset, canFunctionAsSecondaryDominant )
+            , ( IV, pitchClassFromNumeralAndOffset key I noOffset, canFunctionAsVofIV key )
+            , ( V, pitchClassFromNumeralAndOffset key II noOffset, canFunctionAsSecondaryDominant )
+            , ( VI, pitchClassFromNumeralAndOffset key III noOffset, canFunctionAsSecondaryDominant )
+            ]
+
+        matching =
+            List.filter
+                (\triplet ->
+                    case triplet of
+                        ( secDomOf, root, canFunction ) ->
+                            (Chord.root chord == root)
+                                && canFunction (Chord.chordType chord)
+                )
+                secondaryDominantInfo
+                |> List.head
+
+        maybeChordType =
+            if Chord.chordType chord == ChordType.major then
+                Nothing
+
+            else
+                Just (Chord.chordType chord)
+    in
+    case matching of
+        Just ( secDomOf, _, _ ) ->
+            Just (SecondaryDominant secDomOf maybeChordType)
+
+        Nothing ->
+            Nothing
+
+
+canFunctionAsSecondaryDominant : ChordType.ChordType -> Bool
+canFunctionAsSecondaryDominant chordType =
+    ChordType.includes Interval.majorThird chordType
+        && (not <| ChordType.includes Interval.majorSeventh chordType)
+
+
+canFunctionAsVofIV : Key.Key -> ChordType.ChordType -> Bool
+canFunctionAsVofIV key chordType =
+    if Key.isMajor key then
+        ChordType.includes Interval.majorThird chordType
+            && ChordType.includes Interval.minorSeventh chordType
+
+    else
+        ChordType.includes Interval.majorThird chordType
+            && (not <| ChordType.includes Interval.majorSeventh chordType)
 
 
 pitchClassFromNumeralAndOffset : Key.Key -> RomanNumeral -> PitchClass.Offset -> PitchClass.PitchClass
@@ -392,7 +471,7 @@ toChord defaults key analysis =
 
                 SecondaryDominant romanNumeral maybeChordType ->
                     pitchClassFromNumeralAndOffset key romanNumeral (PitchClass.offsetFromInt 0)
-                        |> PitchClass.transpose Interval.perfectFourth
+                        |> PitchClass.transpose Interval.perfectFifth
 
         newChordType : ChordType.ChordType
         newChordType =
