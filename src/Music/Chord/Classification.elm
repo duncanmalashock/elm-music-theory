@@ -6,7 +6,7 @@ module Music.Chord.Classification exposing (Classification(..), Triad(..), Sixth
 # Disclaimer
 
 
-## Classifying chords exhaustively is hard and weird! I did my best
+## Issues with classifying chords exhaustively
 
 Different chord classification methods have accumulated since at least the 17th century, and they mainly serve to describe the most usual cases in a particular idiom. To my knowledge, there is no unified method for classifying chord types into a taxonomy that is also used by practicing musicians.
 
