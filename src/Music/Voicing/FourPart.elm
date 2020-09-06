@@ -492,6 +492,8 @@ orderWeighted weightedSortFns =
         (Chord.majorSix PitchClass.c)
         == Ok Voicing ...
 
+Voices are in order from high to low, the way you might read them on a score. `voiceOne` is the top note.
+
 If the pitches given do not match the chord, this function will return `Err` with the erroneous pitch classes:
 
     voicing
