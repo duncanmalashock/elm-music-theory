@@ -3,6 +3,7 @@ module Music.Internal.Chord exposing
     , chord
     , chordType
     , containsPitchClass
+    , detect
     , root
     , symbol
     , toPitchClasses
@@ -49,3 +50,24 @@ containsPitchClass : PitchClass.PitchClass -> Chord -> Bool
 containsPitchClass pitchClass theChord =
     List.member pitchClass
         (toPitchClasses theChord)
+
+
+detect : List ChordType.ChordType -> List PitchClass.PitchClass -> List Chord
+detect chordTypesToDetect pitchClasses =
+    PitchClass.allInChromaticScale
+        |> List.concatMap
+            (\theRoot ->
+                List.map
+                    (\theChordType ->
+                        chord theRoot theChordType
+                    )
+                    chordTypesToDetect
+            )
+        |> List.filterMap
+            (\theChord ->
+                if List.all (\pc -> containsPitchClass pc theChord) pitchClasses then
+                    Just theChord
+
+                else
+                    Nothing
+            )

@@ -8,6 +8,7 @@ module Music.Internal.PitchClass exposing
     , aSharp
     , accidentals
     , addOffset
+    , allInChromaticScale
     , areEnharmonicEquivalents
     , b
     , bDoubleFlat
@@ -59,6 +60,28 @@ module Music.Internal.PitchClass exposing
 import Music.Internal.Interval as Interval exposing (Direction(..), Interval(..))
 import Music.Internal.Letter as Letter exposing (Letter(..))
 import Util.Basic
+
+
+allInChromaticScale : List PitchClass
+allInChromaticScale =
+    [ c
+    , cSharp
+    , dFlat
+    , d
+    , dSharp
+    , eFlat
+    , e
+    , f
+    , fSharp
+    , gFlat
+    , g
+    , gSharp
+    , aFlat
+    , a
+    , aSharp
+    , bFlat
+    , b
+    ]
 
 
 a : PitchClass

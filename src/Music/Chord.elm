@@ -1,6 +1,6 @@
 module Music.Chord exposing
     ( Chord
-    , chordType, root, containsPitchClass
+    , chordType, root, containsPitchClass, detect
     , toPitchClasses, symbol
     , voiceFourParts, voiceFiveParts
     , major, minor, augmented, diminished, sus2, sus4
@@ -17,6 +17,7 @@ This module allows for:
 
   - Creating chords with a given root and chord type
   - Getting the pitch classes contained in a chord
+  - Detecting chords from a list of pitch classes
   - Converting to chord symbols
   - Turning chords into voicings
 
@@ -25,7 +26,7 @@ This module allows for:
 
 # Helpers
 
-@docs chordType, root, containsPitchClass
+@docs chordType, root, containsPitchClass, detect
 
 
 # Conversion
@@ -171,6 +172,29 @@ root theChord =
 containsPitchClass : PitchClass.PitchClass -> Chord -> Bool
 containsPitchClass pitchClass theChord =
     Chord.containsPitchClass pitchClass theChord
+
+
+{-| Detect chords that contain the given pitch classes:
+
+    Chord.detect
+        [ ChordType.majorSix
+        , ChordType.minorSeventh
+        ]
+        [ PitchClass.a
+        , PitchClass.c
+        , PitchClass.e
+        , PitchClass.g
+        ]
+        == [ Chord.minorSeventh PitchClass.a
+           , Chord.majorSix PitchClass.c
+           ]
+
+Passing in a list of chord types to detect is required, since there exists no exhaustive list of valid chords in tonal music.
+
+-}
+detect : List ChordType.ChordType -> List PitchClass.PitchClass -> List Chord
+detect chordTypesToDetect pitchClasses =
+    Chord.detect chordTypesToDetect pitchClasses
 
 
 {-| Get the pitch classes in a chord:
