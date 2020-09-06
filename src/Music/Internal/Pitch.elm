@@ -208,6 +208,7 @@ module Music.Internal.Pitch exposing
     , range
     , semitones
     , sharp
+    , simplify
     , sort
     , toFrequency
     , toMIDINoteNumber
@@ -325,6 +326,38 @@ getNextChromaticDownward current =
 
         Nothing ->
             Pitch PitchClass.b (Octave.add -1 currentOctave)
+
+
+simplify : Pitch -> Pitch
+simplify thePitch =
+    let
+        usesSharps : Bool
+        usesSharps =
+            PitchClass.accidentals (pitchClass thePitch) > 0
+
+        chromaticScaleToUse =
+            if usesSharps then
+                PitchClass.allInUpwardChromaticScale
+
+            else
+                PitchClass.allInDownwardChromaticScale
+
+        pitchesToChooseFrom =
+            [ Octave.add 1 (octave thePitch)
+            , octave thePitch
+            , Octave.add -1 (octave thePitch)
+            ]
+                |> List.concatMap
+                    (\o ->
+                        List.map (fromPitchClass o) chromaticScaleToUse
+                    )
+                |> List.filter
+                    (\pc ->
+                        semitones pc == semitones thePitch
+                    )
+    in
+    List.head pitchesToChooseFrom
+        |> Maybe.withDefault thePitch
 
 
 pitch : Letter -> Offset -> Octave -> Pitch

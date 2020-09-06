@@ -214,4 +214,36 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "simplify"
+            [ test "B##4 should become C#5" <|
+                \_ ->
+                    let
+                        expected =
+                            Pitch.cSharp5
+
+                        result =
+                            Pitch.simplify (Pitch.transposeUp Interval.augmentedUnison Pitch.bSharp4)
+                    in
+                    Expect.equal expected result
+            , test "Fb3 should become E3" <|
+                \_ ->
+                    let
+                        expected =
+                            Pitch.e3
+
+                        result =
+                            Pitch.simplify Pitch.fFlat3
+                    in
+                    Expect.equal expected result
+            , test "Cb3 should become B2" <|
+                \_ ->
+                    let
+                        expected =
+                            Pitch.b2
+
+                        result =
+                            Pitch.simplify Pitch.cFlat3
+                    in
+                    Expect.equal expected result
+            ]
         ]

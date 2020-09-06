@@ -3,6 +3,7 @@ module Music.Pitch exposing
     , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
     , chromaticRun
     , semitones, toMIDINoteNumber, toFrequency, name, fromPitchClassInOctave
+    , simplify
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
     , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
     , d0, d1, d2, d3, d4, d5, d6, d7, d8
@@ -35,6 +36,7 @@ This module allows for:
   - Generating "chromatic runs" between starting and ending pitches
   - Converting to semitones, MIDI, and frequency
   - Converting a pitch to a symbol
+  - Simplifying pitch spelling
 
 @docs Pitch
 
@@ -52,6 +54,11 @@ This module allows for:
 # Conversion
 
 @docs semitones, toMIDINoteNumber, toFrequency, name, fromPitchClassInOctave
+
+
+# Respelling
+
+@docs simplify
 
 
 # Constructors
@@ -175,6 +182,22 @@ Ascending runs use sharps; descending runs use flats:
 chromaticRun : Pitch -> Pitch -> List Pitch
 chromaticRun start end =
     Pitch.chromaticRun start end
+
+
+{-| Simplify a pitch to a maximum of one accidental:
+
+    bDoubleSharp4 =
+        transposeUp Interval.augmentedUnison bSharp4
+
+    simplify bDoubleSharp
+        == cSharp5
+
+Pitches with two or more accidentals are fairly rare, but possible. This function is helpful if you plan to use pitch data with software (for notation or playback, etc.) in which multiple accidentals are _not_ possible.
+
+-}
+simplify : Pitch -> Pitch
+simplify thePitch =
+    Pitch.simplify thePitch
 
 
 {-| Distance in semitones from C0. Useful for sorting.
