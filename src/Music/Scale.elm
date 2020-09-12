@@ -1,6 +1,6 @@
 module Music.Scale exposing
     ( Scale
-    , root, scaleType, toList, containsPitchClass, containsChord, allChords, degree
+    , root, scaleType, toList, containsPitchClass, containsChord, allChords, degree, mode
     , major, minor
     , ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian
     , melodicMinor, dorianFlat2, lydianAugmented, acoustic, majorMinor, minorLocrian, superlocrian
@@ -17,7 +17,7 @@ module Music.Scale exposing
 
 # Helpers
 
-@docs root, scaleType, toList, containsPitchClass, containsChord, allChords, degree
+@docs root, scaleType, toList, containsPitchClass, containsChord, allChords, degree, mode
 
 
 # Constructors
@@ -77,6 +77,20 @@ type alias Scale =
 root : Scale -> PitchClass.PitchClass
 root theScale =
     Scale.root theScale
+
+
+{-| Get a [mode](https://en.wikipedia.org/wiki/Mode_%28music%29#Modern_modes) of a scale by shifting the order of its pitch classes. For example, E Phrygian is the third mode of the C major scale:
+
+    mode 3 (major PitchClass.c) == phrygian PitchClass.e
+
+Note: like many numbers in music theory, modes are 1-based; `2` means the second mode of the scale type. 0 and negative integers are ignored.
+
+-}
+mode : Int -> Scale -> Scale
+mode modeShiftIndex theScale =
+    Scale.scale
+        (degree modeShiftIndex theScale)
+        (ScaleType.mode modeShiftIndex (scaleType theScale))
 
 
 {-| Get the scale type for a scale:
