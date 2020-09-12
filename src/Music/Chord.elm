@@ -7,7 +7,9 @@ module Music.Chord exposing
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
     , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
-    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
+    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen, dominantSeventhFlatThirteen
+    , dominantNinthSharpEleven, dominantNinthFlatThirteen, dominantNinthSharpElevenFlatThirteen
+    , dominantThirteenthFlatNine, dominantThirteenthSharpNine, dominantThirteenthFlatNineSharpNine, dominantThirteenthFlatNineSharpEleven, dominantThirteenthSharpNineSharpEleven, dominantThirteenthSharpEleven
     , custom
     )
 
@@ -63,7 +65,20 @@ Learn more about how this works in the `Voicing.ThreePart`, `Voicing.FourPart`, 
 
 ## Altered dominant chords
 
-@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen
+
+### Seventh
+
+@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen, dominantSeventhFlatThirteen
+
+
+### Ninth
+
+@docs dominantNinthSharpEleven, dominantNinthFlatThirteen, dominantNinthSharpElevenFlatThirteen
+
+
+### Thirteenth
+
+@docs dominantThirteenthFlatNine, dominantThirteenthSharpNine, dominantThirteenthFlatNineSharpNine, dominantThirteenthFlatNineSharpEleven, dominantThirteenthSharpNineSharpEleven, dominantThirteenthSharpEleven
 
 
 # Custom chord types
@@ -427,6 +442,66 @@ dominantSeventhSharpNineFlatThirteen pitchClass =
 dominantSeventhSharpElevenFlatThirteen : PitchClass.PitchClass -> Chord
 dominantSeventhSharpElevenFlatThirteen pitchClass =
     Chord.chord pitchClass ChordType.dominantSeventhSharpElevenFlatThirteen
+
+
+{-| -}
+dominantSeventhFlatThirteen : PitchClass.PitchClass -> Chord
+dominantSeventhFlatThirteen pitchClass =
+    Chord.chord pitchClass ChordType.dominantSeventhFlatThirteen
+
+
+{-| -}
+dominantNinthSharpEleven : PitchClass.PitchClass -> Chord
+dominantNinthSharpEleven pitchClass =
+    Chord.chord pitchClass ChordType.dominantNinthSharpEleven
+
+
+{-| -}
+dominantNinthFlatThirteen : PitchClass.PitchClass -> Chord
+dominantNinthFlatThirteen pitchClass =
+    Chord.chord pitchClass ChordType.dominantNinthFlatThirteen
+
+
+{-| -}
+dominantNinthSharpElevenFlatThirteen : PitchClass.PitchClass -> Chord
+dominantNinthSharpElevenFlatThirteen pitchClass =
+    Chord.chord pitchClass ChordType.dominantNinthSharpElevenFlatThirteen
+
+
+{-| -}
+dominantThirteenthFlatNine : PitchClass.PitchClass -> Chord
+dominantThirteenthFlatNine pitchClass =
+    Chord.chord pitchClass ChordType.dominantThirteenthFlatNine
+
+
+{-| -}
+dominantThirteenthSharpNine : PitchClass.PitchClass -> Chord
+dominantThirteenthSharpNine pitchClass =
+    Chord.chord pitchClass ChordType.dominantThirteenthSharpNine
+
+
+{-| -}
+dominantThirteenthFlatNineSharpNine : PitchClass.PitchClass -> Chord
+dominantThirteenthFlatNineSharpNine pitchClass =
+    Chord.chord pitchClass ChordType.dominantThirteenthFlatNineSharpNine
+
+
+{-| -}
+dominantThirteenthFlatNineSharpEleven : PitchClass.PitchClass -> Chord
+dominantThirteenthFlatNineSharpEleven pitchClass =
+    Chord.chord pitchClass ChordType.dominantThirteenthFlatNineSharpEleven
+
+
+{-| -}
+dominantThirteenthSharpNineSharpEleven : PitchClass.PitchClass -> Chord
+dominantThirteenthSharpNineSharpEleven pitchClass =
+    Chord.chord pitchClass ChordType.dominantThirteenthSharpNineSharpEleven
+
+
+{-| -}
+dominantThirteenthSharpEleven : PitchClass.PitchClass -> Chord
+dominantThirteenthSharpEleven pitchClass =
+    Chord.chord pitchClass ChordType.dominantThirteenthSharpEleven
 
 
 {-| Create a chord from a custom chord type. For use with `ChordType.custom`:
