@@ -616,7 +616,7 @@ commonTones a b =
     Voicing.commonTones FivePart.allVoices a b
 
 
-{-| Find out whether the first and fourth voices move in opposite directions (known as [contrary motion](https://en.wikipedia.org/wiki/Contrapuntal_motion#Contrary_motion)).
+{-| Find out whether the first and fifth voices move in opposite directions (known as [contrary motion](https://en.wikipedia.org/wiki/Contrapuntal_motion#Contrary_motion)).
 -}
 usesContraryMotion : Voicing -> Voicing -> Bool
 usesContraryMotion a b =
@@ -821,16 +821,16 @@ toPitchList theVoicing =
 {-| Get all intervals between each pitch in a voicing:
 
     toIntervals myVoicing
-        == { voiceFiveToVoiceOne = Interval.x
-           , voiceFiveToVoiceTwo = Interval.x
-           , voiceFourToVoiceOne = Interval.x
-           , voiceFiveToVoiceThree = Interval.x
-           , voiceFourToVoiceTwo = Interval.x
-           , voiceThreeToVoiceOne = Interval.x
-           , voiceFiveToVoiceFour = Interval.x
-           , voiceFourToVoiceThree = Interval.x
-           , voiceThreeToVoiceTwo = Interval.x
-           , voiceTwoToVoiceOne = Interval.x
+        == { fiveToOne = Interval.majorThird
+           , fiveToTwo = Interval.perfectOctave
+           , fiveToThree = Interval.perfectFifth
+           , fiveToFour = Interval.majorThird
+           , fourToOne = Interval.perfectOctave
+           , fourToTwo = Interval.minorSixth
+           , fourToThree = Interval.minorThird
+           , threeToOne = Interval.majorSixth
+           , threeToTwo = Interval.perfectFourth
+           , twoToOne = Interval.majorThird
            }
 
 -}
@@ -843,12 +843,16 @@ toIntervals theVoicing =
 {-| Get all intervals between each pitch in a voicing as a `List`:
 
     toIntervalList myVoicing
-        == [ Interval.majorSecond
-           , Interval.majorSecond
+        == [ Interval.minorThird
+           , Interval.majorThird
+           , Interval.majorThird
            , Interval.majorThird
            , Interval.perfectFourth
            , Interval.perfectFifth
+           , Interval.minorSixth
            , Interval.majorSixth
+           , Interval.perfectOctave
+           , Interval.perfectOctave
            ]
 
 -}
@@ -871,12 +875,12 @@ toIntervalList theVoicing =
 type alias Intervals =
     { fiveToOne : Interval.Interval
     , fiveToTwo : Interval.Interval
-    , fourToOne : Interval.Interval
     , fiveToThree : Interval.Interval
-    , fourToTwo : Interval.Interval
-    , threeToOne : Interval.Interval
     , fiveToFour : Interval.Interval
+    , fourToOne : Interval.Interval
+    , fourToTwo : Interval.Interval
     , fourToThree : Interval.Interval
+    , threeToOne : Interval.Interval
     , threeToTwo : Interval.Interval
     , twoToOne : Interval.Interval
     }
@@ -892,10 +896,10 @@ type alias Intervals =
         , voiceFive = Range.bassVoice
         }
         [ basic ]
-        (Chord.majorSeventh PitchClass.c)
+        (Chord.major PitchClass.c)
         |> List.map toString
-        == [ "C5, B4, G4, E4, C4"
-           , -- 2 others...
+        == [ "E4, C4, G3, E3, C3"
+           , "E5, C5, G4, E4, C4"
            ]
 
 -}
