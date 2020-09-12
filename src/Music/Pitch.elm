@@ -3,7 +3,7 @@ module Music.Pitch exposing
     , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, octave
     , chromaticRun
     , semitones, toMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
-    , simplify
+    , normalize, simplify
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
     , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
     , d0, d1, d2, d3, d4, d5, d6, d7, d8
@@ -49,7 +49,7 @@ module Music.Pitch exposing
 
 # Respelling
 
-@docs simplify
+@docs normalize, simplify
 
 
 # Constructors
@@ -189,17 +189,32 @@ chromaticRun start end =
 
 {-| Respell a pitch with as few accidentals as possible:
 
-    bDoubleSharp4 =
-        transposeUp Interval.augmentedUnison bSharp4
+    simplify fFlat4
+        == e4
 
-    simplify bDoubleSharp
-        == cSharp5
-
-Pitches with two or more accidentals are fairly rare, but possible. This function is helpful if you plan to use pitch data with software (for notation, etc.) in which multiple accidentals are _not_ possible.
+This is be helpful in musical idioms like jazz, where simple spellings are preferred.
 
 -}
 simplify : Pitch -> Pitch
 simplify thePitch =
+    Pitch.simplify thePitch
+
+
+{-| Respell a pitch with at most two accidentals:
+
+    bTripleSharp4 =
+        bSharp4
+            |> transposeUp Interval.augmentedUnison
+            |> transposeUp Interval.augmentedUnison
+
+    normalize bTripleSharp4
+        == d5
+
+Pitches with three or more accidentals are possible, but not normal; most notation software will not support them. This function is a helpful pre-export step if you plan to use pitch data with software in which three or more accidentals are not representable.
+
+-}
+normalize : Pitch -> Pitch
+normalize thePitch =
     Pitch.simplify thePitch
 
 

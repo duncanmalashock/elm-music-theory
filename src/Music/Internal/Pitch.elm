@@ -202,6 +202,7 @@ module Music.Internal.Pitch exposing
     , isLessThan
     , isWithin
     , natural
+    , normalize
     , octave
     , pitch
     , pitchClass
@@ -328,6 +329,42 @@ getNextChromaticDownward current =
 
         Nothing ->
             Pitch PitchClass.b (Octave.add -1 currentOctave)
+
+
+normalize : Int -> Pitch -> Pitch
+normalize maxAccidentals thePitch =
+    let
+        usesSharps : Bool
+        usesSharps =
+            PitchClass.accidentals (pitchClass thePitch) > 0
+
+        chromaticScaleToUse =
+            if usesSharps then
+                PitchClass.allInUpwardChromaticScale
+
+            else
+                PitchClass.allInDownwardChromaticScale
+
+        pitchesToChooseFrom =
+            [ Octave.add 1 (octave thePitch)
+            , octave thePitch
+            , Octave.add -1 (octave thePitch)
+            ]
+                |> List.concatMap
+                    (\o ->
+                        List.map (fromPitchClass o) chromaticScaleToUse
+                    )
+                |> List.filter
+                    (\pc ->
+                        semitones pc == semitones thePitch
+                    )
+    in
+    if abs (PitchClass.accidentals (pitchClass thePitch)) > maxAccidentals then
+        List.head pitchesToChooseFrom
+            |> Maybe.withDefault thePitch
+
+    else
+        thePitch
 
 
 simplify : Pitch -> Pitch

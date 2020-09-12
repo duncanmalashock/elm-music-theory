@@ -246,4 +246,40 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "normalize"
+            [ test "B###4 should become D5" <|
+                \_ ->
+                    let
+                        expected =
+                            Pitch.d5
+
+                        result =
+                            Pitch.normalize 2
+                                (Pitch.bSharp4
+                                    |> Pitch.transposeUp Interval.augmentedUnison
+                                    |> Pitch.transposeUp Interval.augmentedUnison
+                                )
+                    in
+                    Expect.equal expected result
+            , test "Fb3 should stay Fb3" <|
+                \_ ->
+                    let
+                        expected =
+                            Pitch.fFlat3
+
+                        result =
+                            Pitch.normalize 2 Pitch.fFlat3
+                    in
+                    Expect.equal expected result
+            , test "Cb3 should stay Cb3" <|
+                \_ ->
+                    let
+                        expected =
+                            Pitch.cFlat3
+
+                        result =
+                            Pitch.normalize 2 Pitch.cFlat3
+                    in
+                    Expect.equal expected result
+            ]
         ]
