@@ -141,8 +141,7 @@ voiceFiveParts voiceRanges methods chord =
         (\oct ->
             List.map
                 (\class -> Voicing.voicing chord oct class)
-                -- TODO: fix this
-                []
+                (List.concatMap (FivePart.voicingClassesFromMethod (chordType chord)) methods)
         )
         Octave.allValid
         |> List.filter (Voicing.withInstrumentRanges FivePart.allVoices FivePart.allRanges voiceRanges)
@@ -181,7 +180,7 @@ containsPitchClass pitchClass theChord =
 
 {-| Detect chords that contain the given pitch classes:
 
-    Chord.detect
+    detect
         [ ChordType.majorSix
         , ChordType.minorSeventh
         ]
@@ -190,8 +189,8 @@ containsPitchClass pitchClass theChord =
         , PitchClass.e
         , PitchClass.g
         ]
-        == [ Chord.minorSeventh PitchClass.a
-           , Chord.majorSix PitchClass.c
+        == [ minorSeventh PitchClass.a
+           , majorSix PitchClass.c
            ]
 
 Passing in a list of chord types to detect is required, since there exists no exhaustive list of valid chords in tonal music.

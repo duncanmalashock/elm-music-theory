@@ -12,6 +12,7 @@
         "Music.Chord",
         "Music.Chord.Classification",
         "Music.Voicing.FourPart",
+        "Music.Voicing.FivePart",
         "Music.ChordType",
         "Music.Analysis",
         "Music.Key",
