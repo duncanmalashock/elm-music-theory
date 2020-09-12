@@ -49,6 +49,8 @@ module Music.Pitch exposing
 
 # Respelling
 
+Equivalent pitches can be [spelled](https://en.wikipedia.org/wiki/Enharmonic) multiple ways. These functions help with respelling pitches for certain circumstances.
+
 @docs normalize, simplify
 
 
@@ -192,7 +194,7 @@ chromaticRun start end =
     simplify fFlat4
         == e4
 
-This is be helpful in musical idioms like jazz, where simple spellings are preferred.
+This is helpful in musical idioms like jazz, where simple spellings are preferred.
 
 -}
 simplify : Pitch -> Pitch
@@ -210,7 +212,7 @@ simplify thePitch =
     normalize bTripleSharp4
         == d5
 
-Pitches with three or more accidentals are possible, but not normal; most notation software will not support them. This function is a helpful pre-export step if you plan to use pitch data with software in which three or more accidentals are not representable.
+Pitches with three or more accidentals are possible, but not normal; most notation software will not support them. This function is a helpful pre-export step if you plan to use pitch data with software in which three or more accidentals are not representable (which is very likely).
 
 -}
 normalize : Pitch -> Pitch
