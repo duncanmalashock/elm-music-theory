@@ -17,7 +17,7 @@ module Music.Voicing.FourPart exposing
     , rootPosition, firstInversion, secondInversion, thirdInversion
     , VoicingMethod
     , SpacingLimits
-    , custom
+    , method
     , selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
     , placeSelectedFactors
     , combineVoicingMethods
@@ -184,7 +184,7 @@ Example:
 
     myCustomVoicingMethod : VoicingMethod
     myCustomVoicingMethod =
-        custom
+        method
             ChordType.availableTensions
             (\available ->
                 FourPart.selectFactors
@@ -217,7 +217,7 @@ Example:
 
 @docs VoicingMethod
 @docs SpacingLimits
-@docs custom
+@docs method
 @docs selectFactors, withFactor, withUniqueFactor, withFactorFrom, withUniqueFactorFrom, withTwoFactorsFrom, withUniqueTwoFactorsFrom, withThreeFactorsFrom, withUniqueThreeFactorsFrom
 @docs placeSelectedFactors
 @docs combineVoicingMethods
@@ -278,17 +278,17 @@ type alias SpacingLimits =
 
 {-| Begin a custom voicing method:
 
-    custom Chord.categorizeFactors
+    method Chord.categorizeFactors
         (\categorized ->
             ...
         )
 
 -}
-custom :
+method :
     (ChordType.ChordType -> Maybe categorized)
     -> (categorized -> List FourPart.VoicingClass)
     -> VoicingMethod
-custom categorizeFn buildFromCategorized =
+method categorizeFn buildFromCategorized =
     FourPart.custom categorizeFn buildFromCategorized
 
 

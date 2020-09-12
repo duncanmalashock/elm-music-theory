@@ -153,7 +153,7 @@ all =
                             , ChordType.augmentedDominantSeventh
                             , ChordType.dominantSeventhSus4
                             ]
-                                |> List.map ChordType.symbol
+                                |> List.map ChordType.toString
                     in
                     Expect.equal expected result
             ]
