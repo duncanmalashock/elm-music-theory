@@ -5,6 +5,7 @@ module Music.Interval exposing
     , add, subtract, simplify, addOctave
     , reverse, isUp, isDown
     , semitones, toString
+    , Range, range
     , perfectUnison, minorSecond, majorSecond, minorThird, majorThird, perfectFourth, perfectFifth, minorSixth, majorSixth, minorSeventh, majorSeventh, perfectOctave
     , augmentedUnison, augmentedSecond, augmentedThird, augmentedFourth, augmentedFifth, augmentedSixth, augmentedSeventh
     , diminishedSecond, diminishedThird, diminishedFourth, diminishedFifth, diminishedSixth, diminishedSeventh, diminishedOctave
@@ -40,6 +41,11 @@ Intervals have direction: a perfect fifth up is different from a perfect fifth d
 # Conversion
 
 @docs semitones, toString
+
+
+# Ranges
+
+@docs Range, range
 
 
 # Constructors
@@ -83,6 +89,28 @@ import Music.Internal.Pitch as Pitch
 {-| -}
 type alias Interval =
     Interval.Interval
+
+
+{-| -}
+type alias Range =
+    { min : Interval.Interval
+    , max : Interval.Interval
+    }
+
+
+{-| Create a range of intervals:
+
+    range perfectUnison perfectFifth
+        == { min = perfectUnison
+           , max = perfectFifth
+           }
+
+-}
+range : Interval -> Interval -> Range
+range min max =
+    { min = min
+    , max = max
+    }
 
 
 {-| Get the interval between two pitches:
