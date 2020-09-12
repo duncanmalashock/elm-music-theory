@@ -1,19 +1,13 @@
 module Music.PitchClass exposing
     ( PitchClass
     , fromPitch, areEnharmonicEquivalents
-    , name
+    , toString
     , c, cSharp, d, dSharp, dFlat, e, eFlat, f, fSharp, g, gSharp, gFlat, a, aSharp, aFlat, b, bFlat
     , cFlat, eSharp, fFlat, bSharp
     , cDoubleSharp, cDoubleFlat, dDoubleSharp, dDoubleFlat, eDoubleSharp, eDoubleFlat, fDoubleSharp, fDoubleFlat, gDoubleSharp, gDoubleFlat, aDoubleSharp, aDoubleFlat, bDoubleSharp, bDoubleFlat
     )
 
 {-| A [pitch class](https://en.wikipedia.org/wiki/Pitch_class) is like a pitch, but with no octave specified. E.g. the pitch class "B♭".
-
-This module allows for:
-
-  - Converting to a pitch class from a pitch
-  - Comparing pitch classes
-  - Converting a pitch class to a symbol
 
 @docs PitchClass
 
@@ -25,7 +19,7 @@ This module allows for:
 
 # Conversion
 
-@docs name
+@docs toString
 
 
 # Constructors
@@ -68,13 +62,13 @@ fromPitch pitch =
     Pitch.pitchClass pitch
 
 
-{-| A pitch class's letter name and accidental:
+{-| Get a pitch class's letter name and accidental:
 
     name bFlat == "B♭"
 
 -}
-name : PitchClass -> String
-name pitch =
+toString : PitchClass -> String
+toString pitch =
     PitchClass.toString pitch
 
 

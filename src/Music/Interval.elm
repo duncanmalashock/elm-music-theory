@@ -4,7 +4,7 @@ module Music.Interval exposing
     , isEqualTo, isGreaterThan, isLessThan
     , add, subtract, simplify, addOctave
     , reverse, isUp, isDown
-    , semitones, symbol
+    , semitones, toString
     , perfectUnison, minorSecond, majorSecond, minorThird, majorThird, perfectFourth, perfectFifth, minorSixth, majorSixth, minorSeventh, majorSeventh, perfectOctave
     , augmentedUnison, augmentedSecond, augmentedThird, augmentedFourth, augmentedFifth, augmentedSixth, augmentedSeventh
     , diminishedSecond, diminishedThird, diminishedFourth, diminishedFifth, diminishedSixth, diminishedSeventh, diminishedOctave
@@ -14,13 +14,6 @@ module Music.Interval exposing
     )
 
 {-| An [interval](https://en.wikipedia.org/wiki/Interval_%28music%29) is a measure of the distance between two pitches. E.g. a "perfect fifth".
-
-This module allows for:
-
-  - Measuring the interval between pitches
-  - Comparing intervals to each other
-  - Operations on intervals like adding, subtracting, simplifying, and reversing
-  - Conversion to interval symbols
 
 @docs Interval
 
@@ -46,7 +39,7 @@ Intervals have direction: a perfect fifth up is different from a perfect fifth d
 
 # Conversion
 
-@docs semitones, symbol
+@docs semitones, toString
 
 
 # Constructors
@@ -179,13 +172,13 @@ isDown interval =
     Interval.isNegative interval
 
 
-{-| Get the [symbol](https://en.wikipedia.org/wiki/Interval_%28music%29#Alternative_interval_naming_conventions) for an interval:
+{-| Get the [short name](https://en.wikipedia.org/wiki/Interval_%28music%29#Alternative_interval_naming_conventions) of an interval:
 
-    symbol perfectFifth == "P5"
+    toString perfectFifth == "P5"
 
 -}
-symbol : Interval -> String
-symbol interval =
+toString : Interval -> String
+toString interval =
     Interval.shortName interval
 
 

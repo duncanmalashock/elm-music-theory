@@ -61,8 +61,8 @@ module Music.Internal.ChordType exposing
     , minorSixNine
     , sus2
     , sus4
-    , symbol
     , toIntervals
+    , toString
     , withDiminishedSeventh
     , withEleventh
     , withFifth
@@ -439,8 +439,8 @@ alteredExtensionToSymbol alteration =
             "♭13"
 
 
-symbol : ChordType -> String
-symbol theChordType =
+toString : ChordType -> String
+toString theChordType =
     case classify theChordType of
         Classification triad maybeSixthOrSeventh maybeUnalteredExtension alteredExtensions ->
             case triad of

@@ -2,20 +2,15 @@ module Music.Analysis exposing
     ( Analysis
     , analyze
     , toChord, triadsByDefault, seventhsByDefault
-    , symbol
+    , toString
     , i, ii, iii, iv, v, vi, vii
     , withChordType
+    , vOfii, vOfiii, vOfiv, vOfv, vOfvi
     , iSharp, iiSharp, iiiSharp, ivSharp, vSharp, viSharp, viiSharp
     , iFlat, iiFlat, iiiFlat, ivFlat, vFlat, viFlat, viiFlat
-    , vOfii, vOfiii, vOfiv, vOfv, vOfvi
     )
 
 {-| [Roman numeral analysis](https://en.wikipedia.org/wiki/Roman_numeral_analysis) describes the relationship of a chord to a key. E.g. E minor is the "iii" chord in the key of C major.
-
-This module allows for:
-
-  - Analyzing the functions of chords in a key
-  - Converting from Roman numeral analysis to chords in any key
 
 @docs Analysis
 
@@ -32,7 +27,7 @@ This module allows for:
 
 # Other conversions
 
-@docs symbol
+@docs toString
 
 
 # Constructors
@@ -45,19 +40,19 @@ This module allows for:
 @docs withChordType
 
 
+## Secondary dominants
+
+[Secondary dominants](https://en.wikipedia.org/wiki/Secondary_chord#Secondary_dominant) are dominant chords of a scale degree other than the tonic, e.g. A is the V/ii in C major.
+
+@docs vOfii, vOfiii, vOfiv, vOfv, vOfvi
+
+
 ## Chromatic scale degrees
 
 Chromatic scale degrees require a chord type to be specified, since they have no defaults:
 
 @docs iSharp, iiSharp, iiiSharp, ivSharp, vSharp, viSharp, viiSharp
 @docs iFlat, iiFlat, iiiFlat, ivFlat, vFlat, viFlat, viiFlat
-
-
-## Secondary dominants
-
-Secondary dominants are dominant chords of a scale degree other than the tonic, e.g. A is the V/II in C major.
-
-@docs vOfii, vOfiii, vOfiv, vOfv, vOfvi
 
 -}
 
@@ -75,6 +70,8 @@ type alias Analysis =
 {-| Analyze a chord in the context of a given key:
 
     analyze (Chord.minor PitchClass.e) Key.c == iii
+
+    analyze (Chord.major PitchClass.a) Key.c == vOfii
 
 -}
 analyze : Chord.Chord -> Key.Key -> Analysis
@@ -114,17 +111,17 @@ seventhsByDefault =
 
 {-| Get the symbol for a Roman numeral analysis:
 
-    symbol Key.c iv == "IV"
+    toString Key.c iv == "IV"
 
-    symbol Key.cMinor iv == "iv"
+    toString Key.cMinor iv == "iv"
 
-    symbol Key.c (viiFlat ChordType.majorSeventh) == "♭VIIM7"
+    toString Key.c (viiFlat ChordType.majorSeventh) == "♭VIIM7"
 
-The Key parameter is used to determine whether to render the symbol in the context of a major or minor key.
+The `Key` parameter is used to determine whether to render the symbol in the context of a major or minor key.
 
 -}
-symbol : Key.Key -> Analysis -> String
-symbol key analysis =
+toString : Key.Key -> Analysis -> String
+toString key analysis =
     Analysis.symbol key analysis
 
 

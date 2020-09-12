@@ -2,7 +2,7 @@ module Music.Pitch exposing
     ( Pitch
     , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
     , chromaticRun
-    , semitones, toMIDINoteNumber, toFrequency, name, fromPitchClassInOctave
+    , semitones, toMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
     , simplify
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
     , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
@@ -29,15 +29,6 @@ module Music.Pitch exposing
 
 {-| A [pitch](https://en.wikipedia.org/wiki/Pitch_%28music%29) represents a specific frequency of sound with a letter name, octave, and accidental. E.g. the pitch "B♭4".
 
-This module allows for:
-
-  - Transposing a pitch by interval
-  - Comparing and sorting pitches by "height"
-  - Generating "chromatic runs" between starting and ending pitches
-  - Converting to semitones, MIDI, and frequency
-  - Converting a pitch to a symbol
-  - Simplifying pitch spelling
-
 @docs Pitch
 
 
@@ -53,7 +44,7 @@ This module allows for:
 
 # Conversion
 
-@docs semitones, toMIDINoteNumber, toFrequency, name, fromPitchClassInOctave
+@docs semitones, toMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
 
 
 # Respelling
@@ -156,7 +147,7 @@ areEnharmonicEquivalents a b =
     Pitch.areEnharmonicEquivalents a b
 
 
-{-| Generate a section of the ascending or descending chromatic scale between two pitches:
+{-| Generate a section of the ascending or descending [chromatic scale](https://en.wikipedia.org/wiki/Chromatic_scale) between two pitches:
 
     chromaticRun a4 d5
         == [ a4
@@ -232,11 +223,11 @@ toFrequency pitch =
 
 {-| A pitch's letter name, accidental, and octave number:
 
-    name cSharp4 == "C♯4"
+    toString cSharp4 == "C♯4"
 
 -}
-name : Pitch -> String
-name pitch =
+toString : Pitch -> String
+toString pitch =
     Pitch.toString pitch
 
 

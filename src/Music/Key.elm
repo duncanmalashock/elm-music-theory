@@ -2,7 +2,7 @@ module Music.Key exposing
     ( Key
     , tonic, scale, isMajor, isMinor, signature
     , relative, parallel
-    , symbol
+    , toString
     , c, f, bFlat, eFlat, aFlat, dFlat, gFlat
     , g, d, a, e, b, fSharp
     , aMinor, dMinor, gMinor, cMinor, fMinor, bFlatMinor, eFlatMinor
@@ -10,12 +10,6 @@ module Music.Key exposing
     )
 
 {-| A [key](https://en.wikipedia.org/wiki/Key_%28music%29) defines a relationship between a set of pitch classes in a composition. E.g. the "key of D major".
-
-This module allows for:
-
-  - Getting a key's properties like tonic, scale, and key signature
-  - Getting parallel and relative keys
-  - Converting a key to a symbol
 
 @docs Key
 
@@ -32,7 +26,7 @@ This module allows for:
 
 # Conversion
 
-@docs symbol
+@docs toString
 
 
 # Constructors
@@ -71,15 +65,15 @@ signature key =
     Key.signature key
 
 
-{-| Get the symbol for a key:
+{-| Get the name of a key:
 
     symbol eFlat == "E♭"
 
     symbol aMinor == "Am"
 
 -}
-symbol : Key -> String
-symbol key =
+toString : Key -> String
+toString key =
     Key.symbol key
 
 

@@ -1,7 +1,7 @@
 module Music.Chord exposing
     ( Chord
     , chordType, root, containsPitchClass, detect
-    , toPitchClasses, symbol
+    , toPitchClasses, toString
     , voiceFourParts, voiceFiveParts
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
@@ -13,14 +13,6 @@ module Music.Chord exposing
 
 {-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are sounded together to create harmony. E.g. a "G dominant seventh" chord.
 
-This module allows for:
-
-  - Creating chords with a given root and chord type
-  - Getting the pitch classes contained in a chord
-  - Detecting chords from a list of pitch classes
-  - Converting to chord symbols
-  - Turning chords into voicings
-
 @docs Chord
 
 
@@ -31,19 +23,19 @@ This module allows for:
 
 # Conversion
 
-@docs toPitchClasses, symbol
+@docs toPitchClasses, toString
 
 
-# Voicing
+# Voicing chords
 
 A chord is defined by a set of pitch classes. But pitch classes can't be heard; only pitches can! ["Voicing"](https://en.wikipedia.org/wiki/Voicing_%28music%29) a chord is the process of:
 
 1.  choosing some number of its pitch classes, and
 2.  turning them into pitches within specific octaves, so that they can be played or sung.
 
-But which pitch classes to choose, and where to place them? Voicing chords is a deep and nuanced topic, with rules and conventions that are heavily dependent on musical style. A method for voicing any given chord will almost never be sufficiently constrained to produce a single optimal solution, so I have chosen an approach that generates a list of possibilities based on some initial constraints.
+But which pitch classes to choose, and where to place them? Voicing chords is a deep and nuanced topic, with rules and conventions that are heavily dependent on musical style, but I've attempted to model methods for voicing chords in a way that's easy and approachable.
 
-You can then refine further, using helper functions in the appropriate modules to filter and sort this list to find voicings that work best for your application.
+Learn more about how this works in the `Voicing.ThreePart`, `Voicing.FourPart`, and `Voicing.FivePart` modules.
 
 @docs voiceFourParts, voiceFiveParts
 
@@ -205,7 +197,7 @@ detect chordTypesToDetect pitchClasses =
            , PitchClass.e
            ]
 
-Note: for converting a chord to pitches, I recommend looking at the functions in the **Voicing** section below.
+Note: for converting a chord to pitches, I recommend looking at the functions in the **Voicing chords** section below.
 
 -}
 toPitchClasses : Chord -> List PitchClass.PitchClass
@@ -215,11 +207,11 @@ toPitchClasses theChord =
 
 {-| Get the chord symbol for a chord:
 
-    symbol (dominantNinth PitchClass.a) == "A9"
+    toString (dominantNinth PitchClass.a) == "A9"
 
 -}
-symbol : Chord -> String
-symbol chord =
+toString : Chord -> String
+toString chord =
     Chord.symbol chord
 
 

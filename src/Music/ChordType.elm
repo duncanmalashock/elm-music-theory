@@ -3,7 +3,7 @@ module Music.ChordType exposing
     , factors, contains
     , categorizeFactors, CategorizedFactors
     , availableTensions, AvailableTensions
-    , symbol
+    , toString
     , all
     , triads, sixthAndSeventhChords
     , majorChords, minorChords, dominantChords, alteredDominantChords
@@ -20,13 +20,6 @@ module Music.ChordType exposing
     )
 
 {-| A [chord type](https://en.wikipedia.org/wiki/Chord_%28music%29#Common_types_of_chords) describes the [factors](https://en.wikipedia.org/wiki/Factor_%28chord%29) contained in a chord, with no specific root pitch class. E.g. a "dominant seventh" chord.
-
-This module allows for:
-
-  - Getting and categorizing the factors of a chord
-  - Creating a custom chord type
-  - Conversion to a symbol
-  - Creating a custom representation of a chord symbol
 
 @docs ChordType
 
@@ -48,7 +41,7 @@ Categorize factors into certain useful data structures. Helpful when creating cu
 
 # Conversion
 
-@docs symbol
+@docs toString
 
 
 # Groups
@@ -108,14 +101,6 @@ Lists of commonly-grouped chord types. Note that these are incomplete, and only 
 
 
 # Custom chord symbols
-
-In my implementation of the `symbol` function, I've done my best to cover what I consider the usual cases, with symbols that are likely to be recognized by a majority of musicians. But my choices may not appeal to you!
-
-Maybe, for example, you want to use jazz lead sheet-style symbols like "∆7(+11)" and "7(+9-13)". Or maybe you want to write them out in plain English like "dominant seventh, sharp nine flat thirteen". You may even want to convert to a more complex view than a `String` can express, like SVG or elm-ui.
-
-If that's the case, you can use the `Classification` type to write your own custom chord symbol function. A good place to start would be to take a look at the source for `symbol` to see how I did it.
-
-You may disagree with my interpretation of chord classification too! In that case, you have the option of writing your own custom classification function using `toIntervals` as a starting point.
 
 @docs classify
 
@@ -358,14 +343,14 @@ type alias CategorizedFactors =
 
 {-| Get the chord symbol for a chord type:
 
-    symbol majorSeventh == "M7"
+    toString majorSeventh == "M7"
 
 Want more control over chord symbols? See `classify` in the **Custom chord symbols** section.
 
 -}
-symbol : ChordType -> String
-symbol chordType =
-    ChordType.symbol chordType
+toString : ChordType -> String
+toString chordType =
+    ChordType.toString chordType
 
 
 {-| Get a chord type's classification:
@@ -669,7 +654,7 @@ dominantThirteenthSharpEleven =
         |> withMinorSeventh
     -- equivalent to `halfDiminishedSeventh`
 
-Note: because there is no unified model for naming any given chord, your custom chord may not work with the `symbol` function in this module.
+Note: because there is no unified model for naming any given chord, your custom chord may not work with the `toString` function in this module.
 
 -}
 custom : ChordType

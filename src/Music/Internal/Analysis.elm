@@ -249,11 +249,11 @@ symbol key analysis =
                         ""
 
                     else
-                        ChordType.symbol chordType
+                        ChordType.toString chordType
                    )
 
         SecondaryDominant _ _ ->
-            ("V" ++ ChordType.symbol chordType)
+            ("V" ++ ChordType.toString chordType)
                 ++ "/"
                 ++ numeralToString numeral
                     (defaultChordType

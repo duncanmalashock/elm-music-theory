@@ -29,7 +29,7 @@ root (Chord rootPitchClass _) =
 
 symbol : Chord -> String
 symbol (Chord rootPitchClass theChordType) =
-    PitchClass.toString rootPitchClass ++ ChordType.symbol theChordType
+    PitchClass.toString rootPitchClass ++ ChordType.toString theChordType
 
 
 chordType : Chord -> ChordType.ChordType

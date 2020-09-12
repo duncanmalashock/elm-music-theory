@@ -24,19 +24,19 @@ module Music.Voicing.FourPart exposing
 
 {-| A chord voicing is an instance of a chord that can be played or sung.
 
-This module allows for:
-
-  - Getting properties of a voicing like its chord, its interval span, and its voices
-  - Comparing voicings to determine common tones, contrary or parallel motion, and voice distance
-  - Sorting voicings by various criteria such as voice leading concerns
-  - Determining whether a voicing is within low interval limits
-  - Using common voicing methods in the classical and jazz idioms
-  - Defining custom voicing methods
-
 @docs Voicing
 
+    Chord.voiceFourParts
+        { voiceOne = Range.sopranoVoice
+        , voiceTwo = Range.altoVoice
+        , voiceThree = Range.tenorVoice
+        , voiceFour = Range.bassVoice
+        }
+        [ basic ]
+        (Chord.majorSeventh PitchClass.c)
 
-# Constructing voicings
+
+# Constructing a single voicing
 
 Note: If you want to generate many possible voicings, look at `Chord.voiceFourParts` and the **Voicing methods** section here.
 

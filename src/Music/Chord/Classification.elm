@@ -1,20 +1,19 @@
 module Music.Chord.Classification exposing (Classification(..), Triad(..), SixthOrSeventh(..), UnalteredExtension(..), AlteredExtension(..))
 
-{-| Note: Try using `ChordType.symbol` first. If it works for your purposes, then you don't need this module. It contains a type you can use for making custom chord symbols.
+{-| This module contains a type you can use for making custom views of chord symbols.
 
+In my implementation of the `ChordType.toString` function, I've done my best to cover what I consider the usual cases, using chord symbols that are likely to be recognized by a majority of musicians. If `ChordType.toString` works for your purposes, then you don't need this module.
 
-# Disclaimer
+But chord symbols vary greatly in their style, and my choices may not appeal to you!
 
+Maybe, for example, you want to use jazz "lead sheet"-style symbols like "∆7(+11)" and "7(+9-13)". Or maybe you want to write them out in plain English like "dominant seventh (sharp nine, flat thirteen)". You may even want to convert to a more complex view than a `String` can express, like [SVG](https://package.elm-lang.org/packages/elm/svg/latest/) or [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).
 
-## Issues with classifying chords exhaustively
+If any of these are the case, you can use the `Classification` type to write your own custom chord symbol function:
 
-Different chord classification methods have accumulated since at least the 17th century, and they mainly serve to describe the most usual cases in a particular idiom. To my knowledge, there is no unified method for classifying chord types into a taxonomy that is also used by practicing musicians.
+1.  Call `ChordType.classify` on a `ChordType` to return an instance of `Classification`.
+2.  Destructure it with a `case` statement and handle each branch to create your custom view.
 
-This makes classifying chords a complicated topic. Edge cases are everywhere, because some categories that are normally isolated from each other, with only occasional combination, can potentially interact in unspecified ways.
-
-For instance, non-tertian "added-tone" chords and "altered extensions" on 7th chords belong to somewhat separate models of chord categorization, but 6th chords can have 9ths. Does this mean added-tone chords like m6 can have any extensions, as in a m6(♯11)? I have personally never seen any such chord, but I have also never seen a rule that says why it cannot be done!
-
-This `Classification` type is my best attempt to codify the chord type taxonomy, as I understand it, into a type you can destructure for your own purposes (i.e. custom views of chord symbols). Just be aware that, for the reasons I've described, it can represent some combinations that are unusual but not clearly invalid. Use your judgment as to which of these you want to handle, and which you want to ignore.
+A good place to start would be to take a look at the source for `ChordType.toString` to see how I did it.
 
 @docs Classification, Triad, SixthOrSeventh, UnalteredExtension, AlteredExtension
 
@@ -23,7 +22,15 @@ This `Classification` type is my best attempt to codify the chord type taxonomy,
 import Music.Interval as Interval
 
 
-{-| Get an instance of this type by using `ChordType.classify`.
+{-| Get an instance of this type by using `ChordType.classify`:
+
+    ChordType.classify ChordType.dominantNinthFlatThirteen
+        == Classification MajorTriad (Just MinorSeventh) Ninth [ MinorThirteenth ]
+
+This `Classification` type is my best attempt to codify the chord type taxonomy, as I understand it, into a type you can destructure for your own purposes (i.e. custom views of chord symbols).
+
+Be aware that there are a lot of edge cases in the area of chord classification, and this type can represent some combinations that are unusual but not clearly invalid, like "m6(♯11)". Use your judgment as to which of these you want to handle, and which you want to ignore. Take a look at the source code for `ChordType.toString` for how I approached it.
+
 -}
 type Classification
     = Classification Triad (Maybe SixthOrSeventh) (Maybe UnalteredExtension) (List AlteredExtension)
