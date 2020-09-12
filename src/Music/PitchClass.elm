@@ -1,6 +1,6 @@
 module Music.PitchClass exposing
     ( PitchClass
-    , fromPitch, areEnharmonicEquivalents
+    , fromPitch, areEnharmonicEquivalents, letter, Letter(..)
     , toString
     , c, cSharp, d, dSharp, dFlat, e, eFlat, f, fSharp, g, gSharp, gFlat, a, aSharp, aFlat, b, bFlat
     , cFlat, eSharp, fFlat, bSharp
@@ -14,7 +14,7 @@ module Music.PitchClass exposing
 
 # Helpers
 
-@docs fromPitch, areEnharmonicEquivalents
+@docs fromPitch, areEnharmonicEquivalents, letter, Letter
 
 
 # Conversion
@@ -43,6 +43,7 @@ These are used less frequently in music. Most likely you want a pitch from the p
 
 -}
 
+import Music.Internal.Letter as Letter
 import Music.Internal.Pitch as Pitch
 import Music.Internal.PitchClass as PitchClass
 
@@ -80,6 +81,54 @@ toString pitch =
 areEnharmonicEquivalents : PitchClass -> PitchClass -> Bool
 areEnharmonicEquivalents pcA pcB =
     PitchClass.areEnharmonicEquivalents pcA pcB
+
+
+{-| Get the letter name of a pitch class:
+
+    letter fSharp =
+        F
+
+-}
+letter : PitchClass -> Letter
+letter thePitchClass =
+    PitchClass.letter thePitchClass
+        |> toLetter
+
+
+toLetter : Letter.Letter -> Letter
+toLetter internalLetter =
+    case internalLetter of
+        Letter.C ->
+            C
+
+        Letter.D ->
+            D
+
+        Letter.E ->
+            E
+
+        Letter.F ->
+            F
+
+        Letter.G ->
+            G
+
+        Letter.A ->
+            A
+
+        Letter.B ->
+            B
+
+
+{-| -}
+type Letter
+    = A
+    | B
+    | C
+    | D
+    | E
+    | F
+    | G
 
 
 {-| -}

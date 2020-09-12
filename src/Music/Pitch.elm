@@ -1,6 +1,6 @@
 module Music.Pitch exposing
     ( Pitch
-    , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
+    , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, octave
     , chromaticRun
     , semitones, toMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
     , simplify
@@ -34,7 +34,7 @@ module Music.Pitch exposing
 
 # Helpers
 
-@docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
+@docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, octave
 
 
 # Generating
@@ -88,6 +88,7 @@ These are used less frequently in music. Most likely you want a pitch from the p
 -}
 
 import Music.Internal.Interval as Interval
+import Music.Internal.Octave as Octave
 import Music.Internal.Pitch as Pitch
 import Music.Internal.PitchClass as PitchClass
 
@@ -103,8 +104,19 @@ type alias Pitch =
 
 -}
 fromPitchClassInOctave : Int -> PitchClass.PitchClass -> Pitch
-fromPitchClassInOctave octave pc =
-    Pitch.fromPitchClassWithInt octave pc
+fromPitchClassInOctave o pc =
+    Pitch.fromPitchClassWithInt o pc
+
+
+{-| Get the octave of a pitch:
+
+    octave c4 == 4
+
+-}
+octave : Pitch -> Int
+octave thePitch =
+    Pitch.octave thePitch
+        |> Octave.number
 
 
 {-| [Transpose](https://en.wikipedia.org/wiki/Transposition_%28music%29) a pitch upward by an interval.
