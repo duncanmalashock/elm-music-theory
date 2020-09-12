@@ -1,6 +1,6 @@
 module Music.PitchClass exposing
     ( PitchClass
-    , fromPitch, areEnharmonicEquivalents, letter, Letter(..)
+    , fromPitch, areEnharmonicEquivalents, letter, Letter(..), accidentals
     , toString
     , c, cSharp, d, dSharp, dFlat, e, eFlat, f, fSharp, g, gSharp, gFlat, a, aSharp, aFlat, b, bFlat
     , cFlat, eSharp, fFlat, bSharp
@@ -14,7 +14,7 @@ module Music.PitchClass exposing
 
 # Helpers
 
-@docs fromPitch, areEnharmonicEquivalents, letter, Letter
+@docs fromPitch, areEnharmonicEquivalents, letter, Letter, accidentals
 
 
 # Conversion
@@ -129,6 +129,29 @@ type Letter
     | E
     | F
     | G
+
+
+{-| Get the [accidentals](https://en.wikipedia.org/wiki/Accidental_%28music%29) of a pitch class.
+
+Sharps are positive:
+
+    accidentals fSharp =
+        1
+
+Flats are negative:
+
+    accidentals aFlat =
+        -1
+
+Naturals are zero:
+
+    accidentals c =
+        0
+
+-}
+accidentals : PitchClass -> Int
+accidentals thePitchClass =
+    PitchClass.accidentals thePitchClass
 
 
 {-| -}
