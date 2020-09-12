@@ -161,7 +161,7 @@ chordType theChord =
 
 {-| Get a chord's root:
 
-    chordType (dominantSeventh PitchClass.a) == PitchClass.a
+    root (dominantSeventh PitchClass.a) == PitchClass.a
 
 -}
 root : Chord -> PitchClass.PitchClass
