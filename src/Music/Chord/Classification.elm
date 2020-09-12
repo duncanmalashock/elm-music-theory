@@ -1,10 +1,10 @@
 module Music.Chord.Classification exposing (Classification(..), Triad(..), SixthOrSeventh(..), UnalteredExtension(..), AlteredExtension(..))
 
-{-| This module contains a type you can use for making custom views of chord symbols.
+{-| This module contains a `Classification` type you can use for making custom views of chord symbols.
 
 In my implementation of the `ChordType.toString` function, I've done my best to cover what I consider the usual cases, using chord symbols that are likely to be recognized by a majority of musicians. If `ChordType.toString` works for your purposes, then you don't need this module.
 
-But chord symbols vary greatly in their style, and my choices may not appeal to you!
+But chord symbols vary greatly with musical style, educational history, and personal preference. The choices I've made may not appeal to you!
 
 Maybe, for example, you want to use jazz "lead sheet"-style symbols like "∆7(+11)" and "7(+9-13)". Or maybe you want to write them out in plain English like "dominant seventh (sharp nine, flat thirteen)". You may even want to convert to a more complex view than a `String` can express, like [SVG](https://package.elm-lang.org/packages/elm/svg/latest/) or [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).
 
@@ -29,7 +29,11 @@ import Music.Interval as Interval
 
 This `Classification` type is my best attempt to codify the chord type taxonomy, as I understand it, into a type you can destructure for your own purposes (i.e. custom views of chord symbols).
 
-Be aware that there are a lot of edge cases in the area of chord classification, and this type can represent some combinations that are unusual but not clearly invalid, like "m6(♯11)". Use your judgment as to which of these you want to handle, and which you want to ignore. Take a look at the source code for `ChordType.toString` for how I approached it.
+Be aware that there are a lot of edge cases in the area of chord classification, and this type can represent some combinations that are unusual, and even impractical, but not clearly invalid.
+
+For instance, I have never seen a "m6(♯11)" chord, but I have also never seen a rule that explains why such a chord cannot be made.
+
+Use your judgment as to which of these you want to handle, and which you want to ignore. Take a look at the source code for `ChordType.toString` for how I approached it.
 
 -}
 type Classification

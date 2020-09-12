@@ -22,9 +22,14 @@ module Music.Voicing.FourPart exposing
     , combineVoicingMethods
     )
 
-{-| A chord voicing is an instance of a chord that can be played or sung.
+{-| A chord voicing is an instance of a `Chord` that can be played or sung.
 
 @docs Voicing
+
+
+# Generating voicings
+
+This package's recommended way of creating four-part `Voicing`s is to use the `Chord.voiceFourParts` function along with `VoicingMethod`s like the ones in this module:
 
     Chord.voiceFourParts
         { voiceOne = Range.sopranoVoice
@@ -35,10 +40,35 @@ module Music.Voicing.FourPart exposing
         [ basic ]
         (Chord.majorSeventh PitchClass.c)
 
+In this example, we pass the following to `voiceFourParts`:
+
+1.  The `Range`s of the instruments involved
+2.  A list of `VoicingMethod`s to be used
+3.  The chord to voice
+
+This uses the characteristics of the `VoicingMethod` to return a `List` of all possible `Voicing`s.
+
+From here, you may choose from this list based on some criteria:
+
+    myGeneratedVoicings
+        |> List.filter
+            (\voicing ->
+                containsPitchInVoiceOne Pitch.e5 voicing
+                    && (span voicing >= Interval.perfectOctave)
+            )
+        |> List.head
+
+This does the following:
+
+1.  Filters the list to only include `Voicing`s which have E5 in the top voice, and have a span of at least an octave from bottom to top voice
+2.  Takes the first item in the remaining list
+
+These sorting and filtering processes allow you to account for considerations like [voice leading](https://en.wikipedia.org/wiki/Voice_leading), or the harmonization of a melody. You'll find comparison functions in this module for doing that.
+
 
 # Constructing a single voicing
 
-Note: If you want to generate many possible voicings, look at `Chord.voiceFourParts` and the **Voicing methods** section here.
+There are cases where you may want to create a specific voicing you have in mind:
 
 @docs voicing
 
@@ -102,14 +132,12 @@ Note: If you want to generate many possible voicings, look at `Chord.voiceFourPa
 
 ## Jazz
 
-These methods have been used to harmonize brass and saxophone sections since at least the 1930s.
+These methods were adapted from [Jazz Arranging Techniques](http://lindsayjazz.com/jazz-arranging-techniques/) by Gary Lindsay.
 
 Notes:
 
   - Jazz voicing methods can involve substitutions within families of related chords, so don't be surprised when you see voicings that include a pitch class that isn't strictly in the chord you specified.
   - Not all chords are compatible with these methods; in those cases this function will return an empty list.
-
-These methods were adapted from [Jazz Arranging Techniques](http://lindsayjazz.com/jazz-arranging-techniques/) by Gary Lindsay.
 
 @docs close, drop2, drop3, drop2and4, spread
 
@@ -449,9 +477,9 @@ voiceFour theVoicing =
 {-| Sort by multiple ordering functions:
 
     sortWeighted
-        [ ( totalSemitoneDistanceOrder, 10.0 )
-        , ( contraryMotionOrder, 5.0 )
-        , ( commonTonesOrder, 2.0 )
+        [ ( totalSemitoneDistanceOrder previousVoicing, 10.0 )
+        , ( contraryMotionOrder previousVoicing, 5.0 )
+        , ( commonTonesOrder previousVoicing, 2.0 )
         ]
         voicingList
 
@@ -467,9 +495,9 @@ sortWeighted weightedSortFns listToSort =
 {-| Combine multiple ordering functions:
 
     orderWeighted
-        [ ( totalSemitoneDistanceOrder, 10.0 )
-        , ( contraryMotionOrder, 5.0 )
-        , ( commonTonesOrder, 2.0 )
+        [ ( totalSemitoneDistanceOrder previousVoicing, 10.0 )
+        , ( contraryMotionOrder previousVoicing, 5.0 )
+        , ( commonTonesOrder previousVoicing, 2.0 )
         ]
         |> List.orderWith
 
@@ -491,8 +519,6 @@ orderWeighted weightedSortFns =
         }
         (Chord.majorSix PitchClass.c)
         == Ok Voicing ...
-
-Voices are in order from high to low, the way you might read them on a score. `voiceOne` is the top note.
 
 If the pitches given do not match the chord, this function will return `Err` with the erroneous pitch classes:
 
@@ -564,17 +590,14 @@ commonTones a b =
     Voicing.commonTones FourPart.allVoices a b
 
 
-{-| Find out whether the first and fourth voices move in opposite directions.
+{-| Find out whether the first and fourth voices move in opposite directions (known as [contrary motion](https://en.wikipedia.org/wiki/Contrapuntal_motion#Contrary_motion)).
 -}
 usesContraryMotion : Voicing -> Voicing -> Bool
 usesContraryMotion a b =
     Voicing.usesContraryMotion FourPart.getVoiceFour FourPart.getVoiceOne a b
 
 
-{-| Find out whether any two moving voices maintain a perfect fifth interval between them.
-
-Avoiding parallel fifths and octaves was very important in Mozart's time! Checking for instances of them may help you if you want to write in a period style.
-
+{-| Find out whether any two moving voices maintain a perfect fifth interval between them. Identifying [parallel fifths and octaves](https://en.wikipedia.org/wiki/Consecutive_fifths) is important in the study of [counterpoint](https://en.wikipedia.org/wiki/Counterpoint).
 -}
 containsParallelFifths : Voicing -> Voicing -> Bool
 containsParallelFifths a b =

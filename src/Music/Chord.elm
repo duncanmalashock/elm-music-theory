@@ -11,7 +11,7 @@ module Music.Chord exposing
     , custom
     )
 
-{-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are sounded together to create harmony. E.g. a "G dominant seventh" chord.
+{-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are meant to be sounded together to create [harmony](https://en.wikipedia.org/wiki/Harmony). E.g. a "G dominant seventh" chord.
 
 @docs Chord
 
@@ -28,12 +28,10 @@ module Music.Chord exposing
 
 # Voicing chords
 
-A chord is defined by a set of pitch classes. But pitch classes can't be heard; only pitches can! ["Voicing"](https://en.wikipedia.org/wiki/Voicing_%28music%29) a chord is the process of:
+A chord is defined by a set of pitch classes. But pitch classes can't be heard; only pitches can be. ["Voicing"](https://en.wikipedia.org/wiki/Voicing_%28music%29) a chord is the process of:
 
 1.  choosing some number of its pitch classes, and
 2.  turning them into pitches within specific octaves, so that they can be played or sung.
-
-But which pitch classes to choose, and where to place them? Voicing chords is a deep and nuanced topic, with rules and conventions that are heavily dependent on musical style, but I've attempted to model methods for voicing chords in a way that's easy and approachable.
 
 Learn more about how this works in the `Voicing.ThreePart`, `Voicing.FourPart`, and `Voicing.FivePart` modules.
 
