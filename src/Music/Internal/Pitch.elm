@@ -206,6 +206,8 @@ module Music.Internal.Pitch exposing
     , pitch
     , pitchClass
     , range
+    , rangeMax
+    , rangeMin
     , semitones
     , sharp
     , simplify
@@ -406,6 +408,16 @@ range lower upper =
         { lower = lower
         , upper = upper
         }
+
+
+rangeMin : Range -> Pitch
+rangeMin (Range { lower }) =
+    lower
+
+
+rangeMax : Range -> Pitch
+rangeMax (Range { upper }) =
+    upper
 
 
 isWithin : Range -> Pitch -> Bool

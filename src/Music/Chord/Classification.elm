@@ -2,13 +2,16 @@ module Music.Chord.Classification exposing (Classification(..), Triad(..), Sixth
 
 {-| This module contains a `Classification` type you can use for making custom views of chord symbols.
 
+
+# Overview
+
 In my implementation of the `ChordType.toString` function, I've done my best to cover what I consider the usual cases, using chord symbols that are likely to be recognized by a majority of musicians. If `ChordType.toString` works for your purposes, then you don't need this module.
 
 But chord symbols vary greatly with musical style, educational history, and personal preference. The choices I've made may not appeal to you!
 
 Maybe, for example, you want to use jazz "lead sheet"-style symbols like "∆7(+11)" and "7(+9-13)". Or maybe you want to write them out in plain English like "dominant seventh (sharp nine, flat thirteen)". You may even want to convert to a more complex view than a `String` can express, like [SVG](https://package.elm-lang.org/packages/elm/svg/latest/) or [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).
 
-If any of these are the case, you can use the `Classification` type to write your own custom chord symbol function:
+If any of these is the case, you can use the `Classification` type to write your own custom chord symbol function:
 
 1.  Call `ChordType.classify` on a `ChordType` to return an instance of `Classification`.
 2.  Destructure it with a `case` statement and handle each branch to create your custom view.

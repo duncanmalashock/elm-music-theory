@@ -13,12 +13,6 @@ module Music.ScaleType exposing
 
 {-| A scale type describes the intervals contained in a [scale](https://en.wikipedia.org/wiki/Scale_%28music%29), with no specific root pitch class. E.g. the "major scale."
 
-This module allows for:
-
-  - Deriving the modes of a scale type
-  - Getting the list of intervals in a scale type
-  - Defining custom scale types
-
 @docs ScaleType
 
 

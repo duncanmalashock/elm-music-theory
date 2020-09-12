@@ -1,7 +1,7 @@
 module Music.Range exposing
     ( Range
     , range
-    , isWithin
+    , isWithin, min, max
     , sopranoVoice, altoVoice, tenorVoice, bassVoice
     , violin, viola, cello, contrabass
     , bassoon, clarinet, oboe
@@ -13,12 +13,6 @@ module Music.Range exposing
 
 {-| A range, like a range of numbers, represents an upper and lower boundary and all the pitches in between. E.g. "C4–C6."
 
-This module allows for:
-
-  - Creating ranges
-  - Determining whether a pitch is within a range
-  - Using the ranges of common musical instruments
-
 @docs Range
 
 
@@ -29,7 +23,7 @@ This module allows for:
 
 # Helpers
 
-@docs isWithin
+@docs isWithin, min, max
 
 
 # Common instrument ranges
@@ -90,6 +84,26 @@ type alias Range =
 range : Pitch.Pitch -> Pitch.Pitch -> Range
 range lower upper =
     Pitch.range lower upper
+
+
+{-| Get the lower boundary of a range:
+
+    min sopranoVoice Pitch.c4
+
+-}
+min : Range -> Pitch.Pitch
+min theRange =
+    Pitch.rangeMin theRange
+
+
+{-| Get the upper boundary of a range:
+
+    max sopranoVoice Pitch.c6
+
+-}
+max : Range -> Pitch.Pitch
+max theRange =
+    Pitch.rangeMax theRange
 
 
 {-| Find out whether a pitch lies within a range, inclusive of its boundaries.
