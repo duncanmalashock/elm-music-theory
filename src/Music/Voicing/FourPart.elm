@@ -12,6 +12,7 @@ module Music.Voicing.FourPart exposing
     , commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder
     , Pitches, toPitches, toPitchList, toString
     , Intervals, toIntervals, toIntervalList
+    , basic
     , close, drop2, drop3, drop2and4, spread
     , rootPosition, firstInversion, secondInversion, thirdInversion
     , VoicingMethod
@@ -130,6 +131,11 @@ There are cases where you may want to create a specific voicing you have in mind
 # Voicing methods
 
 
+## Basic
+
+@docs basic
+
+
 ## Jazz
 
 These methods were adapted from [Jazz Arranging Techniques](http://lindsayjazz.com/jazz-arranging-techniques/) by Gary Lindsay.
@@ -224,6 +230,7 @@ import Music.Internal.Interval as Interval
 import Music.Internal.Pitch as Pitch
 import Music.Internal.Voicing as Voicing
 import Music.Internal.Voicing.FourPart as FourPart
+import Music.Internal.Voicing.FourPart.Basic as FourPartBasic
 import Music.Internal.Voicing.FourPart.Classical as FourPartClassical
 import Music.Internal.Voicing.FourPart.Jazz as FourPartJazz
 import Music.Internal.VoicingClass as VoicingClass
@@ -826,6 +833,27 @@ type alias Intervals =
     , threeToTwo : Interval.Interval
     , twoToOne : Interval.Interval
     }
+
+
+{-| A basic textbook method for voicing a chord in root position:
+
+    Chord.voiceFourParts
+        { voiceOne = Range.sopranoVoice
+        , voiceTwo = Range.altoVoice
+        , voiceThree = Range.tenorVoice
+        , voiceFour = Range.bassVoice
+        }
+        [ basic ]
+        (Chord.majorSeventh PitchClass.c)
+        |> List.map toString
+        == [ "B4, G4, E4, C4"
+           , -- 2 others...
+           ]
+
+-}
+basic : VoicingMethod
+basic =
+    FourPartBasic.basic
 
 
 {-| Voice a chord using the "four-way close" method:
