@@ -177,38 +177,46 @@ Example:
 
     myCustomVoicingMethod : VoicingMethod
     myCustomVoicingMethod =
-        method
-            ChordType.availableTensions
-            (\available ->
-                FivePart.selectFactors
-                    |> FivePart.withFactorFrom
-                        [ available.fifth.substitutes ]
-                    |> FivePart.withFactor available.fifth.true
-                    |> FivePart.withUniqueFactorFrom
-                        [ available.third.true
-                        , available.seventh.true
-                        ]
-                    |> FivePart.withUniqueFactorFrom
-                        [ available.third.true
-                        , available.seventh.true
-                        ]
-                    |> FivePart.withUniqueFactor
-                        available.root.true
-                    |> FivePart.placeSelectedFactors
-                        { twoToOne =
-                            Interval.range
-                                Interval.augmentedUnison
-                                Interval.perfectOctave
-                        , threeToTwo =
-                            Interval.range
-                                Interval.augmentedUnison
-                                Interval.perfectOctave
-                        , fourToThree =
-                            Interval.range
-                                Interval.augmentedUnison
-                                Interval.perfectOctave
-                        }
+        custom
+            ChordType.categorizeFactors
+            (\factors ->
+                selectFactors
+                    |> withFactorFrom
+                        (List.concat
+                            [ [ factors.third ]
+                            , factors.ninth
+                            ]
+                        )
+                    |> withFactorFrom
+                        (List.filterMap identity
+                            [ Just Interval.perfectUnison
+                            , factors.sixthOrSeventh
+                            ]
+                        )
+                    |> withFactor factors.fifth
+                    |> withFactor factors.third
+                    |> withFactor Interval.perfectUnison
+                    |> placeSelectedFactors spacingLimits
             )
+
+    spacingLimits =
+        { twoToOne =
+            Interval.range
+                Interval.augmentedUnison
+                Interval.perfectOctave
+        , threeToTwo =
+            Interval.range
+                Interval.augmentedUnison
+                Interval.perfectOctave
+        , fourToThree =
+            Interval.range
+                Interval.augmentedUnison
+                Interval.perfectOctave
+        , fiveToFour =
+            Interval.range
+                Interval.augmentedUnison
+                Interval.perfectOctave
+        }
 
 @docs VoicingMethod
 @docs SpacingLimits

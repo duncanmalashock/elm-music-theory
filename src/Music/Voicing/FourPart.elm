@@ -184,36 +184,36 @@ Example:
 
     myCustomVoicingMethod : VoicingMethod
     myCustomVoicingMethod =
-        method
-            ChordType.availableTensions
-            (\available ->
-                FourPart.selectFactors
-                    |> FourPart.withFactor available.fifth.true
-                    |> FourPart.withUniqueFactorFrom
-                        [ available.third.true
-                        , available.seventh.true
-                        ]
-                    |> FourPart.withUniqueFactorFrom
-                        [ available.third.true
-                        , available.seventh.true
-                        ]
-                    |> FourPart.withUniqueFactor
-                        available.root.true
-                    |> FourPart.placeSelectedFactors
-                        { twoToOne =
-                            Interval.range
-                                Interval.augmentedUnison
-                                Interval.perfectOctave
-                        , threeToTwo =
-                            Interval.range
-                                Interval.augmentedUnison
-                                Interval.perfectOctave
-                        , fourToThree =
-                            Interval.range
-                                Interval.augmentedUnison
-                                Interval.perfectOctave
-                        }
+        custom
+            ChordType.categorizeFactors
+            (\factors ->
+                selectFactors
+                    |> withFactorFrom
+                        (List.filterMap identity
+                            [ Just Interval.perfectUnison
+                            , factors.sixthOrSeventh
+                            ]
+                        )
+                    |> withFactor factors.fifth
+                    |> withFactor factors.third
+                    |> withFactor Interval.perfectUnison
+                    |> placeSelectedFactors spacingLimits
             )
+
+    spacingLimits =
+        { twoToOne =
+            Interval.range
+                Interval.augmentedUnison
+                Interval.perfectOctave
+        , threeToTwo =
+            Interval.range
+                Interval.augmentedUnison
+                Interval.perfectOctave
+        , fourToThree =
+            Interval.range
+                Interval.augmentedUnison
+                Interval.perfectOctave
+        }
 
 @docs VoicingMethod
 @docs SpacingLimits
