@@ -2,7 +2,7 @@ module Music.Chord exposing
     ( Chord
     , chordType, root, containsPitchClass, detect
     , toPitchClasses, toString
-    , voiceFourParts, voiceFiveParts
+    , voiceThreeParts, voiceFourParts, voiceFiveParts
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
@@ -37,7 +37,7 @@ A chord is defined by a set of pitch classes. But pitch classes can't be heard; 
 
 Learn more about how this works in the `Voicing.ThreePart`, `Voicing.FourPart`, and `Voicing.FivePart` modules.
 
-@docs voiceFourParts, voiceFiveParts
+@docs voiceThreeParts, voiceFourParts, voiceFiveParts
 
 
 # Constructors
@@ -95,12 +95,34 @@ import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Voicing as Voicing
 import Music.Internal.Voicing.FivePart as FivePart
 import Music.Internal.Voicing.FourPart as FourPart
+import Music.Internal.Voicing.ThreePart as ThreePart
 import Music.Range as Range
 
 
 {-| -}
 type alias Chord =
     Chord.Chord
+
+
+{-| -}
+voiceThreeParts :
+    { voiceOne : Range.Range
+    , voiceTwo : Range.Range
+    , voiceThree : Range.Range
+    }
+    -> List ThreePart.VoicingMethod
+    -> Chord
+    -> List ThreePart.Voicing
+voiceThreeParts voiceRanges methods chord =
+    List.concatMap
+        (\oct ->
+            List.map
+                (\class -> Voicing.voicing chord oct class)
+                (List.concatMap (ThreePart.voicingClassesFromMethod (chordType chord)) methods)
+        )
+        Octave.allValid
+        |> List.filter (Voicing.withInstrumentRanges ThreePart.allVoices ThreePart.allRanges voiceRanges)
+        |> List.Extra.uniqueBy (Voicing.toString ThreePart.allVoices)
 
 
 {-| -}

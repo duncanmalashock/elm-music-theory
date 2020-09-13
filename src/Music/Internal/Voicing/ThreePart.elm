@@ -350,8 +350,6 @@ type alias Ranges =
     { voiceOne : Pitch.Range
     , voiceTwo : Pitch.Range
     , voiceThree : Pitch.Range
-    , voiceFour : Pitch.Range
-    , voiceFive : Pitch.Range
     }
 
 

@@ -13,6 +13,7 @@ module Music.Voicing.ThreePart exposing
     , Pitches, toPitches, toPitchList, toString
     , Intervals, toIntervals, toIntervalList
     , basic
+    , shell
     , VoicingMethod
     , SpacingLimits
     , method
@@ -131,6 +132,11 @@ There are cases where you may want to create a specific voicing you have in mind
 ## Basic
 
 @docs basic
+
+
+## Jazz
+
+@docs shell
 
 
 ## Custom voicing methods
@@ -762,3 +768,25 @@ type alias Intervals =
 basic : VoicingMethod
 basic =
     ThreePartBasic.basic
+
+
+{-| Voice a chord with the "shell" method:
+
+    Chord.voiceThreeParts
+        { voiceOne = Range.sopranoVoice
+        , voiceTwo = Range.altoVoice
+        , voiceThree = Range.tenorVoice
+        }
+        [ shell ]
+        (Chord.majorSeventh PitchClass.c)
+        |> List.map toString
+        == [ "E4, B3, C3"
+           , -- 3 others...
+           ]
+
+Popularized by Bud Powell and Thelonious Monk, "shell" voicings include the essential pitches in jazz chords, and are useful for minimalistic accompaniment.
+
+-}
+shell : VoicingMethod
+shell =
+    ThreePartBasic.shell
