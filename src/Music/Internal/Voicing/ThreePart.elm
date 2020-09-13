@@ -1,4 +1,4 @@
-module Music.Internal.Voicing.FivePart exposing
+module Music.Internal.Voicing.ThreePart exposing
     ( Pitches
     , Ranges
     , SpacingLimits
@@ -14,8 +14,6 @@ module Music.Internal.Voicing.FivePart exposing
     , combineVoicingMethods
     , containsParallelFifths
     , custom
-    , getVoiceFive
-    , getVoiceFour
     , getVoiceOne
     , getVoiceThree
     , getVoiceTwo
@@ -57,8 +55,6 @@ type alias Pitches =
     { voiceOne : Pitch.Pitch
     , voiceTwo : Pitch.Pitch
     , voiceThree : Pitch.Pitch
-    , voiceFour : Pitch.Pitch
-    , voiceFive : Pitch.Pitch
     }
 
 
@@ -74,14 +70,12 @@ voicing pitches theChord =
             [ pitches.voiceOne
             , pitches.voiceTwo
             , pitches.voiceThree
-            , pitches.voiceFour
-            , pitches.voiceFive
             ]
                 |> List.map Pitch.pitchClass
 
         rootOctave : Octave
         rootOctave =
-            Pitch.octave pitches.voiceFive
+            Pitch.octave pitches.voiceThree
 
         newRoot : Pitch.Pitch
         newRoot =
@@ -92,8 +86,6 @@ voicing pitches theChord =
             { voiceOne = Pitch.intervalBetween newRoot pitches.voiceOne
             , voiceTwo = Pitch.intervalBetween newRoot pitches.voiceTwo
             , voiceThree = Pitch.intervalBetween newRoot pitches.voiceThree
-            , voiceFour = Pitch.intervalBetween newRoot pitches.voiceFour
-            , voiceFive = Pitch.intervalBetween newRoot pitches.voiceFive
             }
 
         pitchClassesNotInChord =
@@ -181,8 +173,6 @@ toPitches theVoicing =
     { voiceOne = Pitch.transposeUp vc.voiceOne theRoot
     , voiceTwo = Pitch.transposeUp vc.voiceTwo theRoot
     , voiceThree = Pitch.transposeUp vc.voiceThree theRoot
-    , voiceFour = Pitch.transposeUp vc.voiceFour theRoot
-    , voiceFive = Pitch.transposeUp vc.voiceFive theRoot
     }
 
 
@@ -191,8 +181,6 @@ allVoices =
     [ getVoiceOne
     , getVoiceTwo
     , getVoiceThree
-    , getVoiceFour
-    , getVoiceFive
     ]
 
 
@@ -211,22 +199,10 @@ getVoiceThree =
     toPitches >> .voiceThree
 
 
-getVoiceFour : Voicing -> Pitch.Pitch
-getVoiceFour =
-    toPitches >> .voiceFour
-
-
-getVoiceFive : Voicing -> Pitch.Pitch
-getVoiceFive =
-    toPitches >> .voiceFive
-
-
 type alias VoicingClass =
     { voiceOne : Interval.Interval
     , voiceTwo : Interval.Interval
     , voiceThree : Interval.Interval
-    , voiceFour : Interval.Interval
-    , voiceFive : Interval.Interval
     }
 
 
@@ -235,7 +211,6 @@ allFactors =
     [ getFactorInVoiceOne
     , getFactorInVoiceTwo
     , getFactorInVoiceThree
-    , getFactorInVoiceFour
     ]
 
 
@@ -254,16 +229,10 @@ getFactorInVoiceThree =
     Voicing.voicingClass >> .voiceThree
 
 
-getFactorInVoiceFour : Voicing -> Interval.Interval
-getFactorInVoiceFour =
-    Voicing.voicingClass >> .voiceFour
-
-
 type alias InstrumentRanges =
     { voiceOne : Pitch.Range
     , voiceTwo : Pitch.Range
     , voiceThree : Pitch.Range
-    , voiceFour : Pitch.Range
     }
 
 
@@ -271,7 +240,6 @@ type alias SpacingLimits =
     { twoToOne : Interval.Range
     , threeToTwo : Interval.Range
     , fourToThree : Interval.Range
-    , fiveToFour : Interval.Range
     }
 
 
@@ -356,17 +324,10 @@ selectFactors :
         (Interval.Interval
          -> Interval.Interval
          -> Interval.Interval
-         -> Interval.Interval
-         -> Interval.Interval
          -> VoicingClass
         )
 selectFactors =
     VoicingClass.builder VoicingClass
-
-
-noSelection : List VoicingClass
-noSelection =
-    []
 
 
 placeSelectedFactors :
@@ -399,29 +360,13 @@ allRanges =
     [ .voiceOne
     , .voiceTwo
     , .voiceThree
-    , .voiceFour
-    , .voiceFive
     ]
 
 
 allIntervals : VoicingClass -> IntervalList
 allIntervals vc =
-    { fiveToOne =
-        Interval.subtract vc.voiceFive vc.voiceOne
-    , fiveToTwo =
-        Interval.subtract vc.voiceFive vc.voiceTwo
-    , fourToOne =
-        Interval.subtract vc.voiceFour vc.voiceOne
-    , fiveToThree =
-        Interval.subtract vc.voiceFive vc.voiceThree
-    , fourToTwo =
-        Interval.subtract vc.voiceFour vc.voiceTwo
-    , threeToOne =
+    { threeToOne =
         Interval.subtract vc.voiceThree vc.voiceOne
-    , fiveToFour =
-        Interval.subtract vc.voiceFive vc.voiceFour
-    , fourToThree =
-        Interval.subtract vc.voiceFour vc.voiceThree
     , threeToTwo =
         Interval.subtract vc.voiceThree vc.voiceTwo
     , twoToOne =
@@ -430,14 +375,7 @@ allIntervals vc =
 
 
 type alias IntervalList =
-    { fiveToOne : Interval.Interval
-    , fiveToTwo : Interval.Interval
-    , fourToOne : Interval.Interval
-    , fiveToThree : Interval.Interval
-    , fourToTwo : Interval.Interval
-    , threeToOne : Interval.Interval
-    , fiveToFour : Interval.Interval
-    , fourToThree : Interval.Interval
+    { threeToOne : Interval.Interval
     , threeToTwo : Interval.Interval
     , twoToOne : Interval.Interval
     }
@@ -446,15 +384,8 @@ type alias IntervalList =
 violatesLowIntervalLimits : Voicing -> Bool
 violatesLowIntervalLimits theVoicing =
     allIntervals (Voicing.voicingClass theVoicing)
-        |> (\{ fiveToOne, fiveToTwo, fiveToThree, fiveToFour, fourToOne, fourToTwo, fourToThree, threeToOne, threeToTwo, twoToOne } ->
-                [ ( getVoiceFive theVoicing, fiveToOne )
-                , ( getVoiceFive theVoicing, fiveToTwo )
-                , ( getVoiceFive theVoicing, fiveToThree )
-                , ( getVoiceFive theVoicing, fiveToFour )
-                , ( getVoiceFour theVoicing, fourToOne )
-                , ( getVoiceFour theVoicing, fourToTwo )
-                , ( getVoiceFour theVoicing, fourToThree )
-                , ( getVoiceThree theVoicing, threeToOne )
+        |> (\{ threeToOne, threeToTwo, twoToOne } ->
+                [ ( getVoiceThree theVoicing, threeToOne )
                 , ( getVoiceThree theVoicing, threeToTwo )
                 , ( getVoiceTwo theVoicing, twoToOne )
                 ]
@@ -485,22 +416,8 @@ type alias VoiceIntervalLimits =
 placeFactors : SpacingLimits -> VoicingClass -> List VoicingClass
 placeFactors intervalLimits voicingClass =
     let
-        voiceFiveInitial =
-            Interval.toSimple voicingClass.voiceFive
-
-        voiceFourInitial =
-            adjustToBeAboveMinimum
-                { minimum = Interval.min intervalLimits.fiveToFour
-                , lower = voiceFiveInitial
-                , upper = Interval.toSimple voicingClass.voiceFour
-                }
-
         voiceThreeInitial =
-            adjustToBeAboveMinimum
-                { minimum = Interval.min intervalLimits.fourToThree
-                , lower = voiceFourInitial
-                , upper = Interval.toSimple voicingClass.voiceThree
-                }
+            Interval.toSimple voicingClass.voiceThree
 
         voiceTwoInitial =
             adjustToBeAboveMinimum
@@ -514,20 +431,6 @@ placeFactors intervalLimits voicingClass =
                 { minimum = Interval.min intervalLimits.twoToOne
                 , lower = voiceTwoInitial
                 , upper = Interval.toSimple voicingClass.voiceOne
-                }
-
-        fiveToFourOctaveShifts =
-            octaveShiftsAllowedBetween
-                { maximum = Interval.max intervalLimits.fiveToFour
-                , lower = voiceFourInitial
-                , upper = voiceThreeInitial
-                }
-
-        fourToThreeOctaveShifts =
-            octaveShiftsAllowedBetween
-                { maximum = Interval.max intervalLimits.fourToThree
-                , lower = voiceFourInitial
-                , upper = voiceThreeInitial
                 }
 
         threeToTwoOctaveShifts =
@@ -547,15 +450,11 @@ placeFactors intervalLimits voicingClass =
     { voiceOne = voiceOneInitial
     , voiceTwo = voiceTwoInitial
     , voiceThree = voiceThreeInitial
-    , voiceFour = voiceFourInitial
-    , voiceFive = voiceFiveInitial
     }
         |> validateInitialVoicingClass intervalLimits
         |> Maybe.map
             (performAllowedOctaveShifts
-                { shiftsForVoiceFour = fiveToFourOctaveShifts
-                , shiftsForVoiceThree = fourToThreeOctaveShifts
-                , shiftsForVoiceTwo = threeToTwoOctaveShifts
+                { shiftsForVoiceTwo = threeToTwoOctaveShifts
                 , shiftsForVoiceOne = twoToOneOctaveShifts
                 }
             )
@@ -573,11 +472,7 @@ validateInitialVoicingClass intervalLimits voicingClass =
     in
     if
         List.all identity
-            [ differenceMeetsMinimum voicingClass.voiceFive voicingClass.voiceFour (Interval.min intervalLimits.fiveToFour)
-            , differenceMeetsMaximum voicingClass.voiceFive voicingClass.voiceFour (Interval.max intervalLimits.fiveToFour)
-            , differenceMeetsMinimum voicingClass.voiceFour voicingClass.voiceThree (Interval.min intervalLimits.fourToThree)
-            , differenceMeetsMaximum voicingClass.voiceFour voicingClass.voiceThree (Interval.max intervalLimits.fourToThree)
-            , differenceMeetsMinimum voicingClass.voiceThree voicingClass.voiceTwo (Interval.min intervalLimits.threeToTwo)
+            [ differenceMeetsMinimum voicingClass.voiceThree voicingClass.voiceTwo (Interval.min intervalLimits.threeToTwo)
             , differenceMeetsMaximum voicingClass.voiceThree voicingClass.voiceTwo (Interval.max intervalLimits.threeToTwo)
             , differenceMeetsMinimum voicingClass.voiceTwo voicingClass.voiceOne (Interval.min intervalLimits.twoToOne)
             , differenceMeetsMaximum voicingClass.voiceTwo voicingClass.voiceOne (Interval.max intervalLimits.twoToOne)
@@ -596,7 +491,6 @@ adjustToBeAboveMinimum :
     }
     -> Interval.Interval
 adjustToBeAboveMinimum { minimum, lower, upper } =
-    -- TODO: duplicated with FourPart. extract into another module
     let
         lowerIsAboveUpper l u =
             Interval.semitones (Interval.subtract l u) < 0
@@ -614,60 +508,15 @@ adjustToBeAboveMinimum { minimum, lower, upper } =
 
 
 performAllowedOctaveShifts :
-    { shiftsForVoiceFour : Int
-    , shiftsForVoiceThree : Int
-    , shiftsForVoiceTwo : Int
+    { shiftsForVoiceTwo : Int
     , shiftsForVoiceOne : Int
     }
     -> VoicingClass
     -> List VoicingClass
-performAllowedOctaveShifts { shiftsForVoiceFour, shiftsForVoiceThree, shiftsForVoiceTwo, shiftsForVoiceOne } initialVoicingClass =
+performAllowedOctaveShifts { shiftsForVoiceTwo, shiftsForVoiceOne } initialVoicingClass =
     [ initialVoicingClass ]
-        |> shiftFromVoiceFour shiftsForVoiceFour
-        |> shiftFromVoiceThree shiftsForVoiceThree
         |> shiftFromVoiceTwo shiftsForVoiceTwo
         |> shiftFromVoiceOne shiftsForVoiceOne
-
-
-shiftFromVoiceFour : Int -> List VoicingClass -> List VoicingClass
-shiftFromVoiceFour shiftCount voicingClasses =
-    let
-        doShifts : List Interval.Interval -> VoicingClass -> List VoicingClass
-        doShifts intervalsToShift vc =
-            List.map
-                (\shift ->
-                    { vc
-                        | voiceOne = vc.voiceOne |> Interval.add shift
-                        , voiceTwo = vc.voiceTwo |> Interval.add shift
-                        , voiceThree = vc.voiceThree |> Interval.add shift
-                        , voiceFour = vc.voiceFour |> Interval.add shift
-                    }
-                )
-                intervalsToShift
-    in
-    voicingClasses
-        |> List.concatMap
-            (doShifts (shiftCountToIntervalList shiftCount))
-
-
-shiftFromVoiceThree : Int -> List VoicingClass -> List VoicingClass
-shiftFromVoiceThree shiftCount voicingClasses =
-    let
-        doShifts : List Interval.Interval -> VoicingClass -> List VoicingClass
-        doShifts intervalsToShift vc =
-            List.map
-                (\shift ->
-                    { vc
-                        | voiceOne = vc.voiceOne |> Interval.add shift
-                        , voiceTwo = vc.voiceTwo |> Interval.add shift
-                        , voiceThree = vc.voiceThree |> Interval.add shift
-                    }
-                )
-                intervalsToShift
-    in
-    voicingClasses
-        |> List.concatMap
-            (doShifts (shiftCountToIntervalList shiftCount))
 
 
 shiftFromVoiceTwo : Int -> List VoicingClass -> List VoicingClass

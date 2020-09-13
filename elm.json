@@ -11,6 +11,7 @@
         "Music.Interval",
         "Music.Chord",
         "Music.Chord.Classification",
+        "Music.Voicing.ThreePart",
         "Music.Voicing.FourPart",
         "Music.Voicing.FivePart",
         "Music.ChordType",
