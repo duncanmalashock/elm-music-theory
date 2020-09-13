@@ -908,35 +908,120 @@ basic =
     FivePartBasic.basic
 
 
-{-| Voice a chord using the "four-way close" method.
+{-| Voice a chord using the "four-way close, double lead" method:
+
+    Chord.voiceFiveParts
+        { voiceOne = Range.sopranoVoice
+        , voiceTwo = Range.altoVoice
+        , voiceThree = Range.tenorVoice
+        , voiceFour = Range.tenorVoice
+        , voiceFive = Range.bassVoice
+        }
+        [ close ]
+        (Chord.majorSeventh PitchClass.c)
+        |> List.map toString
+        == [ "C4, B3, G3, E3, C3"
+           , -- 79 others...
+           ]
+
+This is a "close" voicing, where all voices are distributed close together.
+
 -}
 close : VoicingMethod
 close =
     FivePartJazz.close
 
 
-{-| Voice a chord using the "four-way drop-2" method.
+{-| Voice a chord using the "four-way drop-2, double lead" method:
+
+    Chord.voiceFiveParts
+        { voiceOne = Range.sopranoVoice
+        , voiceTwo = Range.altoVoice
+        , voiceThree = Range.tenorVoice
+        , voiceFour = Range.tenorVoice
+        , voiceFive = Range.bassVoice
+        }
+        [ drop2 ]
+        (Chord.majorSeventh PitchClass.c)
+        |> List.map toString
+        == [ "B4, E4, C4, G3, B2"
+           , -- 87 others...
+           ]
+
+A semi-open voicing, similar to "close", but with the second voice dropped an octave.
+
 -}
 drop2 : VoicingMethod
 drop2 =
     FivePartJazz.drop2
 
 
-{-| Voice a chord using the "four-way drop-2-and-4" method.
+{-| Voice a chord using the "four-way drop-2-and-4, double lead" method:
+
+    Chord.voiceFiveParts
+        { voiceOne = Range.sopranoVoice
+        , voiceTwo = Range.altoVoice
+        , voiceThree = Range.tenorVoice
+        , voiceFour = Range.tenorVoice
+        , voiceFive = Range.bassVoice
+        }
+        [ drop2and4 ]
+        (Chord.majorSeventh PitchClass.c)
+        |> List.map toString
+        == [ "B4, E4, G3, C3, B2"
+           , -- 71 others...
+           ]
+
+An open voicing, with the second and fourth voices dropped an octave.
+
 -}
 drop2and4 : VoicingMethod
 drop2and4 =
     FivePartJazz.drop2and4
 
 
-{-| Voice a chord using the "four-way drop-3" method.
+{-| Voice a chord using the "four-way drop-3, double lead" method:
+
+    Chord.voiceFiveParts
+        { voiceOne = Range.sopranoVoice
+        , voiceTwo = Range.altoVoice
+        , voiceThree = Range.tenorVoice
+        , voiceFour = Range.tenorVoice
+        , voiceFive = Range.bassVoice
+        }
+        [ drop3 ]
+        (Chord.majorSeventh PitchClass.c)
+        |> List.map toString
+        == [ "B4, G4, C4, E3, B2"
+           , -- 71 others...
+           ]
+
+A semi-open voicing, similar to "close", but with the third voice dropped an octave.
+
 -}
 drop3 : VoicingMethod
 drop3 =
     FivePartJazz.drop3
 
 
-{-| Voice a chord using the "four-way spread" method.
+{-| Voice a chord using the "five-way spread" method.
+
+    Chord.voiceFiveParts
+        { voiceOne = Range.sopranoVoice
+        , voiceTwo = Range.altoVoice
+        , voiceThree = Range.tenorVoice
+        , voiceFour = Range.tenorVoice
+        , voiceFive = Range.bassVoice
+        }
+        [ spread ]
+        (Chord.majorSeventh PitchClass.c)
+        |> List.map toString
+        == [ "D5, G4, E4, B3, C3"
+           , -- 40 others...
+           ]
+
+Another open voicing method, with the root of the chord on the bottom for a dramatic effect.
+
 -}
 spread : VoicingMethod
 spread =
