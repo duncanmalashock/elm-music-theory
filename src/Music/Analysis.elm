@@ -86,7 +86,7 @@ analyze chord key =
 -}
 toChord : Analysis.DefaultChordTypes -> Key.Key -> Analysis -> Chord.Chord
 toChord defaults key analysis =
-    toChord defaults key analysis
+    Analysis.toChord defaults key analysis
 
 
 {-| Use triads when converting, if no chord type is specified:

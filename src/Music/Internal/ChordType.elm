@@ -41,6 +41,8 @@ module Music.Internal.ChordType exposing
     , dominantThirteenthSharpNineSharpEleven
     , halfDiminished
     , includes
+    , includesAll
+    , includesAny
     , isDiminished
     , isDominant
     , isMajor

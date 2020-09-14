@@ -391,7 +391,7 @@ secondaryDominant key chord =
 
 canFunctionAsSecondaryDominant : ChordType.ChordType -> Bool
 canFunctionAsSecondaryDominant chordType =
-    ChordType.includes Interval.majorThird chordType
+    ChordType.includesAny [ Interval.majorThird, Interval.perfectFourth ] chordType
         && (not <| ChordType.includes Interval.majorSeventh chordType)
 
 
