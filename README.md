@@ -35,9 +35,13 @@ If you are new to music theory, I can recommend these resources for getting fami
 - [Jazz Arranging Techniques](http://lindsayjazz.com/jazz-arranging-techniques/) by Gary Lindsay
 - [Counterpoint](https://www.worldcat.org/title/counterpoint-based-on-eighteenth-century-practice/oclc/726187199) by Kent Kennan
 
+## Contributing
+
+Interested in contributing to this project? Please take a look at the [CONTRIBUTING.md](https://github.com/duncanmalashock/elm-music-theory/blob/master/CONTRIBUTING.md) file in this repo for ways to do so. 
+
 ## Special thanks
 
-Thanks to Leif Battermann ([@battermann](https://github.com/battermann)) for collaborating with me on some of the designs that are central to this package. Early versions of them came out of our work together on [elm-music/music-theory](https://github.com/elm-music/music-theory). That project is no longer maintained, but I consider this project a successor to it.  
+Thanks to Leif Battermann ([@battermann](https://github.com/battermann)) for collaborating with me on some early versions of the designs that are central to this package.  
 
 Thanks to my friend and colleague Matthew Griffith ([@mdgriffith](https://github.com/mdgriffith)) for his generous advice and encouragement. This package was designed better (and released sooner) because of him.
 
