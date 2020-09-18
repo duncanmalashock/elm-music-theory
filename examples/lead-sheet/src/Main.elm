@@ -3,9 +3,12 @@ module Main exposing (main)
 import Browser
 import Element
 import Element.Background
+import Element.Events
 import Element.Font
+import Element.Input
 import Html exposing (Html)
 import Html.Events
+import List.Extra
 import Music.Analysis as Analysis exposing (Analysis)
 import Music.Chord as Chord exposing (Chord)
 import Music.Key as Key exposing (Key)
@@ -128,6 +131,10 @@ type alias Entry =
     }
 
 
+type Row
+    = Row (Maybe Measure) (Maybe Measure) (Maybe Measure) (Maybe Measure)
+
+
 type Msg
     = AnalyzeClicked
     | NewKeyChosen Key
@@ -194,7 +201,9 @@ view : Model -> { title : String, body : List (Html Msg) }
 view model =
     { title = "Lead Sheet"
     , body =
-        [ Element.layout []
+        [ Element.layout
+            [ Element.width Element.fill
+            ]
             (viewBody model)
         ]
     }
@@ -202,13 +211,65 @@ view model =
 
 viewBody : Model -> Element.Element Msg
 viewBody model =
-    Element.wrappedRow
-        []
-        (List.map (viewMeasure model.currentKey) model.measures)
+    let
+        rows =
+            List.Extra.greedyGroupsOf 4 model.measures
+                |> List.map
+                    (\group ->
+                        case group of
+                            a :: b :: c :: d :: rest ->
+                                Row (Just a) (Just b) (Just c) (Just d)
+
+                            a :: b :: c :: rest ->
+                                Row (Just a) (Just b) (Just c) Nothing
+
+                            a :: b :: rest ->
+                                Row (Just a) (Just b) Nothing Nothing
+
+                            a :: rest ->
+                                Row (Just a) Nothing Nothing Nothing
+
+                            [] ->
+                                Row Nothing Nothing Nothing Nothing
+                    )
+    in
+    Element.column
+        [ Element.width <| Element.px 1000
+        , Element.centerX
+        ]
+        [ Element.column
+            [ Element.width Element.fill
+            , Element.spacing 20
+            ]
+            (List.map (viewRow model.currentKey) rows)
+        , Element.Input.button
+            []
+            { onPress = Just AnalyzeClicked
+            , label = Element.text "Analyze"
+            }
+        ]
+
+
+viewRow : Key -> Row -> Element.Element Msg
+viewRow currentKey (Row a b c d) =
+    let
+        maybeViewMeasure measure =
+            Element.el [ Element.width <| Element.fillPortion 1 ]
+                (Maybe.map (viewMeasure currentKey) measure
+                    |> Maybe.withDefault Element.none
+                )
+    in
+    Element.row
+        [ Element.width Element.fill ]
+        [ viewBarline
+        , maybeViewMeasure a
+        , maybeViewMeasure b
+        , maybeViewMeasure c
+        , maybeViewMeasure d
+        ]
 
 
 
---, Html.button [ Html.Events.onClick AnalyzeClicked ] [ Html.text "Analyze" ]
 --, viewTransposeControls model
 
 
@@ -247,21 +308,32 @@ viewTransposeControls model =
 viewMeasure : Key -> Measure -> Element.Element Msg
 viewMeasure currentKey (Measure first second) =
     Element.row
-        []
+        [ Element.width Element.fill
+        ]
         [ Element.row
             [ Element.spacing 30
             , Element.padding 15
+            , Element.width Element.fill
             ]
-            [ viewMaybeEntry currentKey first
-            , viewMaybeEntry currentKey second
+            [ Element.el
+                [ Element.width Element.fill ]
+                (viewMaybeEntry currentKey first)
+            , Element.el
+                [ Element.width Element.fill ]
+                (viewMaybeEntry currentKey second)
             ]
-        , Element.el
-            [ Element.width (Element.px 3)
-            , Element.height (Element.px 60)
-            , Element.Background.color (Element.rgb 0 0 0)
-            ]
-            Element.none
+        , viewBarline
         ]
+
+
+viewBarline : Element.Element Msg
+viewBarline =
+    Element.el
+        [ Element.width (Element.px 3)
+        , Element.height (Element.px 60)
+        , Element.Background.color (Element.rgb 0 0 0)
+        ]
+        Element.none
 
 
 viewMaybeEntry : Key -> Maybe Entry -> Element.Element Msg
@@ -269,7 +341,9 @@ viewMaybeEntry currentKey maybeEntry =
     case maybeEntry of
         Just entry ->
             Element.column
-                [ Element.Font.size 26 ]
+                [ Element.Font.size 26
+                , Element.width Element.fill
+                ]
                 [ Element.text (Chord.toString entry.chord)
                 , viewAnalysis currentKey entry.analysis
                 ]
