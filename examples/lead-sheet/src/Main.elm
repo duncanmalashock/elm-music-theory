@@ -312,7 +312,7 @@ viewMeasure currentKey (Measure first second) =
         ]
         [ Element.row
             [ Element.spacing 30
-            , Element.padding 15
+            , Element.paddingXY 15 0
             , Element.width Element.fill
             ]
             [ Element.el
@@ -330,7 +330,7 @@ viewBarline : Element.Element Msg
 viewBarline =
     Element.el
         [ Element.width (Element.px 3)
-        , Element.height (Element.px 60)
+        , Element.height (Element.px 80)
         , Element.Background.color (Element.rgb 0 0 0)
         ]
         Element.none
@@ -343,6 +343,7 @@ viewMaybeEntry currentKey maybeEntry =
             Element.column
                 [ Element.Font.size 26
                 , Element.width Element.fill
+                , Element.spacing 18
                 ]
                 [ Element.text (Chord.toString entry.chord)
                 , viewAnalysis currentKey entry.analysis
@@ -356,7 +357,11 @@ viewAnalysis : Key -> Maybe Analysis -> Element.Element Msg
 viewAnalysis currentKey maybeAnalysis =
     case maybeAnalysis of
         Just analysis ->
-            Element.text (Analysis.toString currentKey analysis)
+            Element.el
+                [ Element.Font.size 20
+                , Element.Font.color (Element.rgb 0.5 0.5 0.5)
+                ]
+                (Element.text (Analysis.toString currentKey analysis))
 
         Nothing ->
             Element.none
