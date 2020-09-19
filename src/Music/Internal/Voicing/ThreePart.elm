@@ -239,7 +239,6 @@ type alias InstrumentRanges =
 type alias SpacingLimits =
     { twoToOne : Interval.Range
     , threeToTwo : Interval.Range
-    , fourToThree : Interval.Range
     }
 
 

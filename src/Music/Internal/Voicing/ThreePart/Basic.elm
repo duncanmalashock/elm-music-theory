@@ -51,8 +51,4 @@ spacingLimits =
         Interval.range
             Interval.augmentedUnison
             Interval.perfectOctave
-    , fourToThree =
-        Interval.range
-            Interval.augmentedUnison
-            Interval.perfectOctave
     }
