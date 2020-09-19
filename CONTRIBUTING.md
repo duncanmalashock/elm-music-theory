@@ -12,7 +12,7 @@ But if you're interested, please contribute in the following ways:
 
 ## Share your use cases
 
-I'm interested in hearing about any projects you're working on that you're considering using `music-theory` for, so that I can support the features you'd need if they seem relevant to the scope of this library. If you have a project you're working on, reach out to me at `@duncan` on the [Elm Slack](https://elmlang.herokuapp.com/) and tell me about it.
+I'm interested in hearing about any projects you're working on that you're considering using `elm-music-theory` for, so that I can support the features you'd need if they seem relevant to the scope of this library. If you have a project you're working on, reach out to me at `@duncan` on the [Elm Slack](https://elmlang.herokuapp.com/) and tell me about it.
 
 ## Report issues
 
