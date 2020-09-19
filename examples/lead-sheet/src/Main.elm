@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Browser
+import Browser.Events
 import Element
 import Element.Background
 import Element.Border
@@ -8,7 +9,7 @@ import Element.Font
 import Element.Input
 import Html exposing (Html)
 import Html.Attributes
-import Html.Events
+import Json.Decode
 import List.Extra
 import Music.Analysis as Analysis exposing (Analysis)
 import Music.Chord as Chord exposing (Chord)
@@ -24,8 +25,21 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = always Sub.none
+        , subscriptions = subscriptions
         }
+
+
+subscriptions : Model -> Sub Msg
+subscriptions model =
+    case model.dropdownMenu of
+        Open ->
+            Browser.Events.onAnimationFrame (\_ -> KeyDropdownClickedOut)
+
+        ReadyToClose ->
+            Browser.Events.onClick (Json.Decode.succeed KeyDropdownClosed)
+
+        Closed ->
+            Sub.none
 
 
 
@@ -36,7 +50,14 @@ type alias Model =
     { measures : List Measure
     , currentKey : Key
     , analyzed : Bool
+    , dropdownMenu : DropdownState
     }
+
+
+type DropdownState
+    = Open
+    | ReadyToClose
+    | Closed
 
 
 init : () -> ( Model, Cmd msg )
@@ -44,6 +65,7 @@ init flags =
     ( { currentKey = Key.bFlat
       , analyzed = False
       , measures = initialMeasures
+      , dropdownMenu = Closed
       }
     , Cmd.none
     )
@@ -107,6 +129,8 @@ initialMeasures =
 type Msg
     = AnalyzeClicked
     | KeyDropdownClicked
+    | KeyDropdownClickedOut
+    | KeyDropdownClosed
     | NewKeyChosen Key
 
 
@@ -127,7 +151,23 @@ update msg model =
             )
 
         KeyDropdownClicked ->
-            ( model
+            ( { model
+                | dropdownMenu = Open
+              }
+            , Cmd.none
+            )
+
+        KeyDropdownClickedOut ->
+            ( { model
+                | dropdownMenu = ReadyToClose
+              }
+            , Cmd.none
+            )
+
+        KeyDropdownClosed ->
+            ( { model
+                | dropdownMenu = Closed
+              }
             , Cmd.none
             )
 
@@ -140,6 +180,7 @@ update msg model =
                             (transposeEntry newKey)
                         )
                         model.measures
+                , dropdownMenu = Closed
               }
             , Cmd.none
             )
@@ -315,11 +356,19 @@ viewKeyControl model =
             , Element.mouseOver
                 [ Element.Background.color (Element.rgb 0.2 0.4 0.8)
                 ]
+            , Element.below
+                (viewKeyMenu model)
             ]
-            { onPress = Just KeyDropdownClicked
+            { onPress =
+                if model.dropdownMenu == Closed then
+                    Just KeyDropdownClicked
+
+                else
+                    Nothing
             , label =
                 Element.row
-                    [ Element.spacing 10 ]
+                    [ Element.spacing 10
+                    ]
                     [ Element.el []
                         (Element.text labelText)
                     , Element.el []
@@ -333,6 +382,60 @@ viewKeyControl model =
             , Element.Font.size 20
             ]
             (Element.text labelText)
+
+
+viewKeyMenu : Model -> Element.Element Msg
+viewKeyMenu model =
+    let
+        keyMenuItems =
+            [ Key.c
+            , Key.dFlat
+            , Key.d
+            , Key.eFlat
+            , Key.e
+            , Key.f
+            , Key.fSharp
+            , Key.g
+            , Key.aFlat
+            , Key.a
+            , Key.bFlat
+            , Key.b
+            ]
+                |> List.map
+                    (\key ->
+                        Element.Input.button
+                            [ Element.Font.size 16
+                            , Element.padding 10
+                            , Element.alignLeft
+                            , Element.Font.color (Element.rgb 0 0 0)
+                            , Element.width Element.fill
+                            , Element.mouseOver
+                                [ Element.Background.color
+                                    (Element.rgb 0.9 0.9 0.9)
+                                ]
+                            ]
+                            { onPress = Just (NewKeyChosen key)
+                            , label = Element.text (Key.toString key)
+                            }
+                    )
+    in
+    if model.dropdownMenu /= Closed then
+        Element.column
+            [ Element.Background.color (Element.rgb 1 1 1)
+            , Element.width (Element.px 150)
+            , Element.height (Element.px 200)
+            , Element.htmlAttribute (Html.Attributes.style "overflow-y" "auto")
+            , Element.Border.shadow
+                { offset = ( 0, 0 )
+                , size = 2
+                , blur = 2
+                , color = Element.rgba 0 0 0 0.2
+                }
+            ]
+            keyMenuItems
+
+    else
+        Element.none
 
 
 viewDropdownArrow : Html msg
@@ -463,35 +566,3 @@ viewAnalysis currentKey maybeAnalysis =
 
         Nothing ->
             Element.none
-
-
-viewTransposeControls : Model -> Html Msg
-viewTransposeControls model =
-    let
-        keyMenuItems =
-            [ Key.c
-            , Key.dFlat
-            , Key.d
-            , Key.eFlat
-            , Key.e
-            , Key.f
-            , Key.fSharp
-            , Key.g
-            , Key.aFlat
-            , Key.a
-            , Key.bFlat
-            , Key.b
-            ]
-                |> List.map
-                    (\key ->
-                        Html.option [ Html.Events.onClick (NewKeyChosen key) ]
-                            [ Html.text (Key.toString key)
-                            ]
-                    )
-    in
-    if model.analyzed then
-        Html.select []
-            keyMenuItems
-
-    else
-        Html.text ""

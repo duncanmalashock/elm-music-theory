@@ -14,7 +14,7 @@ It is built with these goals in mind:
 
 Source code for these examples can be found in the `/examples` directory of this repo:
 
-- **"Lead Sheet"** ([View live example]()) - Convert a chord progression into Roman numeral analysis, and transpose it into any key. 
+- **"Lead Sheet"** ([View live example](https://duncanmalashock.github.io/elm-music-theory-example-lead-sheet/)) - Convert a chord progression into Roman numeral analysis, and transpose it into any key. 
 - **"Chord Voicings"**  ([View live example]()) - Choose any two chords and any methods for voicing them. See them notated, and hear the result.  
 
 ## Learning resources

@@ -4322,10 +4322,6 @@ var _Bitwise_shiftRightZfBy = F2(function(offset, a)
 {
 	return a >>> offset;
 });
-var $elm$core$Basics$always = F2(
-	function (a, _v0) {
-		return a;
-	});
 var $elm$core$Basics$EQ = {$: 'EQ'};
 var $elm$core$Basics$GT = {$: 'GT'};
 var $elm$core$Basics$LT = {$: 'LT'};
@@ -5115,28 +5111,15 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Music$Internal$Letter$A = {$: 'A'};
+var $author$project$Main$Closed = {$: 'Closed'};
+var $author$project$Music$Internal$Letter$B = {$: 'B'};
 var $author$project$Music$Internal$PitchClass$Offset = function (a) {
 	return {$: 'Offset', a: a};
 };
-var $author$project$Music$Internal$PitchClass$natural = $author$project$Music$Internal$PitchClass$Offset(0);
-var $author$project$Music$Internal$PitchClass$PitchClass = F2(
-	function (a, b) {
-		return {$: 'PitchClass', a: a, b: b};
-	});
-var $author$project$Music$Internal$PitchClass$pitchClass = F2(
-	function (l, o) {
-		return A2($author$project$Music$Internal$PitchClass$PitchClass, l, o);
-	});
-var $author$project$Music$Internal$PitchClass$a = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$natural);
-var $author$project$Music$PitchClass$a = $author$project$Music$Internal$PitchClass$a;
 var $elm$core$Basics$negate = function (n) {
 	return -n;
 };
 var $author$project$Music$Internal$PitchClass$flat = $author$project$Music$Internal$PitchClass$Offset(-1);
-var $author$project$Music$Internal$PitchClass$aFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$flat);
-var $author$project$Music$PitchClass$aFlat = $author$project$Music$Internal$PitchClass$aFlat;
-var $author$project$Music$Internal$Letter$B = {$: 'B'};
 var $author$project$Music$Internal$Key$Key = F2(
 	function (a, b) {
 		return {$: 'Key', a: a, b: b};
@@ -5145,9 +5128,23 @@ var $author$project$Music$Internal$Key$Major = {$: 'Major'};
 var $author$project$Music$Internal$Key$major = function (root) {
 	return A2($author$project$Music$Internal$Key$Key, root, $author$project$Music$Internal$Key$Major);
 };
+var $author$project$Music$Internal$PitchClass$PitchClass = F2(
+	function (a, b) {
+		return {$: 'PitchClass', a: a, b: b};
+	});
+var $author$project$Music$Internal$PitchClass$pitchClass = F2(
+	function (l, o) {
+		return A2($author$project$Music$Internal$PitchClass$PitchClass, l, o);
+	});
 var $author$project$Music$Internal$Key$bFlat = $author$project$Music$Internal$Key$major(
 	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$B, $author$project$Music$Internal$PitchClass$flat));
 var $author$project$Music$Key$bFlat = $author$project$Music$Internal$Key$bFlat;
+var $author$project$Music$Internal$Letter$A = {$: 'A'};
+var $author$project$Music$Internal$PitchClass$natural = $author$project$Music$Internal$PitchClass$Offset(0);
+var $author$project$Music$Internal$PitchClass$a = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$natural);
+var $author$project$Music$PitchClass$a = $author$project$Music$Internal$PitchClass$a;
+var $author$project$Music$Internal$PitchClass$aFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$flat);
+var $author$project$Music$PitchClass$aFlat = $author$project$Music$Internal$PitchClass$aFlat;
 var $author$project$Music$Internal$PitchClass$bFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$B, $author$project$Music$Internal$PitchClass$flat);
 var $author$project$Music$PitchClass$bFlat = $author$project$Music$Internal$PitchClass$bFlat;
 var $author$project$Music$Internal$Letter$C = {$: 'C'};
@@ -5461,141 +5458,690 @@ var $author$project$Music$Internal$ChordType$minorSeventh = $author$project$Musi
 var $author$project$Music$Chord$minorSeventh = function (pitchClass) {
 	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$minorSeventh);
 };
+var $author$project$Main$initialMeasures = _List_fromArray(
+	[
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
+		$author$project$Music$Chord$diminishedSeventh($author$project$Music$PitchClass$dFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$aFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$aFlat)),
+		$author$project$Main$measure1Chord(
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$halfDiminished($author$project$Music$PitchClass$e),
+		$author$project$Music$Chord$dominantSeventhFlatNine($author$project$Music$PitchClass$a)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$dFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$dominantSeventhSus4($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$c)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
+		$author$project$Music$Chord$diminishedSeventh($author$project$Music$PitchClass$dFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
+		$author$project$Main$measure1Chord(
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$halfDiminished($author$project$Music$PitchClass$a),
+		$author$project$Music$Chord$dominantSeventhFlatNine($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$gFlat)),
+		$author$project$Main$measure1Chord(
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		$author$project$Main$measure1Chord(
+		$author$project$Music$Chord$majorSix($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f))
+	]);
 var $elm$core$Platform$Cmd$batch = _Platform_batch;
 var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
 var $author$project$Main$init = function (flags) {
 	return _Utils_Tuple2(
-		{
-			analyzed: false,
-			currentKey: $author$project$Music$Key$bFlat,
-			measures: _List_fromArray(
-				[
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
-					$author$project$Music$Chord$diminishedSeventh($author$project$Music$PitchClass$dFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$aFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$aFlat)),
-					$author$project$Main$measure1Chord(
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$halfDiminished($author$project$Music$PitchClass$e),
-					$author$project$Music$Chord$dominantSeventhFlatNine($author$project$Music$PitchClass$a)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$dFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$dominantSeventhSus4($author$project$Music$PitchClass$c),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$c)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
-					$author$project$Music$Chord$diminishedSeventh($author$project$Music$PitchClass$dFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
-					$author$project$Main$measure1Chord(
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$halfDiminished($author$project$Music$PitchClass$a),
-					$author$project$Music$Chord$dominantSeventhFlatNine($author$project$Music$PitchClass$d)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$gFlat)),
-					$author$project$Main$measure1Chord(
-					$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-					$author$project$Main$measure1Chord(
-					$author$project$Music$Chord$majorSix($author$project$Music$PitchClass$bFlat)),
-					A2(
-					$author$project$Main$measure2Chords,
-					$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-					$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f))
-				])
-		},
+		{analyzed: false, currentKey: $author$project$Music$Key$bFlat, dropdownMenu: $author$project$Main$Closed, measures: $author$project$Main$initialMeasures},
 		$elm$core$Platform$Cmd$none);
 };
+var $author$project$Main$KeyDropdownClickedOut = {$: 'KeyDropdownClickedOut'};
+var $author$project$Main$KeyDropdownClosed = {$: 'KeyDropdownClosed'};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
 var $elm$core$Platform$Sub$none = $elm$core$Platform$Sub$batch(_List_Nil);
+var $elm$browser$Browser$AnimationManager$Time = function (a) {
+	return {$: 'Time', a: a};
+};
+var $elm$browser$Browser$AnimationManager$State = F3(
+	function (subs, request, oldTime) {
+		return {oldTime: oldTime, request: request, subs: subs};
+	});
+var $elm$browser$Browser$AnimationManager$init = $elm$core$Task$succeed(
+	A3($elm$browser$Browser$AnimationManager$State, _List_Nil, $elm$core$Maybe$Nothing, 0));
+var $elm$core$Process$kill = _Scheduler_kill;
+var $elm$browser$Browser$AnimationManager$now = _Browser_now(_Utils_Tuple0);
+var $elm$browser$Browser$AnimationManager$rAF = _Browser_rAF(_Utils_Tuple0);
+var $elm$core$Platform$sendToSelf = _Platform_sendToSelf;
+var $elm$core$Process$spawn = _Scheduler_spawn;
+var $elm$browser$Browser$AnimationManager$onEffects = F3(
+	function (router, subs, _v0) {
+		var request = _v0.request;
+		var oldTime = _v0.oldTime;
+		var _v1 = _Utils_Tuple2(request, subs);
+		if (_v1.a.$ === 'Nothing') {
+			if (!_v1.b.b) {
+				var _v2 = _v1.a;
+				return $elm$browser$Browser$AnimationManager$init;
+			} else {
+				var _v4 = _v1.a;
+				return A2(
+					$elm$core$Task$andThen,
+					function (pid) {
+						return A2(
+							$elm$core$Task$andThen,
+							function (time) {
+								return $elm$core$Task$succeed(
+									A3(
+										$elm$browser$Browser$AnimationManager$State,
+										subs,
+										$elm$core$Maybe$Just(pid),
+										time));
+							},
+							$elm$browser$Browser$AnimationManager$now);
+					},
+					$elm$core$Process$spawn(
+						A2(
+							$elm$core$Task$andThen,
+							$elm$core$Platform$sendToSelf(router),
+							$elm$browser$Browser$AnimationManager$rAF)));
+			}
+		} else {
+			if (!_v1.b.b) {
+				var pid = _v1.a.a;
+				return A2(
+					$elm$core$Task$andThen,
+					function (_v3) {
+						return $elm$browser$Browser$AnimationManager$init;
+					},
+					$elm$core$Process$kill(pid));
+			} else {
+				return $elm$core$Task$succeed(
+					A3($elm$browser$Browser$AnimationManager$State, subs, request, oldTime));
+			}
+		}
+	});
+var $elm$time$Time$Posix = function (a) {
+	return {$: 'Posix', a: a};
+};
+var $elm$time$Time$millisToPosix = $elm$time$Time$Posix;
+var $elm$browser$Browser$AnimationManager$onSelfMsg = F3(
+	function (router, newTime, _v0) {
+		var subs = _v0.subs;
+		var oldTime = _v0.oldTime;
+		var send = function (sub) {
+			if (sub.$ === 'Time') {
+				var tagger = sub.a;
+				return A2(
+					$elm$core$Platform$sendToApp,
+					router,
+					tagger(
+						$elm$time$Time$millisToPosix(newTime)));
+			} else {
+				var tagger = sub.a;
+				return A2(
+					$elm$core$Platform$sendToApp,
+					router,
+					tagger(newTime - oldTime));
+			}
+		};
+		return A2(
+			$elm$core$Task$andThen,
+			function (pid) {
+				return A2(
+					$elm$core$Task$andThen,
+					function (_v1) {
+						return $elm$core$Task$succeed(
+							A3(
+								$elm$browser$Browser$AnimationManager$State,
+								subs,
+								$elm$core$Maybe$Just(pid),
+								newTime));
+					},
+					$elm$core$Task$sequence(
+						A2($elm$core$List$map, send, subs)));
+			},
+			$elm$core$Process$spawn(
+				A2(
+					$elm$core$Task$andThen,
+					$elm$core$Platform$sendToSelf(router),
+					$elm$browser$Browser$AnimationManager$rAF)));
+	});
+var $elm$browser$Browser$AnimationManager$Delta = function (a) {
+	return {$: 'Delta', a: a};
+};
+var $elm$core$Basics$composeL = F3(
+	function (g, f, x) {
+		return g(
+			f(x));
+	});
+var $elm$browser$Browser$AnimationManager$subMap = F2(
+	function (func, sub) {
+		if (sub.$ === 'Time') {
+			var tagger = sub.a;
+			return $elm$browser$Browser$AnimationManager$Time(
+				A2($elm$core$Basics$composeL, func, tagger));
+		} else {
+			var tagger = sub.a;
+			return $elm$browser$Browser$AnimationManager$Delta(
+				A2($elm$core$Basics$composeL, func, tagger));
+		}
+	});
+_Platform_effectManagers['Browser.AnimationManager'] = _Platform_createManager($elm$browser$Browser$AnimationManager$init, $elm$browser$Browser$AnimationManager$onEffects, $elm$browser$Browser$AnimationManager$onSelfMsg, 0, $elm$browser$Browser$AnimationManager$subMap);
+var $elm$browser$Browser$AnimationManager$subscription = _Platform_leaf('Browser.AnimationManager');
+var $elm$browser$Browser$AnimationManager$onAnimationFrame = function (tagger) {
+	return $elm$browser$Browser$AnimationManager$subscription(
+		$elm$browser$Browser$AnimationManager$Time(tagger));
+};
+var $elm$browser$Browser$Events$onAnimationFrame = $elm$browser$Browser$AnimationManager$onAnimationFrame;
+var $elm$browser$Browser$Events$Document = {$: 'Document'};
+var $elm$browser$Browser$Events$MySub = F3(
+	function (a, b, c) {
+		return {$: 'MySub', a: a, b: b, c: c};
+	});
+var $elm$browser$Browser$Events$State = F2(
+	function (subs, pids) {
+		return {pids: pids, subs: subs};
+	});
+var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
+var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
+var $elm$browser$Browser$Events$init = $elm$core$Task$succeed(
+	A2($elm$browser$Browser$Events$State, _List_Nil, $elm$core$Dict$empty));
+var $elm$browser$Browser$Events$nodeToKey = function (node) {
+	if (node.$ === 'Document') {
+		return 'd_';
+	} else {
+		return 'w_';
+	}
+};
+var $elm$browser$Browser$Events$addKey = function (sub) {
+	var node = sub.a;
+	var name = sub.b;
+	return _Utils_Tuple2(
+		_Utils_ap(
+			$elm$browser$Browser$Events$nodeToKey(node),
+			name),
+		sub);
+};
+var $elm$core$Dict$Black = {$: 'Black'};
+var $elm$core$Dict$RBNode_elm_builtin = F5(
+	function (a, b, c, d, e) {
+		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
+	});
+var $elm$core$Dict$Red = {$: 'Red'};
+var $elm$core$Dict$balance = F5(
+	function (color, key, value, left, right) {
+		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
+			var _v1 = right.a;
+			var rK = right.b;
+			var rV = right.c;
+			var rLeft = right.d;
+			var rRight = right.e;
+			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
+				var _v3 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var lLeft = left.d;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					key,
+					value,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
+			} else {
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					color,
+					rK,
+					rV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
+					rRight);
+			}
+		} else {
+			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
+				var _v5 = left.a;
+				var lK = left.b;
+				var lV = left.c;
+				var _v6 = left.d;
+				var _v7 = _v6.a;
+				var llK = _v6.b;
+				var llV = _v6.c;
+				var llLeft = _v6.d;
+				var llRight = _v6.e;
+				var lRight = left.e;
+				return A5(
+					$elm$core$Dict$RBNode_elm_builtin,
+					$elm$core$Dict$Red,
+					lK,
+					lV,
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
+					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
+			} else {
+				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
+			}
+		}
+	});
+var $elm$core$Basics$compare = _Utils_compare;
+var $elm$core$Dict$insertHelp = F3(
+	function (key, value, dict) {
+		if (dict.$ === 'RBEmpty_elm_builtin') {
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
+		} else {
+			var nColor = dict.a;
+			var nKey = dict.b;
+			var nValue = dict.c;
+			var nLeft = dict.d;
+			var nRight = dict.e;
+			var _v1 = A2($elm$core$Basics$compare, key, nKey);
+			switch (_v1.$) {
+				case 'LT':
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						A3($elm$core$Dict$insertHelp, key, value, nLeft),
+						nRight);
+				case 'EQ':
+					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
+				default:
+					return A5(
+						$elm$core$Dict$balance,
+						nColor,
+						nKey,
+						nValue,
+						nLeft,
+						A3($elm$core$Dict$insertHelp, key, value, nRight));
+			}
+		}
+	});
+var $elm$core$Dict$insert = F3(
+	function (key, value, dict) {
+		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
+		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
+			var _v1 = _v0.a;
+			var k = _v0.b;
+			var v = _v0.c;
+			var l = _v0.d;
+			var r = _v0.e;
+			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
+		} else {
+			var x = _v0;
+			return x;
+		}
+	});
+var $elm$core$Dict$fromList = function (assocs) {
+	return A3(
+		$elm$core$List$foldl,
+		F2(
+			function (_v0, dict) {
+				var key = _v0.a;
+				var value = _v0.b;
+				return A3($elm$core$Dict$insert, key, value, dict);
+			}),
+		$elm$core$Dict$empty,
+		assocs);
+};
+var $elm$core$Dict$foldl = F3(
+	function (func, acc, dict) {
+		foldl:
+		while (true) {
+			if (dict.$ === 'RBEmpty_elm_builtin') {
+				return acc;
+			} else {
+				var key = dict.b;
+				var value = dict.c;
+				var left = dict.d;
+				var right = dict.e;
+				var $temp$func = func,
+					$temp$acc = A3(
+					func,
+					key,
+					value,
+					A3($elm$core$Dict$foldl, func, acc, left)),
+					$temp$dict = right;
+				func = $temp$func;
+				acc = $temp$acc;
+				dict = $temp$dict;
+				continue foldl;
+			}
+		}
+	});
+var $elm$core$Dict$merge = F6(
+	function (leftStep, bothStep, rightStep, leftDict, rightDict, initialResult) {
+		var stepState = F3(
+			function (rKey, rValue, _v0) {
+				stepState:
+				while (true) {
+					var list = _v0.a;
+					var result = _v0.b;
+					if (!list.b) {
+						return _Utils_Tuple2(
+							list,
+							A3(rightStep, rKey, rValue, result));
+					} else {
+						var _v2 = list.a;
+						var lKey = _v2.a;
+						var lValue = _v2.b;
+						var rest = list.b;
+						if (_Utils_cmp(lKey, rKey) < 0) {
+							var $temp$rKey = rKey,
+								$temp$rValue = rValue,
+								$temp$_v0 = _Utils_Tuple2(
+								rest,
+								A3(leftStep, lKey, lValue, result));
+							rKey = $temp$rKey;
+							rValue = $temp$rValue;
+							_v0 = $temp$_v0;
+							continue stepState;
+						} else {
+							if (_Utils_cmp(lKey, rKey) > 0) {
+								return _Utils_Tuple2(
+									list,
+									A3(rightStep, rKey, rValue, result));
+							} else {
+								return _Utils_Tuple2(
+									rest,
+									A4(bothStep, lKey, lValue, rValue, result));
+							}
+						}
+					}
+				}
+			});
+		var _v3 = A3(
+			$elm$core$Dict$foldl,
+			stepState,
+			_Utils_Tuple2(
+				$elm$core$Dict$toList(leftDict),
+				initialResult),
+			rightDict);
+		var leftovers = _v3.a;
+		var intermediateResult = _v3.b;
+		return A3(
+			$elm$core$List$foldl,
+			F2(
+				function (_v4, result) {
+					var k = _v4.a;
+					var v = _v4.b;
+					return A3(leftStep, k, v, result);
+				}),
+			intermediateResult,
+			leftovers);
+	});
+var $elm$browser$Browser$Events$Event = F2(
+	function (key, event) {
+		return {event: event, key: key};
+	});
+var $elm$browser$Browser$Events$spawn = F3(
+	function (router, key, _v0) {
+		var node = _v0.a;
+		var name = _v0.b;
+		var actualNode = function () {
+			if (node.$ === 'Document') {
+				return _Browser_doc;
+			} else {
+				return _Browser_window;
+			}
+		}();
+		return A2(
+			$elm$core$Task$map,
+			function (value) {
+				return _Utils_Tuple2(key, value);
+			},
+			A3(
+				_Browser_on,
+				actualNode,
+				name,
+				function (event) {
+					return A2(
+						$elm$core$Platform$sendToSelf,
+						router,
+						A2($elm$browser$Browser$Events$Event, key, event));
+				}));
+	});
+var $elm$core$Dict$union = F2(
+	function (t1, t2) {
+		return A3($elm$core$Dict$foldl, $elm$core$Dict$insert, t2, t1);
+	});
+var $elm$browser$Browser$Events$onEffects = F3(
+	function (router, subs, state) {
+		var stepRight = F3(
+			function (key, sub, _v6) {
+				var deads = _v6.a;
+				var lives = _v6.b;
+				var news = _v6.c;
+				return _Utils_Tuple3(
+					deads,
+					lives,
+					A2(
+						$elm$core$List$cons,
+						A3($elm$browser$Browser$Events$spawn, router, key, sub),
+						news));
+			});
+		var stepLeft = F3(
+			function (_v4, pid, _v5) {
+				var deads = _v5.a;
+				var lives = _v5.b;
+				var news = _v5.c;
+				return _Utils_Tuple3(
+					A2($elm$core$List$cons, pid, deads),
+					lives,
+					news);
+			});
+		var stepBoth = F4(
+			function (key, pid, _v2, _v3) {
+				var deads = _v3.a;
+				var lives = _v3.b;
+				var news = _v3.c;
+				return _Utils_Tuple3(
+					deads,
+					A3($elm$core$Dict$insert, key, pid, lives),
+					news);
+			});
+		var newSubs = A2($elm$core$List$map, $elm$browser$Browser$Events$addKey, subs);
+		var _v0 = A6(
+			$elm$core$Dict$merge,
+			stepLeft,
+			stepBoth,
+			stepRight,
+			state.pids,
+			$elm$core$Dict$fromList(newSubs),
+			_Utils_Tuple3(_List_Nil, $elm$core$Dict$empty, _List_Nil));
+		var deadPids = _v0.a;
+		var livePids = _v0.b;
+		var makeNewPids = _v0.c;
+		return A2(
+			$elm$core$Task$andThen,
+			function (pids) {
+				return $elm$core$Task$succeed(
+					A2(
+						$elm$browser$Browser$Events$State,
+						newSubs,
+						A2(
+							$elm$core$Dict$union,
+							livePids,
+							$elm$core$Dict$fromList(pids))));
+			},
+			A2(
+				$elm$core$Task$andThen,
+				function (_v1) {
+					return $elm$core$Task$sequence(makeNewPids);
+				},
+				$elm$core$Task$sequence(
+					A2($elm$core$List$map, $elm$core$Process$kill, deadPids))));
+	});
+var $elm$core$List$maybeCons = F3(
+	function (f, mx, xs) {
+		var _v0 = f(mx);
+		if (_v0.$ === 'Just') {
+			var x = _v0.a;
+			return A2($elm$core$List$cons, x, xs);
+		} else {
+			return xs;
+		}
+	});
+var $elm$core$List$filterMap = F2(
+	function (f, xs) {
+		return A3(
+			$elm$core$List$foldr,
+			$elm$core$List$maybeCons(f),
+			_List_Nil,
+			xs);
+	});
+var $elm$browser$Browser$Events$onSelfMsg = F3(
+	function (router, _v0, state) {
+		var key = _v0.key;
+		var event = _v0.event;
+		var toMessage = function (_v2) {
+			var subKey = _v2.a;
+			var _v3 = _v2.b;
+			var node = _v3.a;
+			var name = _v3.b;
+			var decoder = _v3.c;
+			return _Utils_eq(subKey, key) ? A2(_Browser_decodeEvent, decoder, event) : $elm$core$Maybe$Nothing;
+		};
+		var messages = A2($elm$core$List$filterMap, toMessage, state.subs);
+		return A2(
+			$elm$core$Task$andThen,
+			function (_v1) {
+				return $elm$core$Task$succeed(state);
+			},
+			$elm$core$Task$sequence(
+				A2(
+					$elm$core$List$map,
+					$elm$core$Platform$sendToApp(router),
+					messages)));
+	});
+var $elm$browser$Browser$Events$subMap = F2(
+	function (func, _v0) {
+		var node = _v0.a;
+		var name = _v0.b;
+		var decoder = _v0.c;
+		return A3(
+			$elm$browser$Browser$Events$MySub,
+			node,
+			name,
+			A2($elm$json$Json$Decode$map, func, decoder));
+	});
+_Platform_effectManagers['Browser.Events'] = _Platform_createManager($elm$browser$Browser$Events$init, $elm$browser$Browser$Events$onEffects, $elm$browser$Browser$Events$onSelfMsg, 0, $elm$browser$Browser$Events$subMap);
+var $elm$browser$Browser$Events$subscription = _Platform_leaf('Browser.Events');
+var $elm$browser$Browser$Events$on = F3(
+	function (node, name, decoder) {
+		return $elm$browser$Browser$Events$subscription(
+			A3($elm$browser$Browser$Events$MySub, node, name, decoder));
+	});
+var $elm$browser$Browser$Events$onClick = A2($elm$browser$Browser$Events$on, $elm$browser$Browser$Events$Document, 'click');
+var $author$project$Main$subscriptions = function (model) {
+	var _v0 = model.dropdownMenu;
+	switch (_v0.$) {
+		case 'Open':
+			return $elm$browser$Browser$Events$onAnimationFrame(
+				function (_v1) {
+					return $author$project$Main$KeyDropdownClickedOut;
+				});
+		case 'ReadyToClose':
+			return $elm$browser$Browser$Events$onClick(
+				$elm$json$Json$Decode$succeed($author$project$Main$KeyDropdownClosed));
+		default:
+			return $elm$core$Platform$Sub$none;
+	}
+};
+var $author$project$Main$Open = {$: 'Open'};
+var $author$project$Main$ReadyToClose = {$: 'ReadyToClose'};
 var $author$project$Music$Internal$Analysis$Degree = F3(
 	function (a, b, c) {
 		return {$: 'Degree', a: a, b: b, c: c};
@@ -5733,24 +6279,6 @@ var $author$project$Music$Internal$Analysis$maybeChordTypeFromContext = F4(
 			numeral) ? $elm$core$Maybe$Nothing : $elm$core$Maybe$Just(chordType)));
 	});
 var $author$project$Music$Internal$Analysis$I = {$: 'I'};
-var $elm$core$List$maybeCons = F3(
-	function (f, mx, xs) {
-		var _v0 = f(mx);
-		if (_v0.$ === 'Just') {
-			var x = _v0.a;
-			return A2($elm$core$List$cons, x, xs);
-		} else {
-			return xs;
-		}
-	});
-var $elm$core$List$filterMap = F2(
-	function (f, xs) {
-		return A3(
-			$elm$core$List$foldr,
-			$elm$core$List$maybeCons(f),
-			_List_Nil,
-			xs);
-	});
 var $elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -6509,18 +7037,6 @@ var $author$project$Main$mapMeasure = F2(
 			A2($elm$core$Maybe$map, fn, first),
 			A2($elm$core$Maybe$map, fn, second));
 	});
-var $author$project$Main$analyzeMeasures = function (model) {
-	return _Utils_update(
-		model,
-		{
-			analyzed: true,
-			measures: A2(
-				$elm$core$List$map,
-				$author$project$Main$mapMeasure(
-					$author$project$Main$analyzeEntry(model.currentKey)),
-				model.measures)
-		});
-};
 var $author$project$Music$Analysis$seventhsByDefault = $author$project$Music$Internal$Analysis$seventhsByDefault;
 var $author$project$Music$Internal$Analysis$toChord = F3(
 	function (defaults, key, analysis) {
@@ -6627,30 +7143,55 @@ var $author$project$Main$transposeEntry = F2(
 				}()
 			});
 	});
-var $author$project$Main$transposeEntries = F2(
-	function (newKey, model) {
-		return _Utils_update(
-			model,
-			{
-				currentKey: newKey,
-				measures: A2(
-					$elm$core$List$map,
-					$author$project$Main$mapMeasure(
-						$author$project$Main$transposeEntry(newKey)),
-					model.measures)
-			});
-	});
 var $author$project$Main$update = F2(
 	function (msg, model) {
-		if (msg.$ === 'AnalyzeClicked') {
-			return _Utils_Tuple2(
-				$author$project$Main$analyzeMeasures(model),
-				$elm$core$Platform$Cmd$none);
-		} else {
-			var key = msg.a;
-			return _Utils_Tuple2(
-				A2($author$project$Main$transposeEntries, key, model),
-				$elm$core$Platform$Cmd$none);
+		switch (msg.$) {
+			case 'AnalyzeClicked':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							analyzed: true,
+							measures: A2(
+								$elm$core$List$map,
+								$author$project$Main$mapMeasure(
+									$author$project$Main$analyzeEntry(model.currentKey)),
+								model.measures)
+						}),
+					$elm$core$Platform$Cmd$none);
+			case 'KeyDropdownClicked':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{dropdownMenu: $author$project$Main$Open}),
+					$elm$core$Platform$Cmd$none);
+			case 'KeyDropdownClickedOut':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{dropdownMenu: $author$project$Main$ReadyToClose}),
+					$elm$core$Platform$Cmd$none);
+			case 'KeyDropdownClosed':
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{dropdownMenu: $author$project$Main$Closed}),
+					$elm$core$Platform$Cmd$none);
+			default:
+				var newKey = msg.a;
+				return _Utils_Tuple2(
+					_Utils_update(
+						model,
+						{
+							currentKey: newKey,
+							dropdownMenu: $author$project$Main$Closed,
+							measures: A2(
+								$elm$core$List$map,
+								$author$project$Main$mapMeasure(
+									$author$project$Main$transposeEntry(newKey)),
+								model.measures)
+						}),
+					$elm$core$Platform$Cmd$none);
 		}
 	});
 var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
@@ -6806,8 +7347,6 @@ var $elm$html$Html$div = _VirtualDom_node('div');
 var $elm$core$Set$Set_elm_builtin = function (a) {
 	return {$: 'Set_elm_builtin', a: a};
 };
-var $elm$core$Dict$RBEmpty_elm_builtin = {$: 'RBEmpty_elm_builtin'};
-var $elm$core$Dict$empty = $elm$core$Dict$RBEmpty_elm_builtin;
 var $elm$core$Set$empty = $elm$core$Set$Set_elm_builtin($elm$core$Dict$empty);
 var $mdgriffith$elm_ui$Internal$Model$lengthClassName = function (x) {
 	switch (x.$) {
@@ -6958,115 +7497,6 @@ var $mdgriffith$elm_ui$Internal$Model$getStyleName = function (style) {
 				$mdgriffith$elm_ui$Internal$Model$transformClass(x));
 	}
 };
-var $elm$core$Dict$Black = {$: 'Black'};
-var $elm$core$Dict$RBNode_elm_builtin = F5(
-	function (a, b, c, d, e) {
-		return {$: 'RBNode_elm_builtin', a: a, b: b, c: c, d: d, e: e};
-	});
-var $elm$core$Dict$Red = {$: 'Red'};
-var $elm$core$Dict$balance = F5(
-	function (color, key, value, left, right) {
-		if ((right.$ === 'RBNode_elm_builtin') && (right.a.$ === 'Red')) {
-			var _v1 = right.a;
-			var rK = right.b;
-			var rV = right.c;
-			var rLeft = right.d;
-			var rRight = right.e;
-			if ((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) {
-				var _v3 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var lLeft = left.d;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					$elm$core$Dict$Red,
-					key,
-					value,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, lK, lV, lLeft, lRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, rK, rV, rLeft, rRight));
-			} else {
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					color,
-					rK,
-					rV,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, left, rLeft),
-					rRight);
-			}
-		} else {
-			if ((((left.$ === 'RBNode_elm_builtin') && (left.a.$ === 'Red')) && (left.d.$ === 'RBNode_elm_builtin')) && (left.d.a.$ === 'Red')) {
-				var _v5 = left.a;
-				var lK = left.b;
-				var lV = left.c;
-				var _v6 = left.d;
-				var _v7 = _v6.a;
-				var llK = _v6.b;
-				var llV = _v6.c;
-				var llLeft = _v6.d;
-				var llRight = _v6.e;
-				var lRight = left.e;
-				return A5(
-					$elm$core$Dict$RBNode_elm_builtin,
-					$elm$core$Dict$Red,
-					lK,
-					lV,
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, llK, llV, llLeft, llRight),
-					A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, key, value, lRight, right));
-			} else {
-				return A5($elm$core$Dict$RBNode_elm_builtin, color, key, value, left, right);
-			}
-		}
-	});
-var $elm$core$Basics$compare = _Utils_compare;
-var $elm$core$Dict$insertHelp = F3(
-	function (key, value, dict) {
-		if (dict.$ === 'RBEmpty_elm_builtin') {
-			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Red, key, value, $elm$core$Dict$RBEmpty_elm_builtin, $elm$core$Dict$RBEmpty_elm_builtin);
-		} else {
-			var nColor = dict.a;
-			var nKey = dict.b;
-			var nValue = dict.c;
-			var nLeft = dict.d;
-			var nRight = dict.e;
-			var _v1 = A2($elm$core$Basics$compare, key, nKey);
-			switch (_v1.$) {
-				case 'LT':
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						A3($elm$core$Dict$insertHelp, key, value, nLeft),
-						nRight);
-				case 'EQ':
-					return A5($elm$core$Dict$RBNode_elm_builtin, nColor, nKey, value, nLeft, nRight);
-				default:
-					return A5(
-						$elm$core$Dict$balance,
-						nColor,
-						nKey,
-						nValue,
-						nLeft,
-						A3($elm$core$Dict$insertHelp, key, value, nRight));
-			}
-		}
-	});
-var $elm$core$Dict$insert = F3(
-	function (key, value, dict) {
-		var _v0 = A3($elm$core$Dict$insertHelp, key, value, dict);
-		if ((_v0.$ === 'RBNode_elm_builtin') && (_v0.a.$ === 'Red')) {
-			var _v1 = _v0.a;
-			var k = _v0.b;
-			var v = _v0.c;
-			var l = _v0.d;
-			var r = _v0.e;
-			return A5($elm$core$Dict$RBNode_elm_builtin, $elm$core$Dict$Black, k, v, l, r);
-		} else {
-			var x = _v0;
-			return x;
-		}
-	});
 var $elm$core$Set$insert = F2(
 	function (key, _v0) {
 		var dict = _v0.a;
@@ -12476,177 +12906,9 @@ var $mdgriffith$elm_ui$Element$layoutWith = F3(
 	});
 var $mdgriffith$elm_ui$Element$layout = $mdgriffith$elm_ui$Element$layoutWith(
 	{options: _List_Nil});
-var $author$project$Main$AnalyzeClicked = {$: 'AnalyzeClicked'};
 var $author$project$Main$Row = F4(
 	function (a, b, c, d) {
 		return {$: 'Row', a: a, b: b, c: c, d: d};
-	});
-var $mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
-var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
-	return {$: 'Describe', a: a};
-};
-var $elm$json$Json$Encode$bool = _Json_wrap;
-var $elm$html$Html$Attributes$boolProperty = F2(
-	function (key, bool) {
-		return A2(
-			_VirtualDom_property,
-			key,
-			$elm$json$Json$Encode$bool(bool));
-	});
-var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
-var $mdgriffith$elm_ui$Element$Input$enter = 'Enter';
-var $mdgriffith$elm_ui$Internal$Model$NoAttribute = {$: 'NoAttribute'};
-var $mdgriffith$elm_ui$Element$Input$hasFocusStyle = function (attr) {
-	if (((attr.$ === 'StyleClass') && (attr.b.$ === 'PseudoSelector')) && (attr.b.a.$ === 'Focus')) {
-		var _v1 = attr.b;
-		var _v2 = _v1.a;
-		return true;
-	} else {
-		return false;
-	}
-};
-var $mdgriffith$elm_ui$Element$Input$focusDefault = function (attrs) {
-	return A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, attrs) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass('focusable');
-};
-var $mdgriffith$elm_ui$Internal$Model$Height = function (a) {
-	return {$: 'Height', a: a};
-};
-var $mdgriffith$elm_ui$Element$height = $mdgriffith$elm_ui$Internal$Model$Height;
-var $elm$core$Basics$composeL = F3(
-	function (g, f, x) {
-		return g(
-			f(x));
-	});
-var $elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
-};
-var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var $elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$Normal(decoder));
-	});
-var $elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		$elm$html$Html$Events$on,
-		'click',
-		$elm$json$Json$Decode$succeed(msg));
-};
-var $mdgriffith$elm_ui$Element$Events$onClick = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Events$onClick);
-var $elm$json$Json$Decode$andThen = _Json_andThen;
-var $elm$json$Json$Decode$fail = _Json_fail;
-var $elm$json$Json$Decode$field = _Json_decodeField;
-var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
-	return {$: 'MayPreventDefault', a: a};
-};
-var $elm$html$Html$Events$preventDefaultOn = F2(
-	function (event, decoder) {
-		return A2(
-			$elm$virtual_dom$VirtualDom$on,
-			event,
-			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
-	});
-var $elm$json$Json$Decode$string = _Json_decodeString;
-var $mdgriffith$elm_ui$Element$Input$onKeyLookup = function (lookup) {
-	var decode = function (code) {
-		var _v0 = lookup(code);
-		if (_v0.$ === 'Nothing') {
-			return $elm$json$Json$Decode$fail('No key matched');
-		} else {
-			var msg = _v0.a;
-			return $elm$json$Json$Decode$succeed(msg);
-		}
-	};
-	var isKey = A2(
-		$elm$json$Json$Decode$andThen,
-		decode,
-		A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string));
-	return $mdgriffith$elm_ui$Internal$Model$Attr(
-		A2(
-			$elm$html$Html$Events$preventDefaultOn,
-			'keydown',
-			A2(
-				$elm$json$Json$Decode$map,
-				function (fired) {
-					return _Utils_Tuple2(fired, true);
-				},
-				isKey)));
-};
-var $mdgriffith$elm_ui$Internal$Model$Class = F2(
-	function (a, b) {
-		return {$: 'Class', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Internal$Flag$cursor = $mdgriffith$elm_ui$Internal$Flag$flag(21);
-var $mdgriffith$elm_ui$Element$pointer = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$cursor, $mdgriffith$elm_ui$Internal$Style$classes.cursorPointer);
-var $mdgriffith$elm_ui$Internal$Model$Content = {$: 'Content'};
-var $mdgriffith$elm_ui$Element$shrink = $mdgriffith$elm_ui$Internal$Model$Content;
-var $mdgriffith$elm_ui$Element$Input$space = ' ';
-var $elm$html$Html$Attributes$tabindex = function (n) {
-	return A2(
-		_VirtualDom_attribute,
-		'tabIndex',
-		$elm$core$String$fromInt(n));
-};
-var $mdgriffith$elm_ui$Internal$Model$Width = function (a) {
-	return {$: 'Width', a: a};
-};
-var $mdgriffith$elm_ui$Element$width = $mdgriffith$elm_ui$Internal$Model$Width;
-var $mdgriffith$elm_ui$Element$Input$button = F2(
-	function (attrs, _v0) {
-		var onPress = _v0.onPress;
-		var label = _v0.label;
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asEl,
-			$mdgriffith$elm_ui$Internal$Model$div,
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-					A2(
-						$elm$core$List$cons,
-						$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentCenterX + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.seButton + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.noTextSelection)))))),
-						A2(
-							$elm$core$List$cons,
-							$mdgriffith$elm_ui$Element$pointer,
-							A2(
-								$elm$core$List$cons,
-								$mdgriffith$elm_ui$Element$Input$focusDefault(attrs),
-								A2(
-									$elm$core$List$cons,
-									$mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Button),
-									A2(
-										$elm$core$List$cons,
-										$mdgriffith$elm_ui$Internal$Model$Attr(
-											$elm$html$Html$Attributes$tabindex(0)),
-										function () {
-											if (onPress.$ === 'Nothing') {
-												return A2(
-													$elm$core$List$cons,
-													$mdgriffith$elm_ui$Internal$Model$Attr(
-														$elm$html$Html$Attributes$disabled(true)),
-													attrs);
-											} else {
-												var msg = onPress.a;
-												return A2(
-													$elm$core$List$cons,
-													$mdgriffith$elm_ui$Element$Events$onClick(msg),
-													A2(
-														$elm$core$List$cons,
-														$mdgriffith$elm_ui$Element$Input$onKeyLookup(
-															function (code) {
-																return _Utils_eq(code, $mdgriffith$elm_ui$Element$Input$enter) ? $elm$core$Maybe$Just(msg) : (_Utils_eq(code, $mdgriffith$elm_ui$Element$Input$space) ? $elm$core$Maybe$Just(msg) : $elm$core$Maybe$Nothing);
-															}),
-														attrs));
-											}
-										}()))))))),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-				_List_fromArray(
-					[label])));
 	});
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
 	return {$: 'AlignX', a: a};
@@ -12655,6 +12917,16 @@ var $mdgriffith$elm_ui$Internal$Model$CenterX = {$: 'CenterX'};
 var $mdgriffith$elm_ui$Element$centerX = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$CenterX);
 var $mdgriffith$elm_ui$Internal$Model$AsColumn = {$: 'AsColumn'};
 var $mdgriffith$elm_ui$Internal$Model$asColumn = $mdgriffith$elm_ui$Internal$Model$AsColumn;
+var $mdgriffith$elm_ui$Internal$Model$Height = function (a) {
+	return {$: 'Height', a: a};
+};
+var $mdgriffith$elm_ui$Element$height = $mdgriffith$elm_ui$Internal$Model$Height;
+var $mdgriffith$elm_ui$Internal$Model$Content = {$: 'Content'};
+var $mdgriffith$elm_ui$Element$shrink = $mdgriffith$elm_ui$Internal$Model$Content;
+var $mdgriffith$elm_ui$Internal$Model$Width = function (a) {
+	return {$: 'Width', a: a};
+};
+var $mdgriffith$elm_ui$Element$width = $mdgriffith$elm_ui$Internal$Model$Width;
 var $mdgriffith$elm_ui$Element$column = F2(
 	function (attrs, children) {
 		return A4(
@@ -12834,6 +13106,40 @@ var $elm_community$list_extra$List$Extra$greedyGroupsOf = F2(
 	function (size, xs) {
 		return A3($elm_community$list_extra$List$Extra$greedyGroupsOfWithStep, size, size, xs);
 	});
+var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
+	function (a, b, c, d, e) {
+		return {$: 'PaddingStyle', a: a, b: b, c: c, d: d, e: e};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$padding = $mdgriffith$elm_ui$Internal$Flag$flag(2);
+var $mdgriffith$elm_ui$Element$paddingXY = F2(
+	function (x, y) {
+		if (_Utils_eq(x, y)) {
+			var f = x;
+			return A2(
+				$mdgriffith$elm_ui$Internal$Model$StyleClass,
+				$mdgriffith$elm_ui$Internal$Flag$padding,
+				A5(
+					$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+					'p-' + $elm$core$String$fromInt(x),
+					f,
+					f,
+					f,
+					f));
+		} else {
+			var yFloat = y;
+			var xFloat = x;
+			return A2(
+				$mdgriffith$elm_ui$Internal$Model$StyleClass,
+				$mdgriffith$elm_ui$Internal$Flag$padding,
+				A5(
+					$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+					'p-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y))),
+					yFloat,
+					xFloat,
+					yFloat,
+					xFloat));
+		}
+	});
 var $mdgriffith$elm_ui$Internal$Model$Px = function (a) {
 	return {$: 'Px', a: a};
 };
@@ -12856,12 +13162,6 @@ var $mdgriffith$elm_ui$Element$spacing = function (x) {
 			A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
 			x,
 			x));
-};
-var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
-	return {$: 'Text', a: a};
-};
-var $mdgriffith$elm_ui$Element$text = function (content) {
-	return $mdgriffith$elm_ui$Internal$Model$Text(content);
 };
 var $mdgriffith$elm_ui$Element$el = F2(
 	function (attrs, child) {
@@ -12924,34 +13224,28 @@ var $author$project$Main$viewBarline = A2(
 			$mdgriffith$elm_ui$Element$width(
 			$mdgriffith$elm_ui$Element$px(3)),
 			$mdgriffith$elm_ui$Element$height(
-			$mdgriffith$elm_ui$Element$px(60)),
+			$mdgriffith$elm_ui$Element$px(80)),
 			$mdgriffith$elm_ui$Element$Background$color(
 			A3($mdgriffith$elm_ui$Element$rgb, 0, 0, 0))
 		]),
 	$mdgriffith$elm_ui$Element$none);
-var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
-	function (a, b, c, d, e) {
-		return {$: 'PaddingStyle', a: a, b: b, c: c, d: d, e: e};
+var $mdgriffith$elm_ui$Internal$Model$Class = F2(
+	function (a, b) {
+		return {$: 'Class', a: a, b: b};
 	});
-var $mdgriffith$elm_ui$Internal$Flag$padding = $mdgriffith$elm_ui$Internal$Flag$flag(2);
-var $mdgriffith$elm_ui$Element$padding = function (x) {
-	var f = x;
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$padding,
-		A5(
-			$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
-			'p-' + $elm$core$String$fromInt(x),
-			f,
-			f,
-			f,
-			f));
-};
+var $mdgriffith$elm_ui$Internal$Flag$fontWeight = $mdgriffith$elm_ui$Internal$Flag$flag(13);
+var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
 var $mdgriffith$elm_ui$Element$Font$size = function (i) {
 	return A2(
 		$mdgriffith$elm_ui$Internal$Model$StyleClass,
 		$mdgriffith$elm_ui$Internal$Flag$fontSize,
 		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
+};
+var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
+	return {$: 'Text', a: a};
+};
+var $mdgriffith$elm_ui$Element$text = function (content) {
+	return $mdgriffith$elm_ui$Internal$Model$Text(content);
 };
 var $author$project$Music$Internal$ChordType$FlatFive = {$: 'FlatFive'};
 var $author$project$Music$Internal$ChordType$SharpFive = {$: 'SharpFive'};
@@ -13348,6 +13642,16 @@ var $author$project$Music$Internal$Chord$symbol = function (_v0) {
 var $author$project$Music$Chord$toString = function (chord) {
 	return $author$project$Music$Internal$Chord$symbol(chord);
 };
+var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$fontColor,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Colored,
+			'fc-' + $mdgriffith$elm_ui$Internal$Model$formatColorClass(fontColor),
+			'color',
+			fontColor));
+};
 var $author$project$Music$Internal$Analysis$defaultChordType = F2(
 	function (defaultChordTypes, numeral) {
 		switch (numeral.$) {
@@ -13486,8 +13790,17 @@ var $author$project$Main$viewAnalysis = F2(
 	function (currentKey, maybeAnalysis) {
 		if (maybeAnalysis.$ === 'Just') {
 			var analysis = maybeAnalysis.a;
-			return $mdgriffith$elm_ui$Element$text(
-				A2($author$project$Music$Analysis$toString, currentKey, analysis));
+			return A2(
+				$mdgriffith$elm_ui$Element$el,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$Font$size(20),
+						$mdgriffith$elm_ui$Element$Font$bold,
+						$mdgriffith$elm_ui$Element$Font$color(
+						A3($mdgriffith$elm_ui$Element$rgb, 0.5, 0.5, 0.5))
+					]),
+				$mdgriffith$elm_ui$Element$text(
+					A2($author$project$Music$Analysis$toString, currentKey, analysis)));
 		} else {
 			return $mdgriffith$elm_ui$Element$none;
 		}
@@ -13501,7 +13814,9 @@ var $author$project$Main$viewMaybeEntry = F2(
 				_List_fromArray(
 					[
 						$mdgriffith$elm_ui$Element$Font$size(26),
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						$mdgriffith$elm_ui$Element$Font$bold,
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$spacing(18)
 					]),
 				_List_fromArray(
 					[
@@ -13530,7 +13845,7 @@ var $author$project$Main$viewMeasure = F2(
 					_List_fromArray(
 						[
 							$mdgriffith$elm_ui$Element$spacing(30),
-							$mdgriffith$elm_ui$Element$padding(15),
+							A2($mdgriffith$elm_ui$Element$paddingXY, 15, 0),
 							$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
 						]),
 					_List_fromArray(
@@ -13590,6 +13905,645 @@ var $author$project$Main$viewRow = F2(
 					maybeViewMeasure(d)
 				]));
 	});
+var $mdgriffith$elm_ui$Internal$Model$Right = {$: 'Right'};
+var $mdgriffith$elm_ui$Element$alignRight = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Right);
+var $author$project$Main$AnalyzeClicked = {$: 'AnalyzeClicked'};
+var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
+var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
+var $mdgriffith$elm_ui$Internal$Model$Button = {$: 'Button'};
+var $mdgriffith$elm_ui$Internal$Model$Describe = function (a) {
+	return {$: 'Describe', a: a};
+};
+var $elm$json$Json$Encode$bool = _Json_wrap;
+var $elm$html$Html$Attributes$boolProperty = F2(
+	function (key, bool) {
+		return A2(
+			_VirtualDom_property,
+			key,
+			$elm$json$Json$Encode$bool(bool));
+	});
+var $elm$html$Html$Attributes$disabled = $elm$html$Html$Attributes$boolProperty('disabled');
+var $mdgriffith$elm_ui$Element$Input$enter = 'Enter';
+var $mdgriffith$elm_ui$Internal$Model$NoAttribute = {$: 'NoAttribute'};
+var $mdgriffith$elm_ui$Element$Input$hasFocusStyle = function (attr) {
+	if (((attr.$ === 'StyleClass') && (attr.b.$ === 'PseudoSelector')) && (attr.b.a.$ === 'Focus')) {
+		var _v1 = attr.b;
+		var _v2 = _v1.a;
+		return true;
+	} else {
+		return false;
+	}
+};
+var $mdgriffith$elm_ui$Element$Input$focusDefault = function (attrs) {
+	return A2($elm$core$List$any, $mdgriffith$elm_ui$Element$Input$hasFocusStyle, attrs) ? $mdgriffith$elm_ui$Internal$Model$NoAttribute : $mdgriffith$elm_ui$Internal$Model$htmlClass('focusable');
+};
+var $elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var $elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
+var $elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var $elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		$elm$html$Html$Events$on,
+		'click',
+		$elm$json$Json$Decode$succeed(msg));
+};
+var $mdgriffith$elm_ui$Element$Events$onClick = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Attr, $elm$html$Html$Events$onClick);
+var $elm$json$Json$Decode$andThen = _Json_andThen;
+var $elm$json$Json$Decode$fail = _Json_fail;
+var $elm$json$Json$Decode$field = _Json_decodeField;
+var $elm$virtual_dom$VirtualDom$MayPreventDefault = function (a) {
+	return {$: 'MayPreventDefault', a: a};
+};
+var $elm$html$Html$Events$preventDefaultOn = F2(
+	function (event, decoder) {
+		return A2(
+			$elm$virtual_dom$VirtualDom$on,
+			event,
+			$elm$virtual_dom$VirtualDom$MayPreventDefault(decoder));
+	});
+var $elm$json$Json$Decode$string = _Json_decodeString;
+var $mdgriffith$elm_ui$Element$Input$onKeyLookup = function (lookup) {
+	var decode = function (code) {
+		var _v0 = lookup(code);
+		if (_v0.$ === 'Nothing') {
+			return $elm$json$Json$Decode$fail('No key matched');
+		} else {
+			var msg = _v0.a;
+			return $elm$json$Json$Decode$succeed(msg);
+		}
+	};
+	var isKey = A2(
+		$elm$json$Json$Decode$andThen,
+		decode,
+		A2($elm$json$Json$Decode$field, 'key', $elm$json$Json$Decode$string));
+	return $mdgriffith$elm_ui$Internal$Model$Attr(
+		A2(
+			$elm$html$Html$Events$preventDefaultOn,
+			'keydown',
+			A2(
+				$elm$json$Json$Decode$map,
+				function (fired) {
+					return _Utils_Tuple2(fired, true);
+				},
+				isKey)));
+};
+var $mdgriffith$elm_ui$Internal$Flag$cursor = $mdgriffith$elm_ui$Internal$Flag$flag(21);
+var $mdgriffith$elm_ui$Element$pointer = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$cursor, $mdgriffith$elm_ui$Internal$Style$classes.cursorPointer);
+var $mdgriffith$elm_ui$Element$Input$space = ' ';
+var $elm$html$Html$Attributes$tabindex = function (n) {
+	return A2(
+		_VirtualDom_attribute,
+		'tabIndex',
+		$elm$core$String$fromInt(n));
+};
+var $mdgriffith$elm_ui$Element$Input$button = F2(
+	function (attrs, _v0) {
+		var onPress = _v0.onPress;
+		var label = _v0.label;
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asEl,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentCenterX + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.seButton + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.noTextSelection)))))),
+						A2(
+							$elm$core$List$cons,
+							$mdgriffith$elm_ui$Element$pointer,
+							A2(
+								$elm$core$List$cons,
+								$mdgriffith$elm_ui$Element$Input$focusDefault(attrs),
+								A2(
+									$elm$core$List$cons,
+									$mdgriffith$elm_ui$Internal$Model$Describe($mdgriffith$elm_ui$Internal$Model$Button),
+									A2(
+										$elm$core$List$cons,
+										$mdgriffith$elm_ui$Internal$Model$Attr(
+											$elm$html$Html$Attributes$tabindex(0)),
+										function () {
+											if (onPress.$ === 'Nothing') {
+												return A2(
+													$elm$core$List$cons,
+													$mdgriffith$elm_ui$Internal$Model$Attr(
+														$elm$html$Html$Attributes$disabled(true)),
+													attrs);
+											} else {
+												var msg = onPress.a;
+												return A2(
+													$elm$core$List$cons,
+													$mdgriffith$elm_ui$Element$Events$onClick(msg),
+													A2(
+														$elm$core$List$cons,
+														$mdgriffith$elm_ui$Element$Input$onKeyLookup(
+															function (code) {
+																return _Utils_eq(code, $mdgriffith$elm_ui$Element$Input$enter) ? $elm$core$Maybe$Just(msg) : (_Utils_eq(code, $mdgriffith$elm_ui$Element$Input$space) ? $elm$core$Maybe$Just(msg) : $elm$core$Maybe$Nothing);
+															}),
+														attrs));
+											}
+										}()))))))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+				_List_fromArray(
+					[label])));
+	});
+var $mdgriffith$elm_ui$Element$htmlAttribute = $mdgriffith$elm_ui$Internal$Model$Attr;
+var $mdgriffith$elm_ui$Internal$Model$Hover = {$: 'Hover'};
+var $mdgriffith$elm_ui$Internal$Model$PseudoSelector = F2(
+	function (a, b) {
+		return {$: 'PseudoSelector', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$hover = $mdgriffith$elm_ui$Internal$Flag$flag(33);
+var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
+	return {$: 'AlignY', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Model$Nearby = F2(
+	function (a, b) {
+		return {$: 'Nearby', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Internal$Model$TransformComponent = F2(
+	function (a, b) {
+		return {$: 'TransformComponent', a: a, b: b};
+	});
+var $elm$virtual_dom$VirtualDom$map = _VirtualDom_map;
+var $mdgriffith$elm_ui$Internal$Model$map = F2(
+	function (fn, el) {
+		switch (el.$) {
+			case 'Styled':
+				var styled = el.a;
+				return $mdgriffith$elm_ui$Internal$Model$Styled(
+					{
+						html: F2(
+							function (add, context) {
+								return A2(
+									$elm$virtual_dom$VirtualDom$map,
+									fn,
+									A2(styled.html, add, context));
+							}),
+						styles: styled.styles
+					});
+			case 'Unstyled':
+				var html = el.a;
+				return $mdgriffith$elm_ui$Internal$Model$Unstyled(
+					A2(
+						$elm$core$Basics$composeL,
+						$elm$virtual_dom$VirtualDom$map(fn),
+						html));
+			case 'Text':
+				var str = el.a;
+				return $mdgriffith$elm_ui$Internal$Model$Text(str);
+			default:
+				return $mdgriffith$elm_ui$Internal$Model$Empty;
+		}
+	});
+var $elm$virtual_dom$VirtualDom$mapAttribute = _VirtualDom_mapAttribute;
+var $mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle = F2(
+	function (fn, attr) {
+		switch (attr.$) {
+			case 'NoAttribute':
+				return $mdgriffith$elm_ui$Internal$Model$NoAttribute;
+			case 'Describe':
+				var description = attr.a;
+				return $mdgriffith$elm_ui$Internal$Model$Describe(description);
+			case 'AlignX':
+				var x = attr.a;
+				return $mdgriffith$elm_ui$Internal$Model$AlignX(x);
+			case 'AlignY':
+				var y = attr.a;
+				return $mdgriffith$elm_ui$Internal$Model$AlignY(y);
+			case 'Width':
+				var x = attr.a;
+				return $mdgriffith$elm_ui$Internal$Model$Width(x);
+			case 'Height':
+				var x = attr.a;
+				return $mdgriffith$elm_ui$Internal$Model$Height(x);
+			case 'Class':
+				var x = attr.a;
+				var y = attr.b;
+				return A2($mdgriffith$elm_ui$Internal$Model$Class, x, y);
+			case 'StyleClass':
+				var flag = attr.a;
+				var style = attr.b;
+				return A2($mdgriffith$elm_ui$Internal$Model$StyleClass, flag, style);
+			case 'Nearby':
+				var location = attr.a;
+				var elem = attr.b;
+				return A2(
+					$mdgriffith$elm_ui$Internal$Model$Nearby,
+					location,
+					A2($mdgriffith$elm_ui$Internal$Model$map, fn, elem));
+			case 'Attr':
+				var htmlAttr = attr.a;
+				return $mdgriffith$elm_ui$Internal$Model$Attr(
+					A2($elm$virtual_dom$VirtualDom$mapAttribute, fn, htmlAttr));
+			default:
+				var fl = attr.a;
+				var trans = attr.b;
+				return A2($mdgriffith$elm_ui$Internal$Model$TransformComponent, fl, trans);
+		}
+	});
+var $mdgriffith$elm_ui$Internal$Model$removeNever = function (style) {
+	return A2($mdgriffith$elm_ui$Internal$Model$mapAttrFromStyle, $elm$core$Basics$never, style);
+};
+var $mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper = F2(
+	function (attr, _v0) {
+		var styles = _v0.a;
+		var trans = _v0.b;
+		var _v1 = $mdgriffith$elm_ui$Internal$Model$removeNever(attr);
+		switch (_v1.$) {
+			case 'StyleClass':
+				var style = _v1.b;
+				return _Utils_Tuple2(
+					A2($elm$core$List$cons, style, styles),
+					trans);
+			case 'TransformComponent':
+				var flag = _v1.a;
+				var component = _v1.b;
+				return _Utils_Tuple2(
+					styles,
+					A2($mdgriffith$elm_ui$Internal$Model$composeTransformation, trans, component));
+			default:
+				return _Utils_Tuple2(styles, trans);
+		}
+	});
+var $mdgriffith$elm_ui$Internal$Model$unwrapDecorations = function (attrs) {
+	var _v0 = A3(
+		$elm$core$List$foldl,
+		$mdgriffith$elm_ui$Internal$Model$unwrapDecsHelper,
+		_Utils_Tuple2(_List_Nil, $mdgriffith$elm_ui$Internal$Model$Untransformed),
+		attrs);
+	var styles = _v0.a;
+	var transform = _v0.b;
+	return A2(
+		$elm$core$List$cons,
+		$mdgriffith$elm_ui$Internal$Model$Transform(transform),
+		styles);
+};
+var $mdgriffith$elm_ui$Element$mouseOver = function (decs) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$hover,
+		A2(
+			$mdgriffith$elm_ui$Internal$Model$PseudoSelector,
+			$mdgriffith$elm_ui$Internal$Model$Hover,
+			$mdgriffith$elm_ui$Internal$Model$unwrapDecorations(decs)));
+};
+var $mdgriffith$elm_ui$Element$padding = function (x) {
+	var f = x;
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$padding,
+		A5(
+			$mdgriffith$elm_ui$Internal$Model$PaddingStyle,
+			'p-' + $elm$core$String$fromInt(x),
+			f,
+			f,
+			f,
+			f));
+};
+var $mdgriffith$elm_ui$Internal$Flag$borderRound = $mdgriffith$elm_ui$Internal$Flag$flag(17);
+var $mdgriffith$elm_ui$Element$Border$rounded = function (radius) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$borderRound,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Single,
+			'br-' + $elm$core$String$fromInt(radius),
+			'border-radius',
+			$elm$core$String$fromInt(radius) + 'px'));
+};
+var $elm$virtual_dom$VirtualDom$style = _VirtualDom_style;
+var $elm$html$Html$Attributes$style = $elm$virtual_dom$VirtualDom$style;
+var $author$project$Main$viewAnalyzeButton = function (model) {
+	var conditionalStyles = model.analyzed ? _List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$htmlAttribute(
+			A2($elm$html$Html$Attributes$style, 'cursor', 'not-allowed')),
+			$mdgriffith$elm_ui$Element$Background$color(
+			A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0.8, 0.8)),
+			$mdgriffith$elm_ui$Element$Font$color(
+			A3($mdgriffith$elm_ui$Element$rgb, 0.9, 0.9, 0.9))
+		]) : _List_fromArray(
+		[
+			$mdgriffith$elm_ui$Element$Background$color(
+			A3($mdgriffith$elm_ui$Element$rgb, 0.3, 0.5, 0.9)),
+			$mdgriffith$elm_ui$Element$mouseOver(
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$Background$color(
+					A3($mdgriffith$elm_ui$Element$rgb, 0.2, 0.4, 0.8))
+				]))
+		]);
+	return A2(
+		$mdgriffith$elm_ui$Element$Input$button,
+		_Utils_ap(
+			_List_fromArray(
+				[
+					$mdgriffith$elm_ui$Element$Font$size(16),
+					$mdgriffith$elm_ui$Element$Font$color(
+					A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1)),
+					$mdgriffith$elm_ui$Element$padding(10),
+					$mdgriffith$elm_ui$Element$Border$rounded(3),
+					$mdgriffith$elm_ui$Element$alignLeft
+				]),
+			conditionalStyles),
+		{
+			label: $mdgriffith$elm_ui$Element$text('Analyze'),
+			onPress: $elm$core$Maybe$Just($author$project$Main$AnalyzeClicked)
+		});
+};
+var $author$project$Main$KeyDropdownClicked = {$: 'KeyDropdownClicked'};
+var $mdgriffith$elm_ui$Internal$Model$Below = {$: 'Below'};
+var $mdgriffith$elm_ui$Element$createNearby = F2(
+	function (loc, element) {
+		if (element.$ === 'Empty') {
+			return $mdgriffith$elm_ui$Internal$Model$NoAttribute;
+		} else {
+			return A2($mdgriffith$elm_ui$Internal$Model$Nearby, loc, element);
+		}
+	});
+var $mdgriffith$elm_ui$Element$below = function (element) {
+	return A2($mdgriffith$elm_ui$Element$createNearby, $mdgriffith$elm_ui$Internal$Model$Below, element);
+};
+var $elm$core$Basics$always = F2(
+	function (a, _v0) {
+		return a;
+	});
+var $mdgriffith$elm_ui$Internal$Model$unstyled = A2($elm$core$Basics$composeL, $mdgriffith$elm_ui$Internal$Model$Unstyled, $elm$core$Basics$always);
+var $mdgriffith$elm_ui$Element$html = $mdgriffith$elm_ui$Internal$Model$unstyled;
+var $author$project$Music$Internal$Key$symbol = function (_v0) {
+	var pc = _v0.a;
+	var majorOrMinor = _v0.b;
+	return _Utils_ap(
+		$author$project$Music$Internal$PitchClass$toString(pc),
+		function () {
+			if (majorOrMinor.$ === 'Minor') {
+				return 'm';
+			} else {
+				return '';
+			}
+		}());
+};
+var $author$project$Music$Key$toString = function (key) {
+	return $author$project$Music$Internal$Key$symbol(key);
+};
+var $elm$svg$Svg$Attributes$d = _VirtualDom_attribute('d');
+var $elm$svg$Svg$Attributes$fill = _VirtualDom_attribute('fill');
+var $elm$svg$Svg$Attributes$height = _VirtualDom_attribute('height');
+var $elm$svg$Svg$trustedNode = _VirtualDom_nodeNS('http://www.w3.org/2000/svg');
+var $elm$svg$Svg$path = $elm$svg$Svg$trustedNode('path');
+var $elm$svg$Svg$svg = $elm$svg$Svg$trustedNode('svg');
+var $elm$svg$Svg$Attributes$viewBox = _VirtualDom_attribute('viewBox');
+var $elm$svg$Svg$Attributes$width = _VirtualDom_attribute('width');
+var $author$project$Main$viewDropdownArrow = A2(
+	$elm$svg$Svg$svg,
+	_List_fromArray(
+		[
+			$elm$svg$Svg$Attributes$width('10'),
+			$elm$svg$Svg$Attributes$height('10'),
+			$elm$svg$Svg$Attributes$viewBox('0 0 1030 638'),
+			$elm$svg$Svg$Attributes$fill('white')
+		]),
+	_List_fromArray(
+		[
+			A2(
+			$elm$svg$Svg$path,
+			_List_fromArray(
+				[
+					$elm$svg$Svg$Attributes$d('M1017 68L541 626q-11 12-26 12t-26-12L13 68Q-3 49 6 24.5T39 0h952q24 0 33 24.5t-7 43.5z')
+				]),
+			_List_Nil)
+		]));
+var $author$project$Main$NewKeyChosen = function (a) {
+	return {$: 'NewKeyChosen', a: a};
+};
+var $author$project$Music$Internal$Key$a = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$natural));
+var $author$project$Music$Key$a = $author$project$Music$Internal$Key$a;
+var $author$project$Music$Internal$Key$aFlat = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$flat));
+var $author$project$Music$Key$aFlat = $author$project$Music$Internal$Key$aFlat;
+var $author$project$Music$Internal$Key$b = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$B, $author$project$Music$Internal$PitchClass$natural));
+var $author$project$Music$Key$b = $author$project$Music$Internal$Key$b;
+var $author$project$Music$Internal$Key$c = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$C, $author$project$Music$Internal$PitchClass$natural));
+var $author$project$Music$Key$c = $author$project$Music$Internal$Key$c;
+var $author$project$Music$Internal$Key$d = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$D, $author$project$Music$Internal$PitchClass$natural));
+var $author$project$Music$Key$d = $author$project$Music$Internal$Key$d;
+var $author$project$Music$Internal$Key$dFlat = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$D, $author$project$Music$Internal$PitchClass$flat));
+var $author$project$Music$Key$dFlat = $author$project$Music$Internal$Key$dFlat;
+var $author$project$Music$Internal$Key$e = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$E, $author$project$Music$Internal$PitchClass$natural));
+var $author$project$Music$Key$e = $author$project$Music$Internal$Key$e;
+var $author$project$Music$Internal$Key$eFlat = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$E, $author$project$Music$Internal$PitchClass$flat));
+var $author$project$Music$Key$eFlat = $author$project$Music$Internal$Key$eFlat;
+var $author$project$Music$Internal$Key$f = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$F, $author$project$Music$Internal$PitchClass$natural));
+var $author$project$Music$Key$f = $author$project$Music$Internal$Key$f;
+var $author$project$Music$Internal$PitchClass$sharp = $author$project$Music$Internal$PitchClass$Offset(1);
+var $author$project$Music$Internal$Key$fSharp = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$F, $author$project$Music$Internal$PitchClass$sharp));
+var $author$project$Music$Key$fSharp = $author$project$Music$Internal$Key$fSharp;
+var $author$project$Music$Internal$Key$g = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$G, $author$project$Music$Internal$PitchClass$natural));
+var $author$project$Music$Key$g = $author$project$Music$Internal$Key$g;
+var $mdgriffith$elm_ui$Element$rgba = $mdgriffith$elm_ui$Internal$Model$Rgba;
+var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
+	return $elm$core$String$concat(
+		_List_fromArray(
+			[
+				shadow.inset ? 'box-inset' : 'box-',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.a) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.offset.b) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.blur) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$floatClass(shadow.size) + 'px',
+				$mdgriffith$elm_ui$Internal$Model$formatColorClass(shadow.color)
+			]));
+};
+var $mdgriffith$elm_ui$Internal$Flag$shadows = $mdgriffith$elm_ui$Internal$Flag$flag(19);
+var $mdgriffith$elm_ui$Element$Border$shadow = function (almostShade) {
+	var shade = {blur: almostShade.blur, color: almostShade.color, inset: false, offset: almostShade.offset, size: almostShade.size};
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$shadows,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Single,
+			$mdgriffith$elm_ui$Internal$Model$boxShadowClass(shade),
+			'box-shadow',
+			$mdgriffith$elm_ui$Internal$Model$formatBoxShadow(shade)));
+};
+var $author$project$Main$viewKeyMenu = function (model) {
+	var keyMenuItems = A2(
+		$elm$core$List$map,
+		function (key) {
+			return A2(
+				$mdgriffith$elm_ui$Element$Input$button,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$Font$size(16),
+						$mdgriffith$elm_ui$Element$padding(10),
+						$mdgriffith$elm_ui$Element$alignLeft,
+						$mdgriffith$elm_ui$Element$Font$color(
+						A3($mdgriffith$elm_ui$Element$rgb, 0, 0, 0)),
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$mouseOver(
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$Background$color(
+								A3($mdgriffith$elm_ui$Element$rgb, 0.9, 0.9, 0.9))
+							]))
+					]),
+				{
+					label: $mdgriffith$elm_ui$Element$text(
+						$author$project$Music$Key$toString(key)),
+					onPress: $elm$core$Maybe$Just(
+						$author$project$Main$NewKeyChosen(key))
+				});
+		},
+		_List_fromArray(
+			[$author$project$Music$Key$c, $author$project$Music$Key$dFlat, $author$project$Music$Key$d, $author$project$Music$Key$eFlat, $author$project$Music$Key$e, $author$project$Music$Key$f, $author$project$Music$Key$fSharp, $author$project$Music$Key$g, $author$project$Music$Key$aFlat, $author$project$Music$Key$a, $author$project$Music$Key$bFlat, $author$project$Music$Key$b]));
+	return (!_Utils_eq(model.dropdownMenu, $author$project$Main$Closed)) ? A2(
+		$mdgriffith$elm_ui$Element$column,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$Background$color(
+				A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1)),
+				$mdgriffith$elm_ui$Element$width(
+				$mdgriffith$elm_ui$Element$px(150)),
+				$mdgriffith$elm_ui$Element$height(
+				$mdgriffith$elm_ui$Element$px(200)),
+				$mdgriffith$elm_ui$Element$htmlAttribute(
+				A2($elm$html$Html$Attributes$style, 'overflow-y', 'auto')),
+				$mdgriffith$elm_ui$Element$Border$shadow(
+				{
+					blur: 2,
+					color: A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 0.2),
+					offset: _Utils_Tuple2(0, 0),
+					size: 2
+				})
+			]),
+		keyMenuItems) : $mdgriffith$elm_ui$Element$none;
+};
+var $author$project$Main$viewKeyControl = function (model) {
+	var labelText = 'Key of ' + $author$project$Music$Key$toString(model.currentKey);
+	return model.analyzed ? A2(
+		$mdgriffith$elm_ui$Element$Input$button,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$padding(10),
+				$mdgriffith$elm_ui$Element$Border$rounded(3),
+				$mdgriffith$elm_ui$Element$alignLeft,
+				$mdgriffith$elm_ui$Element$Font$size(16),
+				$mdgriffith$elm_ui$Element$Font$color(
+				A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1)),
+				$mdgriffith$elm_ui$Element$Background$color(
+				A3($mdgriffith$elm_ui$Element$rgb, 0.3, 0.5, 0.9)),
+				$mdgriffith$elm_ui$Element$mouseOver(
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$Background$color(
+						A3($mdgriffith$elm_ui$Element$rgb, 0.2, 0.4, 0.8))
+					])),
+				$mdgriffith$elm_ui$Element$below(
+				$author$project$Main$viewKeyMenu(model))
+			]),
+		{
+			label: A2(
+				$mdgriffith$elm_ui$Element$row,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$spacing(10)
+					]),
+				_List_fromArray(
+					[
+						A2(
+						$mdgriffith$elm_ui$Element$el,
+						_List_Nil,
+						$mdgriffith$elm_ui$Element$text(labelText)),
+						A2(
+						$mdgriffith$elm_ui$Element$el,
+						_List_Nil,
+						$mdgriffith$elm_ui$Element$html($author$project$Main$viewDropdownArrow))
+					])),
+			onPress: _Utils_eq(model.dropdownMenu, $author$project$Main$Closed) ? $elm$core$Maybe$Just($author$project$Main$KeyDropdownClicked) : $elm$core$Maybe$Nothing
+		}) : A2(
+		$mdgriffith$elm_ui$Element$el,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$Font$bold,
+				$mdgriffith$elm_ui$Element$Font$size(20)
+			]),
+		$mdgriffith$elm_ui$Element$text(labelText));
+};
+var $author$project$Main$viewControls = function (model) {
+	return A2(
+		$mdgriffith$elm_ui$Element$row,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$spacing(10)
+			]),
+		_List_fromArray(
+			[
+				$author$project$Main$viewKeyControl(model),
+				$author$project$Main$viewAnalyzeButton(model)
+			]));
+};
+var $author$project$Main$viewTitle = function (model) {
+	return A2(
+		$mdgriffith$elm_ui$Element$column,
+		_List_fromArray(
+			[
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+				$mdgriffith$elm_ui$Element$centerX,
+				$mdgriffith$elm_ui$Element$spacing(10)
+			]),
+		_List_fromArray(
+			[
+				A2(
+				$mdgriffith$elm_ui$Element$el,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$centerX,
+						$mdgriffith$elm_ui$Element$Font$bold,
+						$mdgriffith$elm_ui$Element$Font$size(40)
+					]),
+				$mdgriffith$elm_ui$Element$text('My Romance')),
+				A2(
+				$mdgriffith$elm_ui$Element$row,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+					]),
+				_List_fromArray(
+					[
+						$author$project$Main$viewControls(model),
+						A2(
+						$mdgriffith$elm_ui$Element$el,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$alignRight,
+								$mdgriffith$elm_ui$Element$Font$bold,
+								$mdgriffith$elm_ui$Element$Font$size(20)
+							]),
+						$mdgriffith$elm_ui$Element$text('R. Rodgers, L. Hart'))
+					]))
+			]));
+};
 var $author$project$Main$viewBody = function (model) {
 	var rows = A2(
 		$elm$core$List$map,
@@ -13659,28 +14613,24 @@ var $author$project$Main$viewBody = function (model) {
 			[
 				$mdgriffith$elm_ui$Element$width(
 				$mdgriffith$elm_ui$Element$px(1000)),
-				$mdgriffith$elm_ui$Element$centerX
+				$mdgriffith$elm_ui$Element$centerX,
+				$mdgriffith$elm_ui$Element$spacing(30),
+				A2($mdgriffith$elm_ui$Element$paddingXY, 0, 50)
 			]),
 		_List_fromArray(
 			[
+				$author$project$Main$viewTitle(model),
 				A2(
 				$mdgriffith$elm_ui$Element$column,
 				_List_fromArray(
 					[
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-						$mdgriffith$elm_ui$Element$spacing(20)
+						$mdgriffith$elm_ui$Element$spacing(40)
 					]),
 				A2(
 					$elm$core$List$map,
 					$author$project$Main$viewRow(model.currentKey),
-					rows)),
-				A2(
-				$mdgriffith$elm_ui$Element$Input$button,
-				_List_Nil,
-				{
-					label: $mdgriffith$elm_ui$Element$text('Analyze'),
-					onPress: $elm$core$Maybe$Just($author$project$Main$AnalyzeClicked)
-				})
+					rows))
 			]));
 };
 var $author$project$Main$view = function (model) {
@@ -13699,11 +14649,6 @@ var $author$project$Main$view = function (model) {
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$document(
-	{
-		init: $author$project$Main$init,
-		subscriptions: $elm$core$Basics$always($elm$core$Platform$Sub$none),
-		update: $author$project$Main$update,
-		view: $author$project$Main$view
-	});
+	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
