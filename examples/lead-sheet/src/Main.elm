@@ -3,15 +3,19 @@ module Main exposing (main)
 import Browser
 import Element
 import Element.Background
+import Element.Border
 import Element.Font
 import Element.Input
 import Html exposing (Html)
+import Html.Attributes
 import Html.Events
 import List.Extra
 import Music.Analysis as Analysis exposing (Analysis)
 import Music.Chord as Chord exposing (Chord)
 import Music.Key as Key exposing (Key)
 import Music.PitchClass as PitchClass
+import Svg
+import Svg.Attributes
 
 
 main : Program () Model Msg
@@ -97,6 +101,51 @@ initialMeasures =
 
 
 
+-- Msg and Update
+
+
+type Msg
+    = AnalyzeClicked
+    | KeyDropdownClicked
+    | NewKeyChosen Key
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        AnalyzeClicked ->
+            ( { model
+                | measures =
+                    List.map
+                        (mapMeasure
+                            (analyzeEntry model.currentKey)
+                        )
+                        model.measures
+                , analyzed = True
+              }
+            , Cmd.none
+            )
+
+        KeyDropdownClicked ->
+            ( model
+            , Cmd.none
+            )
+
+        NewKeyChosen newKey ->
+            ( { model
+                | currentKey = newKey
+                , measures =
+                    List.map
+                        (mapMeasure
+                            (transposeEntry newKey)
+                        )
+                        model.measures
+              }
+            , Cmd.none
+            )
+
+
+
 --  Measures & Entries
 
 
@@ -155,45 +204,6 @@ transposeEntry currentKey entry =
 
 
 
--- Msg and Update
-
-
-type Msg
-    = AnalyzeClicked
-    | NewKeyChosen Key
-
-
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        AnalyzeClicked ->
-            ( { model
-                | measures =
-                    List.map
-                        (mapMeasure
-                            (analyzeEntry model.currentKey)
-                        )
-                        model.measures
-                , analyzed = True
-              }
-            , Cmd.none
-            )
-
-        NewKeyChosen newKey ->
-            ( { model
-                | currentKey = newKey
-                , measures =
-                    List.map
-                        (mapMeasure
-                            (transposeEntry newKey)
-                        )
-                        model.measures
-              }
-            , Cmd.none
-            )
-
-
-
 -- View
 
 
@@ -240,18 +250,136 @@ viewBody model =
     Element.column
         [ Element.width <| Element.px 1000
         , Element.centerX
+        , Element.spacing 30
+        , Element.paddingXY 0 50
         ]
-        [ Element.column
+        [ viewTitle model
+        , Element.column
             [ Element.width Element.fill
             , Element.spacing 40
             ]
             (List.map (viewRow model.currentKey) rows)
-        , Element.Input.button
-            []
-            { onPress = Just AnalyzeClicked
-            , label = Element.text "Analyze"
-            }
         ]
+
+
+viewTitle : Model -> Element.Element Msg
+viewTitle model =
+    Element.column
+        [ Element.width Element.fill
+        , Element.centerX
+        , Element.spacing 10
+        ]
+        [ Element.el
+            [ Element.centerX
+            , Element.Font.bold
+            , Element.Font.size 40
+            ]
+            (Element.text "My Romance")
+        , Element.row
+            [ Element.width Element.fill
+            ]
+            [ viewControls model
+            , Element.el
+                [ Element.alignRight
+                , Element.Font.bold
+                , Element.Font.size 20
+                ]
+                (Element.text "R. Rodgers, L. Hart")
+            ]
+        ]
+
+
+viewControls : Model -> Element.Element Msg
+viewControls model =
+    Element.row
+        [ Element.spacing 10 ]
+        [ viewKeyControl model
+        , viewAnalyzeButton model
+        ]
+
+
+viewKeyControl : Model -> Element.Element Msg
+viewKeyControl model =
+    let
+        labelText =
+            "Key of " ++ Key.toString model.currentKey
+    in
+    if model.analyzed then
+        Element.Input.button
+            [ Element.padding 10
+            , Element.Border.rounded 3
+            , Element.alignLeft
+            , Element.Font.size 16
+            , Element.Font.color (Element.rgb 1 1 1)
+            , Element.Background.color (Element.rgb 0.3 0.5 0.9)
+            , Element.mouseOver
+                [ Element.Background.color (Element.rgb 0.2 0.4 0.8)
+                ]
+            ]
+            { onPress = Just KeyDropdownClicked
+            , label =
+                Element.row
+                    [ Element.spacing 10 ]
+                    [ Element.el []
+                        (Element.text labelText)
+                    , Element.el []
+                        (Element.html viewDropdownArrow)
+                    ]
+            }
+
+    else
+        Element.el
+            [ Element.Font.bold
+            , Element.Font.size 20
+            ]
+            (Element.text labelText)
+
+
+viewDropdownArrow : Html msg
+viewDropdownArrow =
+    Svg.svg
+        [ Svg.Attributes.width "10"
+        , Svg.Attributes.height "10"
+        , Svg.Attributes.viewBox "0 0 1030 638"
+        , Svg.Attributes.fill "white"
+        ]
+        [ Svg.path
+            [ Svg.Attributes.d "M1017 68L541 626q-11 12-26 12t-26-12L13 68Q-3 49 6 24.5T39 0h952q24 0 33 24.5t-7 43.5z"
+            ]
+            []
+        ]
+
+
+viewAnalyzeButton : Model -> Element.Element Msg
+viewAnalyzeButton model =
+    let
+        conditionalStyles =
+            if model.analyzed then
+                [ Element.htmlAttribute
+                    (Html.Attributes.style "cursor" "not-allowed")
+                , Element.Background.color (Element.rgb 0.8 0.8 0.8)
+                , Element.Font.color (Element.rgb 0.9 0.9 0.9)
+                ]
+
+            else
+                [ Element.Background.color (Element.rgb 0.3 0.5 0.9)
+                , Element.mouseOver
+                    [ Element.Background.color (Element.rgb 0.2 0.4 0.8)
+                    ]
+                ]
+    in
+    Element.Input.button
+        ([ Element.Font.size 16
+         , Element.Font.color (Element.rgb 1 1 1)
+         , Element.padding 10
+         , Element.Border.rounded 3
+         , Element.alignLeft
+         ]
+            ++ conditionalStyles
+        )
+        { onPress = Just AnalyzeClicked
+        , label = Element.text "Analyze"
+        }
 
 
 viewRow : Key -> Row -> Element.Element Msg

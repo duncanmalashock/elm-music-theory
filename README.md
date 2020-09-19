@@ -41,7 +41,7 @@ Interested in contributing to this project? Please take a look at the [CONTRIBUT
 
 ## Special thanks
 
-Thanks to Leif Battermann ([@battermann](https://github.com/battermann)) for collaborating with me on some early versions of the designs that are central to this package.  
+Thanks to Leif Battermann ([@battermann](https://github.com/battermann)) for collaborating with me on early versions of some of the designs that are central to this package.  
 
 Thanks to my friend and colleague Matthew Griffith ([@mdgriffith](https://github.com/mdgriffith)) for his generous advice and encouragement. This package was designed better (and released sooner) because of him.
 
