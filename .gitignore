@@ -12,3 +12,7 @@ node_modules
 
 # Desktop Services Store on macOS
 .DS_Store
+
+# Example build files
+examples/chord-voicings/.cache
+examples/chord-voicings/dist
