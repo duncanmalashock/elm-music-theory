@@ -204,6 +204,10 @@ isDown interval =
 
     toString perfectFifth == "P5"
 
+Intervals in the "down" direction are shown with a negative sign:
+
+    toString (reverse perfectFifth) == "-P5"
+
 -}
 toString : Interval -> String
 toString interval =

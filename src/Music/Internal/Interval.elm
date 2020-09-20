@@ -406,6 +406,14 @@ isNegative i =
 shortName : Interval -> String
 shortName (Interval dir intervalQuality intervalNumber) =
     let
+        dirAbbreviation =
+            case dir of
+                Up ->
+                    ""
+
+                Down ->
+                    "-"
+
         qualityAbbreviation =
             case intervalQuality of
                 Perfect (Offset off) ->
@@ -448,7 +456,7 @@ shortName (Interval dir intervalQuality intervalNumber) =
                 anythingElse ->
                     String.fromInt anythingElse
     in
-    qualityAbbreviation ++ numberAbbreviation
+    dirAbbreviation ++ qualityAbbreviation ++ numberAbbreviation
 
 
 addOctave : Interval -> Interval

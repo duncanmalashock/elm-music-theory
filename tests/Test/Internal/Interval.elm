@@ -231,4 +231,22 @@ all =
                     in
                     Expect.equal expected result
             ]
+        , describe "shortName"
+            [ test "correct symbol for PU" <|
+                \_ ->
+                    Interval.perfectUnison
+                        |> Interval.shortName
+                        |> Expect.equal "PU"
+            , test "correct symbol for M10" <|
+                \_ ->
+                    Interval.majorTenth
+                        |> Interval.shortName
+                        |> Expect.equal "M10"
+            , test "correct symbol for -m2" <|
+                \_ ->
+                    Interval.minorSecond
+                        |> Interval.reverse
+                        |> Interval.shortName
+                        |> Expect.equal "-m2"
+            ]
         ]
