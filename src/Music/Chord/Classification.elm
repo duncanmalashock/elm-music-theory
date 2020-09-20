@@ -9,7 +9,7 @@ In my implementation of the `ChordType.toString` function, I've done my best to 
 
 But chord symbols vary greatly with musical style, educational history, and personal preference. The choices I've made may not appeal to you!
 
-Maybe, for example, you want to use jazz "lead sheet"-style symbols like "∆7(+11)" and "7(+9-13)". Or maybe you want to write them out in plain English like "dominant seventh (sharp nine, flat thirteen)". You may even want to convert to a more complex view than a `String` can express, like [SVG](https://package.elm-lang.org/packages/elm/svg/latest/) or [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).
+Maybe, for example, you want to use modern jazz symbols like "∆7(+11)" and "7(+9-13)". Or maybe you want to write them out in plain English like "dominant seventh (sharp nine, flat thirteen)". You may even want to convert to a more complex view than a `String` can express, like [SVG](https://package.elm-lang.org/packages/elm/svg/latest/) or [elm-ui](https://package.elm-lang.org/packages/mdgriffith/elm-ui/latest/).
 
 If any of these is the case, you can use the `Classification` type to write your own custom chord symbol function:
 

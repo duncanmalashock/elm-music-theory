@@ -67,9 +67,9 @@ signature key =
 
 {-| Get the name of a key:
 
-    symbol eFlat == "E♭"
+    toString eFlat == "E♭"
 
-    symbol aMinor == "Am"
+    toString aMinor == "Am"
 
 -}
 toString : Key -> String

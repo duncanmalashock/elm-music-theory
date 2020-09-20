@@ -93,6 +93,8 @@ toChord defaults key analysis =
 
     toChord triadsByDefault Key.f iv == Chord.major PitchClass.bFlat
 
+Triads are the default for harmonizing the scale in classical music.
+
 -}
 triadsByDefault : Analysis.DefaultChordTypes
 triadsByDefault =
@@ -102,6 +104,8 @@ triadsByDefault =
 {-| Use seventh chords when converting, if no chord type is specified:
 
     toChord seventhsByDefault Key.f iv == Chord.majorSeventh PitchClass.bFlat
+
+Seventh chords are the default for harmonizing the scale in jazz music.
 
 -}
 seventhsByDefault : Analysis.DefaultChordTypes
