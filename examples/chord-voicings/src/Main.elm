@@ -56,6 +56,7 @@ init flags =
 
 dropdowns =
     { rootOne = "root-one"
+    , chordTypeOne = "chord-type-one"
     }
 
 
@@ -94,6 +95,7 @@ type Msg
     | DropdownClickedOut
     | DropdownClosed
     | NewRootChosen Music.PitchClass.PitchClass
+    | NewChordTypeChosen Music.ChordType.ChordType
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -108,6 +110,20 @@ update msg model =
                 | chordOne =
                     { chordOne
                         | root = Just root
+                    }
+              }
+            , Cmd.none
+            )
+
+        NewChordTypeChosen chordType ->
+            let
+                chordOne =
+                    model.chordOne
+            in
+            ( { model
+                | chordOne =
+                    { chordOne
+                        | chordType = Just chordType
                     }
               }
             , Cmd.none
@@ -148,9 +164,18 @@ view model =
         [ Element.layout
             [ Element.width Element.fill
             ]
-            (viewDropdown (currentRootDropdownLabel model) rootOptions model)
+            (viewBody model)
         ]
     }
+
+
+viewBody : Model -> Element.Element Msg
+viewBody model =
+    Element.row
+        [ Element.spacing 10 ]
+        [ viewDropdown dropdowns.rootOne (currentRootDropdownLabel model) rootOptions model
+        , viewDropdown dropdowns.chordTypeOne (currentChordTypeDropdownLabel model) chordTypeOptions model
+        ]
 
 
 currentRootDropdownLabel : Model -> String
@@ -180,8 +205,26 @@ rootOptions =
             )
 
 
-viewDropdown : String -> List ( String, Msg ) -> Model -> Element.Element Msg
-viewDropdown label options model =
+currentChordTypeDropdownLabel : Model -> String
+currentChordTypeDropdownLabel model =
+    Maybe.map Music.ChordType.toString model.chordOne.chordType
+        |> Maybe.withDefault "—"
+
+
+chordTypeOptions : List ( String, Msg )
+chordTypeOptions =
+    [ Music.ChordType.majorSeventh
+    , Music.ChordType.minorSeventh
+    , Music.ChordType.dominantSeventh
+    ]
+        |> List.map
+            (\ct ->
+                ( Music.ChordType.toString ct, NewChordTypeChosen ct )
+            )
+
+
+viewDropdown : String -> String -> List ( String, Msg ) -> Model -> Element.Element Msg
+viewDropdown id label options model =
     Element.Input.button
         [ Element.padding 10
         , Element.Border.rounded 3
@@ -193,12 +236,12 @@ viewDropdown label options model =
             [ Element.Background.color (Element.rgb 0.2 0.4 0.8)
             ]
         , Element.below
-            (viewMenu dropdowns.rootOne options model)
+            (viewMenu id options model)
         ]
         { onPress =
             case model.dropdownMenu of
                 ( _, Closed ) ->
-                    Just (DropdownClicked dropdowns.rootOne)
+                    Just (DropdownClicked id)
 
                 _ ->
                     Nothing
