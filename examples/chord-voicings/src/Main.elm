@@ -57,6 +57,7 @@ init flags =
 dropdowns =
     { rootOne = "root-one"
     , chordTypeOne = "chord-type-one"
+    , voicingMethodOne = "voicing-method-one"
     }
 
 
@@ -76,7 +77,7 @@ type alias Model =
 type alias ChordSelection =
     { root : Maybe Music.PitchClass.PitchClass
     , chordType : Maybe Music.ChordType.ChordType
-    , voicingMethod : Maybe Music.Voicing.FourPart.VoicingMethod
+    , voicingMethod : Maybe ( String, Music.Voicing.FourPart.VoicingMethod )
     , voicing : Maybe Music.Voicing.FourPart.Voicing
     }
 
@@ -96,6 +97,7 @@ type Msg
     | DropdownClosed
     | NewRootChosen Music.PitchClass.PitchClass
     | NewChordTypeChosen Music.ChordType.ChordType
+    | NewVoicingMethodChosen ( String, Music.Voicing.FourPart.VoicingMethod )
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -124,6 +126,20 @@ update msg model =
                 | chordOne =
                     { chordOne
                         | chordType = Just chordType
+                    }
+              }
+            , Cmd.none
+            )
+
+        NewVoicingMethodChosen vm ->
+            let
+                chordOne =
+                    model.chordOne
+            in
+            ( { model
+                | chordOne =
+                    { chordOne
+                        | voicingMethod = Just vm
                     }
               }
             , Cmd.none
@@ -172,9 +188,10 @@ view model =
 viewBody : Model -> Element.Element Msg
 viewBody model =
     Element.row
-        [ Element.spacing 10 ]
+        [ Element.spacing 5 ]
         [ viewDropdown dropdowns.rootOne (currentRootDropdownLabel model) rootOptions model
         , viewDropdown dropdowns.chordTypeOne (currentChordTypeDropdownLabel model) chordTypeOptions model
+        , viewDropdown dropdowns.voicingMethodOne (currentVoicingMethodDropdownLabel model) voicingMethodOptions model
         ]
 
 
@@ -221,6 +238,26 @@ chordTypeOptions =
             (\ct ->
                 ( Music.ChordType.toString ct, NewChordTypeChosen ct )
             )
+
+
+currentVoicingMethodDropdownLabel : Model -> String
+currentVoicingMethodDropdownLabel model =
+    case model.chordOne.voicingMethod of
+        Just ( name, _ ) ->
+            name
+
+        Nothing ->
+            "—"
+
+
+voicingMethodOptions : List ( String, Msg )
+voicingMethodOptions =
+    [ ( "Close", NewVoicingMethodChosen ( "Close", Music.Voicing.FourPart.close ) )
+    , ( "Drop-2", NewVoicingMethodChosen ( "Drop-2", Music.Voicing.FourPart.drop2 ) )
+    , ( "Drop-3", NewVoicingMethodChosen ( "Drop-3", Music.Voicing.FourPart.drop3 ) )
+    , ( "Drop-2-and-4", NewVoicingMethodChosen ( "Drop-2-and-4", Music.Voicing.FourPart.drop2and4 ) )
+    , ( "Spread", NewVoicingMethodChosen ( "Spread", Music.Voicing.FourPart.spread ) )
+    ]
 
 
 viewDropdown : String -> String -> List ( String, Msg ) -> Model -> Element.Element Msg
