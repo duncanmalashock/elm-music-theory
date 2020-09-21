@@ -10,8 +10,10 @@ import Element.Input
 import Html exposing (Html)
 import Html.Attributes
 import Json.Decode
+import Music.Chord
 import Music.ChordType
 import Music.PitchClass
+import Music.Range
 import Music.Voicing.FourPart
 import Svg
 import Svg.Attributes
@@ -58,6 +60,7 @@ dropdowns =
     { rootOne = "root-one"
     , chordTypeOne = "chord-type-one"
     , voicingMethodOne = "voicing-method-one"
+    , voicingOne = "voicing-one"
     }
 
 
@@ -78,6 +81,7 @@ type alias ChordSelection =
     { root : Maybe Music.PitchClass.PitchClass
     , chordType : Maybe Music.ChordType.ChordType
     , voicingMethod : Maybe ( String, Music.Voicing.FourPart.VoicingMethod )
+    , voicingOptions : List Music.Voicing.FourPart.Voicing
     , voicing : Maybe Music.Voicing.FourPart.Voicing
     }
 
@@ -87,6 +91,7 @@ initChordSelection =
     { root = Nothing
     , chordType = Nothing
     , voicingMethod = Nothing
+    , voicingOptions = []
     , voicing = Nothing
     }
 
@@ -98,6 +103,7 @@ type Msg
     | NewRootChosen Music.PitchClass.PitchClass
     | NewChordTypeChosen Music.ChordType.ChordType
     | NewVoicingMethodChosen ( String, Music.Voicing.FourPart.VoicingMethod )
+    | NewVoicingChosen Music.Voicing.FourPart.Voicing
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -112,6 +118,11 @@ update msg model =
                 | chordOne =
                     { chordOne
                         | root = Just root
+                        , voicingOptions =
+                            getVoicingOptions
+                                chordOne.root
+                                chordOne.chordType
+                                (Maybe.map Tuple.second chordOne.voicingMethod)
                     }
               }
             , Cmd.none
@@ -126,6 +137,11 @@ update msg model =
                 | chordOne =
                     { chordOne
                         | chordType = Just chordType
+                        , voicingOptions =
+                            getVoicingOptions
+                                chordOne.root
+                                chordOne.chordType
+                                (Maybe.map Tuple.second chordOne.voicingMethod)
                     }
               }
             , Cmd.none
@@ -140,6 +156,25 @@ update msg model =
                 | chordOne =
                     { chordOne
                         | voicingMethod = Just vm
+                        , voicingOptions =
+                            getVoicingOptions
+                                chordOne.root
+                                chordOne.chordType
+                                (Maybe.map Tuple.second chordOne.voicingMethod)
+                    }
+              }
+            , Cmd.none
+            )
+
+        NewVoicingChosen v ->
+            let
+                chordOne =
+                    model.chordOne
+            in
+            ( { model
+                | chordOne =
+                    { chordOne
+                        | voicing = Just v
                     }
               }
             , Cmd.none
@@ -173,6 +208,29 @@ update msg model =
             )
 
 
+getVoicingOptions :
+    Maybe Music.PitchClass.PitchClass
+    -> Maybe Music.ChordType.ChordType
+    -> Maybe Music.Voicing.FourPart.VoicingMethod
+    -> List Music.Voicing.FourPart.Voicing
+getVoicingOptions maybeRoot maybeChordType maybeVoicingMethod =
+    Maybe.map3
+        (\root type_ vm ->
+            Music.Chord.voiceFourParts
+                { voiceOne = Music.Range.sopranoVoice
+                , voiceTwo = Music.Range.altoVoice
+                , voiceThree = Music.Range.tenorVoice
+                , voiceFour = Music.Range.bassVoice
+                }
+                [ vm ]
+                (Music.Chord.custom root type_)
+        )
+        maybeRoot
+        maybeChordType
+        maybeVoicingMethod
+        |> Maybe.withDefault []
+
+
 view : Model -> { title : String, body : List (Html Msg) }
 view model =
     { title = "Chord Voicings"
@@ -192,6 +250,7 @@ viewBody model =
         [ viewDropdown dropdowns.rootOne (currentRootDropdownLabel model) rootOptions model
         , viewDropdown dropdowns.chordTypeOne (currentChordTypeDropdownLabel model) chordTypeOptions model
         , viewDropdown dropdowns.voicingMethodOne (currentVoicingMethodDropdownLabel model) voicingMethodOptions model
+        , viewDropdown dropdowns.voicingOne (currentVoicingDropdownLabel model) (voicingOptions model) model
         ]
 
 
@@ -258,6 +317,21 @@ voicingMethodOptions =
     , ( "Drop-2-and-4", NewVoicingMethodChosen ( "Drop-2-and-4", Music.Voicing.FourPart.drop2and4 ) )
     , ( "Spread", NewVoicingMethodChosen ( "Spread", Music.Voicing.FourPart.spread ) )
     ]
+
+
+currentVoicingDropdownLabel : Model -> String
+currentVoicingDropdownLabel model =
+    Maybe.map Music.Voicing.FourPart.toString model.chordOne.voicing
+        |> Maybe.withDefault "—"
+
+
+voicingOptions : Model -> List ( String, Msg )
+voicingOptions model =
+    model.chordOne.voicingOptions
+        |> List.map
+            (\v ->
+                ( Music.Voicing.FourPart.toString v, NewVoicingChosen v )
+            )
 
 
 viewDropdown : String -> String -> List ( String, Msg ) -> Model -> Element.Element Msg
