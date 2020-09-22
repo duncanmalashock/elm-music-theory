@@ -1,4 +1,4 @@
-module Main exposing (main)
+port module Main exposing (main)
 
 import Browser
 import Browser.Events
@@ -12,11 +12,96 @@ import Html.Attributes
 import Json.Decode
 import Music.Chord
 import Music.ChordType
+import Music.Pitch
 import Music.PitchClass
 import Music.Range
 import Music.Voicing.FourPart
 import Svg
 import Svg.Attributes
+
+
+port abcOutput : String -> Cmd msg
+
+
+newAbcOutput : Model -> Cmd msg
+newAbcOutput model =
+    let
+        chordOne =
+            model.chordOne.voicing
+                |> Maybe.map Music.Voicing.FourPart.toPitchList
+                |> Maybe.withDefault []
+                |> List.map pitchToAbc
+                |> String.join ""
+                |> (\str -> "[" ++ str ++ "]")
+    in
+    [ "X:1", "K:C", chordOne ]
+        |> String.join "\n"
+        |> Debug.log "abcoutput"
+        |> abcOutput
+
+
+pitchToAbc : Music.Pitch.Pitch -> String
+pitchToAbc pitch =
+    let
+        octave =
+            (Music.Pitch.octave pitch - 4)
+                |> (\oct ->
+                        if oct == 0 then
+                            ""
+
+                        else if oct > 0 then
+                            List.repeat oct "'"
+                                |> String.join ""
+
+                        else
+                            List.repeat (abs oct) ","
+                                |> String.join ""
+                   )
+
+        accidentals =
+            Music.PitchClass.fromPitch pitch
+                |> Music.PitchClass.accidentals
+                |> (\acc ->
+                        if acc == 0 then
+                            ""
+
+                        else if acc > 0 then
+                            List.repeat acc "^"
+                                |> String.join ""
+
+                        else
+                            List.repeat (abs acc) "_"
+                                |> String.join ""
+                   )
+    in
+    Music.PitchClass.fromPitch pitch
+        |> Music.PitchClass.letter
+        |> (\l ->
+                case l of
+                    Music.PitchClass.A ->
+                        "a"
+
+                    Music.PitchClass.B ->
+                        "b"
+
+                    Music.PitchClass.C ->
+                        "c"
+
+                    Music.PitchClass.D ->
+                        "d"
+
+                    Music.PitchClass.E ->
+                        "e"
+
+                    Music.PitchClass.F ->
+                        "f"
+
+                    Music.PitchClass.G ->
+                        "g"
+           )
+        |> (\str ->
+                accidentals ++ str ++ octave
+           )
 
 
 type alias Flags =
@@ -118,9 +203,10 @@ update msg model =
                 | chordOne =
                     { chordOne
                         | root = Just root
+                        , voicing = Nothing
                         , voicingOptions =
                             getVoicingOptions
-                                chordOne.root
+                                (Just root)
                                 chordOne.chordType
                                 (Maybe.map Tuple.second chordOne.voicingMethod)
                     }
@@ -137,10 +223,11 @@ update msg model =
                 | chordOne =
                     { chordOne
                         | chordType = Just chordType
+                        , voicing = Nothing
                         , voicingOptions =
                             getVoicingOptions
                                 chordOne.root
-                                chordOne.chordType
+                                (Just chordType)
                                 (Maybe.map Tuple.second chordOne.voicingMethod)
                     }
               }
@@ -156,11 +243,12 @@ update msg model =
                 | chordOne =
                     { chordOne
                         | voicingMethod = Just vm
+                        , voicing = Nothing
                         , voicingOptions =
                             getVoicingOptions
                                 chordOne.root
                                 chordOne.chordType
-                                (Maybe.map Tuple.second chordOne.voicingMethod)
+                                (Just <| Tuple.second vm)
                     }
               }
             , Cmd.none
@@ -170,14 +258,17 @@ update msg model =
             let
                 chordOne =
                     model.chordOne
-            in
-            ( { model
-                | chordOne =
-                    { chordOne
-                        | voicing = Just v
+
+                newModel =
+                    { model
+                        | chordOne =
+                            { chordOne
+                                | voicing = Just v
+                            }
                     }
-              }
-            , Cmd.none
+            in
+            ( newModel
+            , newAbcOutput newModel
             )
 
         DropdownClicked id ->
@@ -245,13 +336,26 @@ view model =
 
 viewBody : Model -> Element.Element Msg
 viewBody model =
-    Element.row
-        [ Element.spacing 5 ]
-        [ viewDropdown dropdowns.rootOne (currentRootDropdownLabel model) rootOptions model
-        , viewDropdown dropdowns.chordTypeOne (currentChordTypeDropdownLabel model) chordTypeOptions model
-        , viewDropdown dropdowns.voicingMethodOne (currentVoicingMethodDropdownLabel model) voicingMethodOptions model
-        , viewDropdown dropdowns.voicingOne (currentVoicingDropdownLabel model) (voicingOptions model) model
+    Element.column
+        []
+        [ viewAbc model
+        , Element.row
+            [ Element.spacing 5 ]
+            [ viewDropdown dropdowns.rootOne (currentRootDropdownLabel model) rootOptions model
+            , viewDropdown dropdowns.chordTypeOne (currentChordTypeDropdownLabel model) chordTypeOptions model
+            , viewDropdown dropdowns.voicingMethodOne (currentVoicingMethodDropdownLabel model) voicingMethodOptions model
+            , viewDropdown dropdowns.voicingOne (currentVoicingDropdownLabel model) (voicingOptions model) model
+            ]
         ]
+
+
+viewAbc : Model -> Element.Element Msg
+viewAbc model =
+    Element.el
+        [ Element.htmlAttribute <| Html.Attributes.id "abcViewer"
+        , Element.htmlAttribute <| Html.Attributes.style "flex-basis" "auto"
+        ]
+        Element.none
 
 
 currentRootDropdownLabel : Model -> String
@@ -292,6 +396,12 @@ chordTypeOptions =
     [ Music.ChordType.majorSeventh
     , Music.ChordType.minorSeventh
     , Music.ChordType.dominantSeventh
+    , Music.ChordType.majorSixNine
+    , Music.ChordType.diminishedSeventh
+    , Music.ChordType.halfDiminishedSeventh
+    , Music.ChordType.minorEleventh
+    , Music.ChordType.dominantSeventhSus4
+    , Music.ChordType.dominantSeventhSharpNine
     ]
         |> List.map
             (\ct ->
@@ -394,8 +504,9 @@ viewMenu id options model =
         menuView =
             Element.column
                 [ Element.Background.color (Element.rgb 1 1 1)
-                , Element.width (Element.px 150)
-                , Element.height (Element.px 200)
+
+                --, Element.width (Element.px 150)
+                , Element.height (Element.px 165)
                 , Element.htmlAttribute (Html.Attributes.style "overflow-y" "auto")
                 , Element.Border.shadow
                     { offset = ( 0, 0 )
