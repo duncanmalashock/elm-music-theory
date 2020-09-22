@@ -34,8 +34,8 @@ newAbcOutput model =
                 |> String.join ""
                 |> (\str -> "[" ++ str ++ "]")
     in
-    [ "X:1", "K:C", chordOne ]
-        |> String.join "\n"
+    [ "X:1\n", "K:C\n", chordOne, chordOne ]
+        |> String.join " "
         |> Debug.log "abcoutput"
         |> abcOutput
 
@@ -44,7 +44,7 @@ pitchToAbc : Music.Pitch.Pitch -> String
 pitchToAbc pitch =
     let
         octave =
-            (Music.Pitch.octave pitch - 4)
+            (Music.Pitch.octave pitch - 5)
                 |> (\oct ->
                         if oct == 0 then
                             ""
@@ -100,7 +100,7 @@ pitchToAbc pitch =
                         "g"
            )
         |> (\str ->
-                accidentals ++ str ++ octave
+                accidentals ++ str ++ octave ++ "4"
            )
 
 
@@ -305,13 +305,17 @@ getVoicingOptions :
     -> Maybe Music.Voicing.FourPart.VoicingMethod
     -> List Music.Voicing.FourPart.Voicing
 getVoicingOptions maybeRoot maybeChordType maybeVoicingMethod =
+    let
+        voiceRange =
+            Music.Range.range Music.Pitch.g3 Music.Pitch.c6
+    in
     Maybe.map3
         (\root type_ vm ->
             Music.Chord.voiceFourParts
-                { voiceOne = Music.Range.sopranoVoice
-                , voiceTwo = Music.Range.altoVoice
-                , voiceThree = Music.Range.tenorVoice
-                , voiceFour = Music.Range.bassVoice
+                { voiceOne = voiceRange
+                , voiceTwo = voiceRange
+                , voiceThree = voiceRange
+                , voiceFour = voiceRange
                 }
                 [ vm ]
                 (Music.Chord.custom root type_)
