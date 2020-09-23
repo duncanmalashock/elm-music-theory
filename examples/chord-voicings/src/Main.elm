@@ -157,20 +157,29 @@ update msg model =
             let
                 chordOne =
                     model.chordOne
-            in
-            ( { model
-                | chordOne =
-                    { chordOne
-                        | voicingMethod = Just vm
-                        , voicing = Nothing
-                        , voicingOptions =
-                            getVoicingOptions
-                                chordOne.root
-                                chordOne.chordType
-                                (Just <| Tuple.second vm)
+
+                theVoicingOptions =
+                    getVoicingOptions
+                        chordOne.root
+                        chordOne.chordType
+                        (Just <| Tuple.second vm)
+                        |> List.sortWith
+                            (Music.Voicing.FourPart.semitoneCenterOrder
+                                (Music.Pitch.semitones Music.Pitch.c5)
+                            )
+
+                newModel =
+                    { model
+                        | chordOne =
+                            { chordOne
+                                | voicingMethod = Just vm
+                                , voicing = List.head theVoicingOptions
+                                , voicingOptions = theVoicingOptions
+                            }
                     }
-              }
-            , Cmd.none
+            in
+            ( newModel
+            , newAbcOutput newModel
             )
 
         NewVoicingChosen v ->
@@ -477,7 +486,6 @@ newAbcOutput model =
     in
     [ "X:1\n", "K:C\n", chordOne, chordOne ]
         |> String.join " "
-        |> Debug.log "abcoutput"
         |> abcOutput
 
 
