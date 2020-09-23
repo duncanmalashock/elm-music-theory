@@ -188,7 +188,7 @@ semitoneDistance a b =
 
 semitoneCenter : Pitch.Pitch -> Pitch.Pitch -> Int
 semitoneCenter a b =
-    (Pitch.semitones a - Pitch.semitones b) // 2
+    (Pitch.semitones a + Pitch.semitones b) // 2
 
 
 semitoneCenterOrder :
