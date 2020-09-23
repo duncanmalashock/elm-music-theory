@@ -52,11 +52,15 @@ subscriptions model =
 
 init : Flags -> ( Model, Cmd msg )
 init _ =
-    ( { chordOne = initChordSelection
-      , chordTwo = initChordSelection
-      , dropdownMenu = ( "", Closed )
-      }
-    , Cmd.none
+    let
+        initialModel =
+            { chordOne = initChordSelection
+            , chordTwo = initChordSelection
+            , dropdownMenu = ( "", Closed )
+            }
+    in
+    ( initialModel
+    , newAbcOutput initialModel
     )
 
 
@@ -164,9 +168,7 @@ update msg model =
                         chordOne.chordType
                         (Just <| Tuple.second vm)
                         |> List.sortWith
-                            (Music.Voicing.FourPart.semitoneCenterOrder
-                                (Music.Pitch.semitones Music.Pitch.c5)
-                            )
+                            (Music.Voicing.FourPart.centerOrder Music.Pitch.c5)
 
                 newModel =
                     { model
