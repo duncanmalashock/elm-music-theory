@@ -19,9 +19,9 @@ Source code for these examples can be found in the `/examples` directory of this
 
 ## Learning resources
 
-This package's documentation attempts to introduce musical concepts as approachably as it can (by including links to Wikipedia, etc.), but it does help if you are familiar with them already.
+This package's documentation attempts to introduce musical concepts as approachably as it can, but it does help if you are familiar with them already.
 
-If you are new to music theory, I can recommend these resources for getting familiar with the basics:
+If you are new to music theory, I can recommend these resources for getting acquainted with the basics:
 
 ### Free online resources
 

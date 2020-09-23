@@ -36,7 +36,7 @@ Be aware that there are a lot of edge cases in the area of chord classification,
 
 For instance, I have never seen a "m6(♯11)" chord, but I have also never seen a rule that explains why such a chord cannot be made.
 
-Use your judgment as to which of these you want to handle, and which you want to ignore. Take a look at the source code for `ChordType.toString` for how I approached it.
+Use your judgment as to which of these you want to handle, and which you want to ignore. Take a look at the source code for `ChordType.toString` to see how I approached this question.
 
 -}
 type Classification
