@@ -6,9 +6,9 @@ This package allows you to work with concepts in tonal music like pitches, inter
 
 It is built with these goals in mind:
 
-1. Model musical concepts and their interactions accurately and coherently according to music theory.
+1. Model musical concepts and their interactions accurately and coherently.
 2. Design module APIs in terms of ideas and processes that are familiar to practicing musicians.
-3. Apply broadly to different musical idioms, making as few assumptions about conventions as possible.
+3. Apply broadly across musical idioms by making as few assumptions about conventions as possible.
 
 ## Examples
 
