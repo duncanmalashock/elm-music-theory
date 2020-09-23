@@ -1,15 +1,15 @@
 module Music.Voicing.FourPart exposing
     ( Voicing
     , voicing
-    , chord, span
+    , chord, span, semitoneCenter
     , voiceOne, voiceTwo, voiceThree, voiceFour
     , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
-    , sortWeighted, orderWeighted
     , commonTones
     , usesContraryMotion, containsParallelFifths, containsParallelOctaves
     , totalSemitoneDistance, semitoneDistanceVoiceOne, semitoneDistanceVoiceTwo, semitoneDistanceVoiceThree, semitoneDistanceVoiceFour
     , isWithinLowIntervalLimits
-    , commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder
+    , sortWeighted, orderWeighted
+    , semitoneCenterOrder, commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder
     , Pitches, toPitches, toPitchList, toString
     , Intervals, toIntervals, toIntervalList
     , basic
@@ -76,18 +76,13 @@ There are cases where you may want to create a specific voicing you have in mind
 
 # Helpers
 
-@docs chord, span
+@docs chord, span, semitoneCenter
 
 
 # Voices
 
 @docs voiceOne, voiceTwo, voiceThree, voiceFour
 @docs containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
-
-
-# Sorting voicings
-
-@docs sortWeighted, orderWeighted
 
 
 # Comparing voicings
@@ -113,9 +108,10 @@ There are cases where you may want to create a specific voicing you have in mind
 @docs isWithinLowIntervalLimits
 
 
-# Ordering voicings
+# Sorting voicings
 
-@docs commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder
+@docs sortWeighted, orderWeighted
+@docs semitoneCenterOrder, commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder
 
 
 # Conversion
@@ -441,6 +437,30 @@ span theVoicing =
         theVoicing
 
 
+{-| Get the midpoint between the highest and lowest voices in semitones:
+
+    semitoneCenter myVoicing
+        == Pitch.semitones Pitch.fSharp3
+
+-}
+semitoneCenter : Voicing -> Int
+semitoneCenter theVoicing =
+    FourPart.semitoneCenter theVoicing
+
+
+{-| Compare voicings by their distance from a goal semitone center:
+
+    myVoicingList
+        |> List.sortWith (semitoneCenterOrder (Pitch.semitones Pitch.g4))
+
+Useful for finding voicings that are centered around a particular pitch.
+
+-}
+semitoneCenterOrder : Int -> (Voicing -> Voicing -> Order)
+semitoneCenterOrder goal =
+    Voicing.semitoneCenterOrder goal voiceFour voiceOne
+
+
 {-| Get the first (highest) pitch of the voicing:
 
     voiceOne myVoicing == Pitch.d5
@@ -643,14 +663,14 @@ semitoneDistanceVoiceTwo a b =
 -}
 semitoneDistanceVoiceThree : Voicing -> Voicing -> Int
 semitoneDistanceVoiceThree a b =
-    Voicing.semitoneDistance (FourPart.getVoiceThree a) (FourPart.getVoiceOne b)
+    Voicing.semitoneDistance (FourPart.getVoiceThree a) (FourPart.getVoiceThree b)
 
 
 {-| Given two voicings, find out how far in semitones the fourth (bottom) voice moves.
 -}
 semitoneDistanceVoiceFour : Voicing -> Voicing -> Int
 semitoneDistanceVoiceFour a b =
-    Voicing.semitoneDistance (FourPart.getVoiceFour a) (FourPart.getVoiceOne b)
+    Voicing.semitoneDistance (FourPart.getVoiceFour a) (FourPart.getVoiceFour b)
 
 
 {-| Compare voicings by how many pitches they have in common with a previous voicing:

@@ -693,5 +693,27 @@ all =
                                 |> List.map (Voicing.toString FourPart.allVoices)
                     in
                     Expect.equal expected result
+            , describe "semitoneCenter"
+                [ test "voicing should return a semitone value between its top and bottom voices" <|
+                    \_ ->
+                        let
+                            voicing =
+                                Voicing.voicing
+                                    (Chord.chord PitchClass.c ChordType.major)
+                                    Octave.three
+                                    { voiceOne = Interval.perfectOctave
+                                    , voiceTwo = Interval.perfectFifth
+                                    , voiceThree = Interval.majorThird
+                                    , voiceFour = Interval.perfectUnison
+                                    }
+
+                            result =
+                                FourPart.semitoneCenter voicing
+
+                            expected =
+                                Pitch.semitones Pitch.fSharp3
+                        in
+                        Expect.equal expected result
+                ]
             ]
         ]

@@ -21,6 +21,8 @@ module Music.Internal.Voicing.ThreePart exposing
     , placeFactors
     , placeSelectedFactors
     , selectFactors
+    , semitoneCenter
+    , semitoneCenterOrder
     , sortWeighted
     , toPitches
     , violatesLowIntervalLimits
@@ -49,6 +51,20 @@ import Util.Basic
 
 type alias Voicing =
     Voicing.Voicing VoicingClass
+
+
+semitoneCenter : Voicing -> Int
+semitoneCenter theVoicing =
+    toPitches theVoicing
+        |> (\{ voiceOne, voiceThree } ->
+                Voicing.semitoneCenter voiceOne voiceThree
+           )
+
+
+semitoneCenterOrder : Int -> (Voicing -> Voicing -> Order)
+semitoneCenterOrder goal =
+    \a b ->
+        Voicing.semitoneCenterOrder goal getVoiceThree getVoiceOne a b
 
 
 type alias Pitches =

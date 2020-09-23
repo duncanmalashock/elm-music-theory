@@ -1,15 +1,15 @@
 module Music.Voicing.FivePart exposing
     ( Voicing
     , voicing
-    , chord, span
+    , chord, span, semitoneCenter
     , voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive
     , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour, containsPitchInVoiceFive
-    , sortWeighted, orderWeighted
     , commonTones
     , usesContraryMotion, containsParallelFifths, containsParallelOctaves
     , totalSemitoneDistance, semitoneDistanceVoiceOne, semitoneDistanceVoiceTwo, semitoneDistanceVoiceThree, semitoneDistanceVoiceFour, semitoneDistanceVoiceFive
     , isWithinLowIntervalLimits
-    , commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder, semitoneDistanceVoiceFiveOrder
+    , sortWeighted, orderWeighted
+    , semitoneCenterOrder, commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder, semitoneDistanceVoiceFiveOrder
     , Pitches, toPitches, toPitchList, toString
     , Intervals, toIntervals, toIntervalList
     , basic
@@ -76,18 +76,13 @@ There are cases where you may want to create a specific voicing you have in mind
 
 # Helpers
 
-@docs chord, span
+@docs chord, span, semitoneCenter
 
 
 # Voices
 
 @docs voiceOne, voiceTwo, voiceThree, voiceFour, voiceFive
 @docs containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour, containsPitchInVoiceFive
-
-
-# Sorting voicings
-
-@docs sortWeighted, orderWeighted
 
 
 # Comparing voicings
@@ -113,9 +108,10 @@ There are cases where you may want to create a specific voicing you have in mind
 @docs isWithinLowIntervalLimits
 
 
-# Ordering voicings
+# Sorting voicings
 
-@docs commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder, semitoneDistanceVoiceFiveOrder
+@docs sortWeighted, orderWeighted
+@docs semitoneCenterOrder, commonTonesOrder, contraryMotionOrder, totalSemitoneDistanceOrder, semitoneDistanceVoiceOneOrder, semitoneDistanceVoiceTwoOrder, semitoneDistanceVoiceThreeOrder, semitoneDistanceVoiceFourOrder, semitoneDistanceVoiceFiveOrder
 
 
 # Conversion
@@ -446,6 +442,30 @@ span theVoicing =
         theVoicing
 
 
+{-| Get the midpoint between the highest and lowest voices in semitones:
+
+    semitoneCenter myVoicing
+        == Pitch.semitones Pitch.fSharp3
+
+-}
+semitoneCenter : Voicing -> Int
+semitoneCenter theVoicing =
+    FivePart.semitoneCenter theVoicing
+
+
+{-| Compare voicings by their distance from a goal semitone center:
+
+    myVoicingList
+        |> List.sortWith (semitoneCenterOrder (Pitch.semitones Pitch.g4))
+
+Useful for finding voicings that are centered around a particular pitch.
+
+-}
+semitoneCenterOrder : Int -> (Voicing -> Voicing -> Order)
+semitoneCenterOrder goal =
+    Voicing.semitoneCenterOrder goal voiceFive voiceOne
+
+
 {-| Get the first (highest) pitch of the voicing:
 
     voiceOne myVoicing == Pitch.d5
@@ -670,21 +690,21 @@ semitoneDistanceVoiceTwo a b =
 -}
 semitoneDistanceVoiceThree : Voicing -> Voicing -> Int
 semitoneDistanceVoiceThree a b =
-    Voicing.semitoneDistance (FivePart.getVoiceThree a) (FivePart.getVoiceOne b)
+    Voicing.semitoneDistance (FivePart.getVoiceThree a) (FivePart.getVoiceThree b)
 
 
 {-| Given two voicings, find out how far in semitones the fourth voice moves.
 -}
 semitoneDistanceVoiceFour : Voicing -> Voicing -> Int
 semitoneDistanceVoiceFour a b =
-    Voicing.semitoneDistance (FivePart.getVoiceFour a) (FivePart.getVoiceOne b)
+    Voicing.semitoneDistance (FivePart.getVoiceFour a) (FivePart.getVoiceFour b)
 
 
 {-| Given two voicings, find out how far in semitones the fifth (bottom) voice moves.
 -}
 semitoneDistanceVoiceFive : Voicing -> Voicing -> Int
 semitoneDistanceVoiceFive a b =
-    Voicing.semitoneDistance (FivePart.getVoiceFive a) (FivePart.getVoiceOne b)
+    Voicing.semitoneDistance (FivePart.getVoiceFive a) (FivePart.getVoiceFive b)
 
 
 {-| Compare voicings by how many pitches they have in common with a previous voicing:

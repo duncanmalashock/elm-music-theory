@@ -14,6 +14,8 @@ module Music.Internal.Voicing exposing
     , containsPitchInVoice
     , range
     , root
+    , semitoneCenter
+    , semitoneCenterOrder
     , semitoneDistance
     , toString
     , totalSemitoneDistance
@@ -182,6 +184,23 @@ compareByCommonTones allVoices from =
 semitoneDistance : Pitch.Pitch -> Pitch.Pitch -> Int
 semitoneDistance a b =
     abs (Pitch.semitones a - Pitch.semitones b)
+
+
+semitoneCenter : Pitch.Pitch -> Pitch.Pitch -> Int
+semitoneCenter a b =
+    (Pitch.semitones a - Pitch.semitones b) // 2
+
+
+semitoneCenterOrder :
+    Int
+    -> (Voicing voicingClass -> Pitch.Pitch)
+    -> (Voicing voicingClass -> Pitch.Pitch)
+    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
+semitoneCenterOrder goal getLowestVoice getHighestVoice =
+    \a b ->
+        compare
+            (abs (goal - semitoneCenter (getLowestVoice a) (getHighestVoice a)))
+            (abs (goal - semitoneCenter (getLowestVoice b) (getHighestVoice b)))
 
 
 totalSemitoneDistance :

@@ -23,87 +23,6 @@ import Svg.Attributes
 port abcOutput : String -> Cmd msg
 
 
-newAbcOutput : Model -> Cmd msg
-newAbcOutput model =
-    let
-        chordOne =
-            model.chordOne.voicing
-                |> Maybe.map Music.Voicing.FourPart.toPitchList
-                |> Maybe.withDefault []
-                |> List.map pitchToAbc
-                |> String.join ""
-                |> (\str -> "[" ++ str ++ "]")
-    in
-    [ "X:1\n", "K:C\n", chordOne, chordOne ]
-        |> String.join " "
-        |> Debug.log "abcoutput"
-        |> abcOutput
-
-
-pitchToAbc : Music.Pitch.Pitch -> String
-pitchToAbc pitch =
-    let
-        octave =
-            (Music.Pitch.octave pitch - 5)
-                |> (\oct ->
-                        if oct == 0 then
-                            ""
-
-                        else if oct > 0 then
-                            List.repeat oct "'"
-                                |> String.join ""
-
-                        else
-                            List.repeat (abs oct) ","
-                                |> String.join ""
-                   )
-
-        accidentals =
-            Music.PitchClass.fromPitch pitch
-                |> Music.PitchClass.accidentals
-                |> (\acc ->
-                        if acc == 0 then
-                            ""
-
-                        else if acc > 0 then
-                            List.repeat acc "^"
-                                |> String.join ""
-
-                        else
-                            List.repeat (abs acc) "_"
-                                |> String.join ""
-                   )
-    in
-    Music.PitchClass.fromPitch pitch
-        |> Music.PitchClass.letter
-        |> (\l ->
-                case l of
-                    Music.PitchClass.A ->
-                        "a"
-
-                    Music.PitchClass.B ->
-                        "b"
-
-                    Music.PitchClass.C ->
-                        "c"
-
-                    Music.PitchClass.D ->
-                        "d"
-
-                    Music.PitchClass.E ->
-                        "e"
-
-                    Music.PitchClass.F ->
-                        "f"
-
-                    Music.PitchClass.G ->
-                        "g"
-           )
-        |> (\str ->
-                accidentals ++ str ++ octave ++ "4"
-           )
-
-
 type alias Flags =
     ()
 
@@ -121,18 +40,18 @@ main =
 subscriptions : Model -> Sub Msg
 subscriptions model =
     case model.dropdownMenu of
-        ( id, Open ) ->
+        ( _, Open ) ->
             Browser.Events.onAnimationFrame (\_ -> DropdownClickedOut)
 
-        ( id, ReadyToClose ) ->
+        ( _, ReadyToClose ) ->
             Browser.Events.onClick (Json.Decode.succeed DropdownClosed)
 
-        ( id, Closed ) ->
+        ( _, Closed ) ->
             Sub.none
 
 
 init : Flags -> ( Model, Cmd msg )
-init flags =
+init _ =
     ( { chordOne = initChordSelection
       , chordTwo = initChordSelection
       , dropdownMenu = ( "", Closed )
@@ -342,7 +261,7 @@ viewBody : Model -> Element.Element Msg
 viewBody model =
     Element.column
         []
-        [ viewAbc model
+        [ viewAbc
         , Element.row
             [ Element.spacing 5 ]
             [ viewDropdown dropdowns.rootOne (currentRootDropdownLabel model) rootOptions model
@@ -353,8 +272,8 @@ viewBody model =
         ]
 
 
-viewAbc : Model -> Element.Element Msg
-viewAbc model =
+viewAbc : Element.Element Msg
+viewAbc =
     Element.el
         [ Element.htmlAttribute <| Html.Attributes.id "abcViewer"
         , Element.htmlAttribute <| Html.Attributes.style "flex-basis" "auto"
@@ -543,3 +462,84 @@ viewDropdownArrow =
             ]
             []
         ]
+
+
+newAbcOutput : Model -> Cmd msg
+newAbcOutput model =
+    let
+        chordOne =
+            model.chordOne.voicing
+                |> Maybe.map Music.Voicing.FourPart.toPitchList
+                |> Maybe.withDefault []
+                |> List.map pitchToAbc
+                |> String.join ""
+                |> (\str -> "[" ++ str ++ "]")
+    in
+    [ "X:1\n", "K:C\n", chordOne, chordOne ]
+        |> String.join " "
+        |> Debug.log "abcoutput"
+        |> abcOutput
+
+
+pitchToAbc : Music.Pitch.Pitch -> String
+pitchToAbc pitch =
+    let
+        octave =
+            (Music.Pitch.octave pitch - 5)
+                |> (\oct ->
+                        if oct == 0 then
+                            ""
+
+                        else if oct > 0 then
+                            List.repeat oct "'"
+                                |> String.join ""
+
+                        else
+                            List.repeat (abs oct) ","
+                                |> String.join ""
+                   )
+
+        accidentals =
+            Music.PitchClass.fromPitch pitch
+                |> Music.PitchClass.accidentals
+                |> (\acc ->
+                        if acc == 0 then
+                            ""
+
+                        else if acc > 0 then
+                            List.repeat acc "^"
+                                |> String.join ""
+
+                        else
+                            List.repeat (abs acc) "_"
+                                |> String.join ""
+                   )
+    in
+    Music.PitchClass.fromPitch pitch
+        |> Music.PitchClass.letter
+        |> (\l ->
+                case l of
+                    Music.PitchClass.A ->
+                        "a"
+
+                    Music.PitchClass.B ->
+                        "b"
+
+                    Music.PitchClass.C ->
+                        "c"
+
+                    Music.PitchClass.D ->
+                        "d"
+
+                    Music.PitchClass.E ->
+                        "e"
+
+                    Music.PitchClass.F ->
+                        "f"
+
+                    Music.PitchClass.G ->
+                        "g"
+           )
+        |> (\str ->
+                accidentals ++ str ++ octave ++ "4"
+           )
