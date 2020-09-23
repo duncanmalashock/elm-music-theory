@@ -2,13 +2,13 @@
 
 ## A toolkit for musical ideas
 
-This package allows you to work with concepts in tonal music like pitches, intervals, chords, keys, and scales. You can use it to analyze music, generate musical structures programatically, and solve musical problems like [harmonization](https://en.wikipedia.org/wiki/Harmonization) and [counterpoint](https://en.wikipedia.org/wiki/Counterpoint).
+This package allows you to work with concepts in tonal music like pitches, intervals, chords, keys, and scales. You can use it to analyze music, generate musical structures, and solve musical problems like [harmonization](https://en.wikipedia.org/wiki/Harmonization) and [counterpoint](https://en.wikipedia.org/wiki/Counterpoint).
 
 It is built with these goals in mind:
 
 1. Model musical concepts and their interactions accurately and coherently.
-2. Design module APIs in terms of ideas and processes that are familiar to practicing musicians.
-3. Apply broadly across musical idioms by making as few assumptions about conventions as possible.
+2. Use ideas and processes that are familiar to practicing musicians.
+3. Apply broadly across musical idioms.
 
 ## Examples
 
@@ -21,9 +21,9 @@ Source code for these examples can be found in the `/examples` directory of this
 
 This package's documentation attempts to introduce musical concepts as approachably as it can, but it does help if you are familiar with them already.
 
-If you are new to music theory, I can recommend these resources for getting acquainted with the basics:
+If you are new to music theory, I can recommend these resources:
 
-### Free online resources
+### Free, online
 
 - The [Gitbook](https://duncanmalashock.gitbook.io/music-theory/) for this project, which attempts to explain the domain concepts in this package and how they are modeled
 - [Fundamentals of Music Theory](https://www.coursera.org/learn/edinburgh-music-theory/), a free course on [Coursera](https://www.coursera.org/)
