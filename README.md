@@ -19,9 +19,7 @@ Source code for these examples can be found in the `/examples` directory of this
 
 ## Learning resources
 
-This package's documentation attempts to introduce musical concepts as approachably as it can, but it does help if you are familiar with them already.
-
-If you are new to music theory, I can recommend these resources:
+**New to music theory?** I can recommend these resources:
 
 ### Free, online
 
@@ -37,7 +35,7 @@ If you are new to music theory, I can recommend these resources:
 
 ## Contributing
 
-Interested in contributing to this project? Please take a look at the [CONTRIBUTING.md](https://github.com/duncanmalashock/elm-music-theory/blob/master/CONTRIBUTING.md) file in this repo for ways to do so. 
+**Interested in contributing to this project?** Please take a look at the [CONTRIBUTING.md](https://github.com/duncanmalashock/elm-music-theory/blob/master/CONTRIBUTING.md) file in this repo for ways to do so. 
 
 ## Special thanks
 
