@@ -55,12 +55,14 @@ From here, you may choose from this list based on some criteria:
                 containsPitchInVoiceOne Pitch.e5 voicing
                     && (span voicing >= Interval.perfectOctave)
             )
+        |> List.sortWith (centerOrder Pitch.g4)
         |> List.head
 
 This does the following:
 
 1.  Filters the list to only include `Voicing`s which have E5 in the top voice, and have a span of at least an octave from bottom to top voice
-2.  Takes the first item in the remaining list
+2.  Sorts the list so that the `Voicing`s which are centered around the pitch G4 are at the beginning
+3.  Takes the first item in the remaining list
 
 These sorting and filtering processes allow you to account for considerations like [voice leading](https://en.wikipedia.org/wiki/Voice_leading), or the harmonization of a melody. You'll find comparison functions in this module for doing that.
 
