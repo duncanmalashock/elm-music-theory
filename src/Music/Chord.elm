@@ -243,6 +243,8 @@ toPitchClasses theChord =
 
     toString (dominantNinth PitchClass.a) == "A9"
 
+Looking for more flexibility? Look at [ChordType.classify](Music-ChordType#classify).
+
 -}
 toString : Chord -> String
 toString chord =
