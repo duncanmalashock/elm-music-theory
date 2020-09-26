@@ -242,8 +242,20 @@ spread =
 
 
 spacingLimits =
-    { twoToOne = Interval.range Interval.augmentedUnison Interval.perfectOctave
-    , threeToTwo = Interval.range Interval.augmentedUnison Interval.perfectOctave
-    , fourToThree = Interval.range Interval.augmentedUnison Interval.perfectOctave
-    , fiveToFour = Interval.range Interval.augmentedUnison Interval.perfectOctave
+    { twoToOne =
+        Interval.range
+            Interval.majorSecond
+            Interval.perfectOctave
+    , threeToTwo =
+        Interval.range
+            Interval.augmentedUnison
+            Interval.perfectOctave
+    , fourToThree =
+        Interval.range
+            Interval.augmentedUnison
+            Interval.perfectOctave
+    , fiveToFour =
+        Interval.range
+            Interval.augmentedUnison
+            Interval.perfectOctave
     }

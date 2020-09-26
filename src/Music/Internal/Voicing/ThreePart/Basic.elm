@@ -37,8 +37,21 @@ shell =
                         ]
                     )
                 |> ThreePart.withFactor Interval.perfectUnison
-                |> ThreePart.placeSelectedFactors spacingLimits
+                |> ThreePart.placeSelectedFactors spacingLimitsJazz
         )
+
+
+spacingLimitsJazz : ThreePart.SpacingLimits
+spacingLimitsJazz =
+    { twoToOne =
+        Interval.range
+            Interval.majorSecond
+            Interval.perfectOctave
+    , threeToTwo =
+        Interval.range
+            Interval.augmentedUnison
+            Interval.perfectOctave
+    }
 
 
 spacingLimits : ThreePart.SpacingLimits

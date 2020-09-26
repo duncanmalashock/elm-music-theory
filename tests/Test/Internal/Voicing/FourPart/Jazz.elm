@@ -37,7 +37,7 @@ all =
                                 )
                                 |> List.length
                     in
-                    Expect.equal 20 result
+                    Expect.equal 18 result
             ]
         , describe "drop2"
             [ test "should generate voicings of the chord" <|
@@ -69,7 +69,7 @@ all =
                                 )
                                 |> List.length
                     in
-                    Expect.equal 38 result
+                    Expect.equal 34 result
             ]
         , describe "drop2and4"
             [ test "should generate voicings of the chord" <|

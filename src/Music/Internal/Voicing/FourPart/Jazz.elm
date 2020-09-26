@@ -15,7 +15,7 @@ spacingLimits : FourPart.SpacingLimits
 spacingLimits =
     { twoToOne =
         Interval.range
-            Interval.augmentedUnison
+            Interval.majorSecond
             Interval.perfectOctave
     , threeToTwo =
         Interval.range
