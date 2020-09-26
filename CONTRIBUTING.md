@@ -26,6 +26,12 @@ After we discuss the bug and agree on the correct behavior and possible API chan
 
 ## Share your theory knowledge
 
-Although I have done some independent study of piano, jazz theory, and basic arrangement, I consider myself an amateur musician. **Do you have experience at the university level or as a practicing composer or performer?** I am interested in what you have to say about how I have approached the ideas from these fields.
+Although I have done some independent study of piano, jazz theory, and basic arrangement, I consider myself an amateur musician. **Do you have experience at the university level or as a practicing composer or performer?** If so, I am interested in what you have to say about how I have approached the ideas from these fields. 
 
-If you are interested in talking about this, please reach out to me at `@duncan` on the [Elm Slack](https://elmlang.herokuapp.com/).
+A few things I am specifically interested in:
+- Jazz theory: Are there general, scale-based ways to determine "available tensions" on any arbitrary chord in jazz theory?
+- Classical theory: Are there objective methods to evaluate the effectiveness of a written species counterpoint?
+- Are there ways of categorizing the notes in a melody in a general way? (i.e. that do not rely on jazz or classical conventions)
+- Do the ways I have modeled or named certain concepts seem strange? Can you suggest better alternatives?
+
+If you are interested in talking about these or any other music theory topics, please reach out to me at `@duncan` on the [Elm Slack](https://elmlang.herokuapp.com/).
