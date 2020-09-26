@@ -1344,12 +1344,10 @@ availableTensionsForChordQuality theChordType voiceCategory jazzChordQuality =
 
                 Fifth ->
                     [ Interval.perfectFifth
-                    , Interval.augmentedEleventh
                     ]
 
                 Seventh ->
                     [ Interval.majorSixth
-                    , Interval.majorSeventh
                     ]
 
         Major7 ->
@@ -1365,12 +1363,10 @@ availableTensionsForChordQuality theChordType voiceCategory jazzChordQuality =
 
                 Fifth ->
                     [ Interval.perfectFifth
-                    , Interval.augmentedEleventh
                     ]
 
                 Seventh ->
                     [ Interval.majorSeventh
-                    , Interval.majorSixth
                     ]
 
         Minor6 ->
@@ -1458,7 +1454,6 @@ availableTensionsForChordQuality theChordType voiceCategory jazzChordQuality =
 
                 Third ->
                     [ Interval.majorThird
-                    , Interval.perfectFourth
                     ]
 
                 Fifth ->
@@ -1496,20 +1491,15 @@ availableTensionsForChordQuality theChordType voiceCategory jazzChordQuality =
                 Root ->
                     [ Interval.perfectUnison
                     , Interval.majorNinth
-                    , Interval.minorNinth
-                    , Interval.augmentedNinth
                     ]
 
                 Third ->
                     [ Interval.perfectFourth
-                    , Interval.majorThird
                     ]
 
                 Fifth ->
                     [ Interval.perfectFifth
-                    , Interval.augmentedEleventh
                     , Interval.majorThirteenth
-                    , Interval.minorThirteenth
                     ]
 
                 Seventh ->

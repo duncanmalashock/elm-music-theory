@@ -53,7 +53,7 @@ all =
                                 )
                                 |> List.length
                     in
-                    Expect.equal 56 result
+                    Expect.equal 14 result
             ]
         , describe "drop3"
             [ test "should generate voicings of the chord" <|

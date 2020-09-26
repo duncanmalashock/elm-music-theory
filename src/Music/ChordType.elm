@@ -804,11 +804,11 @@ type alias AvailableTensions =
             }
         , fifth =
             { true = Interval.perfectFifth
-            , substitutes = [ Interval.augmentedEleventh ]
+            , substitutes = []
             }
         , seventh =
             { true = Interval.majorSeventh
-            , substitutes = [ Interval.majorSixth ]
+            , substitutes = []
             }
         }
 
