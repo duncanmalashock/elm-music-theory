@@ -30,8 +30,8 @@ port play : List Json.Encode.Value -> Cmd msg
 port loadInstrumentById : Int -> Cmd msg
 
 
-encode : ( Music.Pitch.Pitch, Int ) -> Json.Encode.Value
-encode ( pitch, order ) =
+encodePitch : ( Music.Pitch.Pitch, Int ) -> Json.Encode.Value
+encodePitch ( pitch, order ) =
     Json.Encode.object
         [ ( "time", Json.Encode.float (toFloat order * 200) )
         , ( "pitch", Json.Encode.int (Music.Pitch.toMIDINoteNumber pitch) )
@@ -44,7 +44,7 @@ encode ( pitch, order ) =
 playInBrowser : List ( Music.Pitch.Pitch, Int ) -> Cmd msg
 playInBrowser noteEvents =
     noteEvents
-        |> List.map encode
+        |> List.map encodePitch
         |> play
 
 
@@ -104,14 +104,10 @@ init _ =
 
 
 dropdowns =
-    { rootOne = "root-one"
-    , chordTypeOne = "chord-type-one"
-    , voicingMethodOne = "voicing-method-one"
-    , voicingOne = "voicing-one"
-    , rootTwo = "root-two"
-    , chordTypeTwo = "chord-type-two"
-    , voicingMethodTwo = "voicing-method-two"
-    , voicingTwo = "voicing-two"
+    { root = "root"
+    , chordType = "chord-type"
+    , voicingMethod = "voicing-method"
+    , voicing = "voicing"
     }
 
 
@@ -138,9 +134,9 @@ type alias ChordSelection =
 
 initChordSelection : ChordSelection
 initChordSelection =
-    { root = Just Music.PitchClass.c
-    , chordType = Just Music.ChordType.majorSixNine
-    , voicingMethod = Just ( "Close", Music.Voicing.FourPart.close )
+    { root = List.head rootOptions
+    , chordType = List.head chordTypeOptions
+    , voicingMethod = List.head voicingMethodOptions
     , voicingOptions = []
     , voicing = Nothing
     }
@@ -320,10 +316,10 @@ viewSelectionControls : Model -> Element.Element Msg
 viewSelectionControls model =
     let
         { root, chordType, voicingMethod, voicing } =
-            { root = dropdowns.rootOne
-            , chordType = dropdowns.chordTypeOne
-            , voicingMethod = dropdowns.voicingMethodOne
-            , voicing = dropdowns.voicingOne
+            { root = dropdowns.root
+            , chordType = dropdowns.chordType
+            , voicingMethod = dropdowns.voicingMethod
+            , voicing = dropdowns.voicing
             }
     in
     Element.column
@@ -334,11 +330,11 @@ viewSelectionControls model =
             [ Element.spacing 5
             , Element.width Element.fill
             ]
-            [ viewDropdown root (currentRootDropdownLabel model) rootOptions model
-            , viewDropdown chordType (currentChordTypeDropdownLabel model) chordTypeOptions model
-            , viewDropdown voicingMethod (currentVoicingMethodDropdownLabel model) voicingMethodOptions model
+            [ viewDropdown root (currentRootDropdownLabel model) rootMenuOptions model
+            , viewDropdown chordType (currentChordTypeDropdownLabel model) chordTypeMenuOptions model
+            , viewDropdown voicingMethod (currentVoicingMethodDropdownLabel model) voicingMethodMenuOptions model
             ]
-        , viewDropdown voicing (currentVoicingDropdownLabel model) (voicingOptions model) model
+        , viewDropdown voicing (currentVoicingDropdownLabel model) (voicingMenuOptions model) model
         ]
 
 
@@ -357,7 +353,7 @@ currentRootDropdownLabel model =
         |> Maybe.withDefault "—"
 
 
-rootOptions : List ( String, Msg )
+rootOptions : List Music.PitchClass.PitchClass
 rootOptions =
     [ Music.PitchClass.c
     , Music.PitchClass.dFlat
@@ -372,6 +368,11 @@ rootOptions =
     , Music.PitchClass.bFlat
     , Music.PitchClass.b
     ]
+
+
+rootMenuOptions : List ( String, Msg )
+rootMenuOptions =
+    rootOptions
         |> List.map
             (\pc ->
                 ( Music.PitchClass.toString pc, ChordSelectionFwd (NewRoot pc) )
@@ -384,21 +385,27 @@ currentChordTypeDropdownLabel model =
         |> Maybe.withDefault "—"
 
 
-chordTypeOptions : List ( String, Msg )
+chordTypeOptions : List Music.ChordType.ChordType
 chordTypeOptions =
     [ Music.ChordType.majorSeventh
+    , Music.ChordType.majorSix
     , Music.ChordType.minorSeventh
+    , Music.ChordType.minorSix
     , Music.ChordType.dominantSeventh
-    , Music.ChordType.majorSixNine
+    , Music.ChordType.dominantSeventhSharpNine
     , Music.ChordType.diminishedSeventh
     , Music.ChordType.halfDiminishedSeventh
-    , Music.ChordType.minorEleventh
-    , Music.ChordType.dominantSeventhSus4
-    , Music.ChordType.dominantSeventhSharpNine
     ]
+
+
+chordTypeMenuOptions : List ( String, Msg )
+chordTypeMenuOptions =
+    chordTypeOptions
         |> List.map
             (\ct ->
-                ( Music.ChordType.toString ct, ChordSelectionFwd (NewChordType ct) )
+                ( Music.ChordType.toString ct
+                , ChordSelectionFwd (NewChordType ct)
+                )
             )
 
 
@@ -412,14 +419,26 @@ currentVoicingMethodDropdownLabel model =
             "—"
 
 
-voicingMethodOptions : List ( String, Msg )
+voicingMethodOptions : List ( String, Music.Voicing.FourPart.VoicingMethod )
 voicingMethodOptions =
-    [ ( "Close", ChordSelectionFwd (NewVoicingMethod ( "Close", Music.Voicing.FourPart.close )) )
-    , ( "Drop-2", ChordSelectionFwd (NewVoicingMethod ( "Drop-2", Music.Voicing.FourPart.drop2 )) )
-    , ( "Drop-3", ChordSelectionFwd (NewVoicingMethod ( "Drop-3", Music.Voicing.FourPart.drop3 )) )
-    , ( "Drop-2-and-4", ChordSelectionFwd (NewVoicingMethod ( "Drop-2-and-4", Music.Voicing.FourPart.drop2and4 )) )
-    , ( "Spread", ChordSelectionFwd (NewVoicingMethod ( "Spread", Music.Voicing.FourPart.spread )) )
+    [ ( "Close", Music.Voicing.FourPart.close )
+    , ( "Drop-2", Music.Voicing.FourPart.drop2 )
+    , ( "Drop-3", Music.Voicing.FourPart.drop3 )
+    , ( "Drop-2-and-4", Music.Voicing.FourPart.drop2and4 )
+    , ( "Spread", Music.Voicing.FourPart.spread )
     ]
+
+
+voicingMethodMenuOptions : List ( String, Msg )
+voicingMethodMenuOptions =
+    voicingMethodOptions
+        |> List.map
+            (\( name, voicingMethod ) ->
+                ( name
+                , ChordSelectionFwd
+                    (NewVoicingMethod ( name, voicingMethod ))
+                )
+            )
 
 
 currentVoicingDropdownLabel : Model -> String
@@ -428,8 +447,8 @@ currentVoicingDropdownLabel model =
         |> Maybe.withDefault "—"
 
 
-voicingOptions : Model -> List ( String, Msg )
-voicingOptions model =
+voicingMenuOptions : Model -> List ( String, Msg )
+voicingMenuOptions model =
     model.chordSelection.voicingOptions
         |> List.map
             (\v ->
@@ -501,8 +520,6 @@ viewMenu id options model =
         menuView =
             Element.column
                 [ Element.Background.color (Element.rgb 1 1 1)
-
-                --, Element.width (Element.px 150)
                 , Element.height (Element.px 165)
                 , Element.htmlAttribute (Html.Attributes.style "overflow-y" "auto")
                 , Element.Border.shadow
