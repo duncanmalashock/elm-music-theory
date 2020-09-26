@@ -10,6 +10,7 @@ import Element.Input
 import Html exposing (Html)
 import Html.Attributes
 import Json.Decode
+import Json.Encode
 import Music.Chord
 import Music.ChordType
 import Music.Pitch
@@ -21,6 +22,40 @@ import Svg.Attributes
 
 
 port abcOutput : String -> Cmd msg
+
+
+port play : List Json.Encode.Value -> Cmd msg
+
+
+port loadInstrumentById : Int -> Cmd msg
+
+
+encode : ( Music.Pitch.Pitch, Int ) -> Json.Encode.Value
+encode ( pitch, order ) =
+    Json.Encode.object
+        [ ( "time", Json.Encode.float (toFloat order * 200) )
+        , ( "pitch", Json.Encode.int (Music.Pitch.toMIDINoteNumber pitch) )
+        , ( "duration", Json.Encode.float 200 )
+        , ( "volume", Json.Encode.int 60 )
+        , ( "instrumentId", Json.Encode.int instrumentIds.piano )
+        ]
+
+
+playInBrowser : List ( Music.Pitch.Pitch, Int ) -> Cmd msg
+playInBrowser noteEvents =
+    noteEvents
+        |> List.map encode
+        |> play
+
+
+loadInstrument : Int -> Cmd msg
+loadInstrument id =
+    loadInstrumentById id
+
+
+instrumentIds =
+    { piano = 1
+    }
 
 
 type alias Flags =
@@ -50,17 +85,21 @@ subscriptions model =
             Sub.none
 
 
-init : Flags -> ( Model, Cmd msg )
+init : Flags -> ( Model, Cmd Msg )
 init _ =
     let
+        initialModel : Model
         initialModel =
-            { chordOne = initChordSelection
-            , chordTwo = initChordSelection
+            { chordSelection = updateVoicings initChordSelection
             , dropdownMenu = ( "", Closed )
             }
     in
     ( initialModel
-    , newAbcOutput initialModel
+    , Cmd.batch
+        [ newAbcOutput initialModel
+        , loadInstrument instrumentIds.piano
+        , playNewVoicing initialModel
+        ]
     )
 
 
@@ -83,8 +122,7 @@ type DropdownState
 
 
 type alias Model =
-    { chordOne : ChordSelection
-    , chordTwo : ChordSelection
+    { chordSelection : ChordSelection
     , dropdownMenu : ( String, DropdownState )
     }
 
@@ -100,9 +138,9 @@ type alias ChordSelection =
 
 initChordSelection : ChordSelection
 initChordSelection =
-    { root = Nothing
-    , chordType = Nothing
-    , voicingMethod = Nothing
+    { root = Just Music.PitchClass.c
+    , chordType = Just Music.ChordType.majorSixNine
+    , voicingMethod = Just ( "Close", Music.Voicing.FourPart.close )
     , voicingOptions = []
     , voicing = Nothing
     }
@@ -112,12 +150,7 @@ type Msg
     = DropdownClicked String
     | DropdownClickedOut
     | DropdownClosed
-    | ChordSelectionFwd SelectionId ChordSelectionMsg
-
-
-type SelectionId
-    = FirstSelection
-    | SecondSelection
+    | ChordSelectionFwd ChordSelectionMsg
 
 
 type ChordSelectionMsg
@@ -151,47 +184,56 @@ updateChordSelection chordSelectionMsg selection =
             }
     )
         |> (\updatedSelection ->
-                let
-                    newVoicingOptions =
-                        getVoicingOptions
-                            updatedSelection.root
-                            updatedSelection.chordType
-                            (Maybe.map Tuple.second updatedSelection.voicingMethod)
-                in
-                { updatedSelection
-                    | voicingOptions = newVoicingOptions
-                    , voicing =
-                        case chordSelectionMsg of
-                            NewVoicing v ->
-                                Just v
+                case chordSelectionMsg of
+                    NewVoicing _ ->
+                        updatedSelection
 
-                            _ ->
-                                List.head newVoicingOptions
-                }
+                    _ ->
+                        updateVoicings updatedSelection
            )
+
+
+updateVoicings : ChordSelection -> ChordSelection
+updateVoicings selection =
+    let
+        newVoicingOptions =
+            getVoicingOptions
+                selection.root
+                selection.chordType
+                (Maybe.map Tuple.second selection.voicingMethod)
+    in
+    { selection
+        | voicingOptions = newVoicingOptions
+        , voicing =
+            List.head newVoicingOptions
+    }
+
+
+playNewVoicing : Model -> Cmd Msg
+playNewVoicing model =
+    model.chordSelection.voicing
+        |> Maybe.map Music.Voicing.FourPart.toPitchList
+        |> Maybe.withDefault []
+        |> List.map (\pitch -> ( pitch, 0 ))
+        |> playInBrowser
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        ChordSelectionFwd selectionId selectionMsg ->
+        ChordSelectionFwd selectionMsg ->
             let
                 newModel =
-                    case selectionId of
-                        FirstSelection ->
-                            { model
-                                | chordOne =
-                                    updateChordSelection selectionMsg model.chordOne
-                            }
-
-                        SecondSelection ->
-                            { model
-                                | chordTwo =
-                                    updateChordSelection selectionMsg model.chordTwo
-                            }
+                    { model
+                        | chordSelection =
+                            updateChordSelection selectionMsg model.chordSelection
+                    }
             in
             ( newModel
-            , newAbcOutput newModel
+            , Cmd.batch
+                [ newAbcOutput newModel
+                , playNewVoicing newModel
+                ]
             )
 
         DropdownClicked id ->
@@ -256,6 +298,7 @@ view model =
     , body =
         [ Element.layout
             [ Element.width Element.fill
+            , Element.paddingEach { top = 50, right = 0, bottom = 0, left = 0 }
             ]
             (viewBody model)
         ]
@@ -265,38 +308,37 @@ view model =
 viewBody : Model -> Element.Element Msg
 viewBody model =
     Element.column
-        []
+        [ Element.width (Element.px 400)
+        , Element.centerX
+        ]
         [ viewAbc
-        , viewSelectionControls model FirstSelection
-        , viewSelectionControls model SecondSelection
+        , viewSelectionControls model
         ]
 
 
-viewSelectionControls : Model -> SelectionId -> Element.Element Msg
-viewSelectionControls model selectionId =
+viewSelectionControls : Model -> Element.Element Msg
+viewSelectionControls model =
     let
         { root, chordType, voicingMethod, voicing } =
-            case selectionId of
-                FirstSelection ->
-                    { root = dropdowns.rootOne
-                    , chordType = dropdowns.chordTypeOne
-                    , voicingMethod = dropdowns.voicingMethodOne
-                    , voicing = dropdowns.voicingOne
-                    }
-
-                SecondSelection ->
-                    { root = dropdowns.rootTwo
-                    , chordType = dropdowns.chordTypeTwo
-                    , voicingMethod = dropdowns.voicingMethodTwo
-                    , voicing = dropdowns.voicingTwo
-                    }
+            { root = dropdowns.rootOne
+            , chordType = dropdowns.chordTypeOne
+            , voicingMethod = dropdowns.voicingMethodOne
+            , voicing = dropdowns.voicingOne
+            }
     in
-    Element.row
-        [ Element.spacing 5 ]
-        [ viewDropdown root (currentRootDropdownLabel selectionId model) (rootOptions selectionId) model
-        , viewDropdown chordType (currentChordTypeDropdownLabel selectionId model) (chordTypeOptions selectionId) model
-        , viewDropdown voicingMethod (currentVoicingMethodDropdownLabel selectionId model) (voicingMethodOptions selectionId) model
-        , viewDropdown voicing (currentVoicingDropdownLabel selectionId model) (voicingOptions selectionId model) model
+    Element.column
+        [ Element.spacing 5
+        , Element.width Element.fill
+        ]
+        [ Element.row
+            [ Element.spacing 5
+            , Element.width Element.fill
+            ]
+            [ viewDropdown root (currentRootDropdownLabel model) rootOptions model
+            , viewDropdown chordType (currentChordTypeDropdownLabel model) chordTypeOptions model
+            , viewDropdown voicingMethod (currentVoicingMethodDropdownLabel model) voicingMethodOptions model
+            ]
+        , viewDropdown voicing (currentVoicingDropdownLabel model) (voicingOptions model) model
         ]
 
 
@@ -309,23 +351,14 @@ viewAbc =
         Element.none
 
 
-currentRootDropdownLabel : SelectionId -> Model -> String
-currentRootDropdownLabel selectionId model =
-    let
-        root =
-            case selectionId of
-                FirstSelection ->
-                    model.chordOne.root
-
-                SecondSelection ->
-                    model.chordTwo.root
-    in
-    Maybe.map Music.PitchClass.toString root
+currentRootDropdownLabel : Model -> String
+currentRootDropdownLabel model =
+    Maybe.map Music.PitchClass.toString model.chordSelection.root
         |> Maybe.withDefault "—"
 
 
-rootOptions : SelectionId -> List ( String, Msg )
-rootOptions selectionId =
+rootOptions : List ( String, Msg )
+rootOptions =
     [ Music.PitchClass.c
     , Music.PitchClass.dFlat
     , Music.PitchClass.d
@@ -341,27 +374,18 @@ rootOptions selectionId =
     ]
         |> List.map
             (\pc ->
-                ( Music.PitchClass.toString pc, ChordSelectionFwd selectionId (NewRoot pc) )
+                ( Music.PitchClass.toString pc, ChordSelectionFwd (NewRoot pc) )
             )
 
 
-currentChordTypeDropdownLabel : SelectionId -> Model -> String
-currentChordTypeDropdownLabel selectionId model =
-    let
-        chordType =
-            case selectionId of
-                FirstSelection ->
-                    model.chordOne.chordType
-
-                SecondSelection ->
-                    model.chordTwo.chordType
-    in
-    Maybe.map Music.ChordType.toString chordType
+currentChordTypeDropdownLabel : Model -> String
+currentChordTypeDropdownLabel model =
+    Maybe.map Music.ChordType.toString model.chordSelection.chordType
         |> Maybe.withDefault "—"
 
 
-chordTypeOptions : SelectionId -> List ( String, Msg )
-chordTypeOptions selectionId =
+chordTypeOptions : List ( String, Msg )
+chordTypeOptions =
     [ Music.ChordType.majorSeventh
     , Music.ChordType.minorSeventh
     , Music.ChordType.dominantSeventh
@@ -374,22 +398,13 @@ chordTypeOptions selectionId =
     ]
         |> List.map
             (\ct ->
-                ( Music.ChordType.toString ct, ChordSelectionFwd selectionId (NewChordType ct) )
+                ( Music.ChordType.toString ct, ChordSelectionFwd (NewChordType ct) )
             )
 
 
-currentVoicingMethodDropdownLabel : SelectionId -> Model -> String
-currentVoicingMethodDropdownLabel selectionId model =
-    let
-        voicingMethod =
-            case selectionId of
-                FirstSelection ->
-                    model.chordOne.voicingMethod
-
-                SecondSelection ->
-                    model.chordTwo.voicingMethod
-    in
-    case voicingMethod of
+currentVoicingMethodDropdownLabel : Model -> String
+currentVoicingMethodDropdownLabel model =
+    case model.chordSelection.voicingMethod of
         Just ( name, _ ) ->
             name
 
@@ -397,46 +412,28 @@ currentVoicingMethodDropdownLabel selectionId model =
             "—"
 
 
-voicingMethodOptions : SelectionId -> List ( String, Msg )
-voicingMethodOptions selectionId =
-    [ ( "Close", ChordSelectionFwd selectionId (NewVoicingMethod ( "Close", Music.Voicing.FourPart.close )) )
-    , ( "Drop-2", ChordSelectionFwd selectionId (NewVoicingMethod ( "Drop-2", Music.Voicing.FourPart.drop2 )) )
-    , ( "Drop-3", ChordSelectionFwd selectionId (NewVoicingMethod ( "Drop-3", Music.Voicing.FourPart.drop3 )) )
-    , ( "Drop-2-and-4", ChordSelectionFwd selectionId (NewVoicingMethod ( "Drop-2-and-4", Music.Voicing.FourPart.drop2and4 )) )
-    , ( "Spread", ChordSelectionFwd selectionId (NewVoicingMethod ( "Spread", Music.Voicing.FourPart.spread )) )
+voicingMethodOptions : List ( String, Msg )
+voicingMethodOptions =
+    [ ( "Close", ChordSelectionFwd (NewVoicingMethod ( "Close", Music.Voicing.FourPart.close )) )
+    , ( "Drop-2", ChordSelectionFwd (NewVoicingMethod ( "Drop-2", Music.Voicing.FourPart.drop2 )) )
+    , ( "Drop-3", ChordSelectionFwd (NewVoicingMethod ( "Drop-3", Music.Voicing.FourPart.drop3 )) )
+    , ( "Drop-2-and-4", ChordSelectionFwd (NewVoicingMethod ( "Drop-2-and-4", Music.Voicing.FourPart.drop2and4 )) )
+    , ( "Spread", ChordSelectionFwd (NewVoicingMethod ( "Spread", Music.Voicing.FourPart.spread )) )
     ]
 
 
-currentVoicingDropdownLabel : SelectionId -> Model -> String
-currentVoicingDropdownLabel selectionId model =
-    let
-        voicing =
-            case selectionId of
-                FirstSelection ->
-                    model.chordOne.voicing
-
-                SecondSelection ->
-                    model.chordTwo.voicing
-    in
-    Maybe.map Music.Voicing.FourPart.toString voicing
+currentVoicingDropdownLabel : Model -> String
+currentVoicingDropdownLabel model =
+    Maybe.map Music.Voicing.FourPart.toString model.chordSelection.voicing
         |> Maybe.withDefault "—"
 
 
-voicingOptions : SelectionId -> Model -> List ( String, Msg )
-voicingOptions selectionId model =
-    let
-        newVoicingOptions =
-            case selectionId of
-                FirstSelection ->
-                    model.chordOne.voicingOptions
-
-                SecondSelection ->
-                    model.chordTwo.voicingOptions
-    in
-    newVoicingOptions
+voicingOptions : Model -> List ( String, Msg )
+voicingOptions model =
+    model.chordSelection.voicingOptions
         |> List.map
             (\v ->
-                ( Music.Voicing.FourPart.toString v, ChordSelectionFwd selectionId (NewVoicing v) )
+                ( Music.Voicing.FourPart.toString v, ChordSelectionFwd (NewVoicing v) )
             )
 
 
@@ -454,6 +451,7 @@ viewDropdown id label options model =
             ]
         , Element.below
             (viewMenu id options model)
+        , Element.width Element.fill
         ]
         { onPress =
             case model.dropdownMenu of
@@ -465,10 +463,13 @@ viewDropdown id label options model =
         , label =
             Element.row
                 [ Element.spacing 10
+                , Element.width Element.fill
                 ]
                 [ Element.el []
                     (Element.text label)
-                , Element.el []
+                , Element.el
+                    [ Element.alignRight
+                    ]
                     (Element.html viewDropdownArrow)
                 ]
         }
@@ -548,7 +549,7 @@ newAbcOutput model =
                 |> String.join ""
                 |> (\str -> "[" ++ str ++ "]")
     in
-    [ "X:1\n", "K:C\n", chordToAbc model.chordOne, chordToAbc model.chordTwo ]
+    [ "X:1\n", "K:C\n", chordToAbc model.chordSelection ]
         |> String.join " "
         |> abcOutput
 

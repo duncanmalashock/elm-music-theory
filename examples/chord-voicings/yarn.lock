@@ -3221,13 +3221,8 @@ micromatch@^3.0.4, micromatch@^3.1.10, micromatch@^3.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.2"
 
-"midi@git+https://github.com/paulrosen/MIDI.js.git#abcjs":
-  version "0.4.2"
-  resolved "git+https://github.com/paulrosen/MIDI.js.git#e593ffef81a0350f99448e3ab8111957145ff6b2"
-
 "midi@https://github.com/paulrosen/MIDI.js.git#abcjs":
   version "0.4.2"
-  uid e593ffef81a0350f99448e3ab8111957145ff6b2
   resolved "https://github.com/paulrosen/MIDI.js.git#e593ffef81a0350f99448e3ab8111957145ff6b2"
 
 miller-rabin@^4.0.0:
@@ -5126,6 +5121,11 @@ wcwidth@^1.0.1:
   integrity sha1-8LDc+RW8X/FSivrbLA4XtTLaL+g=
   dependencies:
     defaults "^1.0.3"
+
+webaudiofont@^2.5.53:
+  version "2.5.53"
+  resolved "https://registry.yarnpkg.com/webaudiofont/-/webaudiofont-2.5.53.tgz#139de8de01970a94e5bfd6daa187bff4c3915a12"
+  integrity sha512-X7SyUMn5wM4QtJE88x4JDReLHpNvg5wxmeQtO5ueyg9Cby46fsgpZkJBolHWcs0KXPIEem+4qSnAT9F9D/PR+g==
 
 webidl-conversions@^4.0.2:
   version "4.0.2"
