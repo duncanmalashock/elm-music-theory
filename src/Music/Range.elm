@@ -88,7 +88,7 @@ range lower upper =
 
 {-| Get the lower boundary of a range:
 
-    min sopranoVoice Pitch.c4
+    min sopranoVoice == Pitch.c4
 
 -}
 min : Range -> Pitch.Pitch
@@ -98,7 +98,7 @@ min theRange =
 
 {-| Get the upper boundary of a range:
 
-    max sopranoVoice Pitch.c6
+    max sopranoVoice == Pitch.c6
 
 -}
 max : Range -> Pitch.Pitch

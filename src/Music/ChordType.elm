@@ -33,7 +33,7 @@ Chord [factors](https://en.wikipedia.org/wiki/Factor_%28chord%29) (such as the "
 
 ## Categorizing factors
 
-Categorize factors into certain useful data structures. Helpful when creating custom `VoicingMethod`s.
+Categorize factors into certain useful data structures. Helpful when creating [custom voicing methods](Music-Voicing-FivePart#custom-voicing-methods).
 
 @docs categorizeFactors, CategorizedFactors
 @docs availableTensions, AvailableTensions
@@ -345,7 +345,7 @@ type alias CategorizedFactors =
 
     toString majorSeventh == "M7"
 
-Want more control over chord symbols? See `classify` in the **Custom chord symbols** section.
+Want more control over chord symbols? See the [classify](Music-ChordType#classify) function.
 
 -}
 toString : ChordType -> String
@@ -358,7 +358,7 @@ toString chordType =
     classify dominantNinthFlatThirteen
         == Classification MajorTriad (Just MinorSeventh) Ninth [ MinorThirteenth ]
 
-You can read more about how to use the `Classification` type in the **Chord.Classification** module.
+You can read more about how to use the `Classification` type in the [Chord.Classification](Music-Chord-Classification) module.
 
 -}
 classify : ChordType -> Classification
@@ -654,7 +654,7 @@ dominantThirteenthSharpEleven =
         |> withMinorSeventh
     -- equivalent to `halfDiminishedSeventh`
 
-Note: because there is no unified model for naming any given chord, your custom chord may not work with the `toString` function in this module.
+Note: because there is no unified model for naming any given chord, your custom chord may not work with the [toString](Music-ChordType#toString) function in this module.
 
 -}
 custom : ChordType

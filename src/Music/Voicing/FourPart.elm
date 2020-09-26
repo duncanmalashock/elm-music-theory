@@ -30,7 +30,7 @@ module Music.Voicing.FourPart exposing
 
 # Generating voicings
 
-This package's recommended way of creating four-part `Voicing`s is to use the `Chord.voiceFourParts` function along with `VoicingMethod`s like the ones in this module:
+This package's recommended way of creating four-part `Voicing`s is to use the [Chord.voiceFourParts](Music-Chord#voicing-chords) function along with `VoicingMethod`s like the ones in this module:
 
     Chord.voiceFourParts
         { voiceOne = Range.sopranoVoice

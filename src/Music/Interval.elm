@@ -67,7 +67,7 @@ Intervals have direction: a perfect fifth up is different from a perfect fifth d
 
 ## Compound intervals
 
-Note: This module includes constructors for compound intervals up to the thirteenth, which is the highest interval found in standard chords in tonal music. If you need larger compound intervals, take a look at the `add` or `addOctave` helper functions in this module.
+Note: This module includes constructors for compound intervals up to the thirteenth, which is the highest interval found in standard chords in tonal music. If you need larger compound intervals, take a look at the [add](#add) or [addOctave](#addOctave) helper functions in this module.
 
 
 ### Diatonic

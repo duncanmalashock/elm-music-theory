@@ -35,7 +35,7 @@ A chord is defined by a set of pitch classes. But pitch classes can't be heard; 
 1.  choosing some number of its pitch classes, and
 2.  turning them into pitches within specific octaves, so that they can be played or sung.
 
-Learn more about how this works in the `Voicing.ThreePart`, `Voicing.FourPart`, and `Voicing.FivePart` modules.
+Learn more about how this works in the [Voicing.ThreePart](Music-Voicing-ThreePart), [Voicing.FourPart](Music-Voicing-FourPart), and [Voicing.FivePart](Music-Voicing-FivePart) modules.
 
 @docs voiceThreeParts, voiceFourParts, voiceFiveParts
 
@@ -170,9 +170,9 @@ voiceFiveParts voiceRanges methods chord =
         |> List.Extra.uniqueBy (Voicing.toString FivePart.allVoices)
 
 
-{-| Get a chord's chord type:
+{-| Get a chord's type:
 
-    chordType (dominantSeventh PitchClass.a) == dominantSeventh
+    chordType (dominantSeventh PitchClass.a) == ChordType.dominantSeventh
 
 -}
 chordType : Chord -> ChordType.ChordType
@@ -231,7 +231,7 @@ detect chordTypesToDetect pitchClasses =
            , PitchClass.e
            ]
 
-Note: for converting a chord to pitches, I recommend looking at the functions in the **Voicing chords** section below.
+Note: for converting a chord to pitches, I recommend looking at the functions in the [Voicing chords](#voicing-chords) section below.
 
 -}
 toPitchClasses : Chord -> List PitchClass.PitchClass
@@ -527,7 +527,7 @@ dominantThirteenthSharpEleven pitchClass =
     Chord.chord pitchClass ChordType.dominantThirteenthSharpEleven
 
 
-{-| Create a chord from a custom chord type. For use with `ChordType.custom`:
+{-| Create a chord from a custom chord type. For use with [ChordType.custom](Music-ChordType#custom):
 
     myCustomChordType =
         ChordType.custom

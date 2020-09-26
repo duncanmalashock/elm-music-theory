@@ -1,6 +1,6 @@
 # Contributing to this project
 
-Welcome! Thanks for your interest in `elm-music-theory`.
+👋 Welcome! Thanks for your interest in `elm-music-theory`.
 
 If you have a question about this project, feel free to reach out to me at `@duncan` on the [Elm Slack](https://elmlang.herokuapp.com/).
 

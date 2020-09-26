@@ -29,7 +29,7 @@ module Music.Voicing.ThreePart exposing
 
 # Generating voicings
 
-This package's recommended way of creating three-part `Voicing`s is to use the `Chord.voiceThreeParts` function along with `VoicingMethod`s like the ones in this module:
+This package's recommended way of creating three-part `Voicing`s is to use the [Chord.voiceThreeParts](Music-Chord#voicing-chords) function along with `VoicingMethod`s like the ones in this module:
 
     Chord.voiceThreeParts
         { voiceOne = Range.sopranoVoice

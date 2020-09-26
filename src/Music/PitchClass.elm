@@ -53,7 +53,7 @@ type alias PitchClass =
     PitchClass.PitchClass
 
 
-{-| Convert a Pitch to a PitchClass.
+{-| Convert a `Pitch` to a `PitchClass`.
 
     fromPitch Pitch.c4 == c
 

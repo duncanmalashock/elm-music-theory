@@ -41,5 +41,5 @@ Source code for these examples can be found in the `/examples` directory of this
 
 Thanks to Leif Battermann ([@battermann](https://github.com/battermann)) for collaborating with me on early versions of some of the designs that are central to this package.  
 
-Thanks to my friend and colleague Matthew Griffith ([@mdgriffith](https://github.com/mdgriffith)) for his generous advice and encouragement. This package was designed better (and released sooner) because of him.
+Thanks to my friend and colleague Matthew Griffith ([@mdgriffith](https://github.com/mdgriffith)) for his advice and encouragement. This package was designed better (and released sooner) because of him.
 
