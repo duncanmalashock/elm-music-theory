@@ -1,0 +1,9 @@
+{
+  "name": "lead-sheet",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "elm make src/Main.elm --output=js/elm.js"
+  }
+}
