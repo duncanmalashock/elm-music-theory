@@ -3,7 +3,7 @@ module Music.Voicing.FourPart exposing
     , voicing
     , chord, span, center
     , voiceOne, voiceTwo, voiceThree, voiceFour
-    , containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
+    , containsPitch, containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
     , commonTones
     , usesContraryMotion, containsParallelFifths, containsParallelOctaves
     , totalSemitoneDistance, semitoneDistanceVoiceOne, semitoneDistanceVoiceTwo, semitoneDistanceVoiceThree, semitoneDistanceVoiceFour
@@ -84,7 +84,7 @@ There are cases where you may want to create a specific voicing you have in mind
 # Voices
 
 @docs voiceOne, voiceTwo, voiceThree, voiceFour
-@docs containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
+@docs containsPitch, containsPitchInVoiceOne, containsPitchInVoiceTwo, containsPitchInVoiceThree, containsPitchInVoiceFour
 
 
 # Comparing voicings
@@ -564,6 +564,18 @@ If the pitches given do not match the chord, this function will return `Err` wit
 voicing : Pitches -> Chord.Chord -> Result (List PitchClass.PitchClass) Voicing
 voicing pitches theChord =
     FourPart.voicing pitches theChord
+
+
+{-| Find out whether a voicing contains a specific pitch:
+
+     containsPitch Pitch.d5 myVoicing == True
+
+-}
+containsPitch : Pitch.Pitch -> Voicing -> Bool
+containsPitch pitch theVoicing =
+    FourPart.allVoices
+        |> List.map (\get -> Voicing.containsPitchInVoice pitch get theVoicing)
+        |> List.any identity
 
 
 {-| Find out whether a voicing has a specific pitch in the first voice:
