@@ -237,6 +237,7 @@ view model =
     , body =
         [ Element.layout
             [ Element.width Element.fill
+            , Element.Font.family [ Element.Font.typeface "IBM Plex Sans" ]
             ]
             (viewBody model)
         ]
@@ -272,17 +273,48 @@ viewBody model =
                     )
     in
     Element.column
-        [ Element.width <| Element.px 1000
-        , Element.centerX
-        , Element.spacing 30
-        , Element.paddingXY 0 50
+        [ Element.width Element.fill
         ]
-        [ viewTitle model
-        , Element.column
+        [ Element.el
             [ Element.width Element.fill
-            , Element.spacing 40
+            , Element.Font.color (Element.rgb 1 1 1)
+            , Element.Background.color (Element.rgb255 18 147 216)
+            , Element.height (Element.px 64)
             ]
-            (List.map (viewRow model.currentKey) rows)
+            (Element.row
+                [ Element.width <| Element.px 800
+                , Element.centerX
+                , Element.centerY
+                , Element.spacing 16
+                ]
+                [ Element.link
+                    [ Element.Font.size 24
+                    , Element.Font.bold
+                    ]
+                    { url = "https://package.elm-lang.org/packages/duncanmalashock/elm-music-theory/latest/"
+                    , label =
+                        Element.text "elm-music-theory"
+                    }
+                , Element.el
+                    [ Element.Font.size 16
+                    , Element.alignRight
+                    ]
+                    (Element.text "Example: \"Lead Sheet\"")
+                ]
+            )
+        , Element.column
+            [ Element.width <| Element.px 800
+            , Element.centerX
+            , Element.spacing 30
+            , Element.paddingXY 0 50
+            ]
+            [ viewTitle model
+            , Element.column
+                [ Element.width Element.fill
+                , Element.spacing 40
+                ]
+                (List.map (viewRow model.currentKey) rows)
+            ]
         ]
 
 
@@ -296,7 +328,7 @@ viewTitle model =
         [ Element.el
             [ Element.centerX
             , Element.Font.bold
-            , Element.Font.size 40
+            , Element.Font.size 32
             ]
             (Element.text model.metadata.title)
         , Element.row
@@ -316,7 +348,7 @@ viewTitle model =
 viewControls : Model -> Element.Element Msg
 viewControls model =
     Element.row
-        [ Element.spacing 10 ]
+        [ Element.spacing 5 ]
         [ viewKeyControl model
         , viewAnalyzeButton model
         ]
@@ -350,13 +382,13 @@ viewKeyControl model =
     if model.analyzed then
         Element.Input.button
             [ Element.padding 10
-            , Element.Border.rounded 3
+            , Element.Border.rounded 2
             , Element.alignLeft
             , Element.Font.size 16
             , Element.Font.color (Element.rgb 1 1 1)
-            , Element.Background.color (Element.rgb 0.3 0.5 0.9)
+            , Element.Background.color (Element.rgb255 18 147 216)
             , Element.mouseOver
-                [ Element.Background.color (Element.rgb 0.2 0.4 0.8)
+                [ Element.Background.color (Element.rgb255 47 127 190)
                 ]
             , Element.below
                 (viewKeyMenu model)
@@ -413,7 +445,8 @@ viewKeyMenu model =
                             , Element.width Element.fill
                             , Element.mouseOver
                                 [ Element.Background.color
-                                    (Element.rgb 0.9 0.9 0.9)
+                                    (Element.rgb255 18 147 216)
+                                , Element.Font.color (Element.rgb 1 1 1)
                                 ]
                             ]
                             { onPress = Just (NewKeyChosen key)
@@ -427,11 +460,12 @@ viewKeyMenu model =
             , Element.width (Element.px 150)
             , Element.height (Element.px 200)
             , Element.htmlAttribute (Html.Attributes.style "overflow-y" "auto")
+            , Element.Border.rounded 2
             , Element.Border.shadow
                 { offset = ( 0, 0 )
-                , size = 2
-                , blur = 2
-                , color = Element.rgba 0 0 0 0.2
+                , size = 3
+                , blur = 0
+                , color = Element.rgba255 18 147 216 0.5
                 }
             ]
             keyMenuItems
@@ -463,13 +497,14 @@ viewAnalyzeButton model =
                 [ Element.htmlAttribute
                     (Html.Attributes.style "cursor" "not-allowed")
                 , Element.Background.color (Element.rgb 0.8 0.8 0.8)
-                , Element.Font.color (Element.rgb 0.9 0.9 0.9)
+                , Element.Font.color (Element.rgb 1.0 1.0 1.0)
                 ]
 
             else
-                [ Element.Background.color (Element.rgb 0.3 0.5 0.9)
+                [ Element.Font.color (Element.rgb 1 1 1)
+                , Element.Background.color (Element.rgb255 18 147 216)
                 , Element.mouseOver
-                    [ Element.Background.color (Element.rgb 0.2 0.4 0.8)
+                    [ Element.Background.color (Element.rgb255 47 127 190)
                     ]
                 ]
     in
@@ -477,7 +512,7 @@ viewAnalyzeButton model =
         ([ Element.Font.size 16
          , Element.Font.color (Element.rgb 1 1 1)
          , Element.padding 10
-         , Element.Border.rounded 3
+         , Element.Border.rounded 2
          , Element.alignLeft
          ]
             ++ conditionalStyles
@@ -542,7 +577,7 @@ viewMaybeEntry currentKey maybeEntry =
     case maybeEntry of
         Just entry ->
             Element.column
-                [ Element.Font.size 26
+                [ Element.Font.size 24
                 , Element.Font.bold
                 , Element.width Element.fill
                 , Element.spacing 18
@@ -560,7 +595,7 @@ viewAnalysis currentKey maybeAnalysis =
     case maybeAnalysis of
         Just analysis ->
             Element.el
-                [ Element.Font.size 20
+                [ Element.Font.size 16
                 , Element.Font.bold
                 , Element.Font.color (Element.rgb 0.5 0.5 0.5)
                 ]

@@ -129,7 +129,7 @@ view model =
     , body =
         [ Element.layout
             [ Element.width Element.fill
-            , Element.paddingEach { top = 50, right = 0, bottom = 0, left = 0 }
+            , Element.Font.family [ Element.Font.typeface "IBM Plex Sans" ]
             ]
             (viewBody model)
         ]
@@ -139,11 +139,43 @@ view model =
 viewBody : Model -> Element.Element Msg
 viewBody model =
     Element.column
-        [ Element.width (Element.px 400)
-        , Element.centerX
+        [ Element.width Element.fill
+        , Element.spacing 50
         ]
-        [ viewAbc
-        , viewSelectionControls model
+        [ Element.el
+            [ Element.width Element.fill
+            , Element.Font.color (Element.rgb 1 1 1)
+            , Element.Background.color (Element.rgb255 18 147 216)
+            , Element.height (Element.px 64)
+            ]
+            (Element.row
+                [ Element.width <| Element.px 800
+                , Element.centerX
+                , Element.centerY
+                , Element.spacing 16
+                ]
+                [ Element.link
+                    [ Element.Font.size 24
+                    , Element.Font.bold
+                    ]
+                    { url = "https://package.elm-lang.org/packages/duncanmalashock/elm-music-theory/latest/"
+                    , label =
+                        Element.text "elm-music-theory"
+                    }
+                , Element.el
+                    [ Element.Font.size 16
+                    , Element.alignRight
+                    ]
+                    (Element.text "Example: \"Chord Voicings\"")
+                ]
+            )
+        , Element.column
+            [ Element.width (Element.px 400)
+            , Element.centerX
+            ]
+            [ viewAbc
+            , viewSelectionControls model
+            ]
         ]
 
 
@@ -550,16 +582,16 @@ viewDropdown : String -> String -> List ( String, Msg ) -> Model -> Element.Elem
 viewDropdown id label options model =
     Element.Input.button
         [ Element.padding 10
-        , Element.Border.rounded 3
+        , Element.Border.rounded 2
         , Element.alignLeft
         , Element.Font.size 16
         , Element.Font.color (Element.rgb 1 1 1)
-        , Element.Background.color (Element.rgb 0.3 0.5 0.9)
+        , Element.Background.color (Element.rgb255 18 147 216)
         , Element.mouseOver
-            [ Element.Background.color (Element.rgb 0.2 0.4 0.8)
+            [ Element.Background.color (Element.rgb255 47 127 190)
             ]
         , Element.below
-            (viewMenu id options model)
+            (viewMenu id options label model)
         , Element.width Element.fill
         ]
         { onPress =
@@ -584,24 +616,33 @@ viewDropdown id label options model =
         }
 
 
-viewMenu : String -> List ( String, Msg ) -> Model -> Element.Element Msg
-viewMenu id options model =
+viewMenu : String -> List ( String, Msg ) -> String -> Model -> Element.Element Msg
+viewMenu id options selectedLabel model =
     let
         keyMenuItems =
             options
                 |> List.map
                     (\( label, msg ) ->
                         Element.Input.button
-                            [ Element.Font.size 16
-                            , Element.padding 10
-                            , Element.alignLeft
-                            , Element.Font.color (Element.rgb 0 0 0)
-                            , Element.width Element.fill
-                            , Element.mouseOver
+                            ([ Element.Font.size 16
+                             , Element.padding 10
+                             , Element.alignLeft
+                             , Element.width Element.fill
+                             , Element.mouseOver
                                 [ Element.Background.color
-                                    (Element.rgb 0.9 0.9 0.9)
+                                    (Element.rgb255 18 147 216)
+                                , Element.Font.color (Element.rgb 1 1 1)
                                 ]
-                            ]
+                             ]
+                                ++ (if selectedLabel == label then
+                                        [ Element.Font.color (Element.rgb255 18 147 216)
+                                        ]
+
+                                    else
+                                        [ Element.Font.color (Element.rgb 0 0 0)
+                                        ]
+                                   )
+                            )
                             { onPress = Just msg
                             , label = Element.text label
                             }
@@ -611,12 +652,14 @@ viewMenu id options model =
             Element.column
                 [ Element.Background.color (Element.rgb 1 1 1)
                 , Element.height (Element.px 165)
+                , Element.htmlAttribute (Html.Attributes.style "width" "100%")
                 , Element.htmlAttribute (Html.Attributes.style "overflow-y" "auto")
+                , Element.Border.rounded 2
                 , Element.Border.shadow
                     { offset = ( 0, 0 )
-                    , size = 2
-                    , blur = 2
-                    , color = Element.rgba 0 0 0 0.2
+                    , size = 3
+                    , blur = 0
+                    , color = Element.rgba255 18 147 216 0.5
                     }
                 ]
                 keyMenuItems

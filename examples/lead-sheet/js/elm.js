@@ -2778,7 +2778,7 @@ function _VirtualDom_applyFacts(domNode, eventNode, facts)
 		key === 'a4'
 			? _VirtualDom_applyAttrsNS(domNode, value)
 			:
-		(key !== 'value' || key !== 'checked' || domNode[key] !== value) && (domNode[key] = value);
+		((key !== 'value' && key !== 'checked') || domNode[key] !== value) && (domNode[key] = value);
 	}
 }
 
@@ -2807,7 +2807,7 @@ function _VirtualDom_applyAttrs(domNode, attrs)
 	for (var key in attrs)
 	{
 		var value = attrs[key];
-		value
+		typeof value !== 'undefined'
 			? domNode.setAttribute(key, value)
 			: domNode.removeAttribute(key);
 	}
@@ -2826,7 +2826,7 @@ function _VirtualDom_applyAttrsNS(domNode, nsAttrs)
 		var namespace = pair.f;
 		var value = pair.o;
 
-		value
+		typeof value !== 'undefined'
 			? domNode.setAttributeNS(namespace, key, value)
 			: domNode.removeAttributeNS(namespace, key);
 	}
@@ -3289,6 +3289,9 @@ function _VirtualDom_diffKeyedKids(xParent, yParent, patches, rootIndex)
 		var xNode = x.b;
 		var yNode = y.b;
 
+		var newMatch = undefined;
+		var oldMatch = undefined;
+
 		// check if keys match
 
 		if (xKey === yKey)
@@ -3311,14 +3314,14 @@ function _VirtualDom_diffKeyedKids(xParent, yParent, patches, rootIndex)
 		{
 			var xNextKey = xNext.a;
 			var xNextNode = xNext.b;
-			var oldMatch = yKey === xNextKey;
+			oldMatch = yKey === xNextKey;
 		}
 
 		if (yNext)
 		{
 			var yNextKey = yNext.a;
 			var yNextNode = yNext.b;
-			var newMatch = xKey === yNextKey;
+			newMatch = xKey === yNextKey;
 		}
 
 
@@ -3853,6 +3856,7 @@ function _VirtualDom_dekey(keyedNode)
 
 
 
+
 // ELEMENT
 
 
@@ -3928,10 +3932,15 @@ var _Browser_document = _Debugger_document || F4(function(impl, flagDecoder, deb
 // ANIMATION
 
 
+var _Browser_cancelAnimationFrame =
+	typeof cancelAnimationFrame !== 'undefined'
+		? cancelAnimationFrame
+		: function(id) { clearTimeout(id); };
+
 var _Browser_requestAnimationFrame =
 	typeof requestAnimationFrame !== 'undefined'
 		? requestAnimationFrame
-		: function(callback) { setTimeout(callback, 1000 / 60); };
+		: function(callback) { return setTimeout(callback, 1000 / 60); };
 
 
 function _Browser_makeAnimator(model, draw)
@@ -3981,7 +3990,7 @@ function _Browser_application(impl)
 
 			return F2(function(domNode, event)
 			{
-				if (!event.ctrlKey && !event.metaKey && !event.shiftKey && event.button < 1 && !domNode.target && !domNode.download)
+				if (!event.ctrlKey && !event.metaKey && !event.shiftKey && event.button < 1 && !domNode.target && !domNode.hasAttribute('download'))
 				{
 					event.preventDefault();
 					var href = domNode.href;
@@ -4093,12 +4102,12 @@ function _Browser_rAF()
 {
 	return _Scheduler_binding(function(callback)
 	{
-		var id = requestAnimationFrame(function() {
+		var id = _Browser_requestAnimationFrame(function() {
 			callback(_Scheduler_succeed(Date.now()));
 		});
 
 		return function() {
-			cancelAnimationFrame(id);
+			_Browser_cancelAnimationFrame(id);
 		};
 	});
 }
@@ -5111,483 +5120,6 @@ var $elm$core$Task$perform = F2(
 				A2($elm$core$Task$map, toMessage, task)));
 	});
 var $elm$browser$Browser$document = _Browser_document;
-var $author$project$Main$Closed = {$: 'Closed'};
-var $author$project$Music$Internal$Letter$B = {$: 'B'};
-var $author$project$Music$Internal$PitchClass$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var $elm$core$Basics$negate = function (n) {
-	return -n;
-};
-var $author$project$Music$Internal$PitchClass$flat = $author$project$Music$Internal$PitchClass$Offset(-1);
-var $author$project$Music$Internal$Key$Key = F2(
-	function (a, b) {
-		return {$: 'Key', a: a, b: b};
-	});
-var $author$project$Music$Internal$Key$Major = {$: 'Major'};
-var $author$project$Music$Internal$Key$major = function (root) {
-	return A2($author$project$Music$Internal$Key$Key, root, $author$project$Music$Internal$Key$Major);
-};
-var $author$project$Music$Internal$PitchClass$PitchClass = F2(
-	function (a, b) {
-		return {$: 'PitchClass', a: a, b: b};
-	});
-var $author$project$Music$Internal$PitchClass$pitchClass = F2(
-	function (l, o) {
-		return A2($author$project$Music$Internal$PitchClass$PitchClass, l, o);
-	});
-var $author$project$Music$Internal$Key$bFlat = $author$project$Music$Internal$Key$major(
-	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$B, $author$project$Music$Internal$PitchClass$flat));
-var $author$project$Music$Key$bFlat = $author$project$Music$Internal$Key$bFlat;
-var $author$project$Music$Internal$Letter$A = {$: 'A'};
-var $author$project$Music$Internal$PitchClass$natural = $author$project$Music$Internal$PitchClass$Offset(0);
-var $author$project$Music$Internal$PitchClass$a = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$natural);
-var $author$project$Music$PitchClass$a = $author$project$Music$Internal$PitchClass$a;
-var $author$project$Music$Internal$PitchClass$aFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$flat);
-var $author$project$Music$PitchClass$aFlat = $author$project$Music$Internal$PitchClass$aFlat;
-var $author$project$Music$Internal$PitchClass$bFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$B, $author$project$Music$Internal$PitchClass$flat);
-var $author$project$Music$PitchClass$bFlat = $author$project$Music$Internal$PitchClass$bFlat;
-var $author$project$Music$Internal$Letter$C = {$: 'C'};
-var $author$project$Music$Internal$PitchClass$c = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$C, $author$project$Music$Internal$PitchClass$natural);
-var $author$project$Music$PitchClass$c = $author$project$Music$Internal$PitchClass$c;
-var $author$project$Music$Internal$Letter$D = {$: 'D'};
-var $author$project$Music$Internal$PitchClass$d = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$D, $author$project$Music$Internal$PitchClass$natural);
-var $author$project$Music$PitchClass$d = $author$project$Music$Internal$PitchClass$d;
-var $author$project$Music$Internal$PitchClass$dFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$D, $author$project$Music$Internal$PitchClass$flat);
-var $author$project$Music$PitchClass$dFlat = $author$project$Music$Internal$PitchClass$dFlat;
-var $author$project$Music$Internal$Chord$Chord = F2(
-	function (a, b) {
-		return {$: 'Chord', a: a, b: b};
-	});
-var $author$project$Music$Internal$Chord$chord = F2(
-	function (rootPitchClass, theChordType) {
-		return A2($author$project$Music$Internal$Chord$Chord, rootPitchClass, theChordType);
-	});
-var $author$project$Music$Internal$ChordType$ChordType = function (a) {
-	return {$: 'ChordType', a: a};
-};
-var $author$project$Music$Internal$Interval$Interval = F3(
-	function (a, b, c) {
-		return {$: 'Interval', a: a, b: b, c: c};
-	});
-var $author$project$Music$Internal$Interval$Unison = {$: 'Unison'};
-var $author$project$Music$Internal$Interval$Offset = function (a) {
-	return {$: 'Offset', a: a};
-};
-var $author$project$Music$Internal$Interval$Perfect = function (a) {
-	return {$: 'Perfect', a: a};
-};
-var $author$project$Music$Internal$Interval$perfect = $author$project$Music$Internal$Interval$Perfect(
-	$author$project$Music$Internal$Interval$Offset(0));
-var $author$project$Music$Internal$Interval$Up = {$: 'Up'};
-var $author$project$Music$Internal$Interval$up = $author$project$Music$Internal$Interval$Up;
-var $author$project$Music$Internal$Interval$perfectUnison = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfect, $author$project$Music$Internal$Interval$Unison);
-var $author$project$Music$Internal$ChordType$chordType = $author$project$Music$Internal$ChordType$ChordType(
-	_List_fromArray(
-		[$author$project$Music$Internal$Interval$perfectUnison]));
-var $author$project$Music$Internal$ChordType$add = F2(
-	function (factorToAdd, _v0) {
-		var factorList = _v0.a;
-		return $author$project$Music$Internal$ChordType$ChordType(
-			A2($elm$core$List$cons, factorToAdd, factorList));
-	});
-var $author$project$Music$Internal$Interval$Seventh = {$: 'Seventh'};
-var $author$project$Music$Internal$Interval$Imperfect = function (a) {
-	return {$: 'Imperfect', a: a};
-};
-var $author$project$Music$Internal$Interval$imperfectDiminished = $author$project$Music$Internal$Interval$Imperfect(
-	$author$project$Music$Internal$Interval$Offset(-2));
-var $author$project$Music$Internal$Interval$diminishedSeventh = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$imperfectDiminished, $author$project$Music$Internal$Interval$Seventh);
-var $author$project$Music$Internal$Interval$major = $author$project$Music$Internal$Interval$Imperfect(
-	$author$project$Music$Internal$Interval$Offset(0));
-var $author$project$Music$Internal$Interval$majorSeventh = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$major, $author$project$Music$Internal$Interval$Seventh);
-var $author$project$Music$Internal$Interval$Sixth = {$: 'Sixth'};
-var $author$project$Music$Internal$Interval$majorSixth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$major, $author$project$Music$Internal$Interval$Sixth);
-var $author$project$Music$Internal$Interval$minor = $author$project$Music$Internal$Interval$Imperfect(
-	$author$project$Music$Internal$Interval$Offset(-1));
-var $author$project$Music$Internal$Interval$minorSeventh = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$minor, $author$project$Music$Internal$Interval$Seventh);
-var $elm$core$Basics$composeR = F3(
-	function (f, g, x) {
-		return g(
-			f(x));
-	});
-var $elm$core$List$filter = F2(
-	function (isGood, list) {
-		return A3(
-			$elm$core$List$foldr,
-			F2(
-				function (x, xs) {
-					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
-				}),
-			_List_Nil,
-			list);
-	});
-var $elm$core$Basics$not = _Basics_not;
-var $author$project$Music$Internal$ChordType$remove = F2(
-	function (factorToRemove, _v0) {
-		var factorList = _v0.a;
-		return $author$project$Music$Internal$ChordType$ChordType(
-			A2(
-				$elm$core$List$filter,
-				A2(
-					$elm$core$Basics$composeR,
-					$elm$core$Basics$eq(factorToRemove),
-					$elm$core$Basics$not),
-				factorList));
-	});
-var $author$project$Music$Internal$ChordType$withDiminishedSeventh = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$diminishedSeventh,
-		A2(
-			$author$project$Music$Internal$ChordType$remove,
-			$author$project$Music$Internal$Interval$majorSixth,
-			A2(
-				$author$project$Music$Internal$ChordType$remove,
-				$author$project$Music$Internal$Interval$minorSeventh,
-				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorSeventh, factors))));
-};
-var $author$project$Music$Internal$Interval$Fifth = {$: 'Fifth'};
-var $author$project$Music$Internal$Interval$perfectDiminished = $author$project$Music$Internal$Interval$Perfect(
-	$author$project$Music$Internal$Interval$Offset(-1));
-var $author$project$Music$Internal$Interval$diminishedFifth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfectDiminished, $author$project$Music$Internal$Interval$Fifth);
-var $author$project$Music$Internal$Interval$perfectFifth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfect, $author$project$Music$Internal$Interval$Fifth);
-var $author$project$Music$Internal$ChordType$withFlatFifth = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$diminishedFifth,
-		A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$perfectFifth, factors));
-};
-var $author$project$Music$Internal$Interval$Second = {$: 'Second'};
-var $author$project$Music$Internal$Interval$majorSecond = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$major, $author$project$Music$Internal$Interval$Second);
-var $author$project$Music$Internal$Interval$Third = {$: 'Third'};
-var $author$project$Music$Internal$Interval$majorThird = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$major, $author$project$Music$Internal$Interval$Third);
-var $author$project$Music$Internal$Interval$minorThird = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$minor, $author$project$Music$Internal$Interval$Third);
-var $author$project$Music$Internal$Interval$Fourth = {$: 'Fourth'};
-var $author$project$Music$Internal$Interval$perfectFourth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfect, $author$project$Music$Internal$Interval$Fourth);
-var $author$project$Music$Internal$ChordType$withMinorThird = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$minorThird,
-		A2(
-			$author$project$Music$Internal$ChordType$remove,
-			$author$project$Music$Internal$Interval$perfectFourth,
-			A2(
-				$author$project$Music$Internal$ChordType$remove,
-				$author$project$Music$Internal$Interval$majorSecond,
-				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorThird, factors))));
-};
-var $author$project$Music$Internal$ChordType$diminishedSeventh = $author$project$Music$Internal$ChordType$withDiminishedSeventh(
-	$author$project$Music$Internal$ChordType$withFlatFifth(
-		$author$project$Music$Internal$ChordType$withMinorThird($author$project$Music$Internal$ChordType$chordType)));
-var $author$project$Music$Chord$diminishedSeventh = function (pitchClass) {
-	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$diminishedSeventh);
-};
-var $author$project$Music$Internal$Interval$perfectAugmented = $author$project$Music$Internal$Interval$Perfect(
-	$author$project$Music$Internal$Interval$Offset(1));
-var $author$project$Music$Internal$Interval$augmentedFifth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfectAugmented, $author$project$Music$Internal$Interval$Fifth);
-var $author$project$Music$Internal$ChordType$withFifth = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$perfectFifth,
-		A2(
-			$author$project$Music$Internal$ChordType$remove,
-			$author$project$Music$Internal$Interval$augmentedFifth,
-			A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$diminishedFifth, factors)));
-};
-var $author$project$Music$Internal$ChordType$withMajorThird = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$majorThird,
-		A2(
-			$author$project$Music$Internal$ChordType$remove,
-			$author$project$Music$Internal$Interval$perfectFourth,
-			A2(
-				$author$project$Music$Internal$ChordType$remove,
-				$author$project$Music$Internal$Interval$majorSecond,
-				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$minorThird, factors))));
-};
-var $author$project$Music$Internal$ChordType$withMinorSeventh = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$minorSeventh,
-		A2(
-			$author$project$Music$Internal$ChordType$remove,
-			$author$project$Music$Internal$Interval$majorSixth,
-			A2(
-				$author$project$Music$Internal$ChordType$remove,
-				$author$project$Music$Internal$Interval$diminishedSeventh,
-				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorSeventh, factors))));
-};
-var $author$project$Music$Internal$ChordType$dominantSeventh = $author$project$Music$Internal$ChordType$withMinorSeventh(
-	$author$project$Music$Internal$ChordType$withFifth(
-		$author$project$Music$Internal$ChordType$withMajorThird($author$project$Music$Internal$ChordType$chordType)));
-var $author$project$Music$Chord$dominantSeventh = function (pitchClass) {
-	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$dominantSeventh);
-};
-var $author$project$Music$Internal$Interval$Octave = function (a) {
-	return {$: 'Octave', a: a};
-};
-var $author$project$Music$Internal$Interval$majorNinth = A3(
-	$author$project$Music$Internal$Interval$Interval,
-	$author$project$Music$Internal$Interval$up,
-	$author$project$Music$Internal$Interval$major,
-	$author$project$Music$Internal$Interval$Octave($author$project$Music$Internal$Interval$Second));
-var $author$project$Music$Internal$Interval$minorNinth = A3(
-	$author$project$Music$Internal$Interval$Interval,
-	$author$project$Music$Internal$Interval$up,
-	$author$project$Music$Internal$Interval$minor,
-	$author$project$Music$Internal$Interval$Octave($author$project$Music$Internal$Interval$Second));
-var $author$project$Music$Internal$ChordType$withFlatNinth = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$minorNinth,
-		A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorNinth, factors));
-};
-var $author$project$Music$Internal$ChordType$dominantSeventhFlatNine = $author$project$Music$Internal$ChordType$withFlatNinth(
-	$author$project$Music$Internal$ChordType$withMinorSeventh(
-		$author$project$Music$Internal$ChordType$withFifth(
-			$author$project$Music$Internal$ChordType$withMajorThird($author$project$Music$Internal$ChordType$chordType))));
-var $author$project$Music$Chord$dominantSeventhFlatNine = function (pitchClass) {
-	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$dominantSeventhFlatNine);
-};
-var $author$project$Music$Internal$ChordType$withSuspendedFourth = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$perfectFourth,
-		A2(
-			$author$project$Music$Internal$ChordType$remove,
-			$author$project$Music$Internal$Interval$majorSecond,
-			A2(
-				$author$project$Music$Internal$ChordType$remove,
-				$author$project$Music$Internal$Interval$minorThird,
-				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorThird, factors))));
-};
-var $author$project$Music$Internal$ChordType$dominantSeventhSus4 = $author$project$Music$Internal$ChordType$withMinorSeventh(
-	$author$project$Music$Internal$ChordType$withFifth(
-		$author$project$Music$Internal$ChordType$withSuspendedFourth($author$project$Music$Internal$ChordType$chordType)));
-var $author$project$Music$Chord$dominantSeventhSus4 = function (pitchClass) {
-	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$dominantSeventhSus4);
-};
-var $author$project$Music$Internal$Letter$E = {$: 'E'};
-var $author$project$Music$Internal$PitchClass$e = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$E, $author$project$Music$Internal$PitchClass$natural);
-var $author$project$Music$PitchClass$e = $author$project$Music$Internal$PitchClass$e;
-var $author$project$Music$Internal$PitchClass$eFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$E, $author$project$Music$Internal$PitchClass$flat);
-var $author$project$Music$PitchClass$eFlat = $author$project$Music$Internal$PitchClass$eFlat;
-var $author$project$Music$Internal$Letter$F = {$: 'F'};
-var $author$project$Music$Internal$PitchClass$f = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$F, $author$project$Music$Internal$PitchClass$natural);
-var $author$project$Music$PitchClass$f = $author$project$Music$Internal$PitchClass$f;
-var $author$project$Music$Internal$Letter$G = {$: 'G'};
-var $author$project$Music$Internal$PitchClass$g = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$G, $author$project$Music$Internal$PitchClass$natural);
-var $author$project$Music$PitchClass$g = $author$project$Music$Internal$PitchClass$g;
-var $author$project$Music$Internal$PitchClass$gFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$G, $author$project$Music$Internal$PitchClass$flat);
-var $author$project$Music$PitchClass$gFlat = $author$project$Music$Internal$PitchClass$gFlat;
-var $author$project$Music$Internal$ChordType$halfDiminished = $author$project$Music$Internal$ChordType$withMinorSeventh(
-	$author$project$Music$Internal$ChordType$withFlatFifth(
-		$author$project$Music$Internal$ChordType$withMinorThird($author$project$Music$Internal$ChordType$chordType)));
-var $author$project$Music$Chord$halfDiminished = function (pitchClass) {
-	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$halfDiminished);
-};
-var $author$project$Music$Internal$ChordType$withMajorSeventh = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$majorSeventh,
-		A2(
-			$author$project$Music$Internal$ChordType$remove,
-			$author$project$Music$Internal$Interval$majorSixth,
-			A2(
-				$author$project$Music$Internal$ChordType$remove,
-				$author$project$Music$Internal$Interval$diminishedSeventh,
-				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$minorSeventh, factors))));
-};
-var $author$project$Music$Internal$ChordType$majorSeventh = $author$project$Music$Internal$ChordType$withMajorSeventh(
-	$author$project$Music$Internal$ChordType$withFifth(
-		$author$project$Music$Internal$ChordType$withMajorThird($author$project$Music$Internal$ChordType$chordType)));
-var $author$project$Music$Chord$majorSeventh = function (pitchClass) {
-	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$majorSeventh);
-};
-var $author$project$Music$Internal$Interval$majorThirteenth = A3(
-	$author$project$Music$Internal$Interval$Interval,
-	$author$project$Music$Internal$Interval$up,
-	$author$project$Music$Internal$Interval$major,
-	$author$project$Music$Internal$Interval$Octave($author$project$Music$Internal$Interval$Sixth));
-var $author$project$Music$Internal$Interval$minorThirteenth = A3(
-	$author$project$Music$Internal$Interval$Interval,
-	$author$project$Music$Internal$Interval$up,
-	$author$project$Music$Internal$Interval$minor,
-	$author$project$Music$Internal$Interval$Octave($author$project$Music$Internal$Interval$Sixth));
-var $author$project$Music$Internal$ChordType$withSixth = function (factors) {
-	return A2(
-		$author$project$Music$Internal$ChordType$add,
-		$author$project$Music$Internal$Interval$majorSixth,
-		A2(
-			$author$project$Music$Internal$ChordType$remove,
-			$author$project$Music$Internal$Interval$majorThirteenth,
-			A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$minorThirteenth, factors)));
-};
-var $author$project$Music$Internal$ChordType$majorSix = $author$project$Music$Internal$ChordType$withSixth(
-	$author$project$Music$Internal$ChordType$withFifth(
-		$author$project$Music$Internal$ChordType$withMajorThird($author$project$Music$Internal$ChordType$chordType)));
-var $author$project$Music$Chord$majorSix = function (pitchClass) {
-	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$majorSix);
-};
-var $author$project$Main$Measure = F2(
-	function (a, b) {
-		return {$: 'Measure', a: a, b: b};
-	});
-var $author$project$Main$initEntry = function (chord) {
-	return $elm$core$Maybe$Just(
-		{analysis: $elm$core$Maybe$Nothing, chord: chord});
-};
-var $author$project$Main$measure1Chord = function (first) {
-	return A2(
-		$author$project$Main$Measure,
-		$author$project$Main$initEntry(first),
-		$elm$core$Maybe$Nothing);
-};
-var $author$project$Main$measure2Chords = F2(
-	function (first, second) {
-		return A2(
-			$author$project$Main$Measure,
-			$author$project$Main$initEntry(first),
-			$author$project$Main$initEntry(second));
-	});
-var $author$project$Music$Internal$ChordType$minorSeventh = $author$project$Music$Internal$ChordType$withMinorSeventh(
-	$author$project$Music$Internal$ChordType$withFifth(
-		$author$project$Music$Internal$ChordType$withMinorThird($author$project$Music$Internal$ChordType$chordType)));
-var $author$project$Music$Chord$minorSeventh = function (pitchClass) {
-	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$minorSeventh);
-};
-var $author$project$Main$initialMeasures = _List_fromArray(
-	[
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
-		$author$project$Music$Chord$diminishedSeventh($author$project$Music$PitchClass$dFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$aFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$aFlat)),
-		$author$project$Main$measure1Chord(
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$halfDiminished($author$project$Music$PitchClass$e),
-		$author$project$Music$Chord$dominantSeventhFlatNine($author$project$Music$PitchClass$a)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$dFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$dominantSeventhSus4($author$project$Music$PitchClass$c),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$c)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
-		$author$project$Music$Chord$diminishedSeventh($author$project$Music$PitchClass$dFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
-		$author$project$Main$measure1Chord(
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$halfDiminished($author$project$Music$PitchClass$a),
-		$author$project$Music$Chord$dominantSeventhFlatNine($author$project$Music$PitchClass$d)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$gFlat)),
-		$author$project$Main$measure1Chord(
-		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
-		$author$project$Main$measure1Chord(
-		$author$project$Music$Chord$majorSix($author$project$Music$PitchClass$bFlat)),
-		A2(
-		$author$project$Main$measure2Chords,
-		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
-		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f))
-	]);
-var $elm$core$Platform$Cmd$batch = _Platform_batch;
-var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
-var $author$project$Main$init = function (flags) {
-	return _Utils_Tuple2(
-		{analyzed: false, currentKey: $author$project$Music$Key$bFlat, dropdownMenu: $author$project$Main$Closed, measures: $author$project$Main$initialMeasures},
-		$elm$core$Platform$Cmd$none);
-};
 var $author$project$Main$KeyDropdownClickedOut = {$: 'KeyDropdownClickedOut'};
 var $author$project$Main$KeyDropdownClosed = {$: 'KeyDropdownClosed'};
 var $elm$core$Platform$Sub$batch = _Platform_batch;
@@ -6125,7 +5657,7 @@ var $elm$browser$Browser$Events$on = F3(
 			A3($elm$browser$Browser$Events$MySub, node, name, decoder));
 	});
 var $elm$browser$Browser$Events$onClick = A2($elm$browser$Browser$Events$on, $elm$browser$Browser$Events$Document, 'click');
-var $author$project$Main$subscriptions = function (model) {
+var $author$project$Main$dropdownMenuSubscriptions = function (model) {
 	var _v0 = model.dropdownMenu;
 	switch (_v0.$) {
 		case 'Open':
@@ -6139,6 +5671,489 @@ var $author$project$Main$subscriptions = function (model) {
 		default:
 			return $elm$core$Platform$Sub$none;
 	}
+};
+var $author$project$Main$Closed = {$: 'Closed'};
+var $author$project$Music$Internal$Letter$B = {$: 'B'};
+var $author$project$Music$Internal$PitchClass$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var $elm$core$Basics$negate = function (n) {
+	return -n;
+};
+var $author$project$Music$Internal$PitchClass$flat = $author$project$Music$Internal$PitchClass$Offset(-1);
+var $author$project$Music$Internal$Key$Key = F2(
+	function (a, b) {
+		return {$: 'Key', a: a, b: b};
+	});
+var $author$project$Music$Internal$Key$Major = {$: 'Major'};
+var $author$project$Music$Internal$Key$major = function (root) {
+	return A2($author$project$Music$Internal$Key$Key, root, $author$project$Music$Internal$Key$Major);
+};
+var $author$project$Music$Internal$PitchClass$PitchClass = F2(
+	function (a, b) {
+		return {$: 'PitchClass', a: a, b: b};
+	});
+var $author$project$Music$Internal$PitchClass$pitchClass = F2(
+	function (l, o) {
+		return A2($author$project$Music$Internal$PitchClass$PitchClass, l, o);
+	});
+var $author$project$Music$Internal$Key$bFlat = $author$project$Music$Internal$Key$major(
+	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$B, $author$project$Music$Internal$PitchClass$flat));
+var $author$project$Music$Key$bFlat = $author$project$Music$Internal$Key$bFlat;
+var $author$project$Music$Internal$Letter$A = {$: 'A'};
+var $author$project$Music$Internal$PitchClass$natural = $author$project$Music$Internal$PitchClass$Offset(0);
+var $author$project$Music$Internal$PitchClass$a = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$natural);
+var $author$project$Music$PitchClass$a = $author$project$Music$Internal$PitchClass$a;
+var $author$project$Music$Internal$PitchClass$aFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$A, $author$project$Music$Internal$PitchClass$flat);
+var $author$project$Music$PitchClass$aFlat = $author$project$Music$Internal$PitchClass$aFlat;
+var $author$project$Music$Internal$PitchClass$bFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$B, $author$project$Music$Internal$PitchClass$flat);
+var $author$project$Music$PitchClass$bFlat = $author$project$Music$Internal$PitchClass$bFlat;
+var $author$project$Music$Internal$Letter$C = {$: 'C'};
+var $author$project$Music$Internal$PitchClass$c = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$C, $author$project$Music$Internal$PitchClass$natural);
+var $author$project$Music$PitchClass$c = $author$project$Music$Internal$PitchClass$c;
+var $author$project$Music$Internal$Letter$D = {$: 'D'};
+var $author$project$Music$Internal$PitchClass$d = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$D, $author$project$Music$Internal$PitchClass$natural);
+var $author$project$Music$PitchClass$d = $author$project$Music$Internal$PitchClass$d;
+var $author$project$Music$Internal$PitchClass$dFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$D, $author$project$Music$Internal$PitchClass$flat);
+var $author$project$Music$PitchClass$dFlat = $author$project$Music$Internal$PitchClass$dFlat;
+var $author$project$Music$Internal$Chord$Chord = F2(
+	function (a, b) {
+		return {$: 'Chord', a: a, b: b};
+	});
+var $author$project$Music$Internal$Chord$chord = F2(
+	function (rootPitchClass, theChordType) {
+		return A2($author$project$Music$Internal$Chord$Chord, rootPitchClass, theChordType);
+	});
+var $author$project$Music$Internal$ChordType$ChordType = function (a) {
+	return {$: 'ChordType', a: a};
+};
+var $author$project$Music$Internal$Interval$Interval = F3(
+	function (a, b, c) {
+		return {$: 'Interval', a: a, b: b, c: c};
+	});
+var $author$project$Music$Internal$Interval$Unison = {$: 'Unison'};
+var $author$project$Music$Internal$Interval$Offset = function (a) {
+	return {$: 'Offset', a: a};
+};
+var $author$project$Music$Internal$Interval$Perfect = function (a) {
+	return {$: 'Perfect', a: a};
+};
+var $author$project$Music$Internal$Interval$perfect = $author$project$Music$Internal$Interval$Perfect(
+	$author$project$Music$Internal$Interval$Offset(0));
+var $author$project$Music$Internal$Interval$Up = {$: 'Up'};
+var $author$project$Music$Internal$Interval$up = $author$project$Music$Internal$Interval$Up;
+var $author$project$Music$Internal$Interval$perfectUnison = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfect, $author$project$Music$Internal$Interval$Unison);
+var $author$project$Music$Internal$ChordType$chordType = $author$project$Music$Internal$ChordType$ChordType(
+	_List_fromArray(
+		[$author$project$Music$Internal$Interval$perfectUnison]));
+var $author$project$Music$Internal$ChordType$add = F2(
+	function (factorToAdd, _v0) {
+		var factorList = _v0.a;
+		return $author$project$Music$Internal$ChordType$ChordType(
+			A2($elm$core$List$cons, factorToAdd, factorList));
+	});
+var $author$project$Music$Internal$Interval$Seventh = {$: 'Seventh'};
+var $author$project$Music$Internal$Interval$Imperfect = function (a) {
+	return {$: 'Imperfect', a: a};
+};
+var $author$project$Music$Internal$Interval$imperfectDiminished = $author$project$Music$Internal$Interval$Imperfect(
+	$author$project$Music$Internal$Interval$Offset(-2));
+var $author$project$Music$Internal$Interval$diminishedSeventh = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$imperfectDiminished, $author$project$Music$Internal$Interval$Seventh);
+var $author$project$Music$Internal$Interval$major = $author$project$Music$Internal$Interval$Imperfect(
+	$author$project$Music$Internal$Interval$Offset(0));
+var $author$project$Music$Internal$Interval$majorSeventh = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$major, $author$project$Music$Internal$Interval$Seventh);
+var $author$project$Music$Internal$Interval$Sixth = {$: 'Sixth'};
+var $author$project$Music$Internal$Interval$majorSixth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$major, $author$project$Music$Internal$Interval$Sixth);
+var $author$project$Music$Internal$Interval$minor = $author$project$Music$Internal$Interval$Imperfect(
+	$author$project$Music$Internal$Interval$Offset(-1));
+var $author$project$Music$Internal$Interval$minorSeventh = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$minor, $author$project$Music$Internal$Interval$Seventh);
+var $elm$core$Basics$composeR = F3(
+	function (f, g, x) {
+		return g(
+			f(x));
+	});
+var $elm$core$List$filter = F2(
+	function (isGood, list) {
+		return A3(
+			$elm$core$List$foldr,
+			F2(
+				function (x, xs) {
+					return isGood(x) ? A2($elm$core$List$cons, x, xs) : xs;
+				}),
+			_List_Nil,
+			list);
+	});
+var $elm$core$Basics$not = _Basics_not;
+var $author$project$Music$Internal$ChordType$remove = F2(
+	function (factorToRemove, _v0) {
+		var factorList = _v0.a;
+		return $author$project$Music$Internal$ChordType$ChordType(
+			A2(
+				$elm$core$List$filter,
+				A2(
+					$elm$core$Basics$composeR,
+					$elm$core$Basics$eq(factorToRemove),
+					$elm$core$Basics$not),
+				factorList));
+	});
+var $author$project$Music$Internal$ChordType$withDiminishedSeventh = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$diminishedSeventh,
+		A2(
+			$author$project$Music$Internal$ChordType$remove,
+			$author$project$Music$Internal$Interval$majorSixth,
+			A2(
+				$author$project$Music$Internal$ChordType$remove,
+				$author$project$Music$Internal$Interval$minorSeventh,
+				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorSeventh, factors))));
+};
+var $author$project$Music$Internal$Interval$Fifth = {$: 'Fifth'};
+var $author$project$Music$Internal$Interval$perfectDiminished = $author$project$Music$Internal$Interval$Perfect(
+	$author$project$Music$Internal$Interval$Offset(-1));
+var $author$project$Music$Internal$Interval$diminishedFifth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfectDiminished, $author$project$Music$Internal$Interval$Fifth);
+var $author$project$Music$Internal$Interval$perfectFifth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfect, $author$project$Music$Internal$Interval$Fifth);
+var $author$project$Music$Internal$ChordType$withFlatFifth = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$diminishedFifth,
+		A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$perfectFifth, factors));
+};
+var $author$project$Music$Internal$Interval$Second = {$: 'Second'};
+var $author$project$Music$Internal$Interval$majorSecond = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$major, $author$project$Music$Internal$Interval$Second);
+var $author$project$Music$Internal$Interval$Third = {$: 'Third'};
+var $author$project$Music$Internal$Interval$majorThird = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$major, $author$project$Music$Internal$Interval$Third);
+var $author$project$Music$Internal$Interval$minorThird = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$minor, $author$project$Music$Internal$Interval$Third);
+var $author$project$Music$Internal$Interval$Fourth = {$: 'Fourth'};
+var $author$project$Music$Internal$Interval$perfectFourth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfect, $author$project$Music$Internal$Interval$Fourth);
+var $author$project$Music$Internal$ChordType$withMinorThird = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$minorThird,
+		A2(
+			$author$project$Music$Internal$ChordType$remove,
+			$author$project$Music$Internal$Interval$perfectFourth,
+			A2(
+				$author$project$Music$Internal$ChordType$remove,
+				$author$project$Music$Internal$Interval$majorSecond,
+				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorThird, factors))));
+};
+var $author$project$Music$Internal$ChordType$diminishedSeventh = $author$project$Music$Internal$ChordType$withDiminishedSeventh(
+	$author$project$Music$Internal$ChordType$withFlatFifth(
+		$author$project$Music$Internal$ChordType$withMinorThird($author$project$Music$Internal$ChordType$chordType)));
+var $author$project$Music$Chord$diminishedSeventh = function (pitchClass) {
+	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$diminishedSeventh);
+};
+var $author$project$Music$Internal$Interval$perfectAugmented = $author$project$Music$Internal$Interval$Perfect(
+	$author$project$Music$Internal$Interval$Offset(1));
+var $author$project$Music$Internal$Interval$augmentedFifth = A3($author$project$Music$Internal$Interval$Interval, $author$project$Music$Internal$Interval$up, $author$project$Music$Internal$Interval$perfectAugmented, $author$project$Music$Internal$Interval$Fifth);
+var $author$project$Music$Internal$ChordType$withFifth = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$perfectFifth,
+		A2(
+			$author$project$Music$Internal$ChordType$remove,
+			$author$project$Music$Internal$Interval$augmentedFifth,
+			A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$diminishedFifth, factors)));
+};
+var $author$project$Music$Internal$ChordType$withMajorThird = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$majorThird,
+		A2(
+			$author$project$Music$Internal$ChordType$remove,
+			$author$project$Music$Internal$Interval$perfectFourth,
+			A2(
+				$author$project$Music$Internal$ChordType$remove,
+				$author$project$Music$Internal$Interval$majorSecond,
+				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$minorThird, factors))));
+};
+var $author$project$Music$Internal$ChordType$withMinorSeventh = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$minorSeventh,
+		A2(
+			$author$project$Music$Internal$ChordType$remove,
+			$author$project$Music$Internal$Interval$majorSixth,
+			A2(
+				$author$project$Music$Internal$ChordType$remove,
+				$author$project$Music$Internal$Interval$diminishedSeventh,
+				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorSeventh, factors))));
+};
+var $author$project$Music$Internal$ChordType$dominantSeventh = $author$project$Music$Internal$ChordType$withMinorSeventh(
+	$author$project$Music$Internal$ChordType$withFifth(
+		$author$project$Music$Internal$ChordType$withMajorThird($author$project$Music$Internal$ChordType$chordType)));
+var $author$project$Music$Chord$dominantSeventh = function (pitchClass) {
+	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$dominantSeventh);
+};
+var $author$project$Music$Internal$Interval$Octave = function (a) {
+	return {$: 'Octave', a: a};
+};
+var $author$project$Music$Internal$Interval$majorNinth = A3(
+	$author$project$Music$Internal$Interval$Interval,
+	$author$project$Music$Internal$Interval$up,
+	$author$project$Music$Internal$Interval$major,
+	$author$project$Music$Internal$Interval$Octave($author$project$Music$Internal$Interval$Second));
+var $author$project$Music$Internal$Interval$minorNinth = A3(
+	$author$project$Music$Internal$Interval$Interval,
+	$author$project$Music$Internal$Interval$up,
+	$author$project$Music$Internal$Interval$minor,
+	$author$project$Music$Internal$Interval$Octave($author$project$Music$Internal$Interval$Second));
+var $author$project$Music$Internal$ChordType$withFlatNinth = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$minorNinth,
+		A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorNinth, factors));
+};
+var $author$project$Music$Internal$ChordType$dominantSeventhFlatNine = $author$project$Music$Internal$ChordType$withFlatNinth(
+	$author$project$Music$Internal$ChordType$withMinorSeventh(
+		$author$project$Music$Internal$ChordType$withFifth(
+			$author$project$Music$Internal$ChordType$withMajorThird($author$project$Music$Internal$ChordType$chordType))));
+var $author$project$Music$Chord$dominantSeventhFlatNine = function (pitchClass) {
+	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$dominantSeventhFlatNine);
+};
+var $author$project$Music$Internal$ChordType$withSuspendedFourth = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$perfectFourth,
+		A2(
+			$author$project$Music$Internal$ChordType$remove,
+			$author$project$Music$Internal$Interval$majorSecond,
+			A2(
+				$author$project$Music$Internal$ChordType$remove,
+				$author$project$Music$Internal$Interval$minorThird,
+				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$majorThird, factors))));
+};
+var $author$project$Music$Internal$ChordType$dominantSeventhSus4 = $author$project$Music$Internal$ChordType$withMinorSeventh(
+	$author$project$Music$Internal$ChordType$withFifth(
+		$author$project$Music$Internal$ChordType$withSuspendedFourth($author$project$Music$Internal$ChordType$chordType)));
+var $author$project$Music$Chord$dominantSeventhSus4 = function (pitchClass) {
+	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$dominantSeventhSus4);
+};
+var $author$project$Music$Internal$Letter$E = {$: 'E'};
+var $author$project$Music$Internal$PitchClass$e = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$E, $author$project$Music$Internal$PitchClass$natural);
+var $author$project$Music$PitchClass$e = $author$project$Music$Internal$PitchClass$e;
+var $author$project$Music$Internal$PitchClass$eFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$E, $author$project$Music$Internal$PitchClass$flat);
+var $author$project$Music$PitchClass$eFlat = $author$project$Music$Internal$PitchClass$eFlat;
+var $author$project$Music$Internal$Letter$F = {$: 'F'};
+var $author$project$Music$Internal$PitchClass$f = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$F, $author$project$Music$Internal$PitchClass$natural);
+var $author$project$Music$PitchClass$f = $author$project$Music$Internal$PitchClass$f;
+var $author$project$Music$Internal$Letter$G = {$: 'G'};
+var $author$project$Music$Internal$PitchClass$g = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$G, $author$project$Music$Internal$PitchClass$natural);
+var $author$project$Music$PitchClass$g = $author$project$Music$Internal$PitchClass$g;
+var $author$project$Music$Internal$PitchClass$gFlat = A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$G, $author$project$Music$Internal$PitchClass$flat);
+var $author$project$Music$PitchClass$gFlat = $author$project$Music$Internal$PitchClass$gFlat;
+var $author$project$Music$Internal$ChordType$halfDiminished = $author$project$Music$Internal$ChordType$withMinorSeventh(
+	$author$project$Music$Internal$ChordType$withFlatFifth(
+		$author$project$Music$Internal$ChordType$withMinorThird($author$project$Music$Internal$ChordType$chordType)));
+var $author$project$Music$Chord$halfDiminished = function (pitchClass) {
+	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$halfDiminished);
+};
+var $author$project$Music$Internal$ChordType$withMajorSeventh = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$majorSeventh,
+		A2(
+			$author$project$Music$Internal$ChordType$remove,
+			$author$project$Music$Internal$Interval$majorSixth,
+			A2(
+				$author$project$Music$Internal$ChordType$remove,
+				$author$project$Music$Internal$Interval$diminishedSeventh,
+				A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$minorSeventh, factors))));
+};
+var $author$project$Music$Internal$ChordType$majorSeventh = $author$project$Music$Internal$ChordType$withMajorSeventh(
+	$author$project$Music$Internal$ChordType$withFifth(
+		$author$project$Music$Internal$ChordType$withMajorThird($author$project$Music$Internal$ChordType$chordType)));
+var $author$project$Music$Chord$majorSeventh = function (pitchClass) {
+	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$majorSeventh);
+};
+var $author$project$Music$Internal$Interval$majorThirteenth = A3(
+	$author$project$Music$Internal$Interval$Interval,
+	$author$project$Music$Internal$Interval$up,
+	$author$project$Music$Internal$Interval$major,
+	$author$project$Music$Internal$Interval$Octave($author$project$Music$Internal$Interval$Sixth));
+var $author$project$Music$Internal$Interval$minorThirteenth = A3(
+	$author$project$Music$Internal$Interval$Interval,
+	$author$project$Music$Internal$Interval$up,
+	$author$project$Music$Internal$Interval$minor,
+	$author$project$Music$Internal$Interval$Octave($author$project$Music$Internal$Interval$Sixth));
+var $author$project$Music$Internal$ChordType$withSixth = function (factors) {
+	return A2(
+		$author$project$Music$Internal$ChordType$add,
+		$author$project$Music$Internal$Interval$majorSixth,
+		A2(
+			$author$project$Music$Internal$ChordType$remove,
+			$author$project$Music$Internal$Interval$majorThirteenth,
+			A2($author$project$Music$Internal$ChordType$remove, $author$project$Music$Internal$Interval$minorThirteenth, factors)));
+};
+var $author$project$Music$Internal$ChordType$majorSix = $author$project$Music$Internal$ChordType$withSixth(
+	$author$project$Music$Internal$ChordType$withFifth(
+		$author$project$Music$Internal$ChordType$withMajorThird($author$project$Music$Internal$ChordType$chordType)));
+var $author$project$Music$Chord$majorSix = function (pitchClass) {
+	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$majorSix);
+};
+var $author$project$Main$Measure = F2(
+	function (a, b) {
+		return {$: 'Measure', a: a, b: b};
+	});
+var $author$project$Main$initEntry = function (chord) {
+	return $elm$core$Maybe$Just(
+		{analysis: $elm$core$Maybe$Nothing, chord: chord});
+};
+var $author$project$Main$measure1Chord = function (first) {
+	return A2(
+		$author$project$Main$Measure,
+		$author$project$Main$initEntry(first),
+		$elm$core$Maybe$Nothing);
+};
+var $author$project$Main$measure2Chords = F2(
+	function (first, second) {
+		return A2(
+			$author$project$Main$Measure,
+			$author$project$Main$initEntry(first),
+			$author$project$Main$initEntry(second));
+	});
+var $author$project$Music$Internal$ChordType$minorSeventh = $author$project$Music$Internal$ChordType$withMinorSeventh(
+	$author$project$Music$Internal$ChordType$withFifth(
+		$author$project$Music$Internal$ChordType$withMinorThird($author$project$Music$Internal$ChordType$chordType)));
+var $author$project$Music$Chord$minorSeventh = function (pitchClass) {
+	return A2($author$project$Music$Internal$Chord$chord, pitchClass, $author$project$Music$Internal$ChordType$minorSeventh);
+};
+var $author$project$Main$initialMeasures = _List_fromArray(
+	[
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
+		$author$project$Music$Chord$diminishedSeventh($author$project$Music$PitchClass$dFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$aFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$aFlat)),
+		$author$project$Main$measure1Chord(
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$halfDiminished($author$project$Music$PitchClass$e),
+		$author$project$Music$Chord$dominantSeventhFlatNine($author$project$Music$PitchClass$a)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$dFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$dominantSeventhSus4($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$c)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$d),
+		$author$project$Music$Chord$diminishedSeventh($author$project$Music$PitchClass$dFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$eFlat),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$g)),
+		$author$project$Main$measure1Chord(
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$halfDiminished($author$project$Music$PitchClass$a),
+		$author$project$Music$Chord$dominantSeventhFlatNine($author$project$Music$PitchClass$d)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$g),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$gFlat)),
+		$author$project$Main$measure1Chord(
+		$author$project$Music$Chord$majorSeventh($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f)),
+		$author$project$Main$measure1Chord(
+		$author$project$Music$Chord$majorSix($author$project$Music$PitchClass$bFlat)),
+		A2(
+		$author$project$Main$measure2Chords,
+		$author$project$Music$Chord$minorSeventh($author$project$Music$PitchClass$c),
+		$author$project$Music$Chord$dominantSeventh($author$project$Music$PitchClass$f))
+	]);
+var $elm$core$Platform$Cmd$batch = _Platform_batch;
+var $elm$core$Platform$Cmd$none = $elm$core$Platform$Cmd$batch(_List_Nil);
+var $author$project$Main$init = function (flags) {
+	return _Utils_Tuple2(
+		{
+			analyzed: false,
+			currentKey: $author$project$Music$Key$bFlat,
+			dropdownMenu: $author$project$Main$Closed,
+			measures: $author$project$Main$initialMeasures,
+			metadata: {composer: 'R. Rodgers, L. Hart', title: 'My Romance'}
+		},
+		$elm$core$Platform$Cmd$none);
 };
 var $author$project$Main$Open = {$: 'Open'};
 var $author$project$Main$ReadyToClose = {$: 'ReadyToClose'};
@@ -7194,6 +7209,73 @@ var $author$project$Main$update = F2(
 					$elm$core$Platform$Cmd$none);
 		}
 	});
+var $mdgriffith$elm_ui$Internal$Model$FontFamily = F2(
+	function (a, b) {
+		return {$: 'FontFamily', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Internal$Model$StyleClass = F2(
+	function (a, b) {
+		return {$: 'StyleClass', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$Flag = function (a) {
+	return {$: 'Flag', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Flag$Second = function (a) {
+	return {$: 'Second', a: a};
+};
+var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
+var $mdgriffith$elm_ui$Internal$Flag$flag = function (i) {
+	return (i > 31) ? $mdgriffith$elm_ui$Internal$Flag$Second(1 << (i - 32)) : $mdgriffith$elm_ui$Internal$Flag$Flag(1 << i);
+};
+var $mdgriffith$elm_ui$Internal$Flag$fontFamily = $mdgriffith$elm_ui$Internal$Flag$flag(5);
+var $elm$core$String$toLower = _String_toLower;
+var $elm$core$String$words = _String_words;
+var $mdgriffith$elm_ui$Internal$Model$renderFontClassName = F2(
+	function (font, current) {
+		return _Utils_ap(
+			current,
+			function () {
+				switch (font.$) {
+					case 'Serif':
+						return 'serif';
+					case 'SansSerif':
+						return 'sans-serif';
+					case 'Monospace':
+						return 'monospace';
+					case 'Typeface':
+						var name = font.a;
+						return A2(
+							$elm$core$String$join,
+							'-',
+							$elm$core$String$words(
+								$elm$core$String$toLower(name)));
+					case 'ImportFont':
+						var name = font.a;
+						var url = font.b;
+						return A2(
+							$elm$core$String$join,
+							'-',
+							$elm$core$String$words(
+								$elm$core$String$toLower(name)));
+					default:
+						var name = font.a.name;
+						return A2(
+							$elm$core$String$join,
+							'-',
+							$elm$core$String$words(
+								$elm$core$String$toLower(name)));
+				}
+			}());
+	});
+var $mdgriffith$elm_ui$Element$Font$family = function (families) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$fontFamily,
+		A2(
+			$mdgriffith$elm_ui$Internal$Model$FontFamily,
+			A3($elm$core$List$foldl, $mdgriffith$elm_ui$Internal$Model$renderFontClassName, 'ff-', families),
+			families));
+};
 var $mdgriffith$elm_ui$Internal$Model$Fill = function (a) {
 	return {$: 'Fill', a: a};
 };
@@ -7329,16 +7411,6 @@ var $mdgriffith$elm_ui$Internal$Model$addKeyedChildren = F3(
 	});
 var $mdgriffith$elm_ui$Internal$Model$AsParagraph = {$: 'AsParagraph'};
 var $mdgriffith$elm_ui$Internal$Model$asParagraph = $mdgriffith$elm_ui$Internal$Model$AsParagraph;
-var $mdgriffith$elm_ui$Internal$Flag$Flag = function (a) {
-	return {$: 'Flag', a: a};
-};
-var $mdgriffith$elm_ui$Internal$Flag$Second = function (a) {
-	return {$: 'Second', a: a};
-};
-var $elm$core$Bitwise$shiftLeftBy = _Bitwise_shiftLeftBy;
-var $mdgriffith$elm_ui$Internal$Flag$flag = function (i) {
-	return (i > 31) ? $mdgriffith$elm_ui$Internal$Flag$Second(1 << (i - 32)) : $mdgriffith$elm_ui$Internal$Flag$Flag(1 << i);
-};
 var $mdgriffith$elm_ui$Internal$Flag$alignBottom = $mdgriffith$elm_ui$Internal$Flag$flag(41);
 var $mdgriffith$elm_ui$Internal$Flag$alignRight = $mdgriffith$elm_ui$Internal$Flag$flag(40);
 var $mdgriffith$elm_ui$Internal$Flag$centerX = $mdgriffith$elm_ui$Internal$Flag$flag(42);
@@ -12781,24 +12853,15 @@ var $mdgriffith$elm_ui$Internal$Model$Colored = F3(
 	function (a, b, c) {
 		return {$: 'Colored', a: a, b: b, c: c};
 	});
-var $mdgriffith$elm_ui$Internal$Model$FontFamily = F2(
-	function (a, b) {
-		return {$: 'FontFamily', a: a, b: b};
-	});
 var $mdgriffith$elm_ui$Internal$Model$FontSize = function (a) {
 	return {$: 'FontSize', a: a};
 };
 var $mdgriffith$elm_ui$Internal$Model$SansSerif = {$: 'SansSerif'};
-var $mdgriffith$elm_ui$Internal$Model$StyleClass = F2(
-	function (a, b) {
-		return {$: 'StyleClass', a: a, b: b};
-	});
 var $mdgriffith$elm_ui$Internal$Model$Typeface = function (a) {
 	return {$: 'Typeface', a: a};
 };
 var $mdgriffith$elm_ui$Internal$Flag$bgColor = $mdgriffith$elm_ui$Internal$Flag$flag(8);
 var $mdgriffith$elm_ui$Internal$Flag$fontColor = $mdgriffith$elm_ui$Internal$Flag$flag(14);
-var $mdgriffith$elm_ui$Internal$Flag$fontFamily = $mdgriffith$elm_ui$Internal$Flag$flag(5);
 var $mdgriffith$elm_ui$Internal$Flag$fontSize = $mdgriffith$elm_ui$Internal$Flag$flag(4);
 var $mdgriffith$elm_ui$Internal$Model$formatColorClass = function (_v0) {
 	var red = _v0.a;
@@ -12807,45 +12870,6 @@ var $mdgriffith$elm_ui$Internal$Model$formatColorClass = function (_v0) {
 	var alpha = _v0.d;
 	return $mdgriffith$elm_ui$Internal$Model$floatClass(red) + ('-' + ($mdgriffith$elm_ui$Internal$Model$floatClass(green) + ('-' + ($mdgriffith$elm_ui$Internal$Model$floatClass(blue) + ('-' + $mdgriffith$elm_ui$Internal$Model$floatClass(alpha))))));
 };
-var $elm$core$String$toLower = _String_toLower;
-var $elm$core$String$words = _String_words;
-var $mdgriffith$elm_ui$Internal$Model$renderFontClassName = F2(
-	function (font, current) {
-		return _Utils_ap(
-			current,
-			function () {
-				switch (font.$) {
-					case 'Serif':
-						return 'serif';
-					case 'SansSerif':
-						return 'sans-serif';
-					case 'Monospace':
-						return 'monospace';
-					case 'Typeface':
-						var name = font.a;
-						return A2(
-							$elm$core$String$join,
-							'-',
-							$elm$core$String$words(
-								$elm$core$String$toLower(name)));
-					case 'ImportFont':
-						var name = font.a;
-						var url = font.b;
-						return A2(
-							$elm$core$String$join,
-							'-',
-							$elm$core$String$words(
-								$elm$core$String$toLower(name)));
-					default:
-						var name = font.a.name;
-						return A2(
-							$elm$core$String$join,
-							'-',
-							$elm$core$String$words(
-								$elm$core$String$toLower(name)));
-				}
-			}());
-	});
 var $mdgriffith$elm_ui$Internal$Model$rootStyle = function () {
 	var families = _List_fromArray(
 		[
@@ -12906,6 +12930,7 @@ var $mdgriffith$elm_ui$Element$layoutWith = F3(
 	});
 var $mdgriffith$elm_ui$Element$layout = $mdgriffith$elm_ui$Element$layoutWith(
 	{options: _List_Nil});
+var $mdgriffith$elm_ui$Element$Font$typeface = $mdgriffith$elm_ui$Internal$Model$Typeface;
 var $author$project$Main$Row = F4(
 	function (a, b, c, d) {
 		return {$: 'Row', a: a, b: b, c: c, d: d};
@@ -12913,8 +12938,41 @@ var $author$project$Main$Row = F4(
 var $mdgriffith$elm_ui$Internal$Model$AlignX = function (a) {
 	return {$: 'AlignX', a: a};
 };
+var $mdgriffith$elm_ui$Internal$Model$Right = {$: 'Right'};
+var $mdgriffith$elm_ui$Element$alignRight = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Right);
+var $mdgriffith$elm_ui$Internal$Model$Class = F2(
+	function (a, b) {
+		return {$: 'Class', a: a, b: b};
+	});
+var $mdgriffith$elm_ui$Internal$Flag$fontWeight = $mdgriffith$elm_ui$Internal$Flag$flag(13);
+var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
 var $mdgriffith$elm_ui$Internal$Model$CenterX = {$: 'CenterX'};
 var $mdgriffith$elm_ui$Element$centerX = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$CenterX);
+var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
+	return {$: 'AlignY', a: a};
+};
+var $mdgriffith$elm_ui$Internal$Model$CenterY = {$: 'CenterY'};
+var $mdgriffith$elm_ui$Element$centerY = $mdgriffith$elm_ui$Internal$Model$AlignY($mdgriffith$elm_ui$Internal$Model$CenterY);
+var $mdgriffith$elm_ui$Element$Background$color = function (clr) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$bgColor,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Colored,
+			'bg-' + $mdgriffith$elm_ui$Internal$Model$formatColorClass(clr),
+			'background-color',
+			clr));
+};
+var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$fontColor,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$Colored,
+			'fc-' + $mdgriffith$elm_ui$Internal$Model$formatColorClass(fontColor),
+			'color',
+			fontColor));
+};
 var $mdgriffith$elm_ui$Internal$Model$AsColumn = {$: 'AsColumn'};
 var $mdgriffith$elm_ui$Internal$Model$asColumn = $mdgriffith$elm_ui$Internal$Model$AsColumn;
 var $mdgriffith$elm_ui$Internal$Model$Height = function (a) {
@@ -12944,6 +13002,23 @@ var $mdgriffith$elm_ui$Element$column = F2(
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
+	});
+var $mdgriffith$elm_ui$Element$el = F2(
+	function (attrs, child) {
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asEl,
+			$mdgriffith$elm_ui$Internal$Model$div,
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+					attrs)),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+				_List_fromArray(
+					[child])));
 	});
 var $elm$core$List$drop = F2(
 	function (n, list) {
@@ -13106,6 +13181,43 @@ var $elm_community$list_extra$List$Extra$greedyGroupsOf = F2(
 	function (size, xs) {
 		return A3($elm_community$list_extra$List$Extra$greedyGroupsOfWithStep, size, size, xs);
 	});
+var $elm$html$Html$Attributes$href = function (url) {
+	return A2(
+		$elm$html$Html$Attributes$stringProperty,
+		'href',
+		_VirtualDom_noJavaScriptUri(url));
+};
+var $elm$html$Html$Attributes$rel = _VirtualDom_attribute('rel');
+var $mdgriffith$elm_ui$Element$link = F2(
+	function (attrs, _v0) {
+		var url = _v0.url;
+		var label = _v0.label;
+		return A4(
+			$mdgriffith$elm_ui$Internal$Model$element,
+			$mdgriffith$elm_ui$Internal$Model$asEl,
+			$mdgriffith$elm_ui$Internal$Model$NodeName('a'),
+			A2(
+				$elm$core$List$cons,
+				$mdgriffith$elm_ui$Internal$Model$Attr(
+					$elm$html$Html$Attributes$href(url)),
+				A2(
+					$elm$core$List$cons,
+					$mdgriffith$elm_ui$Internal$Model$Attr(
+						$elm$html$Html$Attributes$rel('noopener noreferrer')),
+					A2(
+						$elm$core$List$cons,
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
+						A2(
+							$elm$core$List$cons,
+							$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
+							A2(
+								$elm$core$List$cons,
+								$mdgriffith$elm_ui$Internal$Model$htmlClass($mdgriffith$elm_ui$Internal$Style$classes.contentCenterX + (' ' + ($mdgriffith$elm_ui$Internal$Style$classes.contentCenterY + (' ' + $mdgriffith$elm_ui$Internal$Style$classes.link)))),
+								attrs))))),
+			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
+				_List_fromArray(
+					[label])));
+	});
 var $mdgriffith$elm_ui$Internal$Model$PaddingStyle = F5(
 	function (a, b, c, d, e) {
 		return {$: 'PaddingStyle', a: a, b: b, c: c, d: d, e: e};
@@ -13144,45 +13256,14 @@ var $mdgriffith$elm_ui$Internal$Model$Px = function (a) {
 	return {$: 'Px', a: a};
 };
 var $mdgriffith$elm_ui$Element$px = $mdgriffith$elm_ui$Internal$Model$Px;
-var $mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
-	function (a, b, c) {
-		return {$: 'SpacingStyle', a: a, b: b, c: c};
+var $mdgriffith$elm_ui$Element$rgb = F3(
+	function (r, g, b) {
+		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, r, g, b, 1);
 	});
-var $mdgriffith$elm_ui$Internal$Flag$spacing = $mdgriffith$elm_ui$Internal$Flag$flag(3);
-var $mdgriffith$elm_ui$Internal$Model$spacingName = F2(
-	function (x, y) {
-		return 'spacing-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y)));
+var $mdgriffith$elm_ui$Element$rgb255 = F3(
+	function (red, green, blue) {
+		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, 1);
 	});
-var $mdgriffith$elm_ui$Element$spacing = function (x) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$spacing,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
-			A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
-			x,
-			x));
-};
-var $mdgriffith$elm_ui$Element$el = F2(
-	function (attrs, child) {
-		return A4(
-			$mdgriffith$elm_ui$Internal$Model$element,
-			$mdgriffith$elm_ui$Internal$Model$asEl,
-			$mdgriffith$elm_ui$Internal$Model$div,
-			A2(
-				$elm$core$List$cons,
-				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$shrink),
-				A2(
-					$elm$core$List$cons,
-					$mdgriffith$elm_ui$Element$height($mdgriffith$elm_ui$Element$shrink),
-					attrs)),
-			$mdgriffith$elm_ui$Internal$Model$Unkeyed(
-				_List_fromArray(
-					[child])));
-	});
-var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
-var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
-var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
 var $mdgriffith$elm_ui$Internal$Model$AsRow = {$: 'AsRow'};
 var $mdgriffith$elm_ui$Internal$Model$asRow = $mdgriffith$elm_ui$Internal$Model$AsRow;
 var $mdgriffith$elm_ui$Element$row = F2(
@@ -13203,20 +13284,40 @@ var $mdgriffith$elm_ui$Element$row = F2(
 						attrs))),
 			$mdgriffith$elm_ui$Internal$Model$Unkeyed(children));
 	});
-var $mdgriffith$elm_ui$Element$Background$color = function (clr) {
+var $mdgriffith$elm_ui$Element$Font$size = function (i) {
 	return A2(
 		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$bgColor,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$Colored,
-			'bg-' + $mdgriffith$elm_ui$Internal$Model$formatColorClass(clr),
-			'background-color',
-			clr));
+		$mdgriffith$elm_ui$Internal$Flag$fontSize,
+		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
 };
-var $mdgriffith$elm_ui$Element$rgb = F3(
-	function (r, g, b) {
-		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, r, g, b, 1);
+var $mdgriffith$elm_ui$Internal$Model$SpacingStyle = F3(
+	function (a, b, c) {
+		return {$: 'SpacingStyle', a: a, b: b, c: c};
 	});
+var $mdgriffith$elm_ui$Internal$Flag$spacing = $mdgriffith$elm_ui$Internal$Flag$flag(3);
+var $mdgriffith$elm_ui$Internal$Model$spacingName = F2(
+	function (x, y) {
+		return 'spacing-' + ($elm$core$String$fromInt(x) + ('-' + $elm$core$String$fromInt(y)));
+	});
+var $mdgriffith$elm_ui$Element$spacing = function (x) {
+	return A2(
+		$mdgriffith$elm_ui$Internal$Model$StyleClass,
+		$mdgriffith$elm_ui$Internal$Flag$spacing,
+		A3(
+			$mdgriffith$elm_ui$Internal$Model$SpacingStyle,
+			A2($mdgriffith$elm_ui$Internal$Model$spacingName, x, x),
+			x,
+			x));
+};
+var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
+	return {$: 'Text', a: a};
+};
+var $mdgriffith$elm_ui$Element$text = function (content) {
+	return $mdgriffith$elm_ui$Internal$Model$Text(content);
+};
+var $mdgriffith$elm_ui$Element$fillPortion = $mdgriffith$elm_ui$Internal$Model$Fill;
+var $mdgriffith$elm_ui$Internal$Model$Empty = {$: 'Empty'};
+var $mdgriffith$elm_ui$Element$none = $mdgriffith$elm_ui$Internal$Model$Empty;
 var $author$project$Main$viewBarline = A2(
 	$mdgriffith$elm_ui$Element$el,
 	_List_fromArray(
@@ -13229,24 +13330,6 @@ var $author$project$Main$viewBarline = A2(
 			A3($mdgriffith$elm_ui$Element$rgb, 0, 0, 0))
 		]),
 	$mdgriffith$elm_ui$Element$none);
-var $mdgriffith$elm_ui$Internal$Model$Class = F2(
-	function (a, b) {
-		return {$: 'Class', a: a, b: b};
-	});
-var $mdgriffith$elm_ui$Internal$Flag$fontWeight = $mdgriffith$elm_ui$Internal$Flag$flag(13);
-var $mdgriffith$elm_ui$Element$Font$bold = A2($mdgriffith$elm_ui$Internal$Model$Class, $mdgriffith$elm_ui$Internal$Flag$fontWeight, $mdgriffith$elm_ui$Internal$Style$classes.bold);
-var $mdgriffith$elm_ui$Element$Font$size = function (i) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$fontSize,
-		$mdgriffith$elm_ui$Internal$Model$FontSize(i));
-};
-var $mdgriffith$elm_ui$Internal$Model$Text = function (a) {
-	return {$: 'Text', a: a};
-};
-var $mdgriffith$elm_ui$Element$text = function (content) {
-	return $mdgriffith$elm_ui$Internal$Model$Text(content);
-};
 var $author$project$Music$Internal$ChordType$FlatFive = {$: 'FlatFive'};
 var $author$project$Music$Internal$ChordType$SharpFive = {$: 'SharpFive'};
 var $author$project$Music$Internal$ChordType$alteredExtensionToSymbol = function (alteration) {
@@ -13642,16 +13725,6 @@ var $author$project$Music$Internal$Chord$symbol = function (_v0) {
 var $author$project$Music$Chord$toString = function (chord) {
 	return $author$project$Music$Internal$Chord$symbol(chord);
 };
-var $mdgriffith$elm_ui$Element$Font$color = function (fontColor) {
-	return A2(
-		$mdgriffith$elm_ui$Internal$Model$StyleClass,
-		$mdgriffith$elm_ui$Internal$Flag$fontColor,
-		A3(
-			$mdgriffith$elm_ui$Internal$Model$Colored,
-			'fc-' + $mdgriffith$elm_ui$Internal$Model$formatColorClass(fontColor),
-			'color',
-			fontColor));
-};
 var $author$project$Music$Internal$Analysis$defaultChordType = F2(
 	function (defaultChordTypes, numeral) {
 		switch (numeral.$) {
@@ -13794,7 +13867,7 @@ var $author$project$Main$viewAnalysis = F2(
 				$mdgriffith$elm_ui$Element$el,
 				_List_fromArray(
 					[
-						$mdgriffith$elm_ui$Element$Font$size(20),
+						$mdgriffith$elm_ui$Element$Font$size(16),
 						$mdgriffith$elm_ui$Element$Font$bold,
 						$mdgriffith$elm_ui$Element$Font$color(
 						A3($mdgriffith$elm_ui$Element$rgb, 0.5, 0.5, 0.5))
@@ -13813,7 +13886,7 @@ var $author$project$Main$viewMaybeEntry = F2(
 				$mdgriffith$elm_ui$Element$column,
 				_List_fromArray(
 					[
-						$mdgriffith$elm_ui$Element$Font$size(26),
+						$mdgriffith$elm_ui$Element$Font$size(24),
 						$mdgriffith$elm_ui$Element$Font$bold,
 						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
 						$mdgriffith$elm_ui$Element$spacing(18)
@@ -13905,8 +13978,6 @@ var $author$project$Main$viewRow = F2(
 					maybeViewMeasure(d)
 				]));
 	});
-var $mdgriffith$elm_ui$Internal$Model$Right = {$: 'Right'};
-var $mdgriffith$elm_ui$Element$alignRight = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Right);
 var $author$project$Main$AnalyzeClicked = {$: 'AnalyzeClicked'};
 var $mdgriffith$elm_ui$Internal$Model$Left = {$: 'Left'};
 var $mdgriffith$elm_ui$Element$alignLeft = $mdgriffith$elm_ui$Internal$Model$AlignX($mdgriffith$elm_ui$Internal$Model$Left);
@@ -14065,9 +14136,6 @@ var $mdgriffith$elm_ui$Internal$Model$PseudoSelector = F2(
 		return {$: 'PseudoSelector', a: a, b: b};
 	});
 var $mdgriffith$elm_ui$Internal$Flag$hover = $mdgriffith$elm_ui$Internal$Flag$flag(33);
-var $mdgriffith$elm_ui$Internal$Model$AlignY = function (a) {
-	return {$: 'AlignY', a: a};
-};
 var $mdgriffith$elm_ui$Internal$Model$Nearby = F2(
 	function (a, b) {
 		return {$: 'Nearby', a: a, b: b};
@@ -14233,16 +14301,18 @@ var $author$project$Main$viewAnalyzeButton = function (model) {
 			$mdgriffith$elm_ui$Element$Background$color(
 			A3($mdgriffith$elm_ui$Element$rgb, 0.8, 0.8, 0.8)),
 			$mdgriffith$elm_ui$Element$Font$color(
-			A3($mdgriffith$elm_ui$Element$rgb, 0.9, 0.9, 0.9))
+			A3($mdgriffith$elm_ui$Element$rgb, 1.0, 1.0, 1.0))
 		]) : _List_fromArray(
 		[
+			$mdgriffith$elm_ui$Element$Font$color(
+			A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1)),
 			$mdgriffith$elm_ui$Element$Background$color(
-			A3($mdgriffith$elm_ui$Element$rgb, 0.3, 0.5, 0.9)),
+			A3($mdgriffith$elm_ui$Element$rgb255, 18, 147, 216)),
 			$mdgriffith$elm_ui$Element$mouseOver(
 			_List_fromArray(
 				[
 					$mdgriffith$elm_ui$Element$Background$color(
-					A3($mdgriffith$elm_ui$Element$rgb, 0.2, 0.4, 0.8))
+					A3($mdgriffith$elm_ui$Element$rgb255, 47, 127, 190))
 				]))
 		]);
 	return A2(
@@ -14254,7 +14324,7 @@ var $author$project$Main$viewAnalyzeButton = function (model) {
 					$mdgriffith$elm_ui$Element$Font$color(
 					A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1)),
 					$mdgriffith$elm_ui$Element$padding(10),
-					$mdgriffith$elm_ui$Element$Border$rounded(3),
+					$mdgriffith$elm_ui$Element$Border$rounded(2),
 					$mdgriffith$elm_ui$Element$alignLeft
 				]),
 			conditionalStyles),
@@ -14362,7 +14432,10 @@ var $author$project$Music$Key$fSharp = $author$project$Music$Internal$Key$fSharp
 var $author$project$Music$Internal$Key$g = $author$project$Music$Internal$Key$major(
 	A2($author$project$Music$Internal$PitchClass$pitchClass, $author$project$Music$Internal$Letter$G, $author$project$Music$Internal$PitchClass$natural));
 var $author$project$Music$Key$g = $author$project$Music$Internal$Key$g;
-var $mdgriffith$elm_ui$Element$rgba = $mdgriffith$elm_ui$Internal$Model$Rgba;
+var $mdgriffith$elm_ui$Element$rgba255 = F4(
+	function (red, green, blue, a) {
+		return A4($mdgriffith$elm_ui$Internal$Model$Rgba, red / 255, green / 255, blue / 255, a);
+	});
 var $mdgriffith$elm_ui$Internal$Model$boxShadowClass = function (shadow) {
 	return $elm$core$String$concat(
 		_List_fromArray(
@@ -14405,7 +14478,9 @@ var $author$project$Main$viewKeyMenu = function (model) {
 						_List_fromArray(
 							[
 								$mdgriffith$elm_ui$Element$Background$color(
-								A3($mdgriffith$elm_ui$Element$rgb, 0.9, 0.9, 0.9))
+								A3($mdgriffith$elm_ui$Element$rgb255, 18, 147, 216)),
+								$mdgriffith$elm_ui$Element$Font$color(
+								A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1))
 							]))
 					]),
 				{
@@ -14429,12 +14504,13 @@ var $author$project$Main$viewKeyMenu = function (model) {
 				$mdgriffith$elm_ui$Element$px(200)),
 				$mdgriffith$elm_ui$Element$htmlAttribute(
 				A2($elm$html$Html$Attributes$style, 'overflow-y', 'auto')),
+				$mdgriffith$elm_ui$Element$Border$rounded(2),
 				$mdgriffith$elm_ui$Element$Border$shadow(
 				{
-					blur: 2,
-					color: A4($mdgriffith$elm_ui$Element$rgba, 0, 0, 0, 0.2),
+					blur: 0,
+					color: A4($mdgriffith$elm_ui$Element$rgba255, 18, 147, 216, 0.5),
 					offset: _Utils_Tuple2(0, 0),
-					size: 2
+					size: 3
 				})
 			]),
 		keyMenuItems) : $mdgriffith$elm_ui$Element$none;
@@ -14446,18 +14522,18 @@ var $author$project$Main$viewKeyControl = function (model) {
 		_List_fromArray(
 			[
 				$mdgriffith$elm_ui$Element$padding(10),
-				$mdgriffith$elm_ui$Element$Border$rounded(3),
+				$mdgriffith$elm_ui$Element$Border$rounded(2),
 				$mdgriffith$elm_ui$Element$alignLeft,
 				$mdgriffith$elm_ui$Element$Font$size(16),
 				$mdgriffith$elm_ui$Element$Font$color(
 				A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1)),
 				$mdgriffith$elm_ui$Element$Background$color(
-				A3($mdgriffith$elm_ui$Element$rgb, 0.3, 0.5, 0.9)),
+				A3($mdgriffith$elm_ui$Element$rgb255, 18, 147, 216)),
 				$mdgriffith$elm_ui$Element$mouseOver(
 				_List_fromArray(
 					[
 						$mdgriffith$elm_ui$Element$Background$color(
-						A3($mdgriffith$elm_ui$Element$rgb, 0.2, 0.4, 0.8))
+						A3($mdgriffith$elm_ui$Element$rgb255, 47, 127, 190))
 					])),
 				$mdgriffith$elm_ui$Element$below(
 				$author$project$Main$viewKeyMenu(model))
@@ -14495,7 +14571,7 @@ var $author$project$Main$viewControls = function (model) {
 		$mdgriffith$elm_ui$Element$row,
 		_List_fromArray(
 			[
-				$mdgriffith$elm_ui$Element$spacing(10)
+				$mdgriffith$elm_ui$Element$spacing(5)
 			]),
 		_List_fromArray(
 			[
@@ -14520,9 +14596,9 @@ var $author$project$Main$viewTitle = function (model) {
 					[
 						$mdgriffith$elm_ui$Element$centerX,
 						$mdgriffith$elm_ui$Element$Font$bold,
-						$mdgriffith$elm_ui$Element$Font$size(40)
+						$mdgriffith$elm_ui$Element$Font$size(32)
 					]),
-				$mdgriffith$elm_ui$Element$text('My Romance')),
+				$mdgriffith$elm_ui$Element$text(model.metadata.title)),
 				A2(
 				$mdgriffith$elm_ui$Element$row,
 				_List_fromArray(
@@ -14540,7 +14616,7 @@ var $author$project$Main$viewTitle = function (model) {
 								$mdgriffith$elm_ui$Element$Font$bold,
 								$mdgriffith$elm_ui$Element$Font$size(20)
 							]),
-						$mdgriffith$elm_ui$Element$text('R. Rodgers, L. Hart'))
+						$mdgriffith$elm_ui$Element$text(model.metadata.composer))
 					]))
 			]));
 };
@@ -14611,26 +14687,79 @@ var $author$project$Main$viewBody = function (model) {
 		$mdgriffith$elm_ui$Element$column,
 		_List_fromArray(
 			[
-				$mdgriffith$elm_ui$Element$width(
-				$mdgriffith$elm_ui$Element$px(1000)),
-				$mdgriffith$elm_ui$Element$centerX,
-				$mdgriffith$elm_ui$Element$spacing(30),
-				A2($mdgriffith$elm_ui$Element$paddingXY, 0, 50)
+				$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
 			]),
 		_List_fromArray(
 			[
-				$author$project$Main$viewTitle(model),
+				A2(
+				$mdgriffith$elm_ui$Element$el,
+				_List_fromArray(
+					[
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$Font$color(
+						A3($mdgriffith$elm_ui$Element$rgb, 1, 1, 1)),
+						$mdgriffith$elm_ui$Element$Background$color(
+						A3($mdgriffith$elm_ui$Element$rgb255, 18, 147, 216)),
+						$mdgriffith$elm_ui$Element$height(
+						$mdgriffith$elm_ui$Element$px(64))
+					]),
+				A2(
+					$mdgriffith$elm_ui$Element$row,
+					_List_fromArray(
+						[
+							$mdgriffith$elm_ui$Element$width(
+							$mdgriffith$elm_ui$Element$px(800)),
+							$mdgriffith$elm_ui$Element$centerX,
+							$mdgriffith$elm_ui$Element$centerY,
+							$mdgriffith$elm_ui$Element$spacing(16)
+						]),
+					_List_fromArray(
+						[
+							A2(
+							$mdgriffith$elm_ui$Element$link,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$Font$size(24),
+									$mdgriffith$elm_ui$Element$Font$bold
+								]),
+							{
+								label: $mdgriffith$elm_ui$Element$text('elm-music-theory'),
+								url: 'https://package.elm-lang.org/packages/duncanmalashock/elm-music-theory/latest/'
+							}),
+							A2(
+							$mdgriffith$elm_ui$Element$el,
+							_List_fromArray(
+								[
+									$mdgriffith$elm_ui$Element$Font$size(16),
+									$mdgriffith$elm_ui$Element$alignRight
+								]),
+							$mdgriffith$elm_ui$Element$text('Example: \"Lead Sheet\"'))
+						]))),
 				A2(
 				$mdgriffith$elm_ui$Element$column,
 				_List_fromArray(
 					[
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
-						$mdgriffith$elm_ui$Element$spacing(40)
+						$mdgriffith$elm_ui$Element$width(
+						$mdgriffith$elm_ui$Element$px(800)),
+						$mdgriffith$elm_ui$Element$centerX,
+						$mdgriffith$elm_ui$Element$spacing(30),
+						A2($mdgriffith$elm_ui$Element$paddingXY, 0, 50)
 					]),
-				A2(
-					$elm$core$List$map,
-					$author$project$Main$viewRow(model.currentKey),
-					rows))
+				_List_fromArray(
+					[
+						$author$project$Main$viewTitle(model),
+						A2(
+						$mdgriffith$elm_ui$Element$column,
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+								$mdgriffith$elm_ui$Element$spacing(40)
+							]),
+						A2(
+							$elm$core$List$map,
+							$author$project$Main$viewRow(model.currentKey),
+							rows))
+					]))
 			]));
 };
 var $author$project$Main$view = function (model) {
@@ -14641,7 +14770,12 @@ var $author$project$Main$view = function (model) {
 				$mdgriffith$elm_ui$Element$layout,
 				_List_fromArray(
 					[
-						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill)
+						$mdgriffith$elm_ui$Element$width($mdgriffith$elm_ui$Element$fill),
+						$mdgriffith$elm_ui$Element$Font$family(
+						_List_fromArray(
+							[
+								$mdgriffith$elm_ui$Element$Font$typeface('IBM Plex Sans')
+							]))
 					]),
 				$author$project$Main$viewBody(model))
 			]),
@@ -14649,6 +14783,6 @@ var $author$project$Main$view = function (model) {
 	};
 };
 var $author$project$Main$main = $elm$browser$Browser$document(
-	{init: $author$project$Main$init, subscriptions: $author$project$Main$subscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
+	{init: $author$project$Main$init, subscriptions: $author$project$Main$dropdownMenuSubscriptions, update: $author$project$Main$update, view: $author$project$Main$view});
 _Platform_export({'Main':{'init':$author$project$Main$main(
 	$elm$json$Json$Decode$succeed(_Utils_Tuple0))(0)}});}(this));
