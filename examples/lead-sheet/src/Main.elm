@@ -25,44 +25,32 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = dropdownMenuSubscriptions
         }
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    case model.dropdownMenu of
-        Open ->
-            Browser.Events.onAnimationFrame (\_ -> KeyDropdownClickedOut)
-
-        ReadyToClose ->
-            Browser.Events.onClick (Json.Decode.succeed KeyDropdownClosed)
-
-        Closed ->
-            Sub.none
-
-
-
--- Model & Init
-
-
 type alias Model =
-    { measures : List Measure
+    { metadata : Metadata
+    , measures : List Measure
     , currentKey : Key
     , analyzed : Bool
     , dropdownMenu : DropdownState
     }
 
 
-type DropdownState
-    = Open
-    | ReadyToClose
-    | Closed
+type alias Metadata =
+    { title : String
+    , composer : String
+    }
 
 
 init : () -> ( Model, Cmd msg )
 init flags =
-    ( { currentKey = Key.bFlat
+    ( { metadata =
+            { title = "My Romance"
+            , composer = "R. Rodgers, L. Hart"
+            }
+      , currentKey = Key.bFlat
       , analyzed = False
       , measures = initialMeasures
       , dropdownMenu = Closed
@@ -73,6 +61,7 @@ init flags =
 
 initialMeasures : List Measure
 initialMeasures =
+    -- Populate the initial chords in the chart, with no analysis
     [ measure2Chords (Chord.majorSeventh PitchClass.bFlat) (Chord.minorSeventh PitchClass.c)
     , measure2Chords (Chord.minorSeventh PitchClass.d) (Chord.diminishedSeventh PitchClass.dFlat)
     , measure2Chords (Chord.minorSeventh PitchClass.c) (Chord.dominantSeventh PitchClass.f)
@@ -120,10 +109,6 @@ initialMeasures =
     , measure1Chord (Chord.majorSix PitchClass.bFlat)
     , measure2Chords (Chord.minorSeventh PitchClass.c) (Chord.dominantSeventh PitchClass.f)
     ]
-
-
-
--- Msg and Update
 
 
 type Msg
@@ -227,6 +212,7 @@ analyzeEntry : Key -> Entry -> Entry
 analyzeEntry currentKey entry =
     { entry
         | analysis =
+            -- Analyze the current chord in terms of the current key
             Just (Analysis.analyze entry.chord currentKey)
     }
 
@@ -237,15 +223,12 @@ transposeEntry currentKey entry =
         | chord =
             case entry.analysis of
                 Just analysis ->
+                    -- Use the analysis to transpose to a key, using seventh chords
                     Analysis.toChord Analysis.seventhsByDefault currentKey analysis
 
                 Nothing ->
                     entry.chord
     }
-
-
-
--- View
 
 
 view : Model -> { title : String, body : List (Html Msg) }
@@ -315,7 +298,7 @@ viewTitle model =
             , Element.Font.bold
             , Element.Font.size 40
             ]
-            (Element.text "My Romance")
+            (Element.text model.metadata.title)
         , Element.row
             [ Element.width Element.fill
             ]
@@ -325,7 +308,7 @@ viewTitle model =
                 , Element.Font.bold
                 , Element.Font.size 20
                 ]
-                (Element.text "R. Rodgers, L. Hart")
+                (Element.text model.metadata.composer)
             ]
         ]
 
@@ -337,6 +320,25 @@ viewControls model =
         [ viewKeyControl model
         , viewAnalyzeButton model
         ]
+
+
+type DropdownState
+    = Open
+    | ReadyToClose
+    | Closed
+
+
+dropdownMenuSubscriptions : Model -> Sub Msg
+dropdownMenuSubscriptions model =
+    case model.dropdownMenu of
+        Open ->
+            Browser.Events.onAnimationFrame (\_ -> KeyDropdownClickedOut)
+
+        ReadyToClose ->
+            Browser.Events.onClick (Json.Decode.succeed KeyDropdownClosed)
+
+        Closed ->
+            Sub.none
 
 
 viewKeyControl : Model -> Element.Element Msg
