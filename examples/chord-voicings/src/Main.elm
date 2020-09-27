@@ -170,7 +170,7 @@ viewBody model =
                 ]
             )
         , Element.column
-            [ Element.width (Element.px 400)
+            [ Element.width (Element.px 500)
             , Element.centerX
             ]
             [ viewAbc
@@ -452,18 +452,18 @@ viewSelectionControls model =
             }
     in
     Element.column
-        [ Element.spacing 5
+        [ Element.spacing 15
         , Element.width Element.fill
         ]
         [ Element.row
             [ Element.spacing 5
             , Element.width Element.fill
             ]
-            [ viewDropdown root (currentRootDropdownLabel model) rootMenuOptions model
-            , viewDropdown chordType (currentChordTypeDropdownLabel model) chordTypeMenuOptions model
-            , viewDropdown voicingMethod (currentVoicingMethodDropdownLabel model) voicingMethodMenuOptions model
+            [ viewDropdown "Root" root (currentRootDropdownLabel model) rootMenuOptions model
+            , viewDropdown "Chord type" chordType (currentChordTypeDropdownLabel model) chordTypeMenuOptions model
+            , viewDropdown "Voicing method" voicingMethod (currentVoicingMethodDropdownLabel model) voicingMethodMenuOptions model
             ]
-        , viewDropdown voicing (currentVoicingDropdownLabel model) (voicingMenuOptions model) model
+        , viewDropdown "Voicing" voicing (currentVoicingDropdownLabel model) (voicingMenuOptions model) model
         ]
 
 
@@ -578,42 +578,53 @@ voicingMenuOptions model =
             )
 
 
-viewDropdown : String -> String -> List ( String, Msg ) -> Model -> Element.Element Msg
-viewDropdown id label options model =
-    Element.Input.button
-        [ Element.padding 10
-        , Element.Border.rounded 2
-        , Element.alignLeft
-        , Element.Font.size 16
-        , Element.Font.color (Element.rgb 1 1 1)
-        , Element.Background.color (Element.rgb255 18 147 216)
-        , Element.mouseOver
-            [ Element.Background.color (Element.rgb255 47 127 190)
-            ]
-        , Element.below
-            (viewMenu id options label model)
-        , Element.width Element.fill
+viewDropdown : String -> String -> String -> List ( String, Msg ) -> Model -> Element.Element Msg
+viewDropdown header id label options model =
+    Element.column
+        [ Element.width Element.fill
+        , Element.spacing 8
         ]
-        { onPress =
-            case model.dropdownMenu of
-                ( _, Closed ) ->
-                    Just (DropdownClicked id)
+        [ Element.el
+            [ Element.Font.size 16
+            , Element.Font.color (Element.rgb255 18 147 216)
+            , Element.Font.bold
+            ]
+            (Element.text header)
+        , Element.Input.button
+            [ Element.padding 10
+            , Element.Border.rounded 2
+            , Element.alignLeft
+            , Element.Font.size 16
+            , Element.Font.color (Element.rgb 1 1 1)
+            , Element.Background.color (Element.rgb255 18 147 216)
+            , Element.mouseOver
+                [ Element.Background.color (Element.rgb255 47 127 190)
+                ]
+            , Element.below
+                (viewMenu id options label model)
+            , Element.width Element.fill
+            ]
+            { onPress =
+                case model.dropdownMenu of
+                    ( _, Closed ) ->
+                        Just (DropdownClicked id)
 
-                _ ->
-                    Nothing
-        , label =
-            Element.row
-                [ Element.spacing 10
-                , Element.width Element.fill
-                ]
-                [ Element.el []
-                    (Element.text label)
-                , Element.el
-                    [ Element.alignRight
+                    _ ->
+                        Nothing
+            , label =
+                Element.row
+                    [ Element.spacing 10
+                    , Element.width Element.fill
                     ]
-                    (Element.html viewDropdownArrow)
-                ]
-        }
+                    [ Element.el []
+                        (Element.text label)
+                    , Element.el
+                        [ Element.alignRight
+                        ]
+                        (Element.html viewDropdownArrow)
+                    ]
+            }
+        ]
 
 
 viewMenu : String -> List ( String, Msg ) -> String -> Model -> Element.Element Msg
