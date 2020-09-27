@@ -212,7 +212,7 @@ simplify thePitch =
     normalize bTripleSharp4
         == d5
 
-Pitches with three or more accidentals are possible, but not normal; most notation software will not support them. This function is a helpful pre-export step if you plan to use pitch data with software in which three or more accidentals are not representable (which is very likely).
+Pitches with three or more accidentals are theoretically possible, but extremely unlikely in practice; most notation software will not support them. This function is a helpful pre-export step if you plan to use pitch data with software in which three or more accidentals are not representable.
 
 -}
 normalize : Pitch -> Pitch

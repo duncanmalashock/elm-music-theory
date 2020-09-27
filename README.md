@@ -35,7 +35,7 @@ Source code for these examples can be found in the `/examples` directory of this
 
 ## Contributing
 
-**Interested in contributing to this project?** Please take a look at the [CONTRIBUTING.md](https://github.com/duncanmalashock/elm-music-theory/blob/master/CONTRIBUTING.md) file in this repo for ways to do so. 
+**Interested in contributing to this project?** Please take a look at the [contributing guidelines](https://github.com/duncanmalashock/elm-music-theory/blob/master/CONTRIBUTING.md) for this repo for ways to do so. 
 
 ## Special thanks
 

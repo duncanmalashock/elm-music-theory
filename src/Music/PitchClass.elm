@@ -65,7 +65,7 @@ fromPitch pitch =
 
 {-| Get a pitch class's letter name and accidental:
 
-    name bFlat == "B♭"
+    toString bFlat == "B♭"
 
 -}
 toString : PitchClass -> String

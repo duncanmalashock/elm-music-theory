@@ -315,7 +315,7 @@ factors chordType =
 
 {-| Categorize the factors in a chord type:
 
-    categorizeFactors minorSixth
+    categorizeFactors minorSix
         == { third = Interval.minorThird
            , fifth = Interval.perfectFifth
            , sixthOrSeventh = Just Interval.majorSixth

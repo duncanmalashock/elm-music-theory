@@ -540,6 +540,11 @@ dominantThirteenthSharpEleven pitchClass =
 
     -- Equivalent to `halfDiminishedSeventh PitchClass.c`
 
+You can also use `custom` to construct a chord from a chord type, in cases where the chord type may vary:
+
+    custom PitchClass.c ChordType.majorSeventh
+        == Chord.majorSeventh PitchClass.c
+
 -}
 custom : PitchClass.PitchClass -> ChordType.ChordType -> Chord
 custom pitchClass customChordType =

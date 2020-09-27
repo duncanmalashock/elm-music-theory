@@ -259,7 +259,7 @@ viiSharp =
 
     iii
         |> withChordType ChordType.majorSeventh
-        |> symbol -- "IIImaj7"
+        |> toString -- "IIImaj7"
 
 -}
 withChordType : ChordType.ChordType -> Analysis -> Analysis

@@ -349,7 +349,7 @@ minorPentatonic scaleRoot =
     Scale.scale scaleRoot ScaleType.minorPentatonic
 
 
-{-| Create a scale from a custom scale type. For use with `ScaleType.customPentatonic`, `ScaleType.customHexatonic`, `ScaleType.customHeptatonic`, and `ScaleType.customOctatonic`:
+{-| Create a scale from a custom scale type. For use with [ScaleType.customPentatonic](Music-ScaleType#customPentatonic), [ScaleType.customHexatonic](Music-ScaleType#customHexatonic), [ScaleType.customHeptatonic](Music-ScaleType#customHeptatonic), and [ScaleType.customOctatonic](Music-ScaleType#customOctatonic):
 
     myCustomScaleType =
         customPentatonic
