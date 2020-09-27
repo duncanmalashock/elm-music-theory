@@ -497,6 +497,18 @@ chordTypeMenuOptions =
             )
 
 
+voicingMethodOptions : List ( String, Music.Voicing.FourPart.VoicingMethod )
+voicingMethodOptions =
+    -- `VoicingMethod`s contain functions, and function equality is undecidable in Elm.
+    -- If you need to test equality, do it on a String label like I have done here, or do similarly:
+    [ ( "Close", Music.Voicing.FourPart.close )
+    , ( "Drop-2", Music.Voicing.FourPart.drop2 )
+    , ( "Drop-3", Music.Voicing.FourPart.drop3 )
+    , ( "Drop-2-and-4", Music.Voicing.FourPart.drop2and4 )
+    , ( "Spread", Music.Voicing.FourPart.spread )
+    ]
+
+
 currentVoicingMethodDropdownLabel : Model -> String
 currentVoicingMethodDropdownLabel model =
     case model.chordSelection.voicingMethod of
@@ -505,16 +517,6 @@ currentVoicingMethodDropdownLabel model =
 
         Nothing ->
             "—"
-
-
-voicingMethodOptions : List ( String, Music.Voicing.FourPart.VoicingMethod )
-voicingMethodOptions =
-    [ ( "Close", Music.Voicing.FourPart.close )
-    , ( "Drop-2", Music.Voicing.FourPart.drop2 )
-    , ( "Drop-3", Music.Voicing.FourPart.drop3 )
-    , ( "Drop-2-and-4", Music.Voicing.FourPart.drop2and4 )
-    , ( "Spread", Music.Voicing.FourPart.spread )
-    ]
 
 
 voicingMethodMenuOptions : List ( String, Msg )
