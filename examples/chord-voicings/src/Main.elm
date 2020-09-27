@@ -21,51 +21,20 @@ import Svg
 import Svg.Attributes
 
 
-port abcOutput : String -> Cmd msg
+{-| This example includes the following features:
 
+    (1) Generating valid chord voicings from the current selection
+    (2) Port to ABC.js to show the chord on a musical staff
+    (3) Port to WebAudioFont to play the chord in the browser
+    (4) Dropdown menus for selecting a chord and its voicings
 
-port play : List Json.Encode.Value -> Cmd msg
+Look for numbered markings in comments to see where each behavior is implemented.
 
-
-port loadInstrumentById : Int -> Cmd msg
-
-
-encodePitch : ( Music.Pitch.Pitch, Int ) -> Json.Encode.Value
-encodePitch ( pitch, order ) =
-    Json.Encode.object
-        [ ( "time", Json.Encode.float (toFloat order * 200) )
-        , ( "pitch", Json.Encode.int (Music.Pitch.toMIDINoteNumber pitch) )
-        , ( "duration", Json.Encode.float 200 )
-        , ( "volume", Json.Encode.int 60 )
-        , ( "instrumentId", Json.Encode.int instrumentIds.piano )
-        ]
-
-
-playInBrowser : List ( Music.Pitch.Pitch, Int ) -> Cmd msg
-playInBrowser noteEvents =
-    noteEvents
-        |> List.map encodePitch
-        |> play
-
-
-loadInstrument : Int -> Cmd msg
-loadInstrument id =
-    loadInstrumentById id
-
-
-instrumentIds =
-    { piano = 1
-    }
-
-
-type alias Flags =
-    ()
-
-
-main : Program Flags Model Msg
+-}
+main : Program () Model Msg
 main =
     Browser.document
-        { init = init
+        { init = \() -> init
         , view = view
         , update = update
         , subscriptions = subscriptions
@@ -74,19 +43,17 @@ main =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    case model.dropdownMenu of
-        ( _, Open ) ->
-            Browser.Events.onAnimationFrame (\_ -> DropdownClickedOut)
-
-        ( _, ReadyToClose ) ->
-            Browser.Events.onClick (Json.Decode.succeed DropdownClosed)
-
-        ( _, Closed ) ->
-            Sub.none
+    dropdownMenuSubscriptions model
 
 
-init : Flags -> ( Model, Cmd Msg )
-init _ =
+type alias Model =
+    { chordSelection : ChordSelection
+    , dropdownMenu : ( String, DropdownState )
+    }
+
+
+init : ( Model, Cmd Msg )
+init =
     let
         initialModel : Model
         initialModel =
@@ -98,29 +65,90 @@ init _ =
     , Cmd.batch
         [ newAbcOutput initialModel
         , loadInstrument instrumentIds.piano
-        , playNewVoicing initialModel
+        , playVoicing initialModel
         ]
     )
 
 
-dropdowns =
-    { root = "root"
-    , chordType = "chord-type"
-    , voicingMethod = "voicing-method"
-    , voicing = "voicing"
+type Msg
+    = DropdownClicked String
+    | DropdownClickedOut
+    | DropdownClosed
+    | ChordSelectionFwd ChordSelectionMsg
+
+
+update : Msg -> Model -> ( Model, Cmd Msg )
+update msg model =
+    case msg of
+        ChordSelectionFwd selectionMsg ->
+            let
+                newModel =
+                    { model
+                        | chordSelection =
+                            updateChordSelection selectionMsg model.chordSelection
+                    }
+            in
+            ( newModel
+            , Cmd.batch
+                [ newAbcOutput newModel
+                , playVoicing newModel
+                ]
+            )
+
+        DropdownClicked id ->
+            ( { model
+                | dropdownMenu = ( id, Open )
+              }
+            , Cmd.none
+            )
+
+        DropdownClickedOut ->
+            ( { model
+                | dropdownMenu =
+                    case model.dropdownMenu of
+                        ( id, _ ) ->
+                            ( id, ReadyToClose )
+              }
+            , Cmd.none
+            )
+
+        DropdownClosed ->
+            ( { model
+                | dropdownMenu =
+                    case model.dropdownMenu of
+                        ( id, _ ) ->
+                            ( id, Closed )
+              }
+            , Cmd.none
+            )
+
+
+view : Model -> { title : String, body : List (Html Msg) }
+view model =
+    { title = "Chord Voicings"
+    , body =
+        [ Element.layout
+            [ Element.width Element.fill
+            , Element.paddingEach { top = 50, right = 0, bottom = 0, left = 0 }
+            ]
+            (viewBody model)
+        ]
     }
 
 
-type DropdownState
-    = Open
-    | ReadyToClose
-    | Closed
+viewBody : Model -> Element.Element Msg
+viewBody model =
+    Element.column
+        [ Element.width (Element.px 400)
+        , Element.centerX
+        ]
+        [ viewAbc
+        , viewSelectionControls model
+        ]
 
 
-type alias Model =
-    { chordSelection : ChordSelection
-    , dropdownMenu : ( String, DropdownState )
-    }
+
+-- (1) Generating valid chord voicings from the current selection
 
 
 type alias ChordSelection =
@@ -132,6 +160,57 @@ type alias ChordSelection =
     }
 
 
+updateVoicings : ChordSelection -> ChordSelection
+updateVoicings selection =
+    let
+        newVoicingOptions =
+            getVoicingOptions
+                selection.root
+                selection.chordType
+                (Maybe.map Tuple.second selection.voicingMethod)
+    in
+    { selection
+        | voicingOptions = newVoicingOptions
+        , voicing = List.head newVoicingOptions
+    }
+
+
+getVoicingOptions :
+    Maybe Music.PitchClass.PitchClass
+    -> Maybe Music.ChordType.ChordType
+    -> Maybe Music.Voicing.FourPart.VoicingMethod
+    -> List Music.Voicing.FourPart.Voicing
+getVoicingOptions maybeRoot maybeChordType maybeVoicingMethod =
+    let
+        voiceRange : Music.Range.Range
+        voiceRange =
+            Music.Range.range Music.Pitch.g3 Music.Pitch.c6
+    in
+    Maybe.map3
+        (\chordRoot chordType voicingMethod ->
+            -- Generate all voicings for the chord
+            Music.Chord.voiceFourParts
+                -- All four voices in this example will use pitches within the same range.
+                -- Vary this if you are generating voicings for different instruments.
+                { voiceOne = voiceRange
+                , voiceTwo = voiceRange
+                , voiceThree = voiceRange
+                , voiceFour = voiceRange
+                }
+                -- We are using the voicing method from the selection.
+                [ voicingMethod ]
+                -- Use `Music.Chord.custom` to create the chord from its root and type
+                (Music.Chord.custom chordRoot chordType)
+        )
+        maybeRoot
+        maybeChordType
+        maybeVoicingMethod
+        |> Maybe.withDefault []
+        -- Sort to prefer voicings that are centered on the pitch G4
+        |> List.sortWith
+            (Music.Voicing.FourPart.centerOrder Music.Pitch.g4)
+
+
 initChordSelection : ChordSelection
 initChordSelection =
     { root = List.head rootOptions
@@ -140,13 +219,6 @@ initChordSelection =
     , voicingOptions = []
     , voicing = Nothing
     }
-
-
-type Msg
-    = DropdownClicked String
-    | DropdownClickedOut
-    | DropdownClosed
-    | ChordSelectionFwd ChordSelectionMsg
 
 
 type ChordSelectionMsg
@@ -189,137 +261,162 @@ updateChordSelection chordSelectionMsg selection =
            )
 
 
-updateVoicings : ChordSelection -> ChordSelection
-updateVoicings selection =
+
+-- (2) Port to ABC.js to show the chord on a musical staff
+
+
+port abcOutput : String -> Cmd msg
+
+
+viewAbc : Element.Element Msg
+viewAbc =
+    Element.el
+        [ Element.htmlAttribute <| Html.Attributes.id "abcViewer"
+        , Element.htmlAttribute <| Html.Attributes.style "flex-basis" "auto"
+        ]
+        Element.none
+
+
+newAbcOutput : Model -> Cmd msg
+newAbcOutput model =
     let
-        newVoicingOptions =
-            getVoicingOptions
-                selection.root
-                selection.chordType
-                (Maybe.map Tuple.second selection.voicingMethod)
+        chordToAbc chord =
+            chord.voicing
+                -- Get the pitches in the voicing
+                |> Maybe.map Music.Voicing.FourPart.toPitchList
+                |> Maybe.withDefault []
+                |> List.map pitchToAbc
+                |> String.join ""
+                |> (\str -> "[" ++ str ++ "]")
     in
-    { selection
-        | voicingOptions = newVoicingOptions
-        , voicing =
-            List.head newVoicingOptions
-    }
+    [ "X:1\n", "K:C\n", chordToAbc model.chordSelection ]
+        |> String.join " "
+        |> abcOutput
 
 
-playNewVoicing : Model -> Cmd Msg
-playNewVoicing model =
+pitchToAbc : Music.Pitch.Pitch -> String
+pitchToAbc pitch =
+    let
+        -- Use the `Music.Pitch.octave`, `Music.PitchClass.letter`, and `Music.PitchClass.accidentals`
+        -- functions to create a custom string representation to match the ABC format:
+        octave =
+            (Music.Pitch.octave pitch - 5)
+                |> (\oct ->
+                        if oct == 0 then
+                            ""
+
+                        else if oct > 0 then
+                            List.repeat oct "'"
+                                |> String.join ""
+
+                        else
+                            List.repeat (abs oct) ","
+                                |> String.join ""
+                   )
+
+        accidentals =
+            Music.PitchClass.fromPitch pitch
+                |> Music.PitchClass.accidentals
+                |> (\acc ->
+                        if acc == 0 then
+                            ""
+
+                        else if acc > 0 then
+                            List.repeat acc "^"
+                                |> String.join ""
+
+                        else
+                            List.repeat (abs acc) "_"
+                                |> String.join ""
+                   )
+    in
+    Music.PitchClass.fromPitch pitch
+        |> Music.PitchClass.letter
+        |> (\l ->
+                case l of
+                    Music.PitchClass.A ->
+                        "a"
+
+                    Music.PitchClass.B ->
+                        "b"
+
+                    Music.PitchClass.C ->
+                        "c"
+
+                    Music.PitchClass.D ->
+                        "d"
+
+                    Music.PitchClass.E ->
+                        "e"
+
+                    Music.PitchClass.F ->
+                        "f"
+
+                    Music.PitchClass.G ->
+                        "g"
+           )
+        |> (\str ->
+                accidentals ++ str ++ octave ++ "8"
+           )
+
+
+
+-- (3) Port to WebAudioFont to play the chord in the browser
+
+
+port play : List Json.Encode.Value -> Cmd msg
+
+
+playVoicing : Model -> Cmd Msg
+playVoicing model =
     model.chordSelection.voicing
         |> Maybe.map Music.Voicing.FourPart.toPitchList
         |> Maybe.withDefault []
         |> List.map (\pitch -> ( pitch, 0 ))
-        |> playInBrowser
+        |> List.map encodePitch
+        |> play
 
 
-update : Msg -> Model -> ( Model, Cmd Msg )
-update msg model =
-    case msg of
-        ChordSelectionFwd selectionMsg ->
-            let
-                newModel =
-                    { model
-                        | chordSelection =
-                            updateChordSelection selectionMsg model.chordSelection
-                    }
-            in
-            ( newModel
-            , Cmd.batch
-                [ newAbcOutput newModel
-                , playNewVoicing newModel
-                ]
-            )
-
-        DropdownClicked id ->
-            ( { model
-                | dropdownMenu = ( id, Open )
-              }
-            , Cmd.none
-            )
-
-        DropdownClickedOut ->
-            ( { model
-                | dropdownMenu =
-                    case model.dropdownMenu of
-                        ( id, _ ) ->
-                            ( id, ReadyToClose )
-              }
-            , Cmd.none
-            )
-
-        DropdownClosed ->
-            ( { model
-                | dropdownMenu =
-                    case model.dropdownMenu of
-                        ( id, _ ) ->
-                            ( id, Closed )
-              }
-            , Cmd.none
-            )
-
-
-getVoicingOptions :
-    Maybe Music.PitchClass.PitchClass
-    -> Maybe Music.ChordType.ChordType
-    -> Maybe Music.Voicing.FourPart.VoicingMethod
-    -> List Music.Voicing.FourPart.Voicing
-getVoicingOptions maybeRoot maybeChordType maybeVoicingMethod =
-    let
-        voiceRange =
-            Music.Range.range Music.Pitch.g3 Music.Pitch.c6
-    in
-    Maybe.map3
-        (\root type_ vm ->
-            Music.Chord.voiceFourParts
-                { voiceOne = voiceRange
-                , voiceTwo = voiceRange
-                , voiceThree = voiceRange
-                , voiceFour = voiceRange
-                }
-                [ vm ]
-                (Music.Chord.custom root type_)
-        )
-        maybeRoot
-        maybeChordType
-        maybeVoicingMethod
-        |> Maybe.withDefault []
-        |> List.sortWith (Music.Voicing.FourPart.centerOrder Music.Pitch.g4)
-
-
-view : Model -> { title : String, body : List (Html Msg) }
-view model =
-    { title = "Chord Voicings"
-    , body =
-        [ Element.layout
-            [ Element.width Element.fill
-            , Element.paddingEach { top = 50, right = 0, bottom = 0, left = 0 }
-            ]
-            (viewBody model)
+encodePitch : ( Music.Pitch.Pitch, Int ) -> Json.Encode.Value
+encodePitch ( pitch, order ) =
+    Json.Encode.object
+        [ ( "time", Json.Encode.float (toFloat order * 200) )
+        , ( "pitch"
+          , Json.Encode.int
+                -- Convert to MIDI note number for playback
+                (Music.Pitch.toMIDINoteNumber pitch)
+          )
+        , ( "duration", Json.Encode.float 200 )
+        , ( "volume", Json.Encode.int 60 )
+        , ( "instrumentId", Json.Encode.int instrumentIds.piano )
         ]
+
+
+port loadInstrumentById : Int -> Cmd msg
+
+
+loadInstrument : Int -> Cmd msg
+loadInstrument id =
+    loadInstrumentById id
+
+
+instrumentIds =
+    { piano = 1
     }
 
 
-viewBody : Model -> Element.Element Msg
-viewBody model =
-    Element.column
-        [ Element.width (Element.px 400)
-        , Element.centerX
-        ]
-        [ viewAbc
-        , viewSelectionControls model
-        ]
+
+-- (4) Dropdown menus for selecting a chord and its voicings
 
 
 viewSelectionControls : Model -> Element.Element Msg
 viewSelectionControls model =
     let
         { root, chordType, voicingMethod, voicing } =
-            { root = dropdowns.root
-            , chordType = dropdowns.chordType
-            , voicingMethod = dropdowns.voicingMethod
-            , voicing = dropdowns.voicing
+            { root = dropdownIds.root
+            , chordType = dropdownIds.chordType
+            , voicingMethod = dropdownIds.voicingMethod
+            , voicing = dropdownIds.voicing
             }
     in
     Element.column
@@ -336,15 +433,6 @@ viewSelectionControls model =
             ]
         , viewDropdown voicing (currentVoicingDropdownLabel model) (voicingMenuOptions model) model
         ]
-
-
-viewAbc : Element.Element Msg
-viewAbc =
-    Element.el
-        [ Element.htmlAttribute <| Html.Attributes.id "abcViewer"
-        , Element.htmlAttribute <| Html.Attributes.style "flex-basis" "auto"
-        ]
-        Element.none
 
 
 currentRootDropdownLabel : Model -> String
@@ -555,81 +643,28 @@ viewDropdownArrow =
         ]
 
 
-newAbcOutput : Model -> Cmd msg
-newAbcOutput model =
-    let
-        chordToAbc chord =
-            chord.voicing
-                |> Maybe.map Music.Voicing.FourPart.toPitchList
-                |> Maybe.withDefault []
-                |> List.map pitchToAbc
-                |> String.join ""
-                |> (\str -> "[" ++ str ++ "]")
-    in
-    [ "X:1\n", "K:C\n", chordToAbc model.chordSelection ]
-        |> String.join " "
-        |> abcOutput
+dropdownIds =
+    { root = "root"
+    , chordType = "chord-type"
+    , voicingMethod = "voicing-method"
+    , voicing = "voicing"
+    }
 
 
-pitchToAbc : Music.Pitch.Pitch -> String
-pitchToAbc pitch =
-    let
-        octave =
-            (Music.Pitch.octave pitch - 5)
-                |> (\oct ->
-                        if oct == 0 then
-                            ""
+type DropdownState
+    = Open
+    | ReadyToClose
+    | Closed
 
-                        else if oct > 0 then
-                            List.repeat oct "'"
-                                |> String.join ""
 
-                        else
-                            List.repeat (abs oct) ","
-                                |> String.join ""
-                   )
+dropdownMenuSubscriptions : Model -> Sub Msg
+dropdownMenuSubscriptions model =
+    case model.dropdownMenu of
+        ( _, Open ) ->
+            Browser.Events.onAnimationFrame (\_ -> DropdownClickedOut)
 
-        accidentals =
-            Music.PitchClass.fromPitch pitch
-                |> Music.PitchClass.accidentals
-                |> (\acc ->
-                        if acc == 0 then
-                            ""
+        ( _, ReadyToClose ) ->
+            Browser.Events.onClick (Json.Decode.succeed DropdownClosed)
 
-                        else if acc > 0 then
-                            List.repeat acc "^"
-                                |> String.join ""
-
-                        else
-                            List.repeat (abs acc) "_"
-                                |> String.join ""
-                   )
-    in
-    Music.PitchClass.fromPitch pitch
-        |> Music.PitchClass.letter
-        |> (\l ->
-                case l of
-                    Music.PitchClass.A ->
-                        "a"
-
-                    Music.PitchClass.B ->
-                        "b"
-
-                    Music.PitchClass.C ->
-                        "c"
-
-                    Music.PitchClass.D ->
-                        "d"
-
-                    Music.PitchClass.E ->
-                        "e"
-
-                    Music.PitchClass.F ->
-                        "f"
-
-                    Music.PitchClass.G ->
-                        "g"
-           )
-        |> (\str ->
-                accidentals ++ str ++ octave ++ "4"
-           )
+        ( _, Closed ) ->
+            Sub.none
