@@ -36,10 +36,10 @@ import Music.Internal.Time as Time
 
 
 type Note
-    = Note Pitch.Pitch Time.Time Dynamics.Dynamics
+    = Note Pitch.Pitch Time.Duration Dynamics.Dynamics
 
 
-note : Pitch.Pitch -> Time.Time -> Note
+note : Pitch.Pitch -> Time.Duration -> Note
 note pit dur =
     Note pit dur Dynamics.normal
 
@@ -109,22 +109,22 @@ louder (Note pit dur dyn) =
     Note pit dur (Dynamics.louder dyn)
 
 
-duration : Note -> Time.Time
+duration : Note -> Time.Duration
 duration (Note pit dur dyn) =
     dur
 
 
-addDuration : Time.Time -> Note -> Note
+addDuration : Time.Duration -> Note -> Note
 addDuration durationToAdd (Note pit dur dyn) =
     note pit (Time.add dur durationToAdd)
 
 
-multiplyDuration : Note -> Time.Time -> Note
+multiplyDuration : Note -> Time.Duration -> Note
 multiplyDuration (Note pit dur dyn) durationToMultiply =
     note pit (Time.multiply dur durationToMultiply)
 
 
-setDuration : Note -> Time.Time -> Note
+setDuration : Note -> Time.Duration -> Note
 setDuration (Note pit dur dyn) durationToSet =
     note pit durationToSet
 
