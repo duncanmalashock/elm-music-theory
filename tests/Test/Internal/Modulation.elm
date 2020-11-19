@@ -82,4 +82,28 @@ all =
                                 (Modulation.upByFifths 6)
                 in
                 Expect.equal expected result
+        , test "Modulation to relative key should modulate C to Am" <|
+            \_ ->
+                let
+                    expected =
+                        Key.aMinor
+
+                    result =
+                        Key.c
+                            |> Modulation.apply
+                                Modulation.toRelative
+                in
+                Expect.equal expected result
+        , test "Modulation to relative key should modulate F#m to A" <|
+            \_ ->
+                let
+                    expected =
+                        Key.a
+
+                    result =
+                        Key.fSharpMinor
+                            |> Modulation.apply
+                                Modulation.toRelative
+                in
+                Expect.equal expected result
         ]

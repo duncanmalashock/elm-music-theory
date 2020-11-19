@@ -2,6 +2,7 @@ module Music.Internal.Modulation exposing
     ( Modulation
     , apply
     , downByFifths
+    , toRelative
     , upByFifths
     )
 
@@ -17,7 +18,7 @@ type Modulation
 
 type alias ModulationDetails =
     { stepsToRotate : Int
-    , changeMode : Bool
+    , changeToRelativeKey : Bool
     , normalizeSettings : NormalizeSettings
     }
 
@@ -37,7 +38,7 @@ upByFifths : Int -> Modulation
 upByFifths numFifths =
     Modulation
         { stepsToRotate = numFifths
-        , changeMode = False
+        , changeToRelativeKey = False
         , normalizeSettings = DontNormalize
         }
 
@@ -46,13 +47,40 @@ downByFifths : Int -> Modulation
 downByFifths numFifths =
     Modulation
         { stepsToRotate = -1 * numFifths
-        , changeMode = False
+        , changeToRelativeKey = False
+        , normalizeSettings = DontNormalize
+        }
+
+
+toRelative : Modulation
+toRelative =
+    Modulation
+        { stepsToRotate = 0
+        , changeToRelativeKey = True
         , normalizeSettings = DontNormalize
         }
 
 
 apply : Modulation -> Key.Key -> Key.Key
 apply (Modulation details) key =
+    key
+        |> applySteps details
+        |> changeToRelativeKey details
+
+
+changeToRelativeKey : ModulationDetails -> Key.Key -> Key.Key
+changeToRelativeKey details key =
+    key
+        |> (if details.changeToRelativeKey then
+                Key.relative
+
+            else
+                identity
+           )
+
+
+applySteps : ModulationDetails -> Key.Key -> Key.Key
+applySteps details key =
     key
         |> (if details.stepsToRotate >= 0 then
                 Util.applyNTimes
