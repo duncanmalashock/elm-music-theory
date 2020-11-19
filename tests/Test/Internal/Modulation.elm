@@ -1,6 +1,7 @@
 module Test.Internal.Modulation exposing (..)
 
 import Expect
+import Music.Internal.Interval as Interval
 import Music.Internal.Key as Key
 import Music.Internal.Modulation as Modulation
 import Music.Internal.PitchClass as PitchClass
@@ -18,7 +19,7 @@ all =
 
                     result =
                         Key.c
-                            |> Modulation.apply
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
                                 (Modulation.downByFifths 1)
                 in
                 Expect.equal expected result
@@ -30,7 +31,7 @@ all =
 
                     result =
                         Key.c
-                            |> Modulation.apply
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
                                 (Modulation.upByFifths 1)
                 in
                 Expect.equal expected result
@@ -42,7 +43,7 @@ all =
 
                     result =
                         Key.c
-                            |> Modulation.apply
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
                                 (Modulation.downByFifths 2)
                 in
                 Expect.equal expected result
@@ -54,7 +55,7 @@ all =
 
                     result =
                         Key.dFlat
-                            |> Modulation.apply
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
                                 (Modulation.downByFifths 2)
                 in
                 Expect.equal expected result
@@ -66,7 +67,7 @@ all =
 
                     result =
                         Key.c
-                            |> Modulation.apply
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
                                 (Modulation.downByFifths 6)
                 in
                 Expect.equal expected result
@@ -78,7 +79,7 @@ all =
 
                     result =
                         Key.c
-                            |> Modulation.apply
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
                                 (Modulation.upByFifths 6)
                 in
                 Expect.equal expected result
@@ -90,8 +91,8 @@ all =
 
                     result =
                         Key.c
-                            |> Modulation.apply
-                                Modulation.toRelative
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
+                                Modulation.switchToRelativeKey
                 in
                 Expect.equal expected result
         , test "Modulation to relative key should modulate F#m to A" <|
@@ -102,8 +103,101 @@ all =
 
                     result =
                         Key.fSharpMinor
-                            |> Modulation.apply
-                                Modulation.toRelative
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
+                                Modulation.switchToRelativeKey
+                in
+                Expect.equal expected result
+        , test "Modulation to parallel key should modulate C to Cm" <|
+            \_ ->
+                let
+                    expected =
+                        Key.cMinor
+
+                    result =
+                        Key.c
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
+                                Modulation.switchToParallelKey
+                in
+                Expect.equal expected result
+        , test "Modulation down a major second should modulate C to Bb" <|
+            \_ ->
+                let
+                    expected =
+                        Key.bFlat
+
+                    result =
+                        Key.c
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
+                                (Modulation.byInterval
+                                    (Interval.majorSecond |> Interval.reverse)
+                                )
+                in
+                Expect.equal expected result
+        , test "applyMultiple should perform multiple modulations" <|
+            \_ ->
+                let
+                    expected =
+                        Key.bFlat
+
+                    result =
+                        Key.c
+                            |> Modulation.applyMultiple Modulation.normalizeToCircleOfFifths
+                                [ Modulation.upByFifths 1
+                                , Modulation.switchToParallelKey
+                                , Modulation.switchToRelativeKey
+                                ]
+                in
+                Expect.equal expected result
+        , test "Modulation with no normalization should allow the key of D#" <|
+            \_ ->
+                let
+                    expected =
+                        Key.major PitchClass.dSharp
+
+                    result =
+                        Key.c
+                            |> Modulation.apply Modulation.allowTheoreticalKeys
+                                (Modulation.byInterval
+                                    Interval.augmentedSecond
+                                )
+                in
+                Expect.equal expected result
+        , test "Modulation with default normalization should change D# to Eb" <|
+            \_ ->
+                let
+                    expected =
+                        Key.major PitchClass.eFlat
+
+                    result =
+                        Key.c
+                            |> Modulation.apply Modulation.normalizeToCircleOfFifths
+                                (Modulation.byInterval
+                                    Interval.augmentedSecond
+                                )
+                in
+                Expect.equal expected result
+        , test "Modulation with Gb preference should change to Gb" <|
+            \_ ->
+                let
+                    expected =
+                        Key.major PitchClass.gFlat
+
+                    result =
+                        Key.c
+                            |> Modulation.apply Modulation.simplifyAndPreferGFlat
+                                (Modulation.upByFifths 6)
+                in
+                Expect.equal expected result
+        , test "Modulation with F# preference should change to F#" <|
+            \_ ->
+                let
+                    expected =
+                        Key.major PitchClass.fSharp
+
+                    result =
+                        Key.c
+                            |> Modulation.apply Modulation.simplifyAndPreferFSharp
+                                (Modulation.downByFifths 6)
                 in
                 Expect.equal expected result
         ]

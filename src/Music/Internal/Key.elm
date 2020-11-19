@@ -6,6 +6,7 @@ module Music.Internal.Key exposing
     , aFlatMinor
     , aMinor
     , aSharpMinor
+    , areEnharmonicEquivalents
     , b
     , bFlat
     , bFlatMinor
@@ -74,6 +75,12 @@ majorKey =
 minorKey : MajorOrMinor
 minorKey =
     Minor
+
+
+areEnharmonicEquivalents : Key -> Key -> Bool
+areEnharmonicEquivalents key1 key2 =
+    (isMajor key1 == isMajor key2)
+        && PitchClass.areEnharmonicEquivalents (tonic key1) (tonic key2)
 
 
 relative : Key -> Key

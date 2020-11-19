@@ -1,8 +1,15 @@
 module Music.Internal.Modulation exposing
     ( Modulation
+    , allowTheoreticalKeys
     , apply
+    , applyMultiple
+    , byInterval
     , downByFifths
-    , toRelative
+    , normalizeToCircleOfFifths
+    , simplifyAndPreferFSharp
+    , simplifyAndPreferGFlat
+    , switchToParallelKey
+    , switchToRelativeKey
     , upByFifths
     )
 
@@ -17,16 +24,40 @@ type Modulation
 
 
 type alias ModulationDetails =
-    { stepsToRotate : Int
-    , changeToRelativeKey : Bool
-    , normalizeSettings : NormalizeSettings
+    { interval : Interval.Interval
+    , modeChange : Maybe ModeChange
     }
+
+
+type ModeChange
+    = ChangeToRelativeKey
+    | ChangeToParallelKey
 
 
 type NormalizeSettings
     = DontNormalize
-    | NormalizeAfter6Accidentals
-    | NormalizeAt6Accidentals PreferGFlatOrFSharp
+    | NormalizeToCircleOfFifths
+    | Simplify PreferGFlatOrFSharp
+
+
+allowTheoreticalKeys : NormalizeSettings
+allowTheoreticalKeys =
+    DontNormalize
+
+
+normalizeToCircleOfFifths : NormalizeSettings
+normalizeToCircleOfFifths =
+    NormalizeToCircleOfFifths
+
+
+simplifyAndPreferGFlat : NormalizeSettings
+simplifyAndPreferGFlat =
+    Simplify PreferGFlat
+
+
+simplifyAndPreferFSharp : NormalizeSettings
+simplifyAndPreferFSharp =
+    Simplify PreferFSharp
 
 
 type PreferGFlatOrFSharp
@@ -37,76 +68,194 @@ type PreferGFlatOrFSharp
 upByFifths : Int -> Modulation
 upByFifths numFifths =
     Modulation
-        { stepsToRotate = numFifths
-        , changeToRelativeKey = False
-        , normalizeSettings = DontNormalize
+        { interval =
+            Util.applyNTimes
+                numFifths
+                (Interval.add Interval.perfectFifth)
+                Interval.perfectUnison
+        , modeChange = Nothing
         }
 
 
 downByFifths : Int -> Modulation
 downByFifths numFifths =
     Modulation
-        { stepsToRotate = -1 * numFifths
-        , changeToRelativeKey = False
-        , normalizeSettings = DontNormalize
+        { interval =
+            Util.applyNTimes
+                numFifths
+                (Interval.subtract Interval.perfectFifth)
+                Interval.perfectUnison
+        , modeChange = Nothing
         }
 
 
-toRelative : Modulation
-toRelative =
+byInterval : Interval.Interval -> Modulation
+byInterval interval =
     Modulation
-        { stepsToRotate = 0
-        , changeToRelativeKey = True
-        , normalizeSettings = DontNormalize
+        { interval = interval
+        , modeChange = Nothing
         }
 
 
-apply : Modulation -> Key.Key -> Key.Key
-apply (Modulation details) key =
-    key
-        |> applySteps details
-        |> changeToRelativeKey details
+switchToParallelKey : Modulation
+switchToParallelKey =
+    Modulation
+        { interval = Interval.perfectUnison
+        , modeChange = Just ChangeToParallelKey
+        }
 
 
-changeToRelativeKey : ModulationDetails -> Key.Key -> Key.Key
-changeToRelativeKey details key =
+switchToRelativeKey : Modulation
+switchToRelativeKey =
+    Modulation
+        { interval = Interval.perfectUnison
+        , modeChange = Just ChangeToRelativeKey
+        }
+
+
+apply : NormalizeSettings -> Modulation -> Key.Key -> Key.Key
+apply normalizeSettings (Modulation details) key =
     key
-        |> (if details.changeToRelativeKey then
-                Key.relative
+        |> applyRootTransposition details
+        |> applyModeChange details
+        |> normalize normalizeSettings
+
+
+applyMultiple : NormalizeSettings -> List Modulation -> Key.Key -> Key.Key
+applyMultiple normalizeSettings modulations key =
+    List.foldl (apply normalizeSettings) key modulations
+
+
+normalize : NormalizeSettings -> Key.Key -> Key.Key
+normalize normalizeSettings key =
+    case normalizeSettings of
+        DontNormalize ->
+            key
+
+        NormalizeToCircleOfFifths ->
+            if keyNeedsNormalization normalizeSettings key then
+                key
+                    |> findFirstEnharmonicEquivalent
+                        (majorKeysWith7AccidentalsOrFewer
+                            ++ minorKeysWith7AccidentalsOrFewer
+                        )
 
             else
-                identity
-           )
+                key
 
-
-applySteps : ModulationDetails -> Key.Key -> Key.Key
-applySteps details key =
-    key
-        |> (if details.stepsToRotate >= 0 then
-                Util.applyNTimes
-                    details.stepsToRotate
-                    nextKeyUpAFifth
+        Simplify preferGFlatOrFSharp ->
+            if keyNeedsNormalization normalizeSettings key then
+                key
+                    |> findFirstEnharmonicEquivalent
+                        (majorKeysWith5AccidentalsOrFewer
+                            ++ minorKeysWith5AccidentalsOrFewer
+                            ++ [ keyForGFlatOrFSharpPreference preferGFlatOrFSharp ]
+                        )
 
             else
-                Util.applyNTimes
-                    (details.stepsToRotate * -1)
-                    nextKeyDownAFifth
-           )
+                key
 
 
-nextKeyDownAFifth : Key.Key -> Key.Key
-nextKeyDownAFifth key =
+keyNeedsNormalization : NormalizeSettings -> Key.Key -> Bool
+keyNeedsNormalization normalizeSettings key =
+    case normalizeSettings of
+        DontNormalize ->
+            False
+
+        NormalizeToCircleOfFifths ->
+            ((Key.signature key |> List.length) >= 8)
+                || (Key.signature key
+                        |> List.any
+                            (\pc -> abs (PitchClass.accidentals pc) >= 2)
+                   )
+
+        Simplify _ ->
+            (Key.signature key |> List.length) >= 6
+
+
+keyForGFlatOrFSharpPreference : PreferGFlatOrFSharp -> Key.Key
+keyForGFlatOrFSharpPreference pref =
+    case pref of
+        PreferGFlat ->
+            Key.gFlat
+
+        PreferFSharp ->
+            Key.fSharp
+
+
+findFirstEnharmonicEquivalent : List Key.Key -> Key.Key -> Key.Key
+findFirstEnharmonicEquivalent options keyToReplace =
+    options
+        |> List.filter (Key.areEnharmonicEquivalents keyToReplace)
+        |> List.head
+        |> Maybe.withDefault Key.c
+
+
+majorKeysWith7AccidentalsOrFewer : List Key.Key
+majorKeysWith7AccidentalsOrFewer =
+    [ Key.c
+    , Key.g
+    , Key.d
+    , Key.a
+    , Key.e
+    , Key.b
+    , Key.cFlat
+    , Key.fSharp
+    , Key.gFlat
+    , Key.dFlat
+    , Key.cSharp
+    , Key.aFlat
+    , Key.eFlat
+    , Key.bFlat
+    , Key.f
+    ]
+
+
+minorKeysWith7AccidentalsOrFewer : List Key.Key
+minorKeysWith7AccidentalsOrFewer =
+    majorKeysWith7AccidentalsOrFewer
+        |> List.map Key.relative
+
+
+majorKeysWith5AccidentalsOrFewer : List Key.Key
+majorKeysWith5AccidentalsOrFewer =
+    [ Key.c
+    , Key.g
+    , Key.d
+    , Key.a
+    , Key.e
+    , Key.b
+    , Key.dFlat
+    , Key.aFlat
+    , Key.eFlat
+    , Key.bFlat
+    , Key.f
+    ]
+
+
+minorKeysWith5AccidentalsOrFewer : List Key.Key
+minorKeysWith5AccidentalsOrFewer =
+    majorKeysWith5AccidentalsOrFewer
+        |> List.map Key.relative
+
+
+applyModeChange : ModulationDetails -> Key.Key -> Key.Key
+applyModeChange details key =
+    case details.modeChange of
+        Just ChangeToRelativeKey ->
+            Key.relative key
+
+        Just ChangeToParallelKey ->
+            Key.parallel key
+
+        Nothing ->
+            key
+
+
+applyRootTransposition : ModulationDetails -> Key.Key -> Key.Key
+applyRootTransposition details key =
     Key.setTonic
         (Key.tonic key
-            |> PitchClass.transpose Interval.perfectFourth
-        )
-        key
-
-
-nextKeyUpAFifth : Key.Key -> Key.Key
-nextKeyUpAFifth key =
-    Key.setTonic
-        (Key.tonic key
-            |> PitchClass.transpose Interval.perfectFifth
+            |> PitchClass.transpose details.interval
         )
         key
