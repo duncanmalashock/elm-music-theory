@@ -3,13 +3,17 @@ module Music.Internal.Key exposing
     , MajorOrMinor(..)
     , a
     , aFlat
+    , aFlatMinor
     , aMinor
+    , aSharpMinor
     , b
     , bFlat
     , bFlatMinor
     , bMinor
     , c
+    , cFlat
     , cMinor
+    , cSharp
     , cSharpMinor
     , d
     , dFlat
@@ -35,6 +39,7 @@ module Music.Internal.Key exposing
     , parallel
     , relative
     , scale
+    , setTonic
     , signature
     , symbol
     , tonic
@@ -49,6 +54,11 @@ import Music.Internal.ScaleType as ScaleType
 
 type Key
     = Key PitchClass MajorOrMinor
+
+
+setTonic : PitchClass -> Key -> Key
+setTonic newTonic (Key theTonic majorOrMinor) =
+    Key newTonic majorOrMinor
 
 
 type MajorOrMinor
@@ -237,6 +247,16 @@ c =
     major <| pitchClass C PitchClass.natural
 
 
+cSharp : Key
+cSharp =
+    major <| pitchClass C PitchClass.sharp
+
+
+cFlat : Key
+cFlat =
+    major <| pitchClass C PitchClass.flat
+
+
 g : Key
 g =
     major <| pitchClass G PitchClass.natural
@@ -329,3 +349,13 @@ cSharpMinor =
 gSharpMinor : Key
 gSharpMinor =
     minor <| pitchClass G PitchClass.sharp
+
+
+aSharpMinor : Key
+aSharpMinor =
+    minor <| pitchClass A PitchClass.sharp
+
+
+aFlatMinor : Key
+aFlatMinor =
+    minor <| pitchClass A PitchClass.flat
