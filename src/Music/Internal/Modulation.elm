@@ -1,5 +1,6 @@
 module Music.Internal.Modulation exposing
     ( Modulation
+    , NormalizeSettings
     , allowTheoreticalKeys
     , apply
     , applyMultiple
@@ -186,9 +187,12 @@ keyForGFlatOrFSharpPreference pref =
 findFirstEnharmonicEquivalent : List Key.Key -> Key.Key -> Key.Key
 findFirstEnharmonicEquivalent options keyToReplace =
     options
-        |> List.filter (Key.areEnharmonicEquivalents keyToReplace)
+        |> List.filter
+            (\key ->
+                Key.areEnharmonicEquivalents keyToReplace key
+            )
         |> List.head
-        |> Maybe.withDefault Key.c
+        |> Maybe.withDefault Key.fSharp
 
 
 majorKeysWith7AccidentalsOrFewer : List Key.Key

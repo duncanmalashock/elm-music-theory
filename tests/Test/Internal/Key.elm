@@ -21,4 +21,8 @@ all =
                 Key.major (pitchClass C natural)
                     |> Key.scale
                     |> Expect.equal cMajorScale
+        , test "areEnharmonicEquivalents" <|
+            \_ ->
+                Key.areEnharmonicEquivalents Key.cFlat Key.b
+                    |> Expect.equal True
         ]

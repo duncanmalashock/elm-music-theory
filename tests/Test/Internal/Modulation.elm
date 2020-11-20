@@ -200,4 +200,16 @@ all =
                                 (Modulation.downByFifths 6)
                 in
                 Expect.equal expected result
+        , test "Modulation down 4 fifths should modulate Eb to B" <|
+            \_ ->
+                let
+                    expected =
+                        Key.b
+
+                    result =
+                        Key.eFlat
+                            |> Modulation.apply Modulation.simplifyAndPreferFSharp
+                                (Modulation.downByFifths 4)
+                in
+                Expect.equal expected result
         ]
