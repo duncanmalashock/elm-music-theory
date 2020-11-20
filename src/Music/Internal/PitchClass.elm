@@ -426,4 +426,11 @@ transpose interval pc =
 
 areEnharmonicEquivalents : PitchClass -> PitchClass -> Bool
 areEnharmonicEquivalents lhs rhs =
-    semitones lhs == semitones rhs
+    let
+        lSemis =
+            semitones lhs |> modBy 12
+
+        rSemis =
+            semitones rhs |> modBy 12
+    in
+    lSemis == rSemis
