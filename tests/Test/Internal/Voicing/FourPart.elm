@@ -4,7 +4,6 @@ import Expect
 import Music.Chord as Chord
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
-import Music.Internal.InstrumentRanges as InstrumentRanges
 import Music.Internal.Interval as Interval
 import Music.Internal.Octave as Octave
 import Music.Internal.Pitch as Pitch
@@ -12,15 +11,16 @@ import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Voicing as Voicing
 import Music.Internal.Voicing.FourPart as FourPart
 import Music.Internal.Voicing.FourPart.Classical as Classical
+import Music.Range as Range
 import Test exposing (..)
 
 
 satbRanges : FourPart.Ranges
 satbRanges =
-    { voiceOne = InstrumentRanges.sopranoVoice
-    , voiceTwo = InstrumentRanges.altoVoice
-    , voiceThree = InstrumentRanges.tenorVoice
-    , voiceFour = InstrumentRanges.bassVoice
+    { voiceOne = Range.sopranoVoice
+    , voiceTwo = Range.altoVoice
+    , voiceThree = Range.tenorVoice
+    , voiceFour = Range.bassVoice
     }
 
 

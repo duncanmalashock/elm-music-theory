@@ -67,7 +67,6 @@ All instrument ranges here are defined in [concert pitch](https://en.wikipedia.o
 
 -}
 
-import Music.Internal.InstrumentRanges as InstrumentRanges
 import Music.Internal.Pitch as Pitch
 
 

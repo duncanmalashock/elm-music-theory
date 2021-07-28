@@ -4,19 +4,19 @@ import Expect
 import Music.Chord as Chord
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
-import Music.Internal.InstrumentRanges as InstrumentRanges
 import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Voicing.FourPart as FourPart
 import Music.Internal.Voicing.FourPart.Jazz as JazzFourPart
+import Music.Range as Range
 import Test exposing (..)
 
 
 satbRanges : FourPart.Ranges
 satbRanges =
-    { voiceOne = InstrumentRanges.sopranoVoice
-    , voiceTwo = InstrumentRanges.altoVoice
-    , voiceThree = InstrumentRanges.tenorVoice
-    , voiceFour = InstrumentRanges.bassVoice
+    { voiceOne = Range.sopranoVoice
+    , voiceTwo = Range.altoVoice
+    , voiceThree = Range.tenorVoice
+    , voiceFour = Range.bassVoice
     }
 
 

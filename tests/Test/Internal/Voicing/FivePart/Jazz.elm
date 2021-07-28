@@ -3,20 +3,20 @@ module Test.Internal.Voicing.FivePart.Jazz exposing (..)
 import Expect
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
-import Music.Internal.InstrumentRanges as InstrumentRanges
 import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Voicing.FivePart as FivePart
 import Music.Internal.Voicing.FivePart.Jazz as JazzFivePart
+import Music.Range as Range
 import Test exposing (..)
 
 
 testRanges : FivePart.Ranges
 testRanges =
-    { voiceOne = InstrumentRanges.sopranoVoice
-    , voiceTwo = InstrumentRanges.altoVoice
-    , voiceThree = InstrumentRanges.tenorVoice
-    , voiceFour = InstrumentRanges.tenorVoice
-    , voiceFive = InstrumentRanges.bassVoice
+    { voiceOne = Range.sopranoVoice
+    , voiceTwo = Range.altoVoice
+    , voiceThree = Range.tenorVoice
+    , voiceFour = Range.tenorVoice
+    , voiceFive = Range.bassVoice
     }
 
 
