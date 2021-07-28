@@ -12,13 +12,12 @@ module Music.Internal.Sequence exposing
     )
 
 import List.Extra
+import Music.Internal.Duration as Duration
 import Music.Internal.Note as Note
-import Music.Internal.Time as Time
 
 
 defaultTempo =
-    -- TODO: implement tempo changes correctly
-    160
+    120
 
 
 type NoteEntry
@@ -28,39 +27,32 @@ type NoteEntry
 
 
 type alias SingleNote =
-    { startTime : Time.Duration
+    { startTime : Duration.Duration
     , note : Note.Note
     }
 
 
 type alias Tuplet =
-    { duration : Time.Duration
+    { duration : Duration.Duration
     , entries : List NoteEntry
     }
 
 
 type alias TupletEntry =
-    { startTime : Time.Duration
+    { startTime : Duration.Duration
     , tuplet : Tuplet
     }
 
 
 type alias RestEntry =
-    { startTime : Time.Duration
-    , duration : Time.Duration
-    }
-
-
-type alias TempoEntry =
-    { time : Time.Duration
-    , tempo : Int
+    { startTime : Duration.Duration
+    , duration : Duration.Duration
     }
 
 
 type Sequence
     = Sequence
         { noteEntries : List NoteEntry
-        , tempoEntries : List TempoEntry
         }
 
 
@@ -79,7 +71,7 @@ appendTuplet theTuplet theSequence =
 
 
 tuplet :
-    { duration : Time.Duration
+    { duration : Duration.Duration
     }
     -> Sequence
     -> Tuplet
@@ -93,35 +85,6 @@ init : Sequence
 init =
     Sequence
         { noteEntries = []
-        , tempoEntries = []
-        }
-
-
-initialTempo : Int -> Sequence -> Sequence
-initialTempo tempo (Sequence { noteEntries, tempoEntries }) =
-    let
-        newEntryAtTime =
-            { time = Time.zero
-            , tempo = tempo
-            }
-    in
-    Sequence
-        { noteEntries = noteEntries
-        , tempoEntries = tempoEntries ++ [ newEntryAtTime ]
-        }
-
-
-appendTempoChange : Int -> Sequence -> Sequence
-appendTempoChange tempo ((Sequence { noteEntries, tempoEntries }) as theSequence) =
-    let
-        newEntryAtTime =
-            { time = firstAvailableStart theSequence
-            , tempo = tempo
-            }
-    in
-    Sequence
-        { noteEntries = noteEntries
-        , tempoEntries = tempoEntries ++ [ newEntryAtTime ]
         }
 
 
@@ -139,7 +102,7 @@ appendNote note theSequence =
             ++ [ newEntryAtTime ]
 
 
-appendRest : Time.Duration -> Sequence -> Sequence
+appendRest : Duration.Duration -> Sequence -> Sequence
 appendRest restDuration theSequence =
     let
         newEntryAtTime =
@@ -157,7 +120,6 @@ sequence : List NoteEntry -> Sequence
 sequence theNoteEntries =
     Sequence
         { noteEntries = theNoteEntries
-        , tempoEntries = []
         }
 
 
@@ -177,8 +139,8 @@ sortEntries entries =
 orderEntries : NoteEntry -> NoteEntry -> Order
 orderEntries entryA entryB =
     compare
-        (Time.toFloat <| getStartTime entryA)
-        (Time.toFloat <| getStartTime entryB)
+        (Duration.toFloat <| getStartTime entryA)
+        (Duration.toFloat <| getStartTime entryB)
 
 
 normalizeStartTimes : List NoteEntry -> List NoteEntry
@@ -188,49 +150,49 @@ normalizeStartTimes entries =
             sortEntries entries
                 |> List.head
                 |> Maybe.map getStartTime
-                |> Maybe.withDefault Time.zero
+                |> Maybe.withDefault Duration.zero
     in
     List.map (addStartTime startTimeOffset) entries
 
 
-totalDuration : List SingleNote -> Time.Duration
+totalDuration : List SingleNote -> Duration.Duration
 totalDuration entries =
     let
-        addDurationToStartTime : SingleNote -> Time.Duration
+        addDurationToStartTime : SingleNote -> Duration.Duration
         addDurationToStartTime note =
-            Time.add (Note.duration note.note) note.startTime
+            Duration.add (Note.duration note.note) note.startTime
     in
     entries
         |> List.reverse
         |> List.head
         |> Maybe.map addDurationToStartTime
-        |> Maybe.withDefault Time.zero
+        |> Maybe.withDefault Duration.zero
 
 
-addStartTime : Time.Duration -> NoteEntry -> NoteEntry
+addStartTime : Duration.Duration -> NoteEntry -> NoteEntry
 addStartTime timeToAdd entry =
     case entry of
         EntryNote { startTime, note } ->
             EntryNote
-                { startTime = Time.add timeToAdd startTime
+                { startTime = Duration.add timeToAdd startTime
                 , note = note
                 }
 
         EntryTuplet tupletEntry ->
             EntryTuplet
-                { startTime = Time.add timeToAdd tupletEntry.startTime
+                { startTime = Duration.add timeToAdd tupletEntry.startTime
                 , tuplet = tupletEntry.tuplet
                 }
 
         EntryRest { startTime, duration } ->
             EntryRest
-                { startTime = Time.add timeToAdd startTime
+                { startTime = Duration.add timeToAdd startTime
                 , duration = duration
                 }
 
 
-subdivideAt : Time.Duration -> Sequence -> Sequence
-subdivideAt theStartTime (Sequence { noteEntries, tempoEntries }) =
+subdivideAt : Duration.Duration -> Sequence -> Sequence
+subdivideAt theStartTime (Sequence { noteEntries }) =
     Sequence
         { noteEntries =
             List.concatMap
@@ -240,14 +202,14 @@ subdivideAt theStartTime (Sequence { noteEntries, tempoEntries }) =
                             EntryNote { startTime, note } ->
                                 let
                                     halfDuration =
-                                        Time.multiply Time.half (Note.duration note)
+                                        Duration.multiply Duration.half (Note.duration note)
                                 in
                                 [ EntryNote
                                     { startTime = startTime
                                     , note = Note.setDuration note halfDuration
                                     }
                                 , EntryNote
-                                    { startTime = Time.add startTime halfDuration
+                                    { startTime = Duration.add startTime halfDuration
                                     , note = Note.setDuration note halfDuration
                                     }
                                 ]
@@ -270,13 +232,12 @@ subdivideAt theStartTime (Sequence { noteEntries, tempoEntries }) =
                         [ noteEntry ]
                 )
                 noteEntries
-        , tempoEntries = tempoEntries
         }
 
 
-addStartTimeToNoteEntry : Time.Duration -> SingleNote -> SingleNote
+addStartTimeToNoteEntry : Duration.Duration -> SingleNote -> SingleNote
 addStartTimeToNoteEntry timeToAdd entry =
-    { startTime = Time.add timeToAdd entry.startTime
+    { startTime = Duration.add timeToAdd entry.startTime
     , note = entry.note
     }
 
@@ -286,16 +247,11 @@ getNoteEntries (Sequence { noteEntries }) =
     noteEntries
 
 
-getTempoEntries : Sequence -> List TempoEntry
-getTempoEntries (Sequence { tempoEntries }) =
-    tempoEntries
-
-
 toEvents : Sequence -> List NoteEvent
 toEvents theSequence =
     getNoteEntries theSequence
         |> flattenToNoteEntries
-        |> noteEntriesToNoteEvents (getTempoEntries theSequence)
+        |> noteEntriesToNoteEvents
 
 
 tempoToCoefficient : Int -> Float
@@ -323,16 +279,16 @@ flattenToNoteEntries entriesToConvert =
             )
 
 
-stretchToDuration : Time.Duration -> List SingleNote -> List SingleNote
+stretchToDuration : Duration.Duration -> List SingleNote -> List SingleNote
 stretchToDuration duration noteEntries =
     let
-        ratio : Time.Duration
+        ratio : Duration.Duration
         ratio =
-            Time.divide duration (totalDuration noteEntries)
+            Duration.divide duration (totalDuration noteEntries)
 
-        stretch : Time.Duration -> SingleNote -> SingleNote
+        stretch : Duration.Duration -> SingleNote -> SingleNote
         stretch ratioToStretch noteEntry =
-            { startTime = Time.multiply noteEntry.startTime ratioToStretch
+            { startTime = Duration.multiply noteEntry.startTime ratioToStretch
             , note = Note.multiplyDuration noteEntry.note ratioToStretch
             }
     in
@@ -340,43 +296,26 @@ stretchToDuration duration noteEntries =
         |> List.map (stretch ratio)
 
 
-noteEntriesToNoteEvents : List TempoEntry -> List SingleNote -> List NoteEvent
-noteEntriesToNoteEvents tempoEntries singleNoteEntries =
+noteEntriesToNoteEvents : List SingleNote -> List NoteEvent
+noteEntriesToNoteEvents singleNoteEntries =
     singleNoteEntries
         |> List.map
             (\{ startTime, note } ->
                 { time =
                     startTime
-                        |> Time.toFloat
+                        |> Duration.toFloat
                         |> (*) (tempoToCoefficient defaultTempo)
                 , pitch = Note.toMidiNoteNumber note
                 , duration =
                     Note.duration note
-                        |> Time.toFloat
+                        |> Duration.toFloat
                         |> (*) (tempoToCoefficient defaultTempo)
                 , volume = Note.toMidiVelocity note
                 }
             )
 
 
-allTempoEventPoints : Sequence -> List Time.Duration
-allTempoEventPoints (Sequence { noteEntries, tempoEntries }) =
-    let
-        tempoEntryTimes =
-            List.map .time tempoEntries
-
-        noteEntryStartTimes =
-            List.map getStartTime noteEntries
-
-        noteEntryEndTimes =
-            List.map getEndTime noteEntries
-    in
-    (tempoEntryTimes ++ noteEntryStartTimes ++ noteEntryEndTimes)
-        |> List.Extra.uniqueBy Time.toFloat
-        |> Time.sort
-
-
-getStartTime : NoteEntry -> Time.Duration
+getStartTime : NoteEntry -> Duration.Duration
 getStartTime entry =
     case entry of
         EntryNote noteEntry ->
@@ -389,7 +328,7 @@ getStartTime entry =
             restEntry.startTime
 
 
-getDuration : NoteEntry -> Time.Duration
+getDuration : NoteEntry -> Duration.Duration
 getDuration entry =
     case entry of
         EntryNote noteEntry ->
@@ -402,19 +341,19 @@ getDuration entry =
             restEntry.duration
 
 
-getEndTime : NoteEntry -> Time.Duration
+getEndTime : NoteEntry -> Duration.Duration
 getEndTime entry =
     getStartTime entry
-        |> Time.add (getDuration entry)
+        |> Duration.add (getDuration entry)
 
 
-firstAvailableStart : Sequence -> Time.Duration
+firstAvailableStart : Sequence -> Duration.Duration
 firstAvailableStart theSequence =
     getNoteEntries theSequence
         |> List.reverse
         |> List.head
         |> Maybe.map
             (\entry ->
-                Time.add (getStartTime entry) (getDuration entry)
+                Duration.add (getStartTime entry) (getDuration entry)
             )
-        |> Maybe.withDefault Time.zero
+        |> Maybe.withDefault Duration.zero

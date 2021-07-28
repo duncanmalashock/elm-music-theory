@@ -13,6 +13,7 @@ module Music.Internal.Note exposing
     , mf
     , mp
     , multiplyDuration
+    , note
     , oneHundredTwentyEighth
     , p
     , pitch
@@ -30,16 +31,16 @@ module Music.Internal.Note exposing
     , whole
     )
 
+import Music.Internal.Duration as Duration
 import Music.Internal.Dynamics as Dynamics
 import Music.Internal.Pitch as Pitch
-import Music.Internal.Time as Time
 
 
 type Note
-    = Note Pitch.Pitch Time.Duration Dynamics.Dynamics
+    = Note Pitch.Pitch Duration.Duration Dynamics.Dynamics
 
 
-note : Pitch.Pitch -> Time.Duration -> Note
+note : Pitch.Pitch -> Duration.Duration -> Note
 note pit dur =
     Note pit dur Dynamics.normal
 
@@ -109,78 +110,78 @@ louder (Note pit dur dyn) =
     Note pit dur (Dynamics.louder dyn)
 
 
-duration : Note -> Time.Duration
+duration : Note -> Duration.Duration
 duration (Note pit dur dyn) =
     dur
 
 
-addDuration : Time.Duration -> Note -> Note
+addDuration : Duration.Duration -> Note -> Note
 addDuration durationToAdd (Note pit dur dyn) =
-    note pit (Time.add dur durationToAdd)
+    note pit (Duration.add dur durationToAdd)
 
 
-multiplyDuration : Note -> Time.Duration -> Note
+multiplyDuration : Note -> Duration.Duration -> Note
 multiplyDuration (Note pit dur dyn) durationToMultiply =
-    note pit (Time.multiply dur durationToMultiply)
+    note pit (Duration.multiply dur durationToMultiply)
 
 
-setDuration : Note -> Time.Duration -> Note
+setDuration : Note -> Duration.Duration -> Note
 setDuration (Note pit dur dyn) durationToSet =
     note pit durationToSet
 
 
 dotted : Note -> Note
 dotted (Note pit dur dyn) =
-    note pit (Time.add dur (Time.subdivide dur))
+    note pit (Duration.add dur (Duration.subdivide dur))
 
 
 join : Note -> Note -> Note
 join (Note pitA durationA dynA) (Note pitB durationB dynB) =
     -- This uses only the p of the first Note.
     -- Make sure client code checks that the two pes are the same before joining
-    note pitA (Time.add durationA durationB)
+    note pitA (Duration.add durationA durationB)
 
 
 whole : Pitch.Pitch -> Note
 whole pit =
-    note pit Time.whole
+    note pit Duration.whole
 
 
 half : Pitch.Pitch -> Note
 half pit =
-    note pit Time.half
+    note pit Duration.half
 
 
 quarter : Pitch.Pitch -> Note
 quarter pit =
-    note pit Time.quarter
+    note pit Duration.quarter
 
 
 eighth : Pitch.Pitch -> Note
 eighth pit =
-    note pit Time.eighth
+    note pit Duration.eighth
 
 
 sixteenth : Pitch.Pitch -> Note
 sixteenth pit =
-    note pit Time.sixteenth
+    note pit Duration.sixteenth
 
 
 thirtySecond : Pitch.Pitch -> Note
 thirtySecond pit =
-    note pit Time.thirtySecond
+    note pit Duration.thirtySecond
 
 
 sixtyFourth : Pitch.Pitch -> Note
 sixtyFourth pit =
-    note pit Time.sixtyFourth
+    note pit Duration.sixtyFourth
 
 
 oneHundredTwentyEighth : Pitch.Pitch -> Note
 oneHundredTwentyEighth pit =
-    note pit Time.oneHundredTwentyEighth
+    note pit Duration.oneHundredTwentyEighth
 
 
 twoHundredFiftySixth : Pitch.Pitch -> Note
 twoHundredFiftySixth pit =
-    note pit Time.twoHundredFiftySixth
+    note pit Duration.twoHundredFiftySixth
