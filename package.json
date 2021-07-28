@@ -5,7 +5,8 @@
   "author": "Duncan Malashock <duncanmalashock@gmail.com>",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "elm-test": "^0.19.1-revision2",
+    "elm-json": "^0.2.10",
+    "elm-test": "^0.19.1-revision7",
     "minimist": "1.2.3"
   }
 }
