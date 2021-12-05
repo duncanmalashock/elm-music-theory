@@ -2,7 +2,6 @@ module Music.Chord exposing
     ( Chord
     , chordType, root, containsPitchClass, detect
     , toPitchClasses, toString
-    , voiceThreeParts, voiceFourParts, voiceFiveParts
     , major, minor, augmented, diminished, sus2, sus4
     , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
     , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminished, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
@@ -34,10 +33,6 @@ A chord is defined by a set of pitch classes. But pitch classes can't be heard; 
 
 1.  choosing some number of its pitch classes, and
 2.  turning them into pitches within specific octaves, so that they can be played or sung.
-
-Learn more about how this works in the [Voicing.ThreePart](Music-Voicing-ThreePart), [Voicing.FourPart](Music-Voicing-FourPart), and [Voicing.FivePart](Music-Voicing-FivePart) modules.
-
-@docs voiceThreeParts, voiceFourParts, voiceFiveParts
 
 
 # Constructors
@@ -87,87 +82,14 @@ Learn more about how this works in the [Voicing.ThreePart](Music-Voicing-ThreePa
 
 -}
 
-import List.Extra
 import Music.Internal.Chord as Chord
 import Music.Internal.ChordType as ChordType
-import Music.Internal.Octave as Octave
 import Music.Internal.PitchClass as PitchClass
-import Music.Internal.Voicing as Voicing
-import Music.Internal.Voicing.FivePart as FivePart
-import Music.Internal.Voicing.FourPart as FourPart
-import Music.Internal.Voicing.ThreePart as ThreePart
-import Music.Range as Range
 
 
 {-| -}
 type alias Chord =
     Chord.Chord
-
-
-{-| -}
-voiceThreeParts :
-    { voiceOne : Range.Range
-    , voiceTwo : Range.Range
-    , voiceThree : Range.Range
-    }
-    -> List ThreePart.VoicingMethod
-    -> Chord
-    -> List ThreePart.Voicing
-voiceThreeParts voiceRanges methods chord =
-    List.concatMap
-        (\oct ->
-            List.map
-                (\class -> Voicing.voicing chord oct class)
-                (List.concatMap (ThreePart.voicingClassesFromMethod (chordType chord)) methods)
-        )
-        Octave.allValid
-        |> List.filter (Voicing.withInstrumentRanges ThreePart.allVoices ThreePart.allRanges voiceRanges)
-        |> List.Extra.uniqueBy (Voicing.toString ThreePart.allVoices)
-
-
-{-| -}
-voiceFourParts :
-    { voiceOne : Range.Range
-    , voiceTwo : Range.Range
-    , voiceThree : Range.Range
-    , voiceFour : Range.Range
-    }
-    -> List FourPart.VoicingMethod
-    -> Chord
-    -> List FourPart.Voicing
-voiceFourParts voiceRanges methods chord =
-    List.concatMap
-        (\oct ->
-            List.map
-                (\class -> Voicing.voicing chord oct class)
-                (List.concatMap (FourPart.voicingClassesFromMethod (chordType chord)) methods)
-        )
-        Octave.allValid
-        |> List.filter (Voicing.withInstrumentRanges FourPart.allVoices FourPart.allRanges voiceRanges)
-        |> List.Extra.uniqueBy (Voicing.toString FourPart.allVoices)
-
-
-{-| -}
-voiceFiveParts :
-    { voiceOne : Range.Range
-    , voiceTwo : Range.Range
-    , voiceThree : Range.Range
-    , voiceFour : Range.Range
-    , voiceFive : Range.Range
-    }
-    -> List FivePart.VoicingMethod
-    -> Chord
-    -> List FivePart.Voicing
-voiceFiveParts voiceRanges methods chord =
-    List.concatMap
-        (\oct ->
-            List.map
-                (\class -> Voicing.voicing chord oct class)
-                (List.concatMap (FivePart.voicingClassesFromMethod (chordType chord)) methods)
-        )
-        Octave.allValid
-        |> List.filter (Voicing.withInstrumentRanges FivePart.allVoices FivePart.allRanges voiceRanges)
-        |> List.Extra.uniqueBy (Voicing.toString FivePart.allVoices)
 
 
 {-| Get a chord's type:

@@ -79,7 +79,7 @@ binary@^0.3.0:
     buffers "~0.1.1"
     chainsaw "~0.1.0"
 
-binwrap@^0.2.2:
+binwrap@^0.2.2, binwrap@^0.2.3:
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/binwrap/-/binwrap-0.2.3.tgz#87c4e46fa022e2c78b8380e6dd465973bfc7fbca"
   integrity sha512-N4Pm7iyDEv0BrAMs+dny8WQa+e0nNTdzn2ODkf/MM6XBtKSCxCSUA1ZOQGoc1n7mUqdgOS5pwjsW91rmXVxy2Q==
@@ -210,6 +210,13 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
     safer-buffer "^2.1.0"
+
+elm-format@^0.8.5:
+  version "0.8.5"
+  resolved "https://registry.yarnpkg.com/elm-format/-/elm-format-0.8.5.tgz#bd87c344d371ccd7eb694c6f7bccf29487596454"
+  integrity sha512-/Mjwz5RhJ8cdcMsHT98AEKprSIHyRde+URIPvnHez9WH7Xp+rFCOJx0FNMPIYrbHE9Ei7HDSVwhjDP0i+mlvpQ==
+  dependencies:
+    binwrap "^0.2.3"
 
 elm-json@^0.2.10:
   version "0.2.10"
