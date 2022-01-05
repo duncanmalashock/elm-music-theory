@@ -30,8 +30,6 @@ module Music.Internal.Interval exposing
     , direction
     , directionToInteger
     , down
-    , firstAbove
-    , firstBelow
     , indexToIntervalNumber
     , interval
     , intervalNumberIndex
@@ -75,8 +73,6 @@ module Music.Internal.Interval exposing
     , toSimple
     , up
     )
-
-import Util.Basic
 
 
 type IntervalNumber
@@ -197,56 +193,6 @@ addOffset int (Interval dir qual num) =
 
         Imperfect (Offset offsetInt) ->
             Interval dir (Imperfect (Offset (offsetInt + int))) num
-
-
-firstBelow : Interval -> Interval -> Interval
-firstBelow toFind reference =
-    firstBelowHelp
-        (toFind
-            |> Util.Basic.applyNTimes 10 (add perfectOctave)
-        )
-        reference
-
-
-firstBelowHelp : Interval -> Interval -> Interval
-firstBelowHelp toFind reference =
-    let
-        refSemitones =
-            semitones reference
-
-        toFindSemitones =
-            semitones toFind
-    in
-    if refSemitones > toFindSemitones then
-        toFind
-
-    else
-        firstBelowHelp (add (perfectOctave |> reverse) toFind) reference
-
-
-firstAbove : Interval -> Interval -> Interval
-firstAbove toFind reference =
-    firstAboveHelp
-        (toFind
-            |> Util.Basic.applyNTimes 10 (subtract perfectOctave)
-        )
-        reference
-
-
-firstAboveHelp : Interval -> Interval -> Interval
-firstAboveHelp toFind reference =
-    let
-        refSemitones =
-            semitones reference
-
-        toFindSemitones =
-            semitones toFind
-    in
-    if refSemitones < toFindSemitones then
-        toFind
-
-    else
-        firstAboveHelp (add perfectOctave toFind) reference
 
 
 up : Direction

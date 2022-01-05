@@ -1,28 +1,29 @@
-module Util.ConstraintSolver exposing (combineConstraints, solve, tryAllFor)
-
-import Result.Extra
+module Util.ConstraintSolver exposing (solve, solveList)
 
 
-type alias SolveResult solution problemSetup error =
+type alias SolveResult solution setup error =
     { solved : List solution
-    , failed : List ( error, problemSetup )
+    , failed : List ( error, setup )
     }
 
 
 solve :
-    { problemSetup : problemSetup
-    , getNextSetups : problemSetup -> List problemSetup
-    , constraints : List (problemSetup -> Result error problemSetup)
-    , setupToSolution : problemSetup -> Result error solution
+    { setup : setup
+    , nextSetups : setup -> List setup
+    , constraints : List (setup -> Result error setup)
+    , toSolution : setup -> Result error solution
     }
-    -> SolveResult solution problemSetup error
-solve { problemSetup, getNextSetups, constraints, setupToSolution } =
-    { current = problemSetup
+    ->
+        { solved : List solution
+        , failed : List ( error, setup )
+        }
+solve { setup, nextSetups, constraints, toSolution } =
+    { current = setup
     , backtrack = []
     , solved = []
     , failed = []
     }
-        |> solveHelp constraints getNextSetups setupToSolution
+        |> solveHelp constraints nextSetups toSolution
         |> (\inProgress ->
                 { solved = inProgress.solved
                 , failed = inProgress.failed
@@ -30,63 +31,60 @@ solve { problemSetup, getNextSetups, constraints, setupToSolution } =
            )
 
 
-tryAllFor :
-    (problemSetup -> Maybe part)
-    -> List part
-    -> (problemSetup -> part -> problemSetup)
-    -> List problemSetup
-    -> List problemSetup
-tryAllFor accessor possibleValues updateValue problemSetups =
-    List.concatMap
-        (\problemSetup ->
-            case accessor problemSetup of
-                Nothing ->
-                    List.map (updateValue problemSetup) possibleValues
-
-                Just value ->
-                    []
+solveList :
+    { setups : List setup
+    , nextSetups : setup -> List setup
+    , constraints : List (setup -> Result error setup)
+    , toSolution : setup -> Result error solution
+    }
+    ->
+        { solved : List solution
+        , failed : List ( error, setup )
+        }
+solveList { setups, nextSetups, constraints, toSolution } =
+    List.map
+        (\setup ->
+            solve
+                { setup = setup
+                , nextSetups = nextSetups
+                , constraints = constraints
+                , toSolution = toSolution
+                }
         )
-        problemSetups
+        setups
+        |> solveResultFromList
 
 
-combineConstraints :
-    List (Result error problemSetup)
-    -> problemSetup
-    -> Result error problemSetup
-combineConstraints constraints theProblemSetup =
-    List.foldl
-        (\constraint state ->
-            state
-                |> Result.map always
-                |> Result.Extra.andMap constraint
-        )
-        (Ok theProblemSetup)
-        constraints
+solveResultFromList : List (SolveResult solution setup error) -> SolveResult solution setup error
+solveResultFromList list =
+    { solved = List.concatMap .solved list
+    , failed = List.concatMap .failed list
+    }
 
 
-type alias InProgress problemSetup error solution =
-    { current : problemSetup
-    , backtrack : List problemSetup
+type alias InProgress setup error solution =
+    { current : setup
+    , backtrack : List setup
     , solved : List solution
-    , failed : List ( error, problemSetup )
+    , failed : List ( error, setup )
     }
 
 
 solveHelp :
-    List (problemSetup -> Result error problemSetup)
-    -> (problemSetup -> List problemSetup)
-    -> (problemSetup -> Result error solution)
-    -> InProgress problemSetup error solution
-    -> InProgress problemSetup error solution
-solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved, failed } =
+    List (setup -> Result error setup)
+    -> (setup -> List setup)
+    -> (setup -> Result error solution)
+    -> InProgress setup error solution
+    -> InProgress setup error solution
+solveHelp constraints nextSetups toSolution { current, backtrack, solved, failed } =
     case checkConstraints constraints current of
         Ok _ ->
             -- Constraints are fulfilled.
             -- Are there next setups?
-            case getNextSetups current of
+            case nextSetups current of
                 [] ->
                     -- No next setups, solution should be valid.
-                    case setupToSolution current of
+                    case toSolution current of
                         Ok solution ->
                             -- Converted to solution successfully
                             case backtrack of
@@ -104,8 +102,8 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                                     -- add solution to solved list and solve them
                                     solveHelp
                                         constraints
-                                        getNextSetups
-                                        setupToSolution
+                                        nextSetups
+                                        toSolution
                                         { current = head
                                         , backtrack = tail
                                         , solved = solved ++ [ solution ]
@@ -129,8 +127,8 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                                     -- add solution to solved list and solve them
                                     solveHelp
                                         constraints
-                                        getNextSetups
-                                        setupToSolution
+                                        nextSetups
+                                        toSolution
                                         { current = head
                                         , backtrack = tail
                                         , solved = solved
@@ -142,8 +140,8 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                     -- and attempt to solve first setup
                     solveHelp
                         constraints
-                        getNextSetups
-                        setupToSolution
+                        nextSetups
+                        toSolution
                         { current = head
                         , backtrack = backtrack ++ tail
                         , solved = solved
@@ -167,8 +165,8 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
                     -- attempt to solve backtracks
                     solveHelp
                         constraints
-                        getNextSetups
-                        setupToSolution
+                        nextSetups
+                        toSolution
                         { current = head
                         , backtrack = tail
                         , solved = solved
@@ -177,9 +175,9 @@ solveHelp constraints getNextSetups setupToSolution { current, backtrack, solved
 
 
 checkConstraints :
-    List (problemSetup -> Result error problemSetup)
-    -> problemSetup
-    -> Result error problemSetup
+    List (setup -> Result error setup)
+    -> setup
+    -> Result error setup
 checkConstraints constraints theProblemSetup =
     List.foldl
         (\constraint state ->

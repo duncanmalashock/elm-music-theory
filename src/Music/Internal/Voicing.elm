@@ -22,7 +22,6 @@ module Music.Internal.Voicing exposing
     , usesContraryMotion
     , violatesLowIntervalLimits
     , voicing
-    , voicingClass
     , withInstrumentRanges
     )
 
@@ -32,36 +31,31 @@ import Music.Internal.Octave as Octave
 import Music.Internal.Pitch as Pitch
 
 
-type Voicing voicingClass
-    = Voicing Chord.Chord Octave.Octave voicingClass
+type Voicing
+    = Voicing Chord.Chord Octave.Octave
 
 
-voicing : Chord.Chord -> Octave.Octave -> voicingClass -> Voicing voicingClass
-voicing ch theOctave vc =
-    Voicing ch theOctave vc
+voicing : Chord.Chord -> Octave.Octave -> Voicing
+voicing ch theOctave =
+    Voicing ch theOctave
 
 
-chord : Voicing voicingClass -> Chord.Chord
-chord (Voicing ch theOctave vc) =
+chord : Voicing -> Chord.Chord
+chord (Voicing ch theOctave) =
     ch
 
 
-root : Voicing voicingClass -> Pitch.Pitch
-root (Voicing ch theOctave vc) =
+root : Voicing -> Pitch.Pitch
+root (Voicing ch theOctave) =
     Chord.root ch
         |> Pitch.fromPitchClass theOctave
 
 
-voicingClass : Voicing voicingClass -> voicingClass
-voicingClass (Voicing ch theOctave vc) =
-    vc
-
-
 range :
-    { getTopVoice : Voicing voicingClass -> Pitch.Pitch
-    , getBottomVoice : Voicing voicingClass -> Pitch.Pitch
+    { getTopVoice : Voicing -> Pitch.Pitch
+    , getBottomVoice : Voicing -> Pitch.Pitch
     }
-    -> Voicing voicingClass
+    -> Voicing
     -> Interval.Interval
 range { getTopVoice, getBottomVoice } theVoicing =
     Pitch.intervalBetween
@@ -74,10 +68,10 @@ range { getTopVoice, getBottomVoice } theVoicing =
 
 
 withInstrumentRanges :
-    List (Voicing voicingClass -> Pitch.Pitch)
+    List (Voicing -> Pitch.Pitch)
     -> List (ranges -> Pitch.Range)
     -> ranges
-    -> Voicing voicingClass
+    -> Voicing
     -> Bool
 withInstrumentRanges allVoices allRanges ranges theVoicing =
     List.map2
@@ -93,7 +87,7 @@ withInstrumentRanges allVoices allRanges ranges theVoicing =
 -- Comparisons & predicates
 
 
-usesContraryMotion : (Voicing voicingClass -> Pitch.Pitch) -> (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> Bool
+usesContraryMotion : (Voicing -> Pitch.Pitch) -> (Voicing -> Pitch.Pitch) -> Voicing -> Voicing -> Bool
 usesContraryMotion getVoiceOne getVoiceTwo voicingA voicingB =
     Maybe.map2
         (/=)
@@ -102,7 +96,7 @@ usesContraryMotion getVoiceOne getVoiceTwo voicingA voicingB =
         |> Maybe.withDefault False
 
 
-compareByContraryMotion : (Voicing voicingClass -> Pitch.Pitch) -> (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> (Voicing voicingClass -> Voicing voicingClass -> Order)
+compareByContraryMotion : (Voicing -> Pitch.Pitch) -> (Voicing -> Pitch.Pitch) -> Voicing -> (Voicing -> Voicing -> Order)
 compareByContraryMotion getVoiceOne getVoiceTwo from =
     let
         boolToInt bool =
@@ -131,7 +125,7 @@ movesUpward a b =
         Just True
 
 
-forEachVoice : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> (Pitch.Pitch -> Pitch.Pitch -> a) -> List a
+forEachVoice : List (Voicing -> Pitch.Pitch) -> Voicing -> Voicing -> (Pitch.Pitch -> Pitch.Pitch -> a) -> List a
 forEachVoice allVoices voicingA voicingB fn =
     allVoices
         |> List.map
@@ -141,7 +135,7 @@ forEachVoice allVoices voicingA voicingB fn =
         |> List.map (\( a, b ) -> fn a b)
 
 
-commonToneCount : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> Int
+commonToneCount : List (Voicing -> Pitch.Pitch) -> Voicing -> Voicing -> Int
 commonToneCount allVoices voicingA voicingB =
     forEachVoice allVoices
         voicingA
@@ -156,7 +150,7 @@ commonToneCount allVoices voicingA voicingB =
         |> List.sum
 
 
-commonTones : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> Voicing voicingClass -> List Pitch.Pitch
+commonTones : List (Voicing -> Pitch.Pitch) -> Voicing -> Voicing -> List Pitch.Pitch
 commonTones allVoices voicingA voicingB =
     forEachVoice allVoices
         voicingA
@@ -173,9 +167,9 @@ commonTones allVoices voicingA voicingB =
 
 
 compareByCommonTones :
-    List (Voicing voicingClass -> Pitch.Pitch)
-    -> Voicing voicingClass
-    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
+    List (Voicing -> Pitch.Pitch)
+    -> Voicing
+    -> (Voicing -> Voicing -> Order)
 compareByCommonTones allVoices from =
     \a b ->
         compare (commonToneCount allVoices from b) (commonToneCount allVoices from a)
@@ -193,9 +187,9 @@ semitoneCenter a b =
 
 semitoneCenterOrder :
     Int
-    -> (Voicing voicingClass -> Pitch.Pitch)
-    -> (Voicing voicingClass -> Pitch.Pitch)
-    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
+    -> (Voicing -> Pitch.Pitch)
+    -> (Voicing -> Pitch.Pitch)
+    -> (Voicing -> Voicing -> Order)
 semitoneCenterOrder goal getLowestVoice getHighestVoice =
     \a b ->
         compare
@@ -205,11 +199,11 @@ semitoneCenterOrder goal getLowestVoice getHighestVoice =
 
 totalSemitoneDistance :
     List
-        (Voicing voicingClass
+        (Voicing
          -> Pitch.Pitch
         )
-    -> Voicing voicingClass
-    -> Voicing voicingClass
+    -> Voicing
+    -> Voicing
     -> Int
 totalSemitoneDistance allVoices voicingA voicingB =
     forEachVoice allVoices
@@ -220,9 +214,9 @@ totalSemitoneDistance allVoices voicingA voicingB =
 
 
 compareByTotalSemitoneDistance :
-    List (Voicing voicingClass -> Pitch.Pitch)
-    -> Voicing voicingClass
-    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
+    List (Voicing -> Pitch.Pitch)
+    -> Voicing
+    -> (Voicing -> Voicing -> Order)
 compareByTotalSemitoneDistance allVoices from =
     \a b ->
         compare
@@ -236,9 +230,9 @@ voiceSemitoneDistance getVoice voicingA voicingB =
 
 
 compareByVoiceSemitoneDistance :
-    (Voicing voicingClass -> Pitch.Pitch)
-    -> Voicing voicingClass
-    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
+    (Voicing -> Pitch.Pitch)
+    -> Voicing
+    -> (Voicing -> Voicing -> Order)
 compareByVoiceSemitoneDistance getter from =
     \a b ->
         compare
@@ -248,8 +242,8 @@ compareByVoiceSemitoneDistance getter from =
 
 containsPitch :
     Pitch.Pitch
-    -> List (Voicing voicingClass -> Pitch.Pitch)
-    -> Voicing voicingClass
+    -> List (Voicing -> Pitch.Pitch)
+    -> Voicing
     -> Bool
 containsPitch pitch allVoices theVoicing =
     List.map (\fn -> fn theVoicing) allVoices
@@ -258,8 +252,8 @@ containsPitch pitch allVoices theVoicing =
 
 containsPitchInVoice :
     Pitch.Pitch
-    -> (Voicing voicingClass -> Pitch.Pitch)
-    -> Voicing voicingClass
+    -> (Voicing -> Pitch.Pitch)
+    -> Voicing
     -> Bool
 containsPitchInVoice pitch getter theVoicing =
     getter theVoicing == pitch
@@ -267,8 +261,8 @@ containsPitchInVoice pitch getter theVoicing =
 
 containsFactor :
     Interval.Interval
-    -> (Voicing voicingClass -> List Interval.Interval)
-    -> Voicing voicingClass
+    -> (Voicing -> List Interval.Interval)
+    -> Voicing
     -> Bool
 containsFactor factor allFactors theVoicing =
     theVoicing
@@ -279,10 +273,10 @@ containsFactor factor allFactors theVoicing =
 
 containsParallelIntervals :
     Interval.Interval
-    -> (Voicing voicingClass -> Pitch.Pitch)
-    -> List (Voicing voicingClass -> Interval.Interval)
-    -> Voicing voicingClass
-    -> Voicing voicingClass
+    -> (Voicing -> Pitch.Pitch)
+    -> List (Voicing -> Interval.Interval)
+    -> Voicing
+    -> Voicing
     -> Bool
 containsParallelIntervals interval getRoot allFactors voicingA voicingB =
     let
@@ -303,10 +297,10 @@ containsParallelIntervals interval getRoot allFactors voicingA voicingB =
 
 
 compareByParallelOctave :
-    (Voicing voicingClass -> Pitch.Pitch)
-    -> List (Voicing voicingClass -> Interval.Interval)
-    -> Voicing voicingClass
-    -> (Voicing voicingClass -> Voicing voicingClass -> Order)
+    (Voicing -> Pitch.Pitch)
+    -> List (Voicing -> Interval.Interval)
+    -> Voicing
+    -> (Voicing -> Voicing -> Order)
 compareByParallelOctave getRoot allFactors from =
     let
         boolToInt bool =
@@ -324,20 +318,20 @@ compareByParallelOctave getRoot allFactors from =
 
 
 containsParallelFifths :
-    (Voicing voicingClass -> Pitch.Pitch)
-    -> List (Voicing voicingClass -> Interval.Interval)
-    -> Voicing voicingClass
-    -> Voicing voicingClass
+    (Voicing -> Pitch.Pitch)
+    -> List (Voicing -> Interval.Interval)
+    -> Voicing
+    -> Voicing
     -> Bool
 containsParallelFifths getRoot allFactors voicingA voicingB =
     containsParallelIntervals Interval.perfectFifth getRoot allFactors voicingA voicingB
 
 
 containsParallelOctaves :
-    (Voicing voicingClass -> Pitch.Pitch)
-    -> List (Voicing voicingClass -> Interval.Interval)
-    -> Voicing voicingClass
-    -> Voicing voicingClass
+    (Voicing -> Pitch.Pitch)
+    -> List (Voicing -> Interval.Interval)
+    -> Voicing
+    -> Voicing
     -> Bool
 containsParallelOctaves getRoot allFactors voicingA voicingB =
     containsParallelIntervals Interval.perfectUnison getRoot allFactors voicingA voicingB
@@ -347,7 +341,7 @@ containsParallelOctaves getRoot allFactors voicingA voicingB =
 -- Miscellaneous conversions
 
 
-toString : List (Voicing voicingClass -> Pitch.Pitch) -> Voicing voicingClass -> String
+toString : List (Voicing -> Pitch.Pitch) -> Voicing -> String
 toString allVoices v =
     allVoices
         |> List.map (\fn -> fn v |> Pitch.toString)

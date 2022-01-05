@@ -220,7 +220,6 @@ module Music.Internal.Pitch exposing
     , transposeUp
     )
 
-import List.Extra
 import Music.Internal.Interval as Interval exposing (Interval)
 import Music.Internal.Letter as Letter exposing (Letter(..))
 import Music.Internal.Octave as Octave exposing (Octave)

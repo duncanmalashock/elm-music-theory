@@ -12,10 +12,13 @@ module Music.Internal.Octave exposing
     , seven
     , six
     , three
+    , toInterval
     , toString
     , two
     , zero
     )
+
+import Music.Internal.Interval as Interval
 
 
 type Octave
@@ -49,6 +52,14 @@ allValid =
     , octave 7
     , octave 8
     ]
+
+
+toInterval : Octave -> Interval.Interval
+toInterval (Octave int) =
+    List.foldl
+        (always Interval.addOctave)
+        Interval.perfectUnison
+        (List.repeat int ())
 
 
 semitones : Octave -> Int

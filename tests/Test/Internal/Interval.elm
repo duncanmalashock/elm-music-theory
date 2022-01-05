@@ -34,49 +34,6 @@ all =
                         |> Interval.toSimple
                         |> Expect.equal Interval.majorThird
             ]
-        , describe "firstBelow"
-            [ test "Should return unchanged if it is the first below the reference" <|
-                \_ ->
-                    let
-                        result =
-                            Interval.firstBelow
-                                Interval.majorThird
-                                Interval.perfectFifth
-
-                        expected =
-                            Interval.majorThird
-                    in
-                    Expect.equal expected result
-            , test "First P5 below a M3 should be P5 - PO" <|
-                \_ ->
-                    let
-                        result =
-                            Interval.firstBelow
-                                Interval.perfectFifth
-                                Interval.majorThird
-
-                        expected =
-                            Interval.perfectFifth
-                                |> Interval.add
-                                    (Interval.perfectOctave
-                                        |> Interval.reverse
-                                    )
-                    in
-                    Expect.equal expected result
-            , test "First M6 below PU should be m3" <|
-                \_ ->
-                    let
-                        result =
-                            Interval.firstBelow
-                                Interval.majorSixth
-                                Interval.perfectUnison
-
-                        expected =
-                            Interval.minorThird
-                                |> Interval.reverse
-                    in
-                    Expect.equal expected result
-            ]
         , describe "add"
             [ test "PU plus PU should equal PU" <|
                 \_ ->

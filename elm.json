@@ -29,6 +29,7 @@
         "elm-community/maybe-extra": "5.0.0 <= v < 6.0.0",
         "elm-community/result-extra": "2.4.0 <= v < 3.0.0",
         "elm-explorations/test": "1.1.0 <= v < 2.0.0",
+        "erlandsona/assoc-set": "1.1.0 <= v < 2.0.0",
         "pzp1997/assoc-list": "1.0.0 <= v < 2.0.0",
         "wernerdegroot/listzipper": "4.0.0 <= v < 5.0.0"
     },

@@ -1,182 +1,176 @@
 module Music.Internal.VoicingPlan exposing
-    ( ForScaleTypes
-    , Placement
-    , Voice
+    ( Selection
     , VoicingPlan
-    , firstVoice
-    , forScaleTypes
-    , nextVoice
-    , placeAbove
-    , placeAboveByAtLeast
-    , placeAnywhere
-    , placeBelow
-    , placeBelowByAtLeast
-    , placeWithin
+    , init
+    , select
     , toString
+    , toVoiceList
+    , voicingClassToString
     )
 
-import AssocList as Dict
+import List.Extra
 import Music.Internal.Interval as Interval
+import Music.Internal.Octave as Octave
+import Music.Internal.Placement as Placement
 import Music.Internal.ScaleType as ScaleType
+import Util.ConstraintSolver
 
 
-toString : ForScaleTypes -> String
-toString (ForScaleTypes dict) =
-    Dict.toList dict
-        |> List.map voicingToString
-        |> String.join ","
-        |> (\str -> "[" ++ str ++ "]")
-
-
-voicingToString : ( ScaleType.ScaleType, VoicingPlan ) -> String
-voicingToString ( _, VoicingPlan voices ) =
-    voices
-        |> List.map voiceToString
-        |> String.join ","
-
-
-forScaleTypes :
-    List
-        { scaleType : ScaleType.ScaleType
-        , voicingPlan : VoicingPlan
+toVoiceList : VoicingPlan -> List (List PlacedSelection)
+toVoiceList voicingPlan =
+    Util.ConstraintSolver.solve
+        { setup = initSetup voicingPlan
+        , nextSetups = nextSetups
+        , constraints = constraints
+        , toSolution = toSolution
         }
-    -> ForScaleTypes
-forScaleTypes list =
-    list
-        |> List.map
-            (\{ scaleType, voicingPlan } ->
-                ( scaleType, voicingPlan )
-            )
-        |> Dict.fromList
-        |> ForScaleTypes
+        |> .solved
 
 
-type ForScaleTypes
-    = ForScaleTypes (Dict.Dict ScaleType.ScaleType VoicingPlan)
+type alias Setup =
+    { scaleType : ScaleType.ScaleType
+    , toProcess : List Selection
+    , placedSelections : List PlacedSelection
+    }
+
+
+initSetup : VoicingPlan -> Setup
+initSetup (VoicingPlan scaleType selectionList) =
+    { scaleType = scaleType
+    , toProcess = List.reverse selectionList
+    , placedSelections = []
+    }
+
+
+nextSetups : Setup -> List Setup
+nextSetups setup =
+    case setup.toProcess of
+        [] ->
+            []
+
+        (Selection toProcessHead) :: toProcessTail ->
+            let
+                scaleAsList : List Interval.Interval
+                scaleAsList =
+                    ScaleType.toList setup.scaleType
+
+                sourceDegrees : List Interval.Interval
+                sourceDegrees =
+                    toProcessHead.options
+                        |> List.map
+                            (\index ->
+                                List.Extra.getAt (index - 1) scaleAsList
+                            )
+                        |> List.filterMap identity
+
+                atAllOctaves : Interval.Interval -> List Interval.Interval
+                atAllOctaves sourceInterval =
+                    Octave.allValid
+                        |> List.map Octave.toInterval
+                        |> List.map (Interval.add sourceInterval)
+
+                placedSelectionOptions : List PlacedSelection
+                placedSelectionOptions =
+                    sourceDegrees
+                        |> List.concatMap
+                            (\sourceInterval ->
+                                sourceInterval
+                                    |> atAllOctaves
+                                    |> List.map
+                                        (\transposed ->
+                                            { interval = transposed
+                                            , sourceInterval = sourceInterval
+                                            }
+                                        )
+                            )
+
+                placedToSetup : PlacedSelection -> Setup
+                placedToSetup placed =
+                    { scaleType = setup.scaleType
+                    , toProcess = toProcessTail
+                    , placedSelections = setup.placedSelections ++ [ placed ]
+                    }
+            in
+            placedSelectionOptions
+                |> List.map placedToSetup
+
+
+constraints : List (Setup -> Result String Setup)
+constraints =
+    []
+
+
+toSolution : Setup -> Result String (List PlacedSelection)
+toSolution setup =
+    case setup.toProcess of
+        [] ->
+            Ok (List.reverse setup.placedSelections)
+
+        _ ->
+            Err "not all selections processed"
+
+
+type alias PlacedSelection =
+    { interval : Interval.Interval
+    , sourceInterval : Interval.Interval
+    }
+
+
+voicingClassToString : List PlacedSelection -> String
+voicingClassToString placedSelection =
+    placedSelection
+        |> List.map (.interval >> Interval.shortName)
+        |> String.join ","
+
+
+
+-- FROM SCALE
+
+
+init :
+    { scaleType : ScaleType.ScaleType
+    , selections : List Selection
+    }
+    -> VoicingPlan
+init { scaleType, selections } =
+    VoicingPlan scaleType selections
 
 
 type VoicingPlan
-    = VoicingPlan (List Voice)
+    = VoicingPlan ScaleType.ScaleType (List Selection)
 
 
-type Voice
-    = Voice
+type Selection
+    = Selection
         { options : List Int
         , canBeDoubled : Bool
-        , placement : Placement
+        , placement : Placement.Placement
         }
 
 
-voiceToString : Voice -> String
-voiceToString (Voice { options, canBeDoubled, placement }) =
-    let
-        optionsAsString =
-            options
-                |> List.map String.fromInt
-                |> String.join ","
-
-        canBeDoubledAsString =
-            if canBeDoubled then
-                "Y"
-
-            else
-                "N"
-
-        placementAsString =
-            case placement of
-                PlacementAnywhere ->
-                    "any"
-
-                PlacementAbove ->
-                    "above"
-
-                PlacementAboveByAtLeast interval ->
-                    "aboveMin" ++ Interval.shortName interval
-
-                PlacementBelow ->
-                    "below"
-
-                PlacementBelowByAtLeast interval ->
-                    "belowMin" ++ Interval.shortName interval
-
-                PlacementWithin interval ->
-                    "within" ++ Interval.shortName interval
-    in
-    "opt="
-        ++ optionsAsString
-        ++ "/dbl="
-        ++ canBeDoubledAsString
-        ++ "/plc="
-        ++ placementAsString
-
-
-type Placement
-    = PlacementAnywhere
-    | PlacementAbove
-    | PlacementAboveByAtLeast Interval.Interval
-    | PlacementBelow
-    | PlacementBelowByAtLeast Interval.Interval
-    | PlacementWithin Interval.Interval
-
-
-placeAnywhere : Placement
-placeAnywhere =
-    PlacementAbove
-
-
-placeAbove : Placement
-placeAbove =
-    PlacementAbove
-
-
-placeAboveByAtLeast : Interval.Interval -> Placement
-placeAboveByAtLeast interval =
-    PlacementAboveByAtLeast interval
-
-
-placeBelow : Placement
-placeBelow =
-    PlacementBelow
-
-
-placeBelowByAtLeast : Interval.Interval -> Placement
-placeBelowByAtLeast interval =
-    PlacementBelowByAtLeast interval
-
-
-placeWithin : Interval.Interval -> Placement
-placeWithin range =
-    PlacementWithin range
-
-
-firstVoice :
+select :
     { options : List Int
     , canBeDoubled : Bool
+    , placement : Placement.Placement
     }
-    -> VoicingPlan
-firstVoice { options, canBeDoubled } =
-    [ { options = options
-      , canBeDoubled = canBeDoubled
-      , placement = PlacementAnywhere
-      }
-        |> Voice
-    ]
-        |> VoicingPlan
+    -> Selection
+select { options, canBeDoubled, placement } =
+    { options = options
+    , canBeDoubled = canBeDoubled
+    , placement = placement
+    }
+        |> Selection
 
 
-nextVoice :
-    { options : List Int
-    , canBeDoubled : Bool
-    , placement : Placement
-    }
-    -> VoicingPlan
-    -> VoicingPlan
-nextVoice { options, canBeDoubled, placement } (VoicingPlan list) =
-    list
-        ++ [ { options = options
-             , canBeDoubled = canBeDoubled
-             , placement = placement
-             }
-                |> Voice
-           ]
-        |> VoicingPlan
+toString : VoicingPlan -> String
+toString (VoicingPlan scaleType selections) =
+    selections
+        |> List.map selectionToString
+        |> String.join "-"
+
+
+selectionToString : Selection -> String
+selectionToString (Selection details) =
+    details.options
+        |> List.map String.fromInt
+        |> String.join ","
