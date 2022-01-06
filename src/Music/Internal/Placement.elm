@@ -3,9 +3,11 @@ module Music.Internal.Placement exposing
     , checkIntervals
     , placeAbove
     , placeAboveByAtLeast
+    , placeAboveByAtMost
     , placeAnywhere
     , placeBelow
     , placeBelowByAtLeast
+    , placeBelowByAtMost
     , placeWithin
     , toString
     )
@@ -17,8 +19,10 @@ type Placement
     = PlacementAnywhere
     | PlacementAbove
     | PlacementAboveByAtLeast Interval.Interval
+    | PlacementAboveByAtMost Interval.Interval
     | PlacementBelow
     | PlacementBelowByAtLeast Interval.Interval
+    | PlacementBelowByAtMost Interval.Interval
     | PlacementWithin Interval.Interval
 
 
@@ -36,13 +40,29 @@ checkIntervals placement { from, to } =
             Interval.subtract from to
                 |> Interval.isGreaterThan minInterval
 
+        PlacementAboveByAtMost maxInterval ->
+            let
+                difference =
+                    Interval.subtract from to
+            in
+            Interval.isGreaterThan Interval.perfectUnison difference
+                && Interval.isLessThanOrEqualTo maxInterval difference
+
         PlacementBelow ->
-            Interval.subtract from to
-                |> Interval.isLessThan Interval.perfectUnison
+            Interval.subtract to from
+                |> Interval.isGreaterThan Interval.perfectUnison
 
         PlacementBelowByAtLeast minInterval ->
             Interval.subtract to from
                 |> Interval.isGreaterThan minInterval
+
+        PlacementBelowByAtMost maxInterval ->
+            let
+                difference =
+                    Interval.subtract to from
+            in
+            Interval.isGreaterThan Interval.perfectUnison difference
+                && Interval.isLessThanOrEqualTo maxInterval difference
 
         PlacementWithin range ->
             let
@@ -68,6 +88,11 @@ placeAboveByAtLeast interval =
     PlacementAboveByAtLeast interval
 
 
+placeAboveByAtMost : Interval.Interval -> Placement
+placeAboveByAtMost interval =
+    PlacementAboveByAtMost interval
+
+
 placeBelow : Placement
 placeBelow =
     PlacementBelow
@@ -76,6 +101,11 @@ placeBelow =
 placeBelowByAtLeast : Interval.Interval -> Placement
 placeBelowByAtLeast interval =
     PlacementBelowByAtLeast interval
+
+
+placeBelowByAtMost : Interval.Interval -> Placement
+placeBelowByAtMost interval =
+    PlacementBelowByAtMost interval
 
 
 placeWithin : Interval.Interval -> Placement
@@ -95,11 +125,17 @@ toString placement =
         PlacementAboveByAtLeast interval ->
             ">" ++ Interval.shortName interval
 
+        PlacementAboveByAtMost interval ->
+            ">|" ++ Interval.shortName interval
+
         PlacementBelow ->
             "<"
 
         PlacementBelowByAtLeast interval ->
             "<" ++ Interval.shortName interval
+
+        PlacementBelowByAtMost interval ->
+            "|<" ++ Interval.shortName interval
 
         PlacementWithin interval ->
             "<" ++ Interval.shortName interval ++ ">"

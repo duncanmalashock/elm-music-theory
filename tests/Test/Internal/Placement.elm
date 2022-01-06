@@ -143,6 +143,29 @@ all =
                             ]
                     in
                     Expect.equal expected result
+            , test "'placeAboveByAtMost' should allow only where second interval is greater than first by at most certain amount" <|
+                \_ ->
+                    let
+                        placement =
+                            Placement.placeAboveByAtMost Interval.majorThird
+
+                        result =
+                            intervalPairs
+                                |> List.map
+                                    (Placement.checkIntervals placement)
+
+                        expected =
+                            [ True
+                            , False
+                            , False
+                            , False
+                            , True
+                            , False
+                            , False
+                            , False
+                            ]
+                    in
+                    Expect.equal expected result
             , test "'placeBelowByAtLeast' should allow only where first interval is greater than second by a certain amount" <|
                 \_ ->
                     let
@@ -163,6 +186,29 @@ all =
                             , False
                             , False
                             , True
+                            ]
+                    in
+                    Expect.equal expected result
+            , test "'placeBelowByAtMost' should allow only where second interval is less than first by at most a certain amount" <|
+                \_ ->
+                    let
+                        placement =
+                            Placement.placeBelowByAtMost Interval.majorThird
+
+                        result =
+                            intervalPairs
+                                |> List.map
+                                    (Placement.checkIntervals placement)
+
+                        expected =
+                            [ False
+                            , False
+                            , True
+                            , False
+                            , False
+                            , False
+                            , True
+                            , False
                             ]
                     in
                     Expect.equal expected result
