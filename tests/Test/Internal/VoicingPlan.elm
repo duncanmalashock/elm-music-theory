@@ -16,7 +16,7 @@ all =
                     let
                         expected : String
                         expected =
-                            "1-3,7"
+                            "(1>)-(3,7>U)"
 
                         result : String
                         result =
@@ -25,7 +25,7 @@ all =
                                 , selections =
                                     [ VoicingPlan.select
                                         { options = [ 1 ]
-                                        , canBeDoubled = False
+                                        , canBeDoubled = True
                                         , placement = Placement.placeAbove
                                         }
                                     , VoicingPlan.select
@@ -39,38 +39,39 @@ all =
                     in
                     Expect.equal expected result
             ]
-        , describe "toVoiceList"
-            [ test "creates all voice lists for a plan" <|
-                \_ ->
-                    let
-                        plan : VoicingPlan.VoicingPlan
-                        plan =
-                            VoicingPlan.init
-                                { scaleType = ScaleType.ionian
-                                , selections =
-                                    [ VoicingPlan.select
-                                        { options = [ 1 ]
-                                        , canBeDoubled = False
-                                        , placement = Placement.placeAbove
-                                        }
-                                    , VoicingPlan.select
-                                        { options = [ 3, 7 ]
-                                        , canBeDoubled = False
-                                        , placement = Placement.placeAbove
-                                        }
-                                    ]
-                                }
 
-                        expected : List String
-                        expected =
-                            []
-
-                        result : List String
-                        result =
-                            plan
-                                |> VoicingPlan.toVoiceList
-                                |> List.map VoicingPlan.voicingClassToString
-                    in
-                    Expect.equal expected result
-            ]
+        --, describe "toVoiceList"
+        --    [ test "creates all voice lists for a plan" <|
+        --        \_ ->
+        --            let
+        --                plan : VoicingPlan.VoicingPlan
+        --                plan =
+        --                    VoicingPlan.init
+        --                        { scaleType = ScaleType.ionian
+        --                        , selections =
+        --                            [ VoicingPlan.select
+        --                                { options = [ 1 ]
+        --                                , canBeDoubled = False
+        --                                , placement = Placement.placeAnywhere
+        --                                }
+        --                            , VoicingPlan.select
+        --                                { options = [ 3, 7 ]
+        --                                , canBeDoubled = False
+        --                                , placement = Placement.placeAnywhere
+        --                                }
+        --                            ]
+        --                        }
+        --
+        --                expected : List String
+        --                expected =
+        --                    []
+        --
+        --                result : List String
+        --                result =
+        --                    plan
+        --                        |> VoicingPlan.toVoiceList
+        --                        |> List.map VoicingPlan.voicingClassToString
+        --            in
+        --            Expect.equal expected result
+        --    ]
         ]

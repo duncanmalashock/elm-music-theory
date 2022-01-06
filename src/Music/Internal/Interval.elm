@@ -4,6 +4,7 @@ module Music.Internal.Interval exposing
     , IntervalNumber(..)
     , IntervalQuality(..)
     , Range
+    , absoluteValue
     , add
     , addOctave
     , addOffset
@@ -465,6 +466,11 @@ reverse (Interval dir intervalQuality intervalNumber) =
 
         Down ->
             Interval Up intervalQuality intervalNumber
+
+
+absoluteValue : Interval -> Interval
+absoluteValue (Interval dir intervalQuality intervalNumber) =
+    Interval Up intervalQuality intervalNumber
 
 
 perfectUnison : Interval

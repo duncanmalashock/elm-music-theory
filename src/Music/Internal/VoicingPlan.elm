@@ -171,6 +171,25 @@ toString (VoicingPlan scaleType selections) =
 
 selectionToString : Selection -> String
 selectionToString (Selection details) =
-    details.options
+    let
+        viewOptions =
+            optionsToString details.options
+
+        viewDoubled =
+            if details.canBeDoubled then
+                ""
+
+            else
+                "U"
+
+        viewPlacement =
+            Placement.toString details.placement
+    in
+    "(" ++ viewOptions ++ viewPlacement ++ viewDoubled ++ ")"
+
+
+optionsToString : List Int -> String
+optionsToString options =
+    options
         |> List.map String.fromInt
         |> String.join ","
