@@ -37,7 +37,7 @@ type alias Setup =
 initSetup : VoicingPlan -> Setup
 initSetup (VoicingPlan scaleType selectionList) =
     { scaleType = scaleType
-    , toProcess = List.reverse selectionList
+    , toProcess = selectionList
     , placedSelections = []
     }
 
@@ -88,10 +88,44 @@ nextSetups setup =
                 placedToSetup placed =
                     { scaleType = setup.scaleType
                     , toProcess = toProcessTail
-                    , placedSelections = setup.placedSelections ++ [ placed ]
+                    , placedSelections = placed :: setup.placedSelections
                     }
+
+                maybePreviousPlaced : Maybe PlacedSelection
+                maybePreviousPlaced =
+                    List.head setup.placedSelections
+
+                satisfiesPlacementConstraint : PlacedSelection -> Bool
+                satisfiesPlacementConstraint placed =
+                    case maybePreviousPlaced of
+                        Just previousPlaced ->
+                            Placement.checkIntervals
+                                toProcessHead.placement
+                                { from = previousPlaced.interval
+                                , to = placed.interval
+                                }
+
+                        Nothing ->
+                            True
+
+                satisfiesDoublingConstraint : PlacedSelection -> Bool
+                satisfiesDoublingConstraint placed =
+                    if toProcessHead.canBeDoubled then
+                        True
+
+                    else
+                        case setup.placedSelections of
+                            [] ->
+                                True
+
+                            nonEmpty ->
+                                List.map .sourceInterval nonEmpty
+                                    |> List.member placed.sourceInterval
+                                    |> not
             in
             placedSelectionOptions
+                |> List.filter satisfiesPlacementConstraint
+                |> List.filter satisfiesDoublingConstraint
                 |> List.map placedToSetup
 
 
