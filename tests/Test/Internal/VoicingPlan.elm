@@ -2,6 +2,7 @@ module Test.Internal.VoicingPlan exposing (all)
 
 import Expect
 import Music.Internal.Interval as Interval
+import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Placement as Placement
 import Music.Internal.VoicingPlan as VoicingPlan
 import Music.ScaleType as ScaleType
@@ -40,14 +41,14 @@ all =
                     in
                     Expect.equal expected result
             ]
-        , describe "toVoiceList"
-            [ test "creates all voice lists for a plan" <|
+        , describe "toVoicings"
+            [ test "creates all voicings for a plan" <|
                 \_ ->
                     let
                         plan : VoicingPlan.VoicingPlan
                         plan =
                             VoicingPlan.init
-                                { scaleType = ScaleType.ionian
+                                { scaleType = ScaleType.aeolian
                                 , selections =
                                     [ VoicingPlan.select
                                         { options = [ 1 ]
@@ -55,14 +56,19 @@ all =
                                         , placement = Placement.placeAnywhere
                                         }
                                     , VoicingPlan.select
-                                        { options = [ 3, 7 ]
+                                        { options = [ 5 ]
                                         , canBeDoubled = False
-                                        , placement = Placement.placeAboveByAtMost Interval.perfectOctave
+                                        , placement = Placement.placeBelowByAtMost Interval.perfectOctave
                                         }
                                     , VoicingPlan.select
-                                        { options = [ 3, 7 ]
+                                        { options = [ 3 ]
                                         , canBeDoubled = False
-                                        , placement = Placement.placeAboveByAtMost Interval.perfectOctave
+                                        , placement = Placement.placeBelowByAtMost Interval.perfectOctave
+                                        }
+                                    , VoicingPlan.select
+                                        { options = [ 6 ]
+                                        , canBeDoubled = False
+                                        , placement = Placement.placeBelowByAtMost Interval.perfectOctave
                                         }
                                     ]
                                 }
@@ -74,8 +80,8 @@ all =
                         result : List String
                         result =
                             plan
-                                |> VoicingPlan.toVoiceList
-                                |> List.map VoicingPlan.voicingClassToString
+                                |> VoicingPlan.toVoicings PitchClass.c
+                                |> List.map VoicingPlan.voicingToString
                     in
                     Expect.equal expected result
             ]
