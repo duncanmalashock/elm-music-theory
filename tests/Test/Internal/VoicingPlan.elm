@@ -4,6 +4,7 @@ import Expect
 import Music.Internal.Interval as Interval
 import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Placement as Placement
+import Music.Internal.Voicing as Voicing
 import Music.Internal.VoicingPlan as VoicingPlan
 import Music.ScaleType as ScaleType
 import Test exposing (Test, describe, test)
@@ -58,30 +59,37 @@ all =
                                     , VoicingPlan.select
                                         { options = [ 5 ]
                                         , canBeDoubled = False
-                                        , placement = Placement.placeBelowByAtMost Interval.perfectOctave
+                                        , placement =
+                                            Placement.placeAboveByAtMost
+                                                Interval.perfectOctave
                                         }
                                     , VoicingPlan.select
                                         { options = [ 3 ]
                                         , canBeDoubled = False
-                                        , placement = Placement.placeBelowByAtMost Interval.perfectOctave
-                                        }
-                                    , VoicingPlan.select
-                                        { options = [ 6 ]
-                                        , canBeDoubled = False
-                                        , placement = Placement.placeBelowByAtMost Interval.perfectOctave
+                                        , placement =
+                                            Placement.placeAboveByAtMost
+                                                Interval.perfectOctave
                                         }
                                     ]
                                 }
 
                         expected : List String
                         expected =
-                            []
+                            [ "C0,G0,E♭1"
+                            , "C1,G1,E♭2"
+                            , "C2,G2,E♭3"
+                            , "C3,G3,E♭4"
+                            , "C4,G4,E♭5"
+                            , "C5,G5,E♭6"
+                            , "C6,G6,E♭7"
+                            , "C7,G7,E♭8"
+                            ]
 
                         result : List String
                         result =
                             plan
                                 |> VoicingPlan.toVoicings PitchClass.c
-                                |> List.map VoicingPlan.voicingToString
+                                |> List.map Voicing.toString
                     in
                     Expect.equal expected result
             ]

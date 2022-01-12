@@ -5,8 +5,6 @@ module Music.Internal.VoicingPlan exposing
     , select
     , toString
     , toVoicings
-    , voicingClassToString
-    , voicingToString
     )
 
 import List.Extra
@@ -16,10 +14,11 @@ import Music.Internal.Pitch as Pitch
 import Music.Internal.PitchClass as PitchClass
 import Music.Internal.Placement as Placement
 import Music.Internal.ScaleType as ScaleType
+import Music.Internal.Voicing as Voicing
 import Util.ConstraintSolver
 
 
-toVoicings : PitchClass.PitchClass -> VoicingPlan -> List Voicing
+toVoicings : PitchClass.PitchClass -> VoicingPlan -> List Voicing.Voicing
 toVoicings pitchClass voicingPlan =
     let
         pitchReference : Pitch.Pitch
@@ -32,40 +31,13 @@ toVoicings pitchClass voicingPlan =
                 placedSelections
                     |> List.map
                         (\{ interval, sourceInterval } ->
-                            Voice
-                                { pitch = Pitch.transposeUp interval pitchReference
-                                , interval = interval
-                                , sourceInterval = sourceInterval
-                                }
+                            { pitch = Pitch.transposeUp interval pitchReference
+                            , interval = interval
+                            , sourceInterval = sourceInterval
+                            }
                         )
+                    |> Voicing.init
             )
-
-
-voicingToString : Voicing -> String
-voicingToString voicing =
-    let
-        voiceToString : Voice -> String
-        voiceToString (Voice details) =
-            Pitch.toString details.pitch
-    in
-    voicing
-        |> List.map voiceToString
-        |> String.join ","
-
-
-type alias Voicing =
-    List Voice
-
-
-type Voice
-    = Voice VoiceDetails
-
-
-type alias VoiceDetails =
-    { pitch : Pitch.Pitch
-    , interval : Interval.Interval
-    , sourceInterval : Interval.Interval
-    }
 
 
 toVoiceList : VoicingPlan -> List (List PlacedSelection)
@@ -200,13 +172,6 @@ type alias PlacedSelection =
     { interval : Interval.Interval
     , sourceInterval : Interval.Interval
     }
-
-
-voicingClassToString : List PlacedSelection -> String
-voicingClassToString placedSelection =
-    placedSelection
-        |> List.map (.interval >> Interval.shortName)
-        |> String.join ","
 
 
 
