@@ -1,4 +1,11 @@
-module Music.Internal.ScaleStepper exposing (ScaleStepper, current, init)
+module Music.Internal.ScaleStepper exposing
+    ( ScaleStepper
+    , current
+    , init
+    , stepDown
+    , stepUp
+    , switchScale
+    )
 
 import Music.Internal.Pitch as Pitch
 import Music.Internal.Scale as Scale
@@ -37,7 +44,7 @@ splitOnInitPitch initPitch pitchList =
         selection =
             Pitch.sortClosest initPitch pitchList
                 |> List.head
-                -- this is exceedingly rare, because
+                -- this is effectively impossible, because
                 -- all scales should have at least one pitch
                 |> Maybe.withDefault initPitch
 
@@ -81,11 +88,53 @@ current (ScaleStepper details) =
     details.selection
 
 
-step : Int -> ScaleStepper -> ScaleStepper
-step numSteps (ScaleStepper details) =
-    Debug.todo "implement"
+type Direction
+    = DirectionUp
+    | DirectionDown
+
+
+stepUp : ScaleStepper -> ScaleStepper
+stepUp stepper =
+    step DirectionUp stepper
+
+
+stepDown : ScaleStepper -> ScaleStepper
+stepDown stepper =
+    step DirectionDown stepper
+
+
+step : Direction -> ScaleStepper -> ScaleStepper
+step direction (ScaleStepper details) =
+    case direction of
+        DirectionUp ->
+            case details.afterSelection of
+                [] ->
+                    ScaleStepper details
+
+                head :: tail ->
+                    ScaleStepper
+                        { selection = head
+                        , beforeSelection =
+                            details.beforeSelection ++ [ details.selection ]
+                        , afterSelection = tail
+                        , scale = details.scale
+                        }
+
+        DirectionDown ->
+            case List.reverse details.beforeSelection of
+                [] ->
+                    ScaleStepper details
+
+                head :: tail ->
+                    ScaleStepper
+                        { selection = head
+                        , beforeSelection = List.reverse tail
+                        , afterSelection =
+                            details.selection :: details.afterSelection
+                        , scale = details.scale
+                        }
 
 
 switchScale : Scale.Scale -> ScaleStepper -> ScaleStepper
 switchScale newScale (ScaleStepper details) =
-    Debug.todo "implement"
+    init details.selection newScale
