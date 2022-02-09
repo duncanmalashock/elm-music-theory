@@ -2,6 +2,7 @@ module Music.Internal.ScaleStepper exposing
     ( ScaleStepper
     , current
     , init
+    , stepByAmount
     , stepDown
     , stepUp
     , switchScale
@@ -101,6 +102,18 @@ stepUp stepper =
 stepDown : ScaleStepper -> ScaleStepper
 stepDown stepper =
     step DirectionDown stepper
+
+
+stepByAmount : Int -> ScaleStepper -> ScaleStepper
+stepByAmount numSteps stepper =
+    if numSteps == 0 then
+        stepper
+
+    else if numSteps > 0 then
+        stepByAmount (numSteps - 1) (stepUp stepper)
+
+    else
+        stepByAmount (numSteps + 1) (stepDown stepper)
 
 
 step : Direction -> ScaleStepper -> ScaleStepper
