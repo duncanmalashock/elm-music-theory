@@ -674,7 +674,7 @@ maybeChordTypeFromContext key numeral offset chordType =
 numeralAndOffset : Key.Key -> PitchClass.PitchClass -> ( RomanNumeral, PitchClass.Offset )
 numeralAndOffset key root =
     Key.scale key
-        |> Scale.toList
+        |> Scale.toPitchClasses
         |> List.indexedMap
             (\index pc ->
                 ( index, pc )

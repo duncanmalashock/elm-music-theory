@@ -118,7 +118,7 @@ scaleType theScale =
 -}
 toList : Scale -> List PitchClass.PitchClass
 toList theScale =
-    Scale.toList theScale
+    Scale.toPitchClasses theScale
 
 
 {-| Find out whether a scale contains a given pitch class:

@@ -21,7 +21,7 @@ diatonicChordsAt { root, scale, chordTypesAllowed } =
 
 allChordsInScale : List ChordType.ChordType -> Scale.Scale -> List Chord.Chord
 allChordsInScale chordTypesAllowed scale =
-    Scale.toList scale
+    Scale.toPitchClasses scale
         |> List.concatMap
             (\pitchClass ->
                 diatonicChordsAt

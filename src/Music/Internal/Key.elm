@@ -118,7 +118,7 @@ parallel (Key pc majorOrMinor) =
 signature : Key -> List PitchClass.PitchClass
 signature theKey =
     scale theKey
-        |> Scale.toList
+        |> Scale.toPitchClasses
         |> List.filter (\pc -> PitchClass.accidentals pc /= 0)
         |> List.sortBy orderByAppearanceInKeySignature
 

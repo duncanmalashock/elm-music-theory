@@ -5,8 +5,8 @@ module Music.Internal.Scale exposing
     , root
     , scale
     , scaleType
-    , toList
-    , toListThroughAllOctaves
+    , toPitchClasses
+    , toPitches
     )
 
 import Music.Internal.Octave as Octave
@@ -84,8 +84,8 @@ scaleType (Scale _ theScaleType) =
     theScaleType
 
 
-toListThroughAllOctaves : Scale -> List Pitch
-toListThroughAllOctaves (Scale scaleRoot theScaleType) =
+toPitches : Scale -> List Pitch
+toPitches (Scale scaleRoot theScaleType) =
     Octave.allValid
         |> List.take 8
         |> List.concatMap
@@ -105,14 +105,14 @@ toListThroughAllOctaves (Scale scaleRoot theScaleType) =
 containsPitchClass : PitchClass -> Scale -> { ignoreSpelling : Bool } -> Bool
 containsPitchClass thePitchClass theScale { ignoreSpelling } =
     if ignoreSpelling then
-        List.member (PitchClass.semitones thePitchClass) (toList theScale |> List.map PitchClass.semitones)
+        List.member (PitchClass.semitones thePitchClass) (toPitchClasses theScale |> List.map PitchClass.semitones)
 
     else
-        List.member thePitchClass (toList theScale)
+        List.member thePitchClass (toPitchClasses theScale)
 
 
-toList : Scale -> List PitchClass
-toList theScale =
+toPitchClasses : Scale -> List PitchClass
+toPitchClasses theScale =
     case toScaleDegrees theScale of
         Pentatonic scaleDegrees ->
             [ scaleDegrees.root
@@ -164,7 +164,7 @@ degree degreeNumber theScale =
                 head :: tail ->
                     tail ++ [ head ]
     in
-    toList theScale
+    toPitchClasses theScale
         |> Util.Basic.applyNTimes (degreeNumber - 1) shift
         |> List.head
         |> Maybe.withDefault PitchClass.bDoubleFlat

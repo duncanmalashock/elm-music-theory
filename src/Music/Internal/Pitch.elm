@@ -213,6 +213,7 @@ module Music.Internal.Pitch exposing
     , sharp
     , simplify
     , sort
+    , sortClosest
     , toFrequency
     , toMIDINoteNumber
     , toString
@@ -579,6 +580,17 @@ sort pitchList =
 semitones : Pitch -> Int
 semitones (Pitch pc o) =
     Octave.semitones o + PitchClass.semitones pc
+
+
+sortClosest : Pitch -> List Pitch -> List Pitch
+sortClosest pitch_ list =
+    List.sortBy
+        (\p ->
+            (semitones p - semitones pitch_)
+                |> Basics.abs
+        )
+        list
+        |> List.reverse
 
 
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool

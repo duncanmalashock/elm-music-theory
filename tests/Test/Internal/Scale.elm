@@ -31,7 +31,7 @@ all =
                         ]
                 in
                 Scale.scale (pitchClass C natural) ScaleType.ionian
-                    |> Scale.toList
+                    |> Scale.toPitchClasses
                     |> Expect.equal pitchClassesInCIonian
         , test "D dorian should have correct pitch classes" <|
             \_ ->
@@ -47,7 +47,7 @@ all =
                         ]
                 in
                 Scale.scale (pitchClass D natural) ScaleType.dorian
-                    |> Scale.toList
+                    |> Scale.toPitchClasses
                     |> Expect.equal pitchClassesInCDorian
         , test "E phrygian should have correct pitch classes" <|
             \_ ->
@@ -63,7 +63,7 @@ all =
                         ]
                 in
                 Scale.scale (pitchClass E natural) ScaleType.phrygian
-                    |> Scale.toList
+                    |> Scale.toPitchClasses
                     |> Expect.equal pitchClassesInCPhrygian
         , test "F lydian should have correct pitch classes" <|
             \_ ->
@@ -79,7 +79,7 @@ all =
                         ]
                 in
                 Scale.scale (pitchClass F natural) ScaleType.lydian
-                    |> Scale.toList
+                    |> Scale.toPitchClasses
                     |> Expect.equal pitchClassesInFLydian
         , test "G mixolydian should have correct pitch classes" <|
             \_ ->
@@ -95,7 +95,7 @@ all =
                         ]
                 in
                 Scale.scale (pitchClass G natural) ScaleType.mixolydian
-                    |> Scale.toList
+                    |> Scale.toPitchClasses
                     |> Expect.equal pitchClassesInGMixolydian
         , test "A aeolian should have correct pitch classes" <|
             \_ ->
@@ -111,7 +111,7 @@ all =
                         ]
                 in
                 Scale.scale (pitchClass A natural) ScaleType.aeolian
-                    |> Scale.toList
+                    |> Scale.toPitchClasses
                     |> Expect.equal pitchClassesInAAeolian
         , test "B locrian should have correct pitch classes" <|
             \_ ->
@@ -127,7 +127,7 @@ all =
                         ]
                 in
                 Scale.scale (pitchClass B natural) ScaleType.locrian
-                    |> Scale.toList
+                    |> Scale.toPitchClasses
                     |> Expect.equal pitchClassesInBLocrian
         , describe "degree"
             [ test "Fourth degree of C major is F" <|
@@ -200,7 +200,7 @@ all =
                             ]
 
                         result =
-                            Scale.toListThroughAllOctaves
+                            Scale.toPitches
                                 (Scale.scale PitchClass.f ScaleType.lydian)
                     in
                     Expect.equal expected result
