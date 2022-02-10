@@ -2,10 +2,10 @@ module Music.Internal.ScaleStepper exposing
     ( ScaleStepper
     , current
     , init
+    , setScale
     , stepByAmount
     , stepDown
     , stepUp
-    , switchScale
     )
 
 import Music.Internal.Pitch as Pitch
@@ -148,6 +148,6 @@ step direction (ScaleStepper details) =
                         }
 
 
-switchScale : Scale.Scale -> ScaleStepper -> ScaleStepper
-switchScale newScale (ScaleStepper details) =
+setScale : Scale.Scale -> ScaleStepper -> ScaleStepper
+setScale newScale (ScaleStepper details) =
     init details.selection newScale
