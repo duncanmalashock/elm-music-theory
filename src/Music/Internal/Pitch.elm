@@ -415,15 +415,13 @@ toString (Pitch l o) =
 
 
 isLessThan : Pitch -> Pitch -> Bool
-isLessThan a b =
-    semitones a
-        < semitones b
+isLessThan threshold subject =
+    semitones subject < semitones threshold
 
 
 isGreaterThan : Pitch -> Pitch -> Bool
-isGreaterThan a b =
-    semitones a
-        > semitones b
+isGreaterThan threshold subject =
+    semitones subject > semitones threshold
 
 
 toFrequency : Pitch -> Float

@@ -29,8 +29,8 @@ type ScaleStepper
 
 type alias Details =
     { selection : Pitch.Pitch
-    , beforeSelection : List Pitch.Pitch
-    , afterSelection : List Pitch.Pitch
+    , aboveSelection : List Pitch.Pitch
+    , belowSelection : List Pitch.Pitch
     , pitchSource : PitchSource
     }
 
@@ -71,8 +71,8 @@ splitOnInitPitch :
     -> List Pitch.Pitch
     ->
         { selection : Pitch.Pitch
-        , beforeSelection : List Pitch.Pitch
-        , afterSelection : List Pitch.Pitch
+        , aboveSelection : List Pitch.Pitch
+        , belowSelection : List Pitch.Pitch
         }
 splitOnInitPitch initPitch pitchList =
     let
@@ -84,23 +84,25 @@ splitOnInitPitch initPitch pitchList =
                 -- all scales should have at least one pitch
                 |> Maybe.withDefault initPitch
 
-        beforeSelection : List Pitch.Pitch
-        beforeSelection =
+        belowSelection : List Pitch.Pitch
+        belowSelection =
             List.filter
                 (Pitch.isLessThan selection)
                 pitchList
+                |> Pitch.sort
                 |> List.reverse
 
-        afterSelection : List Pitch.Pitch
-        afterSelection =
+        aboveSelection : List Pitch.Pitch
+        aboveSelection =
             List.filter
                 (Pitch.isGreaterThan selection)
                 pitchList
+                |> Pitch.sort
                 |> List.reverse
     in
     { selection = selection
-    , beforeSelection = beforeSelection
-    , afterSelection = afterSelection
+    , aboveSelection = aboveSelection
+    , belowSelection = belowSelection
     }
 
 
@@ -108,15 +110,15 @@ fromSplit :
     PitchSource
     ->
         { selection : Pitch.Pitch
-        , beforeSelection : List Pitch.Pitch
-        , afterSelection : List Pitch.Pitch
+        , aboveSelection : List Pitch.Pitch
+        , belowSelection : List Pitch.Pitch
         }
     -> ScaleStepper
-fromSplit pitchSource { selection, beforeSelection, afterSelection } =
+fromSplit pitchSource { selection, aboveSelection, belowSelection } =
     ScaleStepper
         { selection = selection
-        , beforeSelection = beforeSelection
-        , afterSelection = afterSelection
+        , aboveSelection = aboveSelection
+        , belowSelection = belowSelection
         , pitchSource = pitchSource
         }
 
@@ -171,30 +173,30 @@ doStep direction (ScaleStepper old) =
     in
     case direction of
         DirectionDown ->
-            case Pitch.sort details.afterSelection |> List.reverse of
+            case Pitch.sort details.belowSelection |> List.reverse of
                 [] ->
                     ScaleStepper details
 
                 head :: tail ->
                     ScaleStepper
                         { selection = head
-                        , beforeSelection =
-                            details.beforeSelection ++ [ details.selection ]
-                        , afterSelection = tail
+                        , aboveSelection =
+                            details.aboveSelection ++ [ details.selection ]
+                        , belowSelection = tail
                         , pitchSource = details.pitchSource
                         }
 
         DirectionUp ->
-            case Pitch.sort details.beforeSelection of
+            case Pitch.sort details.aboveSelection of
                 [] ->
                     ScaleStepper details
 
                 head :: tail ->
                     ScaleStepper
                         { selection = head
-                        , beforeSelection = List.reverse tail
-                        , afterSelection =
-                            details.selection :: details.afterSelection
+                        , aboveSelection = List.reverse tail
+                        , belowSelection =
+                            details.selection :: details.belowSelection
                         , pitchSource = details.pitchSource
                         }
 

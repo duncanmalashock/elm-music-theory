@@ -395,4 +395,4 @@ violatesLowIntervalLimits intervalToTest pitchToTest =
 intervalViolatesLowIntervalLimit : Interval.Interval -> Pitch.Pitch -> LowIntervalLimit -> Bool
 intervalViolatesLowIntervalLimit intervalToTest pitchToTest { interval, lowestAllowedPitch } =
     Interval.isEqualTo intervalToTest interval
-        && Pitch.isLessThan pitchToTest lowestAllowedPitch
+        && Pitch.isLessThan lowestAllowedPitch pitchToTest
