@@ -89,12 +89,14 @@ splitOnInitPitch initPitch pitchList =
             List.filter
                 (Pitch.isLessThan selection)
                 pitchList
+                |> List.reverse
 
         afterSelection : List Pitch.Pitch
         afterSelection =
             List.filter
                 (Pitch.isGreaterThan selection)
                 pitchList
+                |> List.reverse
     in
     { selection = selection
     , beforeSelection = beforeSelection
@@ -168,8 +170,8 @@ doStep direction (ScaleStepper old) =
                     ScaleStepper old
     in
     case direction of
-        DirectionUp ->
-            case details.afterSelection of
+        DirectionDown ->
+            case Pitch.sort details.afterSelection |> List.reverse of
                 [] ->
                     ScaleStepper details
 
@@ -182,8 +184,8 @@ doStep direction (ScaleStepper old) =
                         , pitchSource = details.pitchSource
                         }
 
-        DirectionDown ->
-            case List.reverse details.beforeSelection of
+        DirectionUp ->
+            case Pitch.sort details.beforeSelection of
                 [] ->
                     ScaleStepper details
 
