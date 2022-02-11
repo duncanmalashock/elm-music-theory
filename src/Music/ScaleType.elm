@@ -9,6 +9,7 @@ module Music.ScaleType exposing
     , diminishedWholeToneHalfTone, diminishedHalfToneWholeTone, wholeTone
     , majorPentatonic, minorPentatonic
     , customPentatonic, customHexatonic, customHeptatonic, customOctatonic
+    , name
     )
 
 {-| A scale type describes the intervals contained in a [scale](https://en.wikipedia.org/wiki/Scale_%28music%29), with no specific root pitch class. E.g. the "major scale."
@@ -99,6 +100,11 @@ Note: like many numbers in music theory, modes are 1-based; `2` means the second
 mode : Int -> ScaleType -> ScaleType
 mode modeShiftIndex scaleType =
     mode modeShiftIndex scaleType
+
+
+name : ScaleType -> Maybe String
+name scaleType =
+    ScaleType.name scaleType
 
 
 {-| -}

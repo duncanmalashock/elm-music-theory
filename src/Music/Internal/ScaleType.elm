@@ -31,6 +31,7 @@ module Music.Internal.ScaleType exposing
     , minorPentatonic
     , mixolydian
     , mode
+    , name
     , phrygian
     , phrygianDominant
     , superlocrian
@@ -39,6 +40,7 @@ module Music.Internal.ScaleType exposing
     , wholeTone
     )
 
+import AssocList
 import Music.Internal.Interval as Interval exposing (Interval)
 
 
@@ -248,6 +250,44 @@ modeShift scale =
             , rootToEighth = Interval.add Interval.perfectOctave intervalToSubtract
             }
                 |> Octatonic
+
+
+name : ScaleType -> Maybe String
+name scaleType =
+    AssocList.get scaleType nameDict
+
+
+nameDict : AssocList.Dict ScaleType String
+nameDict =
+    AssocList.fromList
+        [ ( ionian, "Ionian" )
+        , ( major, "Major" )
+        , ( dorian, "Dorian" )
+        , ( phrygian, "Phrygian" )
+        , ( lydian, "Lydian" )
+        , ( mixolydian, "Mixolydian" )
+        , ( aeolian, "Aeolian" )
+        , ( locrian, "Locrian" )
+        , ( melodicMinor, "Melodic Minor" )
+        , ( dorianFlat2, "Dorian Flat 2" )
+        , ( lydianAugmented, "LydianAugmented" )
+        , ( acoustic, "Acoustic" )
+        , ( majorMinor, "Major Minor" )
+        , ( minorLocrian, "Minor Locrian" )
+        , ( superlocrian, "Superlocrian" )
+        , ( harmonicMinor, "Harmonic Minor" )
+        , ( locrianNatural6, "Locrian Natural 6" )
+        , ( majorAugmented, "Major Augmented" )
+        , ( lydianDiminished, "Lydian Diminished" )
+        , ( phrygianDominant, "Phrygian Dominant" )
+        , ( aeolianHarmonic, "Aeolian Harmonic" )
+        , ( ultralocrian, "Ultralocrian" )
+        , ( diminishedWholeToneHalfTone, "Diminished Whole-Half" )
+        , ( diminishedHalfToneWholeTone, "Diminished Half-Whole" )
+        , ( wholeTone, "Whole Tone" )
+        , ( majorPentatonic, "Major Pentatonic" )
+        , ( minorPentatonic, "Minor Pentatonic" )
+        ]
 
 
 
