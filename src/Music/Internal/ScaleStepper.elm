@@ -1,13 +1,24 @@
 module Music.Internal.ScaleStepper exposing
     ( ScaleStepper
-    , current
-    , init
-    , setScale
-    , stepByAmount
-    , stepDown
-    , stepUp
+    , init, initChromatic
+    , step
+    , setScale, setChromatic
+    , currentPitch
     )
 
+{-|
+
+@docs ScaleStepper
+@docs init, initChromatic
+
+@docs step
+@docs setScale, setChromatic
+
+@docs currentPitch
+
+-}
+
+import Music.Internal.Chromatic as Chromatic
 import Music.Internal.Pitch as Pitch
 import Music.Internal.Scale as Scale
 
@@ -20,15 +31,39 @@ type alias Details =
     { selection : Pitch.Pitch
     , beforeSelection : List Pitch.Pitch
     , afterSelection : List Pitch.Pitch
-    , scale : Scale.Scale
+    , pitchSource : PitchSource
     }
+
+
+type PitchSource
+    = PitchSourceChromatic
+    | PitchSourceScale Scale.Scale
 
 
 init : Pitch.Pitch -> Scale.Scale -> ScaleStepper
 init initPitch scale =
     Scale.toPitches scale
         |> splitOnInitPitch initPitch
-        |> fromSplit scale
+        |> fromSplit (PitchSourceScale scale)
+
+
+initChromatic : Pitch.Pitch -> ScaleStepper
+initChromatic initPitch =
+    initChromaticAscending initPitch
+
+
+initChromaticAscending : Pitch.Pitch -> ScaleStepper
+initChromaticAscending initPitch =
+    Chromatic.ascending
+        |> splitOnInitPitch initPitch
+        |> fromSplit PitchSourceChromatic
+
+
+initChromaticDescending : Pitch.Pitch -> ScaleStepper
+initChromaticDescending initPitch =
+    Chromatic.descending
+        |> splitOnInitPitch initPitch
+        |> fromSplit PitchSourceChromatic
 
 
 splitOnInitPitch :
@@ -68,24 +103,24 @@ splitOnInitPitch initPitch pitchList =
 
 
 fromSplit :
-    Scale.Scale
+    PitchSource
     ->
         { selection : Pitch.Pitch
         , beforeSelection : List Pitch.Pitch
         , afterSelection : List Pitch.Pitch
         }
     -> ScaleStepper
-fromSplit scale { selection, beforeSelection, afterSelection } =
+fromSplit pitchSource { selection, beforeSelection, afterSelection } =
     ScaleStepper
         { selection = selection
         , beforeSelection = beforeSelection
         , afterSelection = afterSelection
-        , scale = scale
+        , pitchSource = pitchSource
         }
 
 
-current : ScaleStepper -> Pitch.Pitch
-current (ScaleStepper details) =
+currentPitch : ScaleStepper -> Pitch.Pitch
+currentPitch (ScaleStepper details) =
     details.selection
 
 
@@ -96,28 +131,42 @@ type Direction
 
 stepUp : ScaleStepper -> ScaleStepper
 stepUp stepper =
-    step DirectionUp stepper
+    doStep DirectionUp stepper
 
 
 stepDown : ScaleStepper -> ScaleStepper
 stepDown stepper =
-    step DirectionDown stepper
+    doStep DirectionDown stepper
 
 
-stepByAmount : Int -> ScaleStepper -> ScaleStepper
-stepByAmount numSteps stepper =
+step : Int -> ScaleStepper -> ScaleStepper
+step numSteps stepper =
     if numSteps == 0 then
         stepper
 
     else if numSteps > 0 then
-        stepByAmount (numSteps - 1) (stepUp stepper)
+        step (numSteps - 1) (stepUp stepper)
 
     else
-        stepByAmount (numSteps + 1) (stepDown stepper)
+        step (numSteps + 1) (stepDown stepper)
 
 
-step : Direction -> ScaleStepper -> ScaleStepper
-step direction (ScaleStepper details) =
+doStep : Direction -> ScaleStepper -> ScaleStepper
+doStep direction (ScaleStepper old) =
+    let
+        (ScaleStepper details) =
+            case old.pitchSource of
+                PitchSourceChromatic ->
+                    case direction of
+                        DirectionUp ->
+                            initChromaticAscending old.selection
+
+                        DirectionDown ->
+                            initChromaticDescending old.selection
+
+                PitchSourceScale _ ->
+                    ScaleStepper old
+    in
     case direction of
         DirectionUp ->
             case details.afterSelection of
@@ -130,7 +179,7 @@ step direction (ScaleStepper details) =
                         , beforeSelection =
                             details.beforeSelection ++ [ details.selection ]
                         , afterSelection = tail
-                        , scale = details.scale
+                        , pitchSource = details.pitchSource
                         }
 
         DirectionDown ->
@@ -144,10 +193,15 @@ step direction (ScaleStepper details) =
                         , beforeSelection = List.reverse tail
                         , afterSelection =
                             details.selection :: details.afterSelection
-                        , scale = details.scale
+                        , pitchSource = details.pitchSource
                         }
 
 
 setScale : Scale.Scale -> ScaleStepper -> ScaleStepper
 setScale newScale (ScaleStepper details) =
     init details.selection newScale
+
+
+setChromatic : ScaleStepper -> ScaleStepper
+setChromatic (ScaleStepper details) =
+    initChromatic details.selection
