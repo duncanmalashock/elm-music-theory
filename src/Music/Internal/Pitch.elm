@@ -590,7 +590,6 @@ sortClosest pitch_ list =
                 |> Basics.abs
         )
         list
-        |> List.reverse
 
 
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool
