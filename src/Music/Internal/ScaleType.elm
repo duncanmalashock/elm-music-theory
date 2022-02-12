@@ -27,6 +27,7 @@ module Music.Internal.ScaleType exposing
     , majorMinor
     , majorPentatonic
     , melodicMinor
+    , minor
     , minorLocrian
     , minorPentatonic
     , mixolydian
@@ -261,7 +262,6 @@ nameDict : AssocList.Dict ScaleType String
 nameDict =
     AssocList.fromList
         [ ( ionian, "Ionian" )
-        , ( major, "Major" )
         , ( dorian, "Dorian" )
         , ( phrygian, "Phrygian" )
         , ( lydian, "Lydian" )
@@ -270,7 +270,7 @@ nameDict =
         , ( locrian, "Locrian" )
         , ( melodicMinor, "Melodic Minor" )
         , ( dorianFlat2, "Dorian Flat 2" )
-        , ( lydianAugmented, "LydianAugmented" )
+        , ( lydianAugmented, "Lydian Augmented" )
         , ( acoustic, "Acoustic" )
         , ( majorMinor, "Major Minor" )
         , ( minorLocrian, "Minor Locrian" )
@@ -287,7 +287,23 @@ nameDict =
         , ( wholeTone, "Whole Tone" )
         , ( majorPentatonic, "Major Pentatonic" )
         , ( minorPentatonic, "Minor Pentatonic" )
+        , ( major, "Major" )
+        , ( minor, "Minor" )
         ]
+
+
+
+-- Common aliases
+
+
+major : ScaleType
+major =
+    ionian
+
+
+minor : ScaleType
+minor =
+    aeolian
 
 
 
@@ -304,11 +320,6 @@ ionian =
         , rootToSixth = Interval.majorSixth
         , rootToSeventh = Interval.majorSeventh
         }
-
-
-major : ScaleType
-major =
-    ionian
 
 
 dorian : ScaleType
