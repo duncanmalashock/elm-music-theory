@@ -3,7 +3,7 @@ module Music.Internal.ScaleStepper exposing
     , init, initChromatic
     , step
     , setScale, setChromatic
-    , currentPitch
+    , pitch
     )
 
 {-|
@@ -14,7 +14,7 @@ module Music.Internal.ScaleStepper exposing
 @docs step
 @docs setScale, setChromatic
 
-@docs currentPitch
+@docs pitch
 
 -}
 
@@ -123,8 +123,8 @@ fromSplit pitchSource { selection, aboveSelection, belowSelection } =
         }
 
 
-currentPitch : ScaleStepper -> Pitch.Pitch
-currentPitch (ScaleStepper details) =
+pitch : ScaleStepper -> Pitch.Pitch
+pitch (ScaleStepper details) =
     details.selection
 
 
