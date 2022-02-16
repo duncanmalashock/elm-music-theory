@@ -33,6 +33,7 @@ module Music.Internal.ScaleType exposing
     , mixolydian
     , mode
     , name
+    , nameWithCustom
     , phrygian
     , phrygianDominant
     , superlocrian
@@ -255,12 +256,17 @@ modeShift scale =
 
 name : ScaleType -> Maybe String
 name scaleType =
-    AssocList.get scaleType nameDict
+    AssocList.get scaleType (nameDict [])
 
 
-nameDict : AssocList.Dict ScaleType String
-nameDict =
-    AssocList.fromList
+nameWithCustom : List ( ScaleType, String ) -> ScaleType -> Maybe String
+nameWithCustom customs scaleType =
+    AssocList.get scaleType (nameDict customs)
+
+
+nameDict : List ( ScaleType, String ) -> AssocList.Dict ScaleType String
+nameDict customs =
+    AssocList.fromList <|
         [ ( ionian, "Ionian" )
         , ( dorian, "Dorian" )
         , ( phrygian, "Phrygian" )
@@ -290,6 +296,7 @@ nameDict =
         , ( major, "Major" )
         , ( minor, "Minor" )
         ]
+            ++ customs
 
 
 
