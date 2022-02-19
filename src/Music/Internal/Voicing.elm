@@ -5,6 +5,7 @@ module Music.Internal.Voicing exposing
     , containsPitchAtVoice
     , init
     , initFromPitches
+    , toPitches
     , toString
     )
 
@@ -74,14 +75,14 @@ compareVoiceAtIndex index (Voicing voicingA) (Voicing voicingB) =
 
 
 containsPitch : Pitch.Pitch -> Voicing -> Bool
-containsPitch pitch (Voicing details) =
-    let
-        pitchList : List Pitch.Pitch
-        pitchList =
-            details.voices
-                |> List.map (\(Voice voice) -> voice.pitch)
-    in
-    List.member pitch pitchList
+containsPitch pitch voicing =
+    List.member pitch (toPitches voicing)
+
+
+toPitches : Voicing -> List Pitch.Pitch
+toPitches (Voicing details) =
+    details.voices
+        |> List.map (\(Voice voice) -> voice.pitch)
 
 
 containsPitchAtVoice : Int -> Pitch.Pitch -> Voicing -> Bool
