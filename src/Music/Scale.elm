@@ -56,11 +56,11 @@ module Music.Scale exposing
 
 -}
 
+import Internal.Chord as Chord
+import Internal.ChordScale as ChordScale
+import Internal.Scale as Scale
+import Internal.ScaleType as ScaleType
 import Music.ChordType as ChordType
-import Music.Internal.Chord as Chord
-import Music.Internal.ChordScale as ChordScale
-import Music.Internal.Scale as Scale
-import Music.Internal.ScaleType as ScaleType
 import Music.PitchClass as PitchClass
 
 

@@ -56,10 +56,10 @@ Chromatic scale degrees require a chord type to be specified, since they have no
 
 -}
 
+import Internal.Analysis as Analysis
+import Internal.Key as Key
 import Music.Chord as Chord
 import Music.ChordType as ChordType
-import Music.Internal.Analysis as Analysis
-import Music.Internal.Key as Key
 
 
 {-| -}

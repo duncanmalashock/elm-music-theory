@@ -63,8 +63,8 @@ module Music.ScaleType exposing
 
 -}
 
-import Music.Internal.Interval exposing (Interval)
-import Music.Internal.ScaleType as ScaleType
+import Internal.Interval exposing (Interval)
+import Internal.ScaleType as ScaleType
 
 
 {-| -}

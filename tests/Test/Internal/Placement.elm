@@ -1,8 +1,8 @@
 module Test.Internal.Placement exposing (..)
 
 import Expect
-import Music.Internal.Interval as Interval
-import Music.Internal.Placement as Placement
+import Internal.Interval as Interval
+import Internal.Placement as Placement
 import Test exposing (Test, describe, test)
 
 

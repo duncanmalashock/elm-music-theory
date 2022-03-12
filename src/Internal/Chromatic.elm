@@ -1,4 +1,4 @@
-module Music.Internal.Chromatic exposing (ascending, descending)
+module Internal.Chromatic exposing (ascending, descending)
 
 {-|
 
@@ -6,8 +6,8 @@ module Music.Internal.Chromatic exposing (ascending, descending)
 
 -}
 
-import Music.Internal.Octave as Octave
-import Music.Internal.Pitch as Pitch
+import Internal.Octave as Octave
+import Internal.Pitch as Pitch
 import Music.PitchClass as PitchClass
 
 

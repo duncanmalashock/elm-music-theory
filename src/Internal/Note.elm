@@ -1,4 +1,4 @@
-module Music.Internal.Note exposing
+module Internal.Note exposing
     ( Note, note
     , whole, half, quarter, eighth, sixteenth
     , thirtySecond, sixtyFourth, oneHundredTwentyEighth, twoHundredFiftySixth
@@ -36,9 +36,9 @@ module Music.Internal.Note exposing
 
 -}
 
-import Music.Internal.Duration as Duration
-import Music.Internal.Dynamics as Dynamics
-import Music.Internal.Pitch as Pitch
+import Internal.Duration as Duration
+import Internal.Dynamics as Dynamics
+import Internal.Pitch as Pitch
 
 
 type Note

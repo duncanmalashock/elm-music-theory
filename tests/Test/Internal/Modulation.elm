@@ -1,10 +1,10 @@
 module Test.Internal.Modulation exposing (..)
 
 import Expect
-import Music.Internal.Interval as Interval
-import Music.Internal.Key as Key
-import Music.Internal.Modulation as Modulation
-import Music.Internal.PitchClass as PitchClass
+import Internal.Interval as Interval
+import Internal.Key as Key
+import Internal.Modulation as Modulation
+import Internal.PitchClass as PitchClass
 import Test exposing (Test, describe, test)
 
 

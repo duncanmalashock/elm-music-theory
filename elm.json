@@ -5,20 +5,18 @@
     "license": "BSD-3-Clause",
     "version": "1.0.0",
     "exposed-modules": [
+        "Music",
+        "Music.Analysis",
+        "Music.Chord",
+        "Music.ChordType",
+        "Music.Interval",
+        "Music.Key",
         "Music.Pitch",
         "Music.PitchClass",
         "Music.Range",
-        "Music.Interval",
-        "Music.Chord",
-        "Music.Chord.Classification",
-        "Music.Voicing.ThreePart",
-        "Music.Voicing.FourPart",
-        "Music.Voicing.FivePart",
-        "Music.ChordType",
-        "Music.Analysis",
-        "Music.Key",
         "Music.Scale",
-        "Music.ScaleType"
+        "Music.ScaleType",
+        "Music.Chord.Classification"
     ],
     "elm-version": "0.19.1 <= v < 0.20.0",
     "dependencies": {

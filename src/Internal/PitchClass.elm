@@ -1,4 +1,4 @@
-module Music.Internal.PitchClass exposing
+module Internal.PitchClass exposing
     ( PitchClass
     , areEnharmonicEquivalents, letter, accidentals
     , toString
@@ -32,8 +32,8 @@ module Music.Internal.PitchClass exposing
 
 -}
 
-import Music.Internal.Interval as Interval exposing (Direction(..), Interval(..))
-import Music.Internal.Letter as Letter exposing (Letter(..))
+import Internal.Interval as Interval exposing (Direction(..), Interval(..))
+import Internal.Letter as Letter exposing (Letter(..))
 import Util.Basic
 
 

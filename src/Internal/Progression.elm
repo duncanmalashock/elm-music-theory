@@ -1,4 +1,4 @@
-module Music.Internal.Progression exposing
+module Internal.Progression exposing
     ( Progression
     , ProgressionEvent
     , ProgressionType
@@ -12,11 +12,11 @@ module Music.Internal.Progression exposing
     , progressionType
     )
 
-import Music.Internal.Analysis as Analysis
-import Music.Internal.Chord as Chord
-import Music.Internal.Duration as Duration
-import Music.Internal.Key as Key
-import Music.Internal.Modulation as Modulation
+import Internal.Analysis as Analysis
+import Internal.Chord as Chord
+import Internal.Duration as Duration
+import Internal.Key as Key
+import Internal.Modulation as Modulation
 
 
 type Progression

@@ -45,8 +45,8 @@ module Music.Key exposing
 
 -}
 
-import Music.Internal.Key as Key
-import Music.Internal.Scale as Scale
+import Internal.Key as Key
+import Internal.Scale as Scale
 import Music.PitchClass as PitchClass
 
 

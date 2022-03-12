@@ -1,4 +1,4 @@
-module Music.Internal.Interval exposing
+module Internal.Interval exposing
     ( Interval, interval
     , isEqualTo, isGreaterThan, isLessThan, isGreaterThanOrEqualTo, isLessThanOrEqualTo
     , add, subtract, addOctave, absoluteValue

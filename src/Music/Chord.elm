@@ -82,9 +82,9 @@ A chord is defined by a set of pitch classes. But pitch classes can't be heard; 
 
 -}
 
-import Music.Internal.Chord as Chord
-import Music.Internal.ChordType as ChordType
-import Music.Internal.PitchClass as PitchClass
+import Internal.Chord as Chord
+import Internal.ChordType as ChordType
+import Internal.PitchClass as PitchClass
 
 
 {-| -}

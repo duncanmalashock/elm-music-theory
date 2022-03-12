@@ -1,8 +1,8 @@
 module Test.Internal.ScaleType exposing (all)
 
 import Expect
-import Music.Internal.Interval as Interval
-import Music.Internal.ScaleType as ScaleType
+import Internal.Interval as Interval
+import Internal.ScaleType as ScaleType
 import Test exposing (Test, describe, test)
 
 

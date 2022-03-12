@@ -1,4 +1,4 @@
-module Music.Internal.Octave exposing
+module Internal.Octave exposing
     ( Octave
     , allValid
     , zero, one, two, three, four, five, six, seven, eight
@@ -28,7 +28,7 @@ module Music.Internal.Octave exposing
 
 -}
 
-import Music.Internal.Interval as Interval
+import Internal.Interval as Interval
 
 
 type Octave

@@ -1,4 +1,4 @@
-module Music.Internal.Analysis exposing
+module Internal.Analysis exposing
     ( Analysis
     , i, ii, iii, iv, v, vi, vii
     , vOfii, vOfiii, vOfiv, vOfv, vOfvi
@@ -30,13 +30,13 @@ module Music.Internal.Analysis exposing
 
 -}
 
+import Internal.Chord as InternalChord
+import Internal.ChordType as ChordType
+import Internal.Interval as Interval
+import Internal.Key as Key
+import Internal.PitchClass as PitchClass
+import Internal.Scale as Scale
 import Music.Chord as Chord
-import Music.Internal.Chord as InternalChord
-import Music.Internal.ChordType as ChordType
-import Music.Internal.Interval as Interval
-import Music.Internal.Key as Key
-import Music.Internal.PitchClass as PitchClass
-import Music.Internal.Scale as Scale
 
 
 type Analysis

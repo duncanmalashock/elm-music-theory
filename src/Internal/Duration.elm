@@ -1,4 +1,4 @@
-module Music.Internal.Duration exposing
+module Internal.Duration exposing
     ( Duration
     , whole, half, quarter, eighth, sixteenth
     , thirtySecond, sixtyFourth, oneHundredTwentyEighth, twoHundredFiftySixth

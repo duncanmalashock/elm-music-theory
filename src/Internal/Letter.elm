@@ -1,4 +1,4 @@
-module Music.Internal.Letter exposing
+module Internal.Letter exposing
     ( Letter(..)
     , semitones
     , nextWithSemitoneCount, prevWithSemitoneCount

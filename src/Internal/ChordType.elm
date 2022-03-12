@@ -1,4 +1,4 @@
-module Music.Internal.ChordType exposing
+module Internal.ChordType exposing
     ( ChordType
     , toString
     , all
@@ -62,8 +62,8 @@ module Music.Internal.ChordType exposing
 
 -}
 
+import Internal.Interval as Interval exposing (Interval)
 import Music.Chord.Classification exposing (..)
-import Music.Internal.Interval as Interval exposing (Interval)
 
 
 type ChordType

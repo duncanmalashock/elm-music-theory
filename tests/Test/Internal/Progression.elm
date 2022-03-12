@@ -1,12 +1,12 @@
 module Test.Internal.Progression exposing (..)
 
 import Expect
-import Music.Internal.Analysis as Analysis
-import Music.Internal.Chord as Chord
-import Music.Internal.Duration as Duration
-import Music.Internal.Key as Key
-import Music.Internal.Modulation as Modulation
-import Music.Internal.Progression as Progression
+import Internal.Analysis as Analysis
+import Internal.Chord as Chord
+import Internal.Duration as Duration
+import Internal.Key as Key
+import Internal.Modulation as Modulation
+import Internal.Progression as Progression
 import Test exposing (Test, describe, test)
 
 

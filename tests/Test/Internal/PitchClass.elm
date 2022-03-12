@@ -1,8 +1,8 @@
 module Test.Internal.PitchClass exposing (all)
 
 import Expect
-import Music.Internal.Interval as Interval
-import Music.Internal.PitchClass as PitchClass
+import Internal.Interval as Interval
+import Internal.PitchClass as PitchClass
 import Test exposing (Test, describe, test)
 
 

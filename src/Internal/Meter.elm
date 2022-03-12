@@ -1,4 +1,4 @@
-module Music.Internal.Meter exposing
+module Internal.Meter exposing
     ( Meter
     , twoTwo
     , threeFour, fourFour, sixFour
@@ -20,7 +20,7 @@ module Music.Internal.Meter exposing
 
 -}
 
-import Music.Internal.Duration as Duration exposing (Duration)
+import Internal.Duration as Duration exposing (Duration)
 
 
 type Meter

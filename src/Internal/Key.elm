@@ -1,4 +1,4 @@
-module Music.Internal.Key exposing
+module Internal.Key exposing
     ( Key, major, minor
     , c, f, bFlat, eFlat, aFlat, dFlat, gFlat
     , g, d, a, e, b, fSharp
@@ -35,11 +35,11 @@ module Music.Internal.Key exposing
 
 -}
 
-import Music.Internal.Interval as Interval
-import Music.Internal.Letter exposing (Letter(..))
-import Music.Internal.PitchClass as PitchClass exposing (PitchClass, pitchClass)
-import Music.Internal.Scale as Scale exposing (Scale)
-import Music.Internal.ScaleType as ScaleType
+import Internal.Interval as Interval
+import Internal.Letter exposing (Letter(..))
+import Internal.PitchClass as PitchClass exposing (PitchClass, pitchClass)
+import Internal.Scale as Scale exposing (Scale)
+import Internal.ScaleType as ScaleType
 
 
 type Key

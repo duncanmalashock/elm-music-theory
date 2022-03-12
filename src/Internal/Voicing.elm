@@ -1,4 +1,4 @@
-module Music.Internal.Voicing exposing
+module Internal.Voicing exposing
     ( Voicing, init
     , compareVoiceAtIndex
     , containsPitchAtVoice, containsPitch
@@ -19,9 +19,9 @@ module Music.Internal.Voicing exposing
 
 -}
 
+import Internal.Interval as Interval
+import Internal.Pitch as Pitch
 import List.Extra
-import Music.Internal.Interval as Interval
-import Music.Internal.Pitch as Pitch
 
 
 init :

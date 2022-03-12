@@ -1,11 +1,11 @@
 module Test.Internal.VoicingPlan exposing (all)
 
 import Expect
-import Music.Internal.Interval as Interval
-import Music.Internal.PitchClass as PitchClass
-import Music.Internal.Placement as Placement
-import Music.Internal.Voicing as Voicing
-import Music.Internal.VoicingPlan as VoicingPlan
+import Internal.Interval as Interval
+import Internal.PitchClass as PitchClass
+import Internal.Placement as Placement
+import Internal.Voicing as Voicing
+import Internal.VoicingPlan as VoicingPlan
 import Music.ScaleType as ScaleType
 import Test exposing (Test, describe, test)
 

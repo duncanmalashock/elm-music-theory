@@ -1,4 +1,4 @@
-module Music.Internal.Chord exposing
+module Internal.Chord exposing
     ( Chord, chord
     , root, chordType
     , toPitchClasses, containsPitchClass
@@ -20,8 +20,8 @@ module Music.Internal.Chord exposing
 
 -}
 
-import Music.Internal.ChordType as ChordType
-import Music.Internal.PitchClass as PitchClass
+import Internal.ChordType as ChordType
+import Internal.PitchClass as PitchClass
 
 
 type Chord

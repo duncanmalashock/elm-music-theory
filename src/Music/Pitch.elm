@@ -89,10 +89,10 @@ These are used less frequently in music. Most likely you want a pitch from the p
 
 -}
 
-import Music.Internal.Interval as Interval
-import Music.Internal.Octave as Octave
-import Music.Internal.Pitch as Pitch
-import Music.Internal.PitchClass as PitchClass
+import Internal.Interval as Interval
+import Internal.Octave as Octave
+import Internal.Pitch as Pitch
+import Internal.PitchClass as PitchClass
 
 
 {-| -}

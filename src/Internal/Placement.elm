@@ -1,4 +1,4 @@
-module Music.Internal.Placement exposing
+module Internal.Placement exposing
     ( Placement(..)
     , checkIntervals
     , placeAbove
@@ -12,7 +12,7 @@ module Music.Internal.Placement exposing
     , toString
     )
 
-import Music.Internal.Interval as Interval
+import Internal.Interval as Interval
 
 
 type Placement

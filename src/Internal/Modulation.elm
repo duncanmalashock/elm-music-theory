@@ -1,4 +1,4 @@
-module Music.Internal.Modulation exposing
+module Internal.Modulation exposing
     ( Modulation
     , NormalizeSettings
     , allowTheoreticalKeys
@@ -14,9 +14,9 @@ module Music.Internal.Modulation exposing
     , upByFifths
     )
 
-import Music.Internal.Interval as Interval
-import Music.Internal.Key as Key
-import Music.Internal.PitchClass as PitchClass
+import Internal.Interval as Interval
+import Internal.Key as Key
+import Internal.PitchClass as PitchClass
 import Util.Basic as Util
 
 

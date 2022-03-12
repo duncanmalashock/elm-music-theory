@@ -1,4 +1,4 @@
-module Music.Internal.Pitch exposing
+module Internal.Pitch exposing
     ( Pitch
     , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
     , octave, pitchClass
@@ -79,10 +79,10 @@ module Music.Internal.Pitch exposing
 
 -}
 
-import Music.Internal.Interval as Interval exposing (Interval)
-import Music.Internal.Letter as Letter exposing (Letter(..))
-import Music.Internal.Octave as Octave exposing (Octave)
-import Music.Internal.PitchClass as PitchClass exposing (Offset, PitchClass)
+import Internal.Interval as Interval exposing (Interval)
+import Internal.Letter as Letter exposing (Letter(..))
+import Internal.Octave as Octave exposing (Octave)
+import Internal.PitchClass as PitchClass exposing (Offset, PitchClass)
 import Util.Basic
 
 

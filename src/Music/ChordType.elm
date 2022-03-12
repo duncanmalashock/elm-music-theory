@@ -96,9 +96,9 @@ Lists of commonly-grouped chord types. Note that these are incomplete, and only 
 
 -}
 
+import Internal.ChordType as ChordType
+import Internal.Interval as Interval
 import Music.Chord.Classification as Classification exposing (..)
-import Music.Internal.ChordType as ChordType
-import Music.Internal.Interval as Interval
 
 
 {-| -}

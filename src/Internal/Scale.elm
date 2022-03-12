@@ -1,4 +1,4 @@
-module Music.Internal.Scale exposing
+module Internal.Scale exposing
     ( Scale, scale
     , root, scaleType
     , toPitchClasses, toPitches
@@ -19,10 +19,10 @@ module Music.Internal.Scale exposing
 
 -}
 
-import Music.Internal.Octave as Octave
-import Music.Internal.Pitch as Pitch exposing (Pitch)
-import Music.Internal.PitchClass as PitchClass exposing (PitchClass)
-import Music.Internal.ScaleType as ScaleType exposing (ScaleType)
+import Internal.Octave as Octave
+import Internal.Pitch as Pitch exposing (Pitch)
+import Internal.PitchClass as PitchClass exposing (PitchClass)
+import Internal.ScaleType as ScaleType exposing (ScaleType)
 import Util.Basic
 
 

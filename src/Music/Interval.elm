@@ -82,8 +82,8 @@ Note: This module includes constructors for compound intervals up to the thirtee
 
 -}
 
-import Music.Internal.Interval as Interval
-import Music.Internal.Pitch as Pitch
+import Internal.Interval as Interval
+import Internal.Pitch as Pitch
 
 
 {-| -}

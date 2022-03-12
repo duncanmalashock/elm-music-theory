@@ -1,4 +1,4 @@
-module Music.Internal.VoicingPlan exposing
+module Internal.VoicingPlan exposing
     ( VoicingPlan, init
     , toVoicings
     , toString
@@ -14,14 +14,14 @@ module Music.Internal.VoicingPlan exposing
 
 -}
 
+import Internal.Interval as Interval
+import Internal.Octave as Octave
+import Internal.Pitch as Pitch
+import Internal.PitchClass as PitchClass
+import Internal.Placement as Placement
+import Internal.ScaleType as ScaleType
+import Internal.Voicing as Voicing
 import List.Extra
-import Music.Internal.Interval as Interval
-import Music.Internal.Octave as Octave
-import Music.Internal.Pitch as Pitch
-import Music.Internal.PitchClass as PitchClass
-import Music.Internal.Placement as Placement
-import Music.Internal.ScaleType as ScaleType
-import Music.Internal.Voicing as Voicing
 import Util.ConstraintSolver
 
 

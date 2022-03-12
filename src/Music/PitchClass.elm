@@ -43,9 +43,9 @@ These are used less frequently in music. Most likely you want a pitch from the p
 
 -}
 
-import Music.Internal.Letter as Letter
-import Music.Internal.Pitch as Pitch
-import Music.Internal.PitchClass as PitchClass
+import Internal.Letter as Letter
+import Internal.Pitch as Pitch
+import Internal.PitchClass as PitchClass
 
 
 {-| -}

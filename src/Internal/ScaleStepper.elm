@@ -1,4 +1,4 @@
-module Music.Internal.ScaleStepper exposing
+module Internal.ScaleStepper exposing
     ( ScaleStepper
     , init, initChromatic
     , step
@@ -18,9 +18,9 @@ module Music.Internal.ScaleStepper exposing
 
 -}
 
-import Music.Internal.Chromatic as Chromatic
-import Music.Internal.Pitch as Pitch
-import Music.Internal.Scale as Scale
+import Internal.Chromatic as Chromatic
+import Internal.Pitch as Pitch
+import Internal.Scale as Scale
 
 
 type ScaleStepper

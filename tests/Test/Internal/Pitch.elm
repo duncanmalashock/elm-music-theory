@@ -1,11 +1,11 @@
 module Test.Internal.Pitch exposing (all)
 
 import Expect
-import Music.Internal.Interval as Interval
-import Music.Internal.Letter exposing (Letter(..))
-import Music.Internal.Octave as Octave
-import Music.Internal.Pitch as Pitch
-import Music.Internal.PitchClass as PitchClass
+import Internal.Interval as Interval
+import Internal.Letter exposing (Letter(..))
+import Internal.Octave as Octave
+import Internal.Pitch as Pitch
+import Internal.PitchClass as PitchClass
 import Test exposing (Test, describe, test)
 
 

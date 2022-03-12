@@ -1,4 +1,4 @@
-module Music.Internal.ScaleType exposing
+module Internal.ScaleType exposing
     ( ScaleType(..)
     , mode
     , toList
@@ -42,7 +42,7 @@ module Music.Internal.ScaleType exposing
 -}
 
 import AssocList
-import Music.Internal.Interval as Interval exposing (Interval)
+import Internal.Interval as Interval exposing (Interval)
 
 
 type ScaleType
