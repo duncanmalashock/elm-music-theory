@@ -1,8 +1,6 @@
 module Music.ChordType exposing
     ( ChordType
     , factors, contains
-    , categorizeFactors, CategorizedFactors
-    , availableTensions, AvailableTensions
     , toString
     , all
     , triads, sixthAndSeventhChords
@@ -29,14 +27,6 @@ module Music.ChordType exposing
 Chord [factors](https://en.wikipedia.org/wiki/Factor_%28chord%29) (such as the "third", "fifth", etc. of a chord) are represented as `Interval`s.
 
 @docs factors, contains
-
-
-## Categorizing factors
-
-Categorize factors into certain useful data structures. Helpful when creating [custom voicing methods](Music-Voicing-FivePart#custom-voicing-methods).
-
-@docs categorizeFactors, CategorizedFactors
-@docs availableTensions, AvailableTensions
 
 
 # Conversion
@@ -311,34 +301,6 @@ contains interval theChordType =
 factors : ChordType -> List Interval.Interval
 factors chordType =
     ChordType.toIntervals chordType
-
-
-{-| Categorize the factors in a chord type:
-
-    categorizeFactors minorSix
-        == { third = Interval.minorThird
-           , fifth = Interval.perfectFifth
-           , sixthOrSeventh = Just Interval.majorSixth
-           , ninth = []
-           , eleventh = Nothing
-           , thirteenth = Nothing
-           }
-
--}
-categorizeFactors : ChordType -> Maybe CategorizedFactors
-categorizeFactors chordType =
-    ChordType.categorizeFactors chordType
-
-
-{-| -}
-type alias CategorizedFactors =
-    { third : Interval.Interval
-    , fifth : Interval.Interval
-    , sixthOrSeventh : Maybe Interval.Interval
-    , ninth : List Interval.Interval
-    , eleventh : Maybe Interval.Interval
-    , thirteenth : Maybe Interval.Interval
-    }
 
 
 {-| Get the chord symbol for a chord type:
@@ -768,51 +730,3 @@ withThirteenth chordType =
 withFlatThirteenth : ChordType -> ChordType
 withFlatThirteenth chordType =
     ChordType.withFlatThirteenth chordType
-
-
-{-| -}
-type alias AvailableTensions =
-    { root :
-        { true : Interval.Interval
-        , substitutes : List Interval.Interval
-        }
-    , third :
-        { true : Interval.Interval
-        , substitutes : List Interval.Interval
-        }
-    , fifth :
-        { true : Interval.Interval
-        , substitutes : List Interval.Interval
-        }
-    , seventh :
-        { true : Interval.Interval
-        , substitutes : List Interval.Interval
-        }
-    }
-
-
-{-| Organize the factors in a chord type into their jazz-theory category and their possible substitutes, often known referred to as "available tensions".
-
-    availableTensions majorSeventh =
-        { root =
-            { true = Interval.perfectUnison
-            , substitutes = [ Interval.majorSecond ]
-            }
-        , third =
-            { true = Interval.majorThird
-            , substitutes = []
-            }
-        , fifth =
-            { true = Interval.perfectFifth
-            , substitutes = []
-            }
-        , seventh =
-            { true = Interval.majorSeventh
-            , substitutes = []
-            }
-        }
-
--}
-availableTensions : ChordType -> Maybe AvailableTensions
-availableTensions chordType =
-    ChordType.availableTensions chordType
