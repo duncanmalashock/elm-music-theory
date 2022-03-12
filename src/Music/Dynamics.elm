@@ -1,4 +1,4 @@
-module Internal.Dynamics exposing
+module Music.Dynamics exposing
     ( Dynamics
     , normal
     , mf, f, ff, fff

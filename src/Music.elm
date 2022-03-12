@@ -1,4 +1,4 @@
-module Internal.Music exposing (Music, new)
+module Music exposing (Music, new)
 
 {-|
 
@@ -6,13 +6,13 @@ module Internal.Music exposing (Music, new)
 
 -}
 
-import Internal.Chord exposing (Chord)
-import Internal.Duration as Duration exposing (Duration)
-import Internal.Key as Key exposing (Key)
-import Internal.Meter as Meter exposing (Meter)
-import Internal.Note as Note
-import Internal.Pitch as Pitch
-import Internal.Tempo as Tempo exposing (Tempo)
+import Music.Chord exposing (Chord)
+import Music.Duration as Duration exposing (Duration)
+import Music.Key as Key exposing (Key)
+import Music.Meter as Meter exposing (Meter)
+import Music.Note as Note
+import Music.Range as Range
+import Music.Tempo as Tempo exposing (Tempo)
 
 
 type Music
@@ -50,7 +50,7 @@ type alias Note =
 type alias Instrument =
     { id : Id
     , name : String
-    , range : Pitch.Range
+    , range : Range.Range
     }
 
 

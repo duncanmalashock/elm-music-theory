@@ -1,4 +1,4 @@
-module Internal.Tempo exposing
+module Music.Tempo exposing
     ( Tempo
     , quarterNotesPerMinute
     , larghissimo
@@ -44,7 +44,7 @@ module Internal.Tempo exposing
 
 -}
 
-import Internal.Duration as Duration exposing (Duration)
+import Music.Duration as Duration exposing (Duration)
 
 
 type Tempo

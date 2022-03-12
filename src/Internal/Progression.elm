@@ -14,9 +14,9 @@ module Internal.Progression exposing
 
 import Internal.Analysis as Analysis
 import Internal.Chord as Chord
-import Internal.Duration as Duration
 import Internal.Key as Key
 import Internal.Modulation as Modulation
+import Music.Duration as Duration
 
 
 type Progression

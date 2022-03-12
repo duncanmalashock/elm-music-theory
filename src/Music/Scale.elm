@@ -1,6 +1,6 @@
 module Music.Scale exposing
     ( Scale
-    , root, scaleType, toList, containsPitchClass, containsChord, allChords, degree, mode
+    , root, scaleType, toList, containsPitchClass, degree, mode
     , major, minor
     , ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian
     , melodicMinor, dorianFlat2, lydianAugmented, acoustic, majorMinor, minorLocrian, superlocrian
@@ -17,7 +17,7 @@ module Music.Scale exposing
 
 # Helpers
 
-@docs root, scaleType, toList, containsPitchClass, containsChord, allChords, degree, mode
+@docs root, scaleType, toList, containsPitchClass, degree, mode
 
 
 # Constructors
@@ -57,7 +57,6 @@ module Music.Scale exposing
 -}
 
 import Internal.Chord as Chord
-import Internal.ChordScale as ChordScale
 import Internal.Scale as Scale
 import Internal.ScaleType as ScaleType
 import Music.ChordType as ChordType
@@ -139,32 +138,6 @@ Set the `ignoreSpelling` flag to allow enharmonic equivalents. This returns `Tru
 containsPitchClass : PitchClass.PitchClass -> { ignoreSpelling : Bool } -> Scale -> Bool
 containsPitchClass pitchClass ignoreSpelling theScale =
     Scale.containsPitchClass pitchClass theScale ignoreSpelling
-
-
-{-| Find out whether a scale contains a given chord:
-
-    containsChord (Chord.majorSeventhSharpEleven PitchClass.f)
-        (major PitchClass.c)
-        == True
-
--}
-containsChord : Chord.Chord -> Scale.Scale -> Bool
-containsChord chord scale =
-    ChordScale.chordIsInScale scale chord
-
-
-{-| Get all chords contained in a scale, choosing from a list of chord types to detect:
-
-    allChords [ ChordType.minorSeventh ] (major PitchClass.c)
-        == [ Chord.minorSeventh PitchClass.d
-           , Chord.minorSeventh PitchClass.e
-           , Chord.minorSeventh PitchClass.a
-           ]
-
--}
-allChords : List ChordType.ChordType -> Scale.Scale -> List Chord.Chord
-allChords chordTypesAllowed scale =
-    ChordScale.allChordsInScale chordTypesAllowed scale
 
 
 {-| Get a degree of the scale:
