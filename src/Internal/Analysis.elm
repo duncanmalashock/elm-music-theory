@@ -26,7 +26,7 @@ module Internal.Analysis exposing
 
 @docs toChord, triadsByDefault, seventhsByDefault
 
-@docs toString
+@docs DefaultChordTypes, fromChord, symbol
 
 -}
 
