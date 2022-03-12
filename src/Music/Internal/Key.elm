@@ -1,50 +1,39 @@
 module Music.Internal.Key exposing
-    ( Key
-    , MajorOrMinor(..)
-    , a
-    , aFlat
-    , aFlatMinor
-    , aMinor
-    , aSharpMinor
-    , areEnharmonicEquivalents
-    , b
-    , bFlat
-    , bFlatMinor
-    , bMinor
-    , c
-    , cFlat
-    , cMinor
-    , cSharp
-    , cSharpMinor
-    , d
-    , dFlat
-    , dMinor
-    , e
-    , eFlat
-    , eFlatMinor
-    , eMinor
-    , f
-    , fMinor
-    , fSharp
-    , fSharpMinor
-    , g
-    , gFlat
-    , gMinor
-    , gSharpMinor
-    , isMajor
-    , isMinor
-    , major
-    , majorKey
-    , minor
-    , minorKey
-    , parallel
-    , relative
-    , scale
+    ( Key, major, minor
+    , c, f, bFlat, eFlat, aFlat, dFlat, gFlat
+    , g, d, a, e, b, fSharp
+    , aMinor, dMinor, gMinor, cMinor, fMinor, bFlatMinor, eFlatMinor
+    , eMinor, bMinor, fSharpMinor, cSharpMinor, gSharpMinor
+    , tonic, scale, isMajor, isMinor, signature, symbol
+    , relative, parallel
     , setTonic
-    , signature
-    , symbol
-    , tonic
+    , areEnharmonicEquivalents
+    , aFlatMinor, aSharpMinor, cFlat, cSharp
     )
+
+{-|
+
+@docs Key, major, minor
+
+@docs c, f, bFlat, eFlat, aFlat, dFlat, gFlat
+@docs g, d, a, e, b, fSharp
+
+@docs aMinor, dMinor, gMinor, cMinor, fMinor, bFlatMinor, eFlatMinor
+@docs eMinor, bMinor, fSharpMinor, cSharpMinor, gSharpMinor
+
+@docs tonic, scale, isMajor, isMinor, signature, symbol
+
+@docs relative, parallel
+
+@docs setTonic
+
+@docs toString
+
+@docs areEnharmonicEquivalents
+
+@docs aFlatMinor, aSharpMinor, cFlat, cSharp
+
+-}
 
 import Music.Internal.Interval as Interval
 import Music.Internal.Letter exposing (Letter(..))
@@ -65,16 +54,6 @@ setTonic newTonic (Key theTonic majorOrMinor) =
 type MajorOrMinor
     = Major
     | Minor
-
-
-majorKey : MajorOrMinor
-majorKey =
-    Major
-
-
-minorKey : MajorOrMinor
-minorKey =
-    Minor
 
 
 areEnharmonicEquivalents : Key -> Key -> Bool

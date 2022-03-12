@@ -272,7 +272,7 @@ diminishedSeventh pitchClass =
 {-| -}
 halfDiminished : PitchClass.PitchClass -> Chord
 halfDiminished pitchClass =
-    Chord.chord pitchClass ChordType.halfDiminished
+    Chord.chord pitchClass ChordType.halfDiminishedSeventh
 
 
 {-| -}

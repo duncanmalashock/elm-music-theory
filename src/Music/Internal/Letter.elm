@@ -1,13 +1,22 @@
 module Music.Internal.Letter exposing
     ( Letter(..)
-    , index
-    , nextWithSemitoneCount
-    , prevWithSemitoneCount
     , semitones
+    , nextWithSemitoneCount, prevWithSemitoneCount
+    , index
     , toString
     )
 
-{-| A letter represents a note from the diatonic C major scale.
+{-|
+
+@docs Letter
+
+@docs semitones
+@docs nextWithSemitoneCount, prevWithSemitoneCount
+
+@docs index
+
+@docs toString
+
 -}
 
 

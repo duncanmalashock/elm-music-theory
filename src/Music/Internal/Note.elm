@@ -1,35 +1,40 @@
 module Music.Internal.Note exposing
-    ( Note
-    , addDuration
+    ( Note, note
+    , whole, half, quarter, eighth, sixteenth
+    , thirtySecond, sixtyFourth, oneHundredTwentyEighth, twoHundredFiftySixth
     , dotted
-    , duration
-    , eighth
-    , f
-    , ff
-    , fff
-    , half
+    , mf, f, ff, fff
+    , mp, p, pp, ppp
+    , louder, softer
+    , pitch, duration
+    , addDuration, setDuration, multiplyDuration
     , join
-    , louder
-    , mf
-    , mp
-    , multiplyDuration
-    , note
-    , oneHundredTwentyEighth
-    , p
-    , pitch
-    , pp
-    , ppp
-    , quarter
-    , setDuration
-    , sixteenth
-    , sixtyFourth
-    , softer
-    , thirtySecond
-    , toMidiNoteNumber
-    , toMidiVelocity
-    , twoHundredFiftySixth
-    , whole
+    , toMidiNoteNumber, toMidiVelocity
     )
+
+{-|
+
+@docs Note, note
+
+@docs whole, half, quarter, eighth, sixteenth
+@docs thirtySecond, sixtyFourth, oneHundredTwentyEighth, twoHundredFiftySixth
+
+@docs dotted
+
+@docs mf, f, ff, fff
+@docs mp, p, pp, ppp
+
+@docs louder, softer
+
+@docs pitch, duration
+
+@docs addDuration, setDuration, multiplyDuration
+
+@docs join
+
+@docs toMidiNoteNumber, toMidiVelocity
+
+-}
 
 import Music.Internal.Duration as Duration
 import Music.Internal.Dynamics as Dynamics

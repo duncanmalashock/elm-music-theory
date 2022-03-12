@@ -1,5 +1,11 @@
 module Music.Internal.Chromatic exposing (ascending, descending)
 
+{-|
+
+@docs ascending, descending
+
+-}
+
 import Music.Internal.Octave as Octave
 import Music.Internal.Pitch as Pitch
 import Music.PitchClass as PitchClass

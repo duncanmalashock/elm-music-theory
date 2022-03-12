@@ -1,11 +1,18 @@
 module Music.Internal.VoicingPlan exposing
-    ( Selection
-    , VoicingPlan
-    , init
-    , select
-    , toString
+    ( VoicingPlan, init
     , toVoicings
+    , toString
+    , Selection, select
     )
+
+{-|
+
+@docs VoicingPlan, init
+@docs Selection select
+@docs toVoicings
+@docs toString
+
+-}
 
 import List.Extra
 import Music.Internal.Interval as Interval

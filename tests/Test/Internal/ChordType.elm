@@ -46,7 +46,7 @@ all =
                             [ ChordType.diminished
                             , ChordType.diminishedSeventh
                             , ChordType.diminishedSeventhElevenFlatThirteen
-                            , ChordType.halfDiminished
+                            , ChordType.halfDiminishedSeventh
                             ]
 
                         result =
@@ -126,7 +126,7 @@ all =
                             , ChordType.minorSeventh
                             , ChordType.dominantSeventh
                             , ChordType.diminishedSeventh
-                            , ChordType.halfDiminished
+                            , ChordType.halfDiminishedSeventh
                             , ChordType.minorMajorSeventh
 
                             --

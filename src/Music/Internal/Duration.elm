@@ -1,22 +1,29 @@
 module Music.Internal.Duration exposing
     ( Duration
-    , add
-    , divide
-    , eighth
-    , half
-    , multiply
-    , oneHundredTwentyEighth
-    , quarter
-    , sixteenth
-    , sixtyFourth
-    , sort
-    , subdivide
-    , thirtySecond
-    , toFloat
-    , twoHundredFiftySixth
-    , whole
+    , whole, half, quarter, eighth, sixteenth
+    , thirtySecond, sixtyFourth, oneHundredTwentyEighth, twoHundredFiftySixth
     , zero
+    , add, divide, multiply, subdivide
+    , sort
+    , toFloat
     )
+
+{-|
+
+@docs Duration
+
+@docs whole, half, quarter, eighth, sixteenth
+@docs thirtySecond, sixtyFourth, oneHundredTwentyEighth, twoHundredFiftySixth
+
+@docs zero
+
+@docs add, divide, multiply, subdivide
+
+@docs sort
+
+@docs toFloat
+
+-}
 
 import Fraction
 
@@ -26,8 +33,8 @@ type Duration
 
 
 sort : List Duration -> List Duration
-sort timeList =
-    timeList
+sort list =
+    list
         |> List.map (\(Duration fraction) -> fraction)
         |> Fraction.sort
         |> List.map Duration

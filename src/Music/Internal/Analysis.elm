@@ -1,39 +1,34 @@
 module Music.Internal.Analysis exposing
     ( Analysis
-    , DefaultChordTypes
-    , fromChord
-    , i
-    , iFlat
-    , iSharp
-    , ii
-    , iiFlat
-    , iiSharp
-    , iii
-    , iiiFlat
-    , iiiSharp
-    , iv
-    , ivFlat
-    , ivSharp
-    , seventhsByDefault
-    , symbol
-    , toChord
-    , triadsByDefault
-    , v
-    , vFlat
-    , vOfii
-    , vOfiii
-    , vOfiv
-    , vOfv
-    , vOfvi
-    , vSharp
-    , vi
-    , viFlat
-    , viSharp
-    , vii
-    , viiFlat
-    , viiSharp
+    , i, ii, iii, iv, v, vi, vii
+    , vOfii, vOfiii, vOfiv, vOfv, vOfvi
+    , iSharp, iiSharp, iiiSharp, ivSharp, vSharp, viSharp, viiSharp
+    , iFlat, iiFlat, iiiFlat, ivFlat, vFlat, viFlat, viiFlat
     , withChordType
+    , toChord, triadsByDefault, seventhsByDefault
+    , DefaultChordTypes, fromChord, symbol
     )
+
+{-|
+
+@docs Analysis
+
+@docs i, ii, iii, iv, v, vi, vii
+
+@docs vOfii, vOfiii, vOfiv, vOfv, vOfvi
+
+@docs iSharp, iiSharp, iiiSharp, ivSharp, vSharp, viSharp, viiSharp
+@docs iFlat, iiFlat, iiiFlat, ivFlat, vFlat, viFlat, viiFlat
+
+@docs withChordType
+
+@docs analyze
+
+@docs toChord, triadsByDefault, seventhsByDefault
+
+@docs toString
+
+-}
 
 import Music.Chord as Chord
 import Music.Internal.Chord as InternalChord
@@ -582,12 +577,12 @@ seventhsByDefault =
         , iv = ChordType.majorSeventh
         , v = ChordType.dominantSeventh
         , vi = ChordType.minorSeventh
-        , vii = ChordType.halfDiminished
+        , vii = ChordType.halfDiminishedSeventh
         , secondaryDominant = ChordType.dominantSeventh
         }
     , minor =
         { i = ChordType.minorSeventh
-        , ii = ChordType.halfDiminished
+        , ii = ChordType.halfDiminishedSeventh
         , iii = ChordType.majorSeventh
         , iv = ChordType.minorSeventh
         , v = ChordType.minorSeventh

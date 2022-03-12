@@ -1,13 +1,23 @@
 module Music.Internal.Scale exposing
-    ( Scale
+    ( Scale, scale
+    , root, scaleType
+    , toPitchClasses, toPitches
     , containsPitchClass
     , degree
-    , root
-    , scale
-    , scaleType
-    , toPitchClasses
-    , toPitches
     )
+
+{-|
+
+@docs Scale, scale
+
+@docs root, scaleType
+
+@docs toPitchClasses, toPitches
+
+@docs containsPitchClass
+@docs degree
+
+-}
 
 import Music.Internal.Octave as Octave
 import Music.Internal.Pitch as Pitch exposing (Pitch)

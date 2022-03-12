@@ -1,87 +1,68 @@
 module Music.Internal.ChordType exposing
     ( ChordType
-    , all
-    , augmented
-    , augmentedDominantSeventh
-    , classify
-    , custom
-    , diminished
-    , diminishedSeventh
-    , diminishedSeventhElevenFlatThirteen
-    , dominantEleventh
-    , dominantNinth
-    , dominantNinthFlatThirteen
-    , dominantNinthSharpEleven
-    , dominantNinthSharpElevenFlatThirteen
-    , dominantSeventh
-    , dominantSeventhFlatFive
-    , dominantSeventhFlatNine
-    , dominantSeventhFlatNineFlatThirteen
-    , dominantSeventhFlatNineSharpEleven
-    , dominantSeventhFlatNineSharpNine
-    , dominantSeventhFlatNineSharpNineFlatThirteen
-    , dominantSeventhFlatThirteen
-    , dominantSeventhSharpEleven
-    , dominantSeventhSharpElevenFlatThirteen
-    , dominantSeventhSharpNine
-    , dominantSeventhSharpNineFlatThirteen
-    , dominantSeventhSharpNineSharpEleven
-    , dominantSeventhSus4
-    , dominantThirteenth
-    , dominantThirteenthFlatNine
-    , dominantThirteenthFlatNineSharpEleven
-    , dominantThirteenthFlatNineSharpNine
-    , dominantThirteenthSharpEleven
-    , dominantThirteenthSharpNine
-    , dominantThirteenthSharpNineFlatNine
-    , dominantThirteenthSharpNineSharpEleven
-    , halfDiminished
-    , includes
-    , includesAll
-    , includesAny
-    , isDiminished
-    , isDominant
-    , isMajor
-    , major
-    , majorAddNine
-    , majorNinth
-    , majorSeventh
-    , majorSeventhSharpEleven
-    , majorSix
-    , majorSixNine
-    , minor
-    , minorAddNine
-    , minorEleventh
-    , minorMajorSeventh
-    , minorNinth
-    , minorSeventh
-    , minorSix
-    , minorSixNine
-    , sus2
-    , sus4
-    , toIntervals
     , toString
-    , withDiminishedSeventh
-    , withEleventh
-    , withFifth
-    , withFlatFifth
-    , withFlatNinth
-    , withFlatThirteenth
-    , withMajorSeventh
-    , withMajorThird
-    , withMinorSeventh
-    , withMinorThird
-    , withNinth
-    , withSharpEleventh
-    , withSharpFifth
-    , withSharpNinth
-    , withSixth
-    , withSuspendedFourth
+    , all
+    , major, minor, augmented, diminished, sus2, sus4
+    , majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
+    , majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminishedSeventh, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
+    , majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
+    , dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen, dominantSeventhFlatThirteen, dominantSeventhFlatFive, dominantSeventhFlatNineSharpNineFlatThirteen, diminishedSeventhElevenFlatThirteen
+    , dominantNinthSharpEleven, dominantNinthFlatThirteen, dominantNinthSharpElevenFlatThirteen
+    , dominantThirteenthFlatNine, dominantThirteenthSharpNine, dominantThirteenthFlatNineSharpNine, dominantThirteenthFlatNineSharpEleven, dominantThirteenthSharpNineSharpEleven, dominantThirteenthSharpEleven, dominantThirteenthSharpNineFlatNine
+    , custom
+    , withMajorThird, withMinorThird
     , withSuspendedSecond
-    , withThirteenth
+    , withSuspendedFourth
+    , withFifth, withSharpFifth, withFlatFifth
+    , withSixth
+    , withMajorSeventh, withMinorSeventh, withDiminishedSeventh
+    , withNinth, withSharpNinth, withFlatNinth
+    , withEleventh, withSharpEleventh
+    , withThirteenth, withFlatThirteenth
+    , classify
+    , includes, includesAll, includesAny
+    , isDiminished, isDominant, isMajor
+    , toIntervals
     )
 
-import Music.Chord.Classification as Classification exposing (..)
+{-|
+
+@docs ChordType
+
+@docs toString
+
+@docs all
+
+@docs major, minor, augmented, diminished, sus2, sus4
+@docs majorSix, majorSixNine, minorSix, minorSixNine, majorAddNine, minorAddNine
+@docs majorSeventh, majorSeventhSharpEleven, minorSeventh, dominantSeventh, diminishedSeventh, halfDiminishedSeventh, augmentedDominantSeventh, dominantSeventhSus4, minorMajorSeventh
+@docs majorNinth, minorNinth, dominantNinth, minorEleventh, dominantEleventh, dominantThirteenth
+@docs dominantSeventhFlatNine, dominantSeventhSharpNine, dominantSeventhFlatNineSharpNine, dominantSeventhFlatNineSharpEleven, dominantSeventhSharpNineSharpEleven, dominantSeventhSharpEleven, dominantSeventhFlatNineFlatThirteen, dominantSeventhSharpNineFlatThirteen, dominantSeventhSharpElevenFlatThirteen, dominantSeventhFlatThirteen, dominantSeventhFlatFive, dominantSeventhFlatNineSharpNineFlatThirteen, diminishedSeventhElevenFlatThirteen
+@docs dominantNinthSharpEleven, dominantNinthFlatThirteen, dominantNinthSharpElevenFlatThirteen
+@docs dominantThirteenthFlatNine, dominantThirteenthSharpNine, dominantThirteenthFlatNineSharpNine, dominantThirteenthFlatNineSharpEleven, dominantThirteenthSharpNineSharpEleven, dominantThirteenthSharpEleven, dominantThirteenthSharpNineFlatNine
+
+@docs custom
+@docs withMajorThird, withMinorThird
+@docs withSuspendedSecond
+@docs withSuspendedFourth
+@docs withFifth, withSharpFifth, withFlatFifth
+@docs withSixth
+@docs withMajorSeventh, withMinorSeventh, withDiminishedSeventh
+@docs withNinth, withSharpNinth, withFlatNinth
+@docs withEleventh, withSharpEleventh
+@docs withThirteenth, withFlatThirteenth
+
+@docs classify
+
+@docs includes, includesAll, includesAny
+
+@docs isDiminished, isDominant, isMajor
+
+@docs toIntervals
+
+-}
+
+import Music.Chord.Classification exposing (..)
 import Music.Internal.Interval as Interval exposing (Interval)
 
 
@@ -118,7 +99,7 @@ all =
     , dominantThirteenthFlatNine
     , dominantThirteenthSharpNine
     , dominantThirteenthSharpNineFlatNine
-    , halfDiminished
+    , halfDiminishedSeventh
     , major
     , majorAddNine
     , majorSeventh
@@ -658,8 +639,8 @@ minorMajorSeventh =
         |> withMajorSeventh
 
 
-halfDiminished : ChordType
-halfDiminished =
+halfDiminishedSeventh : ChordType
+halfDiminishedSeventh =
     chordType
         |> withMinorThird
         |> withFlatFifth

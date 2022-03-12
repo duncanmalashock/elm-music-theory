@@ -1,18 +1,25 @@
 module Music.Internal.Dynamics exposing
     ( Dynamics
-    , f
-    , ff
-    , fff
-    , louder
-    , mf
-    , mp
     , normal
-    , p
-    , pp
-    , ppp
-    , softer
+    , mf, f, ff, fff
+    , mp, p, pp, ppp
+    , louder, softer
     , toMidiVelocity
     )
+
+{-|
+
+@docs Dynamics
+
+@docs normal
+@docs mf, f, ff, fff
+@docs mp, p, pp, ppp
+
+@docs louder, softer
+
+@docs toMidiVelocity
+
+-}
 
 
 type Dynamics

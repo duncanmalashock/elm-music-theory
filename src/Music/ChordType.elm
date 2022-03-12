@@ -427,7 +427,7 @@ diminishedSeventh =
 {-| -}
 halfDiminishedSeventh : ChordType
 halfDiminishedSeventh =
-    ChordType.halfDiminished
+    ChordType.halfDiminishedSeventh
 
 
 {-| -}

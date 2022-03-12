@@ -1,46 +1,45 @@
 module Music.Internal.ScaleType exposing
-    ( HeptatonicIntervals
-    , HexatonicIntervals
-    , OctatonicIntervals
-    , PentatonicIntervals
-    , ScaleType(..)
-    , acoustic
-    , aeolian
-    , aeolianHarmonic
-    , customHeptatonic
-    , customHexatonic
-    , customOctatonic
-    , customPentatonic
-    , diminishedHalfToneWholeTone
-    , diminishedWholeToneHalfTone
-    , dorian
-    , dorianFlat2
-    , harmonicMinor
-    , ionian
-    , locrian
-    , locrianNatural6
-    , lydian
-    , lydianAugmented
-    , lydianDiminished
-    , major
-    , majorAugmented
-    , majorMinor
-    , majorPentatonic
-    , melodicMinor
-    , minor
-    , minorLocrian
-    , minorPentatonic
-    , mixolydian
+    ( ScaleType(..)
     , mode
-    , name
-    , nameWithCustom
-    , phrygian
-    , phrygianDominant
-    , superlocrian
     , toList
-    , ultralocrian
-    , wholeTone
+    , major, minor
+    , ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian
+    , melodicMinor, dorianFlat2, lydianAugmented, acoustic, majorMinor, minorLocrian, superlocrian
+    , harmonicMinor, locrianNatural6, majorAugmented, lydianDiminished, phrygianDominant, aeolianHarmonic, ultralocrian
+    , diminishedWholeToneHalfTone, diminishedHalfToneWholeTone, wholeTone
+    , majorPentatonic, minorPentatonic
+    , customPentatonic, customHexatonic, customHeptatonic, customOctatonic
+    , HeptatonicIntervals, HexatonicIntervals, OctatonicIntervals, PentatonicIntervals
+    , name, nameWithCustom
     )
+
+{-|
+
+@docs ScaleType
+
+@docs mode
+
+@docs toList
+
+@docs major, minor
+
+@docs ionian, dorian, phrygian, lydian, mixolydian, aeolian, locrian
+
+@docs melodicMinor, dorianFlat2, lydianAugmented, acoustic, majorMinor, minorLocrian, superlocrian
+
+@docs harmonicMinor, locrianNatural6, majorAugmented, lydianDiminished, phrygianDominant, aeolianHarmonic, ultralocrian
+
+@docs diminishedWholeToneHalfTone, diminishedHalfToneWholeTone, wholeTone
+
+@docs majorPentatonic, minorPentatonic
+
+@docs customPentatonic, customHexatonic, customHeptatonic, customOctatonic
+
+@docs HeptatonicIntervals, HexatonicIntervals, OctatonicIntervals, PentatonicIntervals
+
+@docs name, nameWithCustom
+
+-}
 
 import AssocList
 import Music.Internal.Interval as Interval exposing (Interval)

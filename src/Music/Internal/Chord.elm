@@ -1,13 +1,24 @@
 module Music.Internal.Chord exposing
-    ( Chord
-    , chord
-    , chordType
-    , containsPitchClass
+    ( Chord, chord
+    , root, chordType
+    , toPitchClasses, containsPitchClass
     , detect
-    , root
     , symbol
-    , toPitchClasses
     )
+
+{-|
+
+@docs Chord, chord
+
+@docs root, chordType
+
+@docs toPitchClasses, containsPitchClass
+
+@docs detect
+
+@docs symbol
+
+-}
 
 import Music.Internal.ChordType as ChordType
 import Music.Internal.PitchClass as PitchClass

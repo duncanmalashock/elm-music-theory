@@ -1,224 +1,83 @@
 module Music.Internal.Pitch exposing
     ( Pitch
-    , Range
-    , a0
-    , a1
-    , a2
-    , a3
-    , a4
-    , a5
-    , a6
-    , a7
-    , a8
-    , aFlat0
-    , aFlat1
-    , aFlat2
-    , aFlat3
-    , aFlat4
-    , aFlat5
-    , aFlat6
-    , aFlat7
-    , aFlat8
-    , aSharp0
-    , aSharp1
-    , aSharp2
-    , aSharp3
-    , aSharp4
-    , aSharp5
-    , aSharp6
-    , aSharp7
-    , aSharp8
+    , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
+    , octave, pitchClass
+    , semitones, toMIDINoteNumber, toFrequency, toString
+    , normalize, simplify
+    , c0, c1, c2, c3, c4, c5, c6, c7, c8
+    , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
+    , d0, d1, d2, d3, d4, d5, d6, d7, d8
+    , dFlat0, dFlat1, dFlat2, dFlat3, dFlat4, dFlat5, dFlat6, dFlat7, dFlat8
+    , dSharp0, dSharp1, dSharp2, dSharp3, dSharp4, dSharp5, dSharp6, dSharp7, dSharp8
+    , e0, e1, e2, e3, e4, e5, e6, e7, e8
+    , eFlat0, eFlat1, eFlat2, eFlat3, eFlat4, eFlat5, eFlat6, eFlat7, eFlat8
+    , f0, f1, f2, f3, f4, f5, f6, f7, f8
+    , fSharp0, fSharp1, fSharp2, fSharp3, fSharp4, fSharp5, fSharp6, fSharp7, fSharp8
+    , g0, g1, g2, g3, g4, g5, g6, g7, g8
+    , gFlat0, gFlat1, gFlat2, gFlat3, gFlat4, gFlat5, gFlat6, gFlat7, gFlat8
+    , gSharp0, gSharp1, gSharp2, gSharp3, gSharp4, gSharp5, gSharp6, gSharp7, gSharp8
+    , a0, a1, a2, a3, a4, a5, a6, a7, a8
+    , aFlat0, aFlat1, aFlat2, aFlat3, aFlat4, aFlat5, aFlat6, aFlat7, aFlat8
+    , aSharp0, aSharp1, aSharp2, aSharp3, aSharp4, aSharp5, aSharp6, aSharp7, aSharp8
+    , b0, b1, b2, b3, b4, b5, b6, b7, b8
+    , bFlat0, bFlat1, bFlat2, bFlat3, bFlat4, bFlat5, bFlat6, bFlat7, bFlat8
+    , cFlat1, cFlat2, cFlat3, cFlat4, cFlat5, cFlat6, cFlat7, cFlat8
+    , eSharp0, eSharp1, eSharp2, eSharp3, eSharp4, eSharp5, eSharp6, eSharp7, eSharp8
+    , fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8
+    , bSharp0, bSharp1, bSharp2, bSharp3, bSharp4, bSharp5, bSharp6, bSharp7, bSharp8
+    , Range, range, rangeMax, rangeMin, isWithin
     , allForPitchClass
-    , areEnharmonicEquivalents
-    , b0
-    , b1
-    , b2
-    , b3
-    , b4
-    , b5
-    , b6
-    , b7
-    , b8
-    , bFlat0
-    , bFlat1
-    , bFlat2
-    , bFlat3
-    , bFlat4
-    , bFlat5
-    , bFlat6
-    , bFlat7
-    , bFlat8
-    , bSharp0
-    , bSharp1
-    , bSharp2
-    , bSharp3
-    , bSharp4
-    , bSharp5
-    , bSharp6
-    , bSharp7
-    , bSharp8
-    , c0
-    , c1
-    , c2
-    , c3
-    , c4
-    , c5
-    , c6
-    , c7
-    , c8
-    , cFlat1
-    , cFlat2
-    , cFlat3
-    , cFlat4
-    , cFlat5
-    , cFlat6
-    , cFlat7
-    , cFlat8
-    , cSharp0
-    , cSharp1
-    , cSharp2
-    , cSharp3
-    , cSharp4
-    , cSharp5
-    , cSharp6
-    , cSharp7
-    , cSharp8
-    , d0
-    , d1
-    , d2
-    , d3
-    , d4
-    , d5
-    , d6
-    , d7
-    , d8
-    , dFlat0
-    , dFlat1
-    , dFlat2
-    , dFlat3
-    , dFlat4
-    , dFlat5
-    , dFlat6
-    , dFlat7
-    , dFlat8
-    , dSharp0
-    , dSharp1
-    , dSharp2
-    , dSharp3
-    , dSharp4
-    , dSharp5
-    , dSharp6
-    , dSharp7
-    , dSharp8
-    , doubleFlat
-    , doubleSharp
-    , e0
-    , e1
-    , e2
-    , e3
-    , e4
-    , e5
-    , e6
-    , e7
-    , e8
-    , eFlat0
-    , eFlat1
-    , eFlat2
-    , eFlat3
-    , eFlat4
-    , eFlat5
-    , eFlat6
-    , eFlat7
-    , eFlat8
-    , eSharp0
-    , eSharp1
-    , eSharp2
-    , eSharp3
-    , eSharp4
-    , eSharp5
-    , eSharp6
-    , eSharp7
-    , eSharp8
-    , f0
-    , f1
-    , f2
-    , f3
-    , f4
-    , f5
-    , f6
-    , f7
-    , f8
-    , fFlat0
-    , fFlat1
-    , fFlat2
-    , fFlat3
-    , fFlat4
-    , fFlat5
-    , fFlat6
-    , fFlat7
-    , fFlat8
-    , fSharp0
-    , fSharp1
-    , fSharp2
-    , fSharp3
-    , fSharp4
-    , fSharp5
-    , fSharp6
-    , fSharp7
-    , fSharp8
-    , flat
-    , fromPitchClass
-    , fromPitchClassWithInt
-    , g0
-    , g1
-    , g2
-    , g3
-    , g4
-    , g5
-    , g6
-    , g7
-    , g8
-    , gFlat0
-    , gFlat1
-    , gFlat2
-    , gFlat3
-    , gFlat4
-    , gFlat5
-    , gFlat6
-    , gFlat7
-    , gFlat8
-    , gSharp0
-    , gSharp1
-    , gSharp2
-    , gSharp3
-    , gSharp4
-    , gSharp5
-    , gSharp6
-    , gSharp7
-    , gSharp8
-    , intervalBetween
-    , isGreaterThan
-    , isLessThan
-    , isWithin
-    , natural
-    , normalize
-    , octave
+    , sort, sortClosest, isGreaterThan, isLessThan
     , pitch
-    , pitchClass
-    , range
-    , rangeMax
-    , rangeMin
-    , semitones
-    , sharp
-    , simplify
-    , sort
-    , sortClosest
-    , toFrequency
-    , toMIDINoteNumber
-    , toString
-    , transposeDown
-    , transposeUp
+    , natural, flat, sharp, doubleFlat, doubleSharp
+    , fromPitchClass, fromPitchClassWithInt
     )
+
+{-|
+
+@docs Pitch
+
+@docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents
+
+@docs octave, pitchClass
+
+@docs semitones, toMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
+
+@docs normalize, simplify
+
+@docs c0, c1, c2, c3, c4, c5, c6, c7, c8
+@docs cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
+@docs d0, d1, d2, d3, d4, d5, d6, d7, d8
+@docs dFlat0, dFlat1, dFlat2, dFlat3, dFlat4, dFlat5, dFlat6, dFlat7, dFlat8
+@docs dSharp0, dSharp1, dSharp2, dSharp3, dSharp4, dSharp5, dSharp6, dSharp7, dSharp8
+@docs e0, e1, e2, e3, e4, e5, e6, e7, e8
+@docs eFlat0, eFlat1, eFlat2, eFlat3, eFlat4, eFlat5, eFlat6, eFlat7, eFlat8
+@docs f0, f1, f2, f3, f4, f5, f6, f7, f8
+@docs fSharp0, fSharp1, fSharp2, fSharp3, fSharp4, fSharp5, fSharp6, fSharp7, fSharp8
+@docs g0, g1, g2, g3, g4, g5, g6, g7, g8
+@docs gFlat0, gFlat1, gFlat2, gFlat3, gFlat4, gFlat5, gFlat6, gFlat7, gFlat8
+@docs gSharp0, gSharp1, gSharp2, gSharp3, gSharp4, gSharp5, gSharp6, gSharp7, gSharp8
+@docs a0, a1, a2, a3, a4, a5, a6, a7, a8
+@docs aFlat0, aFlat1, aFlat2, aFlat3, aFlat4, aFlat5, aFlat6, aFlat7, aFlat8
+@docs aSharp0, aSharp1, aSharp2, aSharp3, aSharp4, aSharp5, aSharp6, aSharp7, aSharp8
+@docs b0, b1, b2, b3, b4, b5, b6, b7, b8
+@docs bFlat0, bFlat1, bFlat2, bFlat3, bFlat4, bFlat5, bFlat6, bFlat7, bFlat8
+
+@docs cFlat1, cFlat2, cFlat3, cFlat4, cFlat5, cFlat6, cFlat7, cFlat8
+@docs eSharp0, eSharp1, eSharp2, eSharp3, eSharp4, eSharp5, eSharp6, eSharp7, eSharp8
+@docs fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8
+@docs bSharp0, bSharp1, bSharp2, bSharp3, bSharp4, bSharp5, bSharp6, bSharp7, bSharp8
+
+@docs Range, range, rangeMax, rangeMin, isWithin
+@docs allForPitchClass
+
+@docs sort, sortClosest, isGreaterThan, isLessThan
+
+@docs pitch
+@docs natural, flat, sharp, doubleFlat, doubleSharp
+@docs fromPitchClass, fromPitchClassWithInt
+
+-}
 
 import Music.Internal.Interval as Interval exposing (Interval)
 import Music.Internal.Letter as Letter exposing (Letter(..))

@@ -1,13 +1,23 @@
 module Music.Internal.Voicing exposing
-    ( Voicing
+    ( Voicing, init
     , compareVoiceAtIndex
-    , containsPitch
-    , containsPitchAtVoice
-    , init
+    , containsPitchAtVoice, containsPitch
     , initFromPitches
     , toPitches
     , toString
     )
+
+{-|
+
+@docs Voicing, init
+@docs compareVoiceAtIndex
+@docs containsPitchAtVoice, containsPitch
+
+@docs initFromPitches
+@docs toPitches
+@docs toString
+
+-}
 
 import List.Extra
 import Music.Internal.Interval as Interval

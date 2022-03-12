@@ -1,63 +1,36 @@
 module Music.Internal.PitchClass exposing
-    ( Offset
-    , PitchClass
-    , a
-    , aDoubleFlat
-    , aDoubleSharp
-    , aFlat
-    , aSharp
-    , accidentals
-    , addOffset
-    , allInChromaticScale
-    , allInDownwardChromaticScale
-    , allInUpwardChromaticScale
-    , areEnharmonicEquivalents
-    , b
-    , bDoubleFlat
-    , bDoubleSharp
-    , bFlat
-    , bSharp
-    , c
-    , cDoubleFlat
-    , cDoubleSharp
-    , cFlat
-    , cSharp
-    , d
-    , dDoubleFlat
-    , dDoubleSharp
-    , dFlat
-    , dSharp
-    , doubleFlat
-    , doubleSharp
-    , e
-    , eDoubleFlat
-    , eDoubleSharp
-    , eFlat
-    , eSharp
-    , f
-    , fDoubleFlat
-    , fDoubleSharp
-    , fFlat
-    , fSharp
-    , flat
-    , g
-    , gDoubleFlat
-    , gDoubleSharp
-    , gFlat
-    , gSharp
-    , letter
-    , natural
-    , offset
-    , offsetFromInt
-    , offsetToString
-    , pitchClass
-    , semitones
-    , sharp
+    ( PitchClass
+    , areEnharmonicEquivalents, letter, accidentals
     , toString
-    , transpose
-    , tripleFlat
-    , tripleSharp
+    , c, cSharp, d, dSharp, dFlat, e, eFlat, f, fSharp, g, gSharp, gFlat, a, aSharp, aFlat, b, bFlat
+    , cFlat, eSharp, fFlat, bSharp
+    , cDoubleSharp, cDoubleFlat, dDoubleSharp, dDoubleFlat, eDoubleSharp, eDoubleFlat, fDoubleSharp, fDoubleFlat, gDoubleSharp, gDoubleFlat, aDoubleSharp, aDoubleFlat, bDoubleSharp, bDoubleFlat
+    , Offset, addOffset, offset, offsetFromInt, offsetToString
+    , allInChromaticScale, allInDownwardChromaticScale, allInUpwardChromaticScale
+    , natural, flat, sharp, doubleFlat, doubleSharp, tripleFlat, tripleSharp
+    , pitchClass, semitones, transpose
     )
+
+{-|
+
+@docs PitchClass
+
+@docs fromPitch, areEnharmonicEquivalents, letter, Letter, accidentals
+
+@docs toString
+
+@docs c, cSharp, d, dSharp, dFlat, e, eFlat, f, fSharp, g, gSharp, gFlat, a, aSharp, aFlat, b, bFlat
+
+@docs cFlat, eSharp, fFlat, bSharp
+
+@docs cDoubleSharp, cDoubleFlat, dDoubleSharp, dDoubleFlat, eDoubleSharp, eDoubleFlat, fDoubleSharp, fDoubleFlat, gDoubleSharp, gDoubleFlat, aDoubleSharp, aDoubleFlat, bDoubleSharp, bDoubleFlat
+
+@docs Offset, addOffset, offset, offsetFromInt, offsetToString
+@docs allInChromaticScale, allInDownwardChromaticScale, allInUpwardChromaticScale
+@docs natural, flat, sharp, doubleFlat, doubleSharp, tripleFlat, tripleSharp
+@docs pitchClass, semitones, transpose
+
+-}
 
 import Music.Internal.Interval as Interval exposing (Direction(..), Interval(..))
 import Music.Internal.Letter as Letter exposing (Letter(..))

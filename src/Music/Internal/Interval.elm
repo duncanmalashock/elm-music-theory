@@ -1,79 +1,69 @@
 module Music.Internal.Interval exposing
-    ( Direction(..)
-    , Interval
-    , IntervalNumber(..)
-    , IntervalQuality(..)
-    , Range
-    , absoluteValue
-    , add
-    , addOctave
-    , addOffset
-    , allSimple
-    , augmentedEleventh
-    , augmentedFifth
-    , augmentedFourth
-    , augmentedNinth
-    , augmentedOctave
-    , augmentedSecond
-    , augmentedSeventh
-    , augmentedSixth
-    , augmentedThird
-    , augmentedTwelfth
-    , augmentedUnison
-    , diminishedFifth
-    , diminishedFourth
-    , diminishedOctave
-    , diminishedSecond
-    , diminishedSeventh
-    , diminishedSixth
-    , diminishedThird
-    , diminishedTwelfth
-    , direction
-    , directionToInteger
-    , down
-    , indexToIntervalNumber
-    , interval
-    , intervalNumberIndex
-    , isEqualTo
-    , isGreaterThan
-    , isGreaterThanOrEqualTo
-    , isLessThan
-    , isLessThanOrEqualTo
-    , isNegative
-    , isPositive
-    , majorNinth
-    , majorSecond
-    , majorSeventh
-    , majorSixth
-    , majorTenth
-    , majorThird
-    , majorThirteenth
-    , max
-    , min
-    , minorNinth
-    , minorSecond
-    , minorSeventh
-    , minorSixth
-    , minorTenth
-    , minorThird
-    , minorThirteenth
-    , number
-    , numberToQuality
-    , perfectEleventh
-    , perfectFifth
-    , perfectFourth
-    , perfectOctave
-    , perfectTwelfth
-    , perfectUnison
-    , quality
-    , range
+    ( Interval, interval
+    , isEqualTo, isGreaterThan, isLessThan, isGreaterThanOrEqualTo, isLessThanOrEqualTo
+    , add, subtract, addOctave, absoluteValue
     , reverse
-    , semitones
-    , shortName
-    , subtract
+    , semitones, shortName
+    , perfectUnison
+    , minorSecond, majorSecond
+    , minorThird, majorThird
+    , perfectFourth
+    , perfectFifth
+    , minorSixth, majorSixth
+    , minorSeventh, majorSeventh
+    , perfectOctave
+    , augmentedUnison, augmentedSecond, augmentedThird, augmentedFourth, augmentedFifth, augmentedSixth, augmentedSeventh
+    , diminishedSecond, diminishedThird, diminishedFourth, diminishedFifth, diminishedSixth, diminishedSeventh, diminishedOctave
+    , minorNinth, majorNinth, minorTenth, majorTenth, perfectEleventh, perfectTwelfth, minorThirteenth, majorThirteenth
+    , augmentedOctave, augmentedNinth, augmentedEleventh, augmentedTwelfth
+    , diminishedTwelfth
     , toSimple
-    , up
+    , allSimple
+    , Direction(..), direction, up, down, directionToInteger, isNegative, isPositive
+    , IntervalNumber(..), number, indexToIntervalNumber, intervalNumberIndex
+    , IntervalQuality(..), quality, numberToQuality
+    , Range, range, max, min
+    , addOffset
     )
+
+{-|
+
+@docs Interval, interval
+
+@docs isEqualTo, isGreaterThan, isLessThan, isGreaterThanOrEqualTo, isLessThanOrEqualTo
+
+@docs add, subtract, simplify, addOctave, absoluteValue
+
+@docs reverse, isUp, isDown
+
+@docs semitones, shortName
+
+@docs perfectUnison
+@docs minorSecond, majorSecond
+@docs minorThird, majorThird
+@docs perfectFourth
+@docs perfectFifth
+@docs minorSixth, majorSixth
+@docs minorSeventh, majorSeventh
+@docs perfectOctave
+
+@docs augmentedUnison, augmentedSecond, augmentedThird, augmentedFourth, augmentedFifth, augmentedSixth, augmentedSeventh
+@docs diminishedSecond, diminishedThird, diminishedFourth, diminishedFifth, diminishedSixth, diminishedSeventh, diminishedOctave
+@docs minorNinth, majorNinth, minorTenth, majorTenth, perfectEleventh, perfectTwelfth, minorThirteenth, majorThirteenth
+@docs augmentedOctave, augmentedNinth, augmentedEleventh, augmentedTwelfth
+@docs diminishedTwelfth
+
+@docs toSimple
+@docs allSimple
+
+@docs Direction, direction, up, down, directionToInteger, isNegative, isPositive
+@docs IntervalNumber, number, indexToIntervalNumber, intervalNumberIndex
+@docs IntervalQuality, quality, numberToQuality
+@docs Range, range, max, min
+
+@docs betweenPitches, addOffset
+
+-}
 
 
 type IntervalNumber

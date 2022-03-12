@@ -1,22 +1,32 @@
 module Music.Internal.Octave exposing
     ( Octave
-    , add
     , allValid
-    , eight
-    , five
-    , four
-    , number
-    , octave
-    , one
+    , zero, one, two, three, four, five, six, seven, eight
     , semitones
-    , seven
-    , six
-    , three
-    , toInterval
-    , toString
-    , two
-    , zero
+    , add
+    , octave
+    , number
+    , toInterval, toString
     )
+
+{-|
+
+@docs Octave
+
+@docs allValid
+
+@docs zero, one, two, three, four, five, six, seven, eight
+
+@docs semitones
+
+@docs add
+
+@docs octave
+@docs number
+
+@docs toInterval, toString
+
+-}
 
 import Music.Internal.Interval as Interval
 
