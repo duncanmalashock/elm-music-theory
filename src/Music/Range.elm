@@ -1,24 +1,22 @@
 module Music.Range exposing
-    ( Range
-    , range
+    ( Range, range
     , isWithin, min, max
-    , sopranoVoice, altoVoice, tenorVoice, bassVoice
+    , piano
+    , sopranoVoice, mezzoSopranoVoice, altoVoice
+    , countertenorVoice, tenorVoice, bassVoice
     , violin, viola, cello, contrabass
-    , bassoon, clarinet, oboe
     , flute, piccolo
-    , tuba, frenchHorn, trombone, trumpet
-    , altoSax, baritoneSax, tenorSax
+    , oboe, englishHorn
+    , clarinet, bassClarinet
+    , bassoon, contrabassoon
+    , trumpet, frenchHorn, trombone, tuba
+    , sopranoSax, altoSax, tenorSax, baritoneSax
     , marimba, vibraphone, glockenspiel, xylophone
     )
 
 {-| A range, like a range of numbers, represents an upper and lower boundary and all the pitches in between. E.g. "C4–C6."
 
-@docs Range
-
-
-# Constructor
-
-@docs range
+@docs Range, range
 
 
 # Helpers
@@ -31,19 +29,27 @@ module Music.Range exposing
 All instrument ranges here are defined in [concert pitch](https://en.wikipedia.org/wiki/Concert_pitch).
 
 
+## Piano
+
+@docs piano
+
+
 ## Vocal ranges
 
-@docs sopranoVoice, altoVoice, tenorVoice, bassVoice
+
+### Female vocal ranges
+
+@docs sopranoVoice, mezzoSopranoVoice, altoVoice
 
 
-## Stringed instruments
+### Male vocal ranges
+
+@docs countertenorVoice, tenorVoice, bassVoice
+
+
+## String family
 
 @docs violin, viola, cello, contrabass
-
-
-## Reed instruments
-
-@docs bassoon, clarinet, oboe
 
 
 ## Wind instruments
@@ -51,14 +57,21 @@ All instrument ranges here are defined in [concert pitch](https://en.wikipedia.o
 @docs flute, piccolo
 
 
+## Reed instruments
+
+@docs oboe, englishHorn
+@docs clarinet, bassClarinet
+@docs bassoon, contrabassoon
+
+
 ## Brass instruments
 
-@docs tuba, frenchHorn, trombone, trumpet
+@docs trumpet, frenchHorn, trombone, tuba
 
 
 ## Saxophones
 
-@docs altoSax, baritoneSax, tenorSax
+@docs sopranoSax, altoSax, tenorSax, baritoneSax
 
 
 ## Pitched percussion
@@ -120,15 +133,33 @@ isWithin theRange thePitch =
 
 
 {-| -}
+piano : Pitch.Range
+piano =
+    range Pitch.a0 Pitch.c8
+
+
+{-| -}
 sopranoVoice : Pitch.Range
 sopranoVoice =
     range Pitch.c4 Pitch.c6
 
 
 {-| -}
+mezzoSopranoVoice : Pitch.Range
+mezzoSopranoVoice =
+    range Pitch.a3 Pitch.a5
+
+
+{-| -}
 altoVoice : Pitch.Range
 altoVoice =
     range Pitch.f3 Pitch.f5
+
+
+{-| -}
+countertenorVoice : Pitch.Range
+countertenorVoice =
+    range Pitch.g3 Pitch.e5
 
 
 {-| -}
@@ -210,9 +241,33 @@ oboe =
 
 
 {-| -}
+englishHorn : Pitch.Range
+englishHorn =
+    range Pitch.e3 Pitch.c6
+
+
+{-| -}
 clarinet : Pitch.Range
 clarinet =
     range Pitch.b3 Pitch.a6
+
+
+{-| -}
+bassClarinet : Pitch.Range
+bassClarinet =
+    range Pitch.bFlat1 Pitch.b5
+
+
+{-| -}
+contrabassoon : Pitch.Range
+contrabassoon =
+    range Pitch.bFlat0 Pitch.d4
+
+
+{-| -}
+sopranoSax : Pitch.Range
+sopranoSax =
+    range Pitch.aFlat3 Pitch.e6
 
 
 {-| -}
