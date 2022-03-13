@@ -10,7 +10,7 @@ import Music.Chord exposing (Chord)
 import Music.Duration as Duration exposing (Duration)
 import Music.Key as Key exposing (Key)
 import Music.Meter as Meter exposing (Meter)
-import Music.Note as Note
+import Music.Note as Note exposing (Note)
 import Music.Range as Range
 import Music.Tempo as Tempo exposing (Tempo)
 
@@ -38,13 +38,13 @@ new :
 new { tempo, key, meter } =
     Music
         { tempoEvents =
-            [ event Duration.zero tempo newId
+            [ event Duration.zero tempo
             ]
         , keyEvents =
-            [ event Duration.zero key newId
+            [ event Duration.zero key
             ]
         , meterEvents =
-            [ event Duration.zero meter newId
+            [ event Duration.zero meter
             ]
         , chordEvents = []
         , noteEvents = []
@@ -55,49 +55,27 @@ new { tempo, key, meter } =
 type Event a
     = Event
         { at : Duration
-        , id : Id
         , value : a
         }
 
 
-type Id
-    = Id Int
-
-
-newId : Id
-newId =
-    Id 0
-
-
-type alias Note =
-    { note : Note.Note
-    , instrumentId : Id
-    }
-
-
 type alias Instrument =
-    { id : Id
-    , name : String
+    { name : String
     , range : Range.Range
     }
 
 
 addNote :
     { note : Note.Note
-    , instrumentId : Id
     , at : Duration
     }
     -> Music
     -> Music
 addNote options (Music music) =
     let
-        newNoteEvent : Event Note
+        newNoteEvent : Event Note.Note
         newNoteEvent =
-            event options.at
-                { note = options.note
-                , instrumentId = options.instrumentId
-                }
-                newId
+            event options.at options.note
     in
     Music
         { music
@@ -106,10 +84,9 @@ addNote options (Music music) =
         }
 
 
-event : Duration -> a -> Id -> Event a
-event at value id =
+event : Duration -> a -> Event a
+event at value =
     Event
         { at = at
-        , id = id
         , value = value
         }
