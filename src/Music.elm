@@ -1,8 +1,13 @@
-module Music exposing (Music, new)
+module Music exposing
+    ( Music, new
+    , addNote, removeNote
+    )
 
 {-|
 
 @docs Music, new
+
+@docs addNote, removeNote
 
 -}
 
@@ -81,6 +86,26 @@ addNote options (Music music) =
         { music
             | noteEvents =
                 newNoteEvent :: music.noteEvents
+        }
+
+
+removeNote :
+    { note : Note.Note
+    , at : Duration
+    }
+    -> Music
+    -> Music
+removeNote options (Music music) =
+    let
+        matches : Event Note.Note -> Bool
+        matches (Event current) =
+            (current.value == options.note)
+                && (current.at == options.at)
+    in
+    Music
+        { music
+            | noteEvents =
+                List.filter (\current -> not (matches current)) music.noteEvents
         }
 
 
