@@ -1,7 +1,6 @@
 module Music.Pitch exposing
     ( Pitch
     , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, octave
-    , chromaticRun
     , semitones, toMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
     , normalize, simplify
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
@@ -35,11 +34,6 @@ module Music.Pitch exposing
 # Helpers
 
 @docs transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, octave
-
-
-# Generating
-
-@docs chromaticRun
 
 
 # Conversion
@@ -159,34 +153,6 @@ intervalBetween a b =
 areEnharmonicEquivalents : Pitch -> Pitch -> Bool
 areEnharmonicEquivalents a b =
     Pitch.areEnharmonicEquivalents a b
-
-
-{-| Generate a section of the ascending or descending [chromatic scale](https://en.wikipedia.org/wiki/Chromatic_scale) between two pitches:
-
-    chromaticRun a4 d5
-        == [ a4
-           , aSharp4
-           , b4
-           , c5
-           , cSharp5
-           , d5
-           ]
-
-Ascending runs use sharps; descending runs use flats:
-
-    chromaticRun d5 a4
-        == [ d5
-           , dFlat5
-           , c5
-           , b4
-           , bFlat4
-           , a4
-           ]
-
--}
-chromaticRun : Pitch -> Pitch -> List Pitch
-chromaticRun start end =
-    Pitch.chromaticRun start end
 
 
 {-| Respell a pitch with as few accidentals as possible:
