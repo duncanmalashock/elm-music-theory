@@ -61,6 +61,7 @@ allValid =
     , octave 6
     , octave 7
     , octave 8
+    , octave 9
     ]
 
 
