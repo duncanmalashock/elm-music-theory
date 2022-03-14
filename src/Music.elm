@@ -1,6 +1,7 @@
 module Music exposing
     ( Music, new
     , addNote, removeNote
+    , NoteEvent, noteEvents
     )
 
 {-|
@@ -8,6 +9,8 @@ module Music exposing
 @docs Music, new
 
 @docs addNote, removeNote
+
+@docs NoteEvent noteEvents
 
 -}
 
@@ -57,11 +60,16 @@ new { tempo, key, meter } =
         }
 
 
-type Event a
-    = Event
-        { at : Duration
-        , value : a
-        }
+type alias Event a =
+    { at : Duration
+    , value : a
+    }
+
+
+type alias NoteEvent =
+    { at : Duration
+    , value : Note
+    }
 
 
 type alias Instrument =
@@ -98,7 +106,7 @@ removeNote :
 removeNote options (Music music) =
     let
         matches : Event Note.Note -> Bool
-        matches (Event current) =
+        matches current =
             (current.value == options.note)
                 && (current.at == options.at)
     in
@@ -111,7 +119,11 @@ removeNote options (Music music) =
 
 event : Duration -> a -> Event a
 event at value =
-    Event
-        { at = at
-        , value = value
-        }
+    { at = at
+    , value = value
+    }
+
+
+noteEvents : Music -> List NoteEvent
+noteEvents (Music music) =
+    music.noteEvents
