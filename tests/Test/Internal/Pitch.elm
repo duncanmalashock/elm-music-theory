@@ -58,7 +58,7 @@ all =
                 \_ ->
                     Pitch.allForPitchClass (PitchClass.pitchClass F Pitch.natural)
                         |> List.length
-                        |> Expect.equal 9
+                        |> Expect.equal 10
             ]
         , describe "intervalBetween"
             [ test "interval between C4 and E4 should be a major third" <|

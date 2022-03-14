@@ -83,6 +83,7 @@ all =
                             , "C5,G5,E♭6"
                             , "C6,G6,E♭7"
                             , "C7,G7,E♭8"
+                            , "C8,G8,E♭9"
                             ]
 
                         result : List String
