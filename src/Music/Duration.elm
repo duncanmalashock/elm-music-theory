@@ -3,7 +3,7 @@ module Music.Duration exposing
     , whole, half, quarter, eighth, sixteenth
     , thirtySecond, sixtyFourth, oneHundredTwentyEighth, twoHundredFiftySixth
     , zero
-    , add, divide, multiply, subdivide
+    , add, divide, multiply, multiplyByInt, subdivide
     , sort
     , toFloat
     )
@@ -17,7 +17,7 @@ module Music.Duration exposing
 
 @docs zero
 
-@docs add, divide, multiply, subdivide
+@docs add, divide, multiply, multiplyByInt, subdivide
 
 @docs sort
 
@@ -66,6 +66,12 @@ add (Duration fractionA) (Duration fractionB) =
 multiply : Duration -> Duration -> Duration
 multiply (Duration fractionA) (Duration fractionB) =
     Fraction.multiply fractionA fractionB
+        |> Duration
+
+
+multiplyByInt : Int -> Duration -> Duration
+multiplyByInt int (Duration fraction) =
+    Fraction.multiply (Fraction.createUnsafe int 1) fraction
         |> Duration
 
 

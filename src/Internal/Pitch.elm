@@ -83,7 +83,6 @@ import Internal.Interval as Interval exposing (Interval)
 import Internal.Letter as Letter exposing (Letter(..))
 import Internal.Octave as Octave exposing (Octave)
 import Internal.PitchClass as PitchClass exposing (Offset, PitchClass)
-import Util.Basic
 
 
 semitonesUpperLimit : Int

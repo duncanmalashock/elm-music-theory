@@ -1,7 +1,7 @@
 module Music.Pitch exposing
     ( Pitch
     , transposeUp, transposeDown, intervalBetween, areEnharmonicEquivalents, octave
-    , semitones, toMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
+    , semitones, toMIDINoteNumber, fromMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
     , normalize, simplify
     , c0, c1, c2, c3, c4, c5, c6, c7, c8
     , cSharp0, cSharp1, cSharp2, cSharp3, cSharp4, cSharp5, cSharp6, cSharp7, cSharp8
@@ -38,7 +38,7 @@ module Music.Pitch exposing
 
 # Conversion
 
-@docs semitones, toMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
+@docs semitones, toMIDINoteNumber, fromMIDINoteNumber, toFrequency, toString, fromPitchClassInOctave
 
 
 # Respelling
@@ -87,6 +87,7 @@ import Internal.Interval as Interval
 import Internal.Octave as Octave
 import Internal.Pitch as Pitch
 import Internal.PitchClass as PitchClass
+import Internal.PitchFromMidi
 
 
 {-| -}
@@ -204,6 +205,12 @@ semitones pitch =
 toMIDINoteNumber : Pitch -> Int
 toMIDINoteNumber pitch =
     Pitch.toMIDINoteNumber pitch
+
+
+{-| -}
+fromMIDINoteNumber : Int -> Pitch
+fromMIDINoteNumber int =
+    Internal.PitchFromMidi.fromMIDINoteNumber int
 
 
 {-| Convert a pitch to a frequency in [Hertz](https://en.wikipedia.org/wiki/Hertz):

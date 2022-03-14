@@ -32,7 +32,7 @@ type alias Details =
     , keyEvents : List (Event Key)
     , meterEvents : List (Event Meter)
     , chordEvents : List (Event Chord)
-    , noteEvents : List (Event Note)
+    , noteEvents : List NoteEvent
     , instruments : List Instrument
     }
 
