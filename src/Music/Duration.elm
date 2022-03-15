@@ -6,6 +6,7 @@ module Music.Duration exposing
     , add, divide, multiply, multiplyByInt, subdivide
     , sort
     , toFloat
+    , toFraction, fromFraction
     )
 
 {-|
@@ -22,6 +23,8 @@ module Music.Duration exposing
 @docs sort
 
 @docs toFloat
+
+@docs toFraction, fromFraction
 
 -}
 
@@ -43,6 +46,19 @@ sort list =
 toFloat : Duration -> Float
 toFloat (Duration fraction) =
     Fraction.toFloat fraction
+
+
+toFraction : Duration -> { numerator : Int, denominator : Int }
+toFraction (Duration fraction) =
+    case Fraction.toTuple fraction of
+        ( numerator, denominator ) ->
+            { numerator = numerator, denominator = denominator }
+
+
+fromFraction : { numerator : Int, denominator : Int } -> Duration
+fromFraction { numerator, denominator } =
+    Fraction.createUnsafe numerator denominator
+        |> Duration
 
 
 zero : Duration
