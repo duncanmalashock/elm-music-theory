@@ -1,7 +1,7 @@
 module Music exposing
     ( Music, new
     , addNote, removeNote
-    , NoteEvent, noteEvents
+    , NoteEvent, PitchEvent, noteEvents
     )
 
 {-|
@@ -14,13 +14,14 @@ module Music exposing
 
 -}
 
-import Music.Chord exposing (Chord)
-import Music.Duration as Duration exposing (Duration)
-import Music.Key as Key exposing (Key)
-import Music.Meter as Meter exposing (Meter)
-import Music.Note as Note exposing (Note)
+import Music.Chord as Chord
+import Music.Duration as Duration
+import Music.Key as Key
+import Music.Meter as Meter
+import Music.Note as Note
+import Music.Pitch as Pitch
 import Music.Range as Range
-import Music.Tempo as Tempo exposing (Tempo)
+import Music.Tempo as Tempo
 
 
 type Music
@@ -28,10 +29,10 @@ type Music
 
 
 type alias Details =
-    { tempoEvents : List (Event Tempo)
-    , keyEvents : List (Event Key)
-    , meterEvents : List (Event Meter)
-    , chordEvents : List (Event Chord)
+    { tempoEvents : List (Event Tempo.Tempo)
+    , keyEvents : List (Event Key.Key)
+    , meterEvents : List (Event Meter.Meter)
+    , chordEvents : List (Event Chord.Chord)
     , noteEvents : List NoteEvent
     , instruments : List Instrument
     }
@@ -61,15 +62,17 @@ new { tempo, key, meter } =
 
 
 type alias Event a =
-    { at : Duration
+    { at : Duration.Duration
     , value : a
     }
 
 
 type alias NoteEvent =
-    { at : Duration
-    , value : Note
-    }
+    Event Note.Note
+
+
+type alias PitchEvent =
+    Event Pitch.Pitch
 
 
 type alias Instrument =
@@ -80,7 +83,7 @@ type alias Instrument =
 
 addNote :
     { note : Note.Note
-    , at : Duration
+    , at : Duration.Duration
     }
     -> Music
     -> Music
@@ -99,7 +102,7 @@ addNote options (Music music) =
 
 removeNote :
     { note : Note.Note
-    , at : Duration
+    , at : Duration.Duration
     }
     -> Music
     -> Music
@@ -117,7 +120,7 @@ removeNote options (Music music) =
         }
 
 
-event : Duration -> a -> Event a
+event : Duration.Duration -> a -> Event a
 event at value =
     { at = at
     , value = value
