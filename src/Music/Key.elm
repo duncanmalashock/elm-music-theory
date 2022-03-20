@@ -7,6 +7,7 @@ module Music.Key exposing
     , g, d, a, e, b, fSharp
     , aMinor, dMinor, gMinor, cMinor, fMinor, bFlatMinor, eFlatMinor
     , eMinor, bMinor, fSharpMinor, cSharpMinor, gSharpMinor
+    , Serial, toSerial
     )
 
 {-| A [key](https://en.wikipedia.org/wiki/Key_%28music%29) defines a relationship between a set of pitch classes in a composition. E.g. the "key of D major".
@@ -53,6 +54,17 @@ import Music.PitchClass as PitchClass
 {-| -}
 type alias Key =
     Key.Key
+
+
+type alias Serial =
+    { tonic : PitchClass.Serial
+    , majorOrMinor : String
+    }
+
+
+toSerial : Key -> Serial
+toSerial key =
+    Key.toSerial key
 
 
 {-| Get the [key signature](https://en.wikipedia.org/wiki/Key_signature) for a key as a list of the pitch classes that are sharpened or flattened:

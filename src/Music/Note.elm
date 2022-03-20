@@ -10,6 +10,7 @@ module Music.Note exposing
     , addDuration, setDuration, multiplyDuration
     , join
     , toMidiNoteNumber, toMidiVelocity
+    , Serial, toSerial
     )
 
 {-|
@@ -34,6 +35,8 @@ module Music.Note exposing
 
 @docs toMidiNoteNumber, toMidiVelocity
 
+@docs Serial, toSerial
+
 -}
 
 import Music.Duration as Duration
@@ -43,6 +46,21 @@ import Music.Pitch as Pitch
 
 type Note
     = Note Pitch.Pitch Duration.Duration Dynamics.Dynamics
+
+
+type alias Serial =
+    { pitch : Pitch.Serial
+    , duration : Duration.Serial
+    , dynamics : Dynamics.Serial
+    }
+
+
+toSerial : Note -> Serial
+toSerial (Note pitch_ duration_ dynamics_) =
+    { pitch = Pitch.toSerial pitch_
+    , duration = Duration.toSerial duration_
+    , dynamics = Dynamics.toSerial dynamics_
+    }
 
 
 note : Pitch.Pitch -> Duration.Duration -> Note

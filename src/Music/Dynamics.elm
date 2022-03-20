@@ -1,10 +1,11 @@
 module Music.Dynamics exposing
     ( Dynamics
     , normal
-    , mf, f, ff, fff
-    , mp, p, pp, ppp
+    , mf, f, ff, fff, ffff
+    , mp, p, pp, ppp, pppp
     , louder, softer
     , toMidiVelocity
+    , Serial, toSerial
     )
 
 {-|
@@ -12,12 +13,14 @@ module Music.Dynamics exposing
 @docs Dynamics
 
 @docs normal
-@docs mf, f, ff, fff
-@docs mp, p, pp, ppp
+@docs mf, f, ff, fff, ffff
+@docs mp, p, pp, ppp, pppp
 
 @docs louder, softer
 
 @docs toMidiVelocity
+
+@docs Serial, toSerial
 
 -}
 
@@ -26,62 +29,81 @@ type Dynamics
     = Dynamics Int
 
 
+type alias Serial =
+    Int
+
+
+toSerial : Dynamics -> Serial
+toSerial (Dynamics d) =
+    d
+
+
 normal : Dynamics
 normal =
-    Dynamics 0
+    Dynamics 64
 
 
 mf : Dynamics
 mf =
-    Dynamics 1
+    Dynamics 75
 
 
 f : Dynamics
 f =
-    Dynamics 2
+    Dynamics 88
 
 
 ff : Dynamics
 ff =
-    Dynamics 3
+    Dynamics 101
 
 
 fff : Dynamics
 fff =
-    Dynamics 4
+    Dynamics 114
+
+
+ffff : Dynamics
+ffff =
+    Dynamics 127
 
 
 mp : Dynamics
 mp =
-    Dynamics -1
+    Dynamics 62
 
 
 p : Dynamics
 p =
-    Dynamics -2
+    Dynamics 49
 
 
 pp : Dynamics
 pp =
-    Dynamics -3
+    Dynamics 36
 
 
 ppp : Dynamics
 ppp =
-    Dynamics -4
+    Dynamics 23
+
+
+pppp : Dynamics
+pppp =
+    Dynamics 10
 
 
 louder : Dynamics -> Dynamics
 louder (Dynamics level) =
-    Dynamics (level + 1)
+    Dynamics (level + 10)
 
 
 softer : Dynamics -> Dynamics
 softer (Dynamics level) =
-    Dynamics (level - 1)
+    Dynamics (level - 10)
 
 
 toMidiVelocity : Dynamics -> Int
 toMidiVelocity (Dynamics level) =
-    (64 + (level * 16))
+    level
         |> clamp 1 127

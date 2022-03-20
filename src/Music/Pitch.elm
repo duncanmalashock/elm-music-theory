@@ -24,6 +24,7 @@ module Music.Pitch exposing
     , eSharp0, eSharp1, eSharp2, eSharp3, eSharp4, eSharp5, eSharp6, eSharp7, eSharp8
     , fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8
     , bSharp0, bSharp1, bSharp2, bSharp3, bSharp4, bSharp5, bSharp6, bSharp7, bSharp8
+    , Serial, toSerial
     )
 
 {-| A [pitch](https://en.wikipedia.org/wiki/Pitch_%28music%29) represents a specific frequency of sound with a letter name, octave, and accidental. E.g. the pitch "B♭4".
@@ -81,6 +82,8 @@ These are used less frequently in music. Most likely you want a pitch from the p
 @docs fFlat0, fFlat1, fFlat2, fFlat3, fFlat4, fFlat5, fFlat6, fFlat7, fFlat8
 @docs bSharp0, bSharp1, bSharp2, bSharp3, bSharp4, bSharp5, bSharp6, bSharp7, bSharp8
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.Interval as Interval
@@ -93,6 +96,15 @@ import Internal.PitchFromMidi
 {-| -}
 type alias Pitch =
     Pitch.Pitch
+
+
+type alias Serial =
+    Pitch.Serial
+
+
+toSerial : Pitch -> Serial
+toSerial pitch =
+    Pitch.toSerial pitch
 
 
 {-| Create a pitch from a pitch class and octave number:

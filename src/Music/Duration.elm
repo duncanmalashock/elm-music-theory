@@ -6,7 +6,7 @@ module Music.Duration exposing
     , add, divide, multiply, multiplyByInt, subdivide
     , sort
     , toFloat
-    , toFraction, fromFraction
+    , Serial, fromSerial, toSerial
     )
 
 {-|
@@ -24,7 +24,7 @@ module Music.Duration exposing
 
 @docs toFloat
 
-@docs toFraction, fromFraction
+@docs Serial, fromSerial, toSerial
 
 -}
 
@@ -48,15 +48,21 @@ toFloat (Duration fraction) =
     Fraction.toFloat fraction
 
 
-toFraction : Duration -> { numerator : Int, denominator : Int }
-toFraction (Duration fraction) =
+type alias Serial =
+    { numerator : Int
+    , denominator : Int
+    }
+
+
+toSerial : Duration -> Serial
+toSerial (Duration fraction) =
     case Fraction.toTuple fraction of
         ( numerator, denominator ) ->
             { numerator = numerator, denominator = denominator }
 
 
-fromFraction : { numerator : Int, denominator : Int } -> Duration
-fromFraction { numerator, denominator } =
+fromSerial : Serial -> Duration
+fromSerial { numerator, denominator } =
     Fraction.createUnsafe numerator denominator
         |> Duration
 

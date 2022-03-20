@@ -7,6 +7,7 @@ module Internal.Octave exposing
     , octave
     , number
     , toInterval, toString
+    , Serial, toSerial
     )
 
 {-|
@@ -26,6 +27,8 @@ module Internal.Octave exposing
 
 @docs toInterval, toString
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.Interval as Interval
@@ -38,6 +41,15 @@ type Octave
 octave : Int -> Octave
 octave n =
     Octave n
+
+
+type alias Serial =
+    Int
+
+
+toSerial : Octave -> Serial
+toSerial (Octave o) =
+    o
 
 
 add : Int -> Octave -> Octave

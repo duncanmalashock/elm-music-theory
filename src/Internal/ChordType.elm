@@ -23,6 +23,7 @@ module Internal.ChordType exposing
     , includes, includesAll, includesAny
     , isDiminished, isDominant, isMajor
     , toIntervals
+    , Serial, toSerial
     )
 
 {-|
@@ -60,6 +61,8 @@ module Internal.ChordType exposing
 
 @docs toIntervals
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.Interval as Interval exposing (Interval)
@@ -68,6 +71,17 @@ import Music.Chord.Classification exposing (..)
 
 type ChordType
     = ChordType (List Interval)
+
+
+type alias Serial =
+    { intervals : List Interval.Serial
+    }
+
+
+toSerial : ChordType -> Serial
+toSerial (ChordType intervals) =
+    { intervals = List.map Interval.toSerial intervals
+    }
 
 
 toIntervals : ChordType -> List Interval

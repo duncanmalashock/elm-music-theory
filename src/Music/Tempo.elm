@@ -17,6 +17,7 @@ module Music.Tempo exposing
     , vivacissimo
     , presto
     , prestissimo
+    , Serial, toSerial
     )
 
 {-|
@@ -42,6 +43,8 @@ module Music.Tempo exposing
 @docs presto
 @docs prestissimo
 
+@docs Serial, toSerial
+
 -}
 
 import Music.Duration as Duration exposing (Duration)
@@ -52,6 +55,19 @@ type Tempo
         { beatsPerMinute : Int
         , beatUnit : Duration
         }
+
+
+type alias Serial =
+    { beatsPerMinute : Int
+    , beatUnit : Duration.Serial
+    }
+
+
+toSerial : Tempo -> Serial
+toSerial (Tempo details) =
+    { beatsPerMinute = details.beatsPerMinute
+    , beatUnit = Duration.toSerial details.beatUnit
+    }
 
 
 quarterNotesPerMinute : Int -> Tempo

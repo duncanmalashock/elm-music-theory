@@ -10,6 +10,7 @@ module Music.Chord exposing
     , dominantNinthSharpEleven, dominantNinthFlatThirteen, dominantNinthSharpElevenFlatThirteen
     , dominantThirteenthFlatNine, dominantThirteenthSharpNine, dominantThirteenthFlatNineSharpNine, dominantThirteenthFlatNineSharpEleven, dominantThirteenthSharpNineSharpEleven, dominantThirteenthSharpEleven
     , custom
+    , Serial, toSerial
     )
 
 {-| A [chord](https://en.wikipedia.org/wiki/Chord_%28music%29) is a set of pitch classes that are meant to be sounded together to create [harmony](https://en.wikipedia.org/wiki/Harmony). E.g. a "G dominant seventh" chord.
@@ -80,6 +81,8 @@ A chord is defined by a set of pitch classes. But pitch classes can't be heard; 
 
 @docs custom
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.Chord as Chord
@@ -90,6 +93,15 @@ import Internal.PitchClass as PitchClass
 {-| -}
 type alias Chord =
     Chord.Chord
+
+
+type alias Serial =
+    Chord.Serial
+
+
+toSerial : Chord -> Serial
+toSerial chord =
+    Chord.toSerial chord
 
 
 {-| Get a chord's type:

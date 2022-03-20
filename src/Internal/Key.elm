@@ -9,6 +9,7 @@ module Internal.Key exposing
     , setTonic
     , areEnharmonicEquivalents
     , aFlatMinor, aSharpMinor, cFlat, cSharp
+    , Serial, toSerial
     )
 
 {-|
@@ -33,6 +34,8 @@ module Internal.Key exposing
 
 @docs aFlatMinor, aSharpMinor, cFlat, cSharp
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.Interval as Interval
@@ -44,6 +47,19 @@ import Internal.ScaleType as ScaleType
 
 type Key
     = Key PitchClass MajorOrMinor
+
+
+type alias Serial =
+    { tonic : PitchClass.Serial
+    , majorOrMinor : String
+    }
+
+
+toSerial : Key -> Serial
+toSerial (Key theTonic majorOrMinor) =
+    { tonic = PitchClass.toSerial theTonic
+    , majorOrMinor = majorOrMinorToString majorOrMinor
+    }
 
 
 setTonic : PitchClass -> Key -> Key
@@ -150,13 +166,17 @@ orderByAppearanceInKeySignature pitchClass =
 symbol : Key -> String
 symbol (Key pc majorOrMinor) =
     PitchClass.toString pc
-        ++ (case majorOrMinor of
-                Minor ->
-                    "m"
+        ++ majorOrMinorToString majorOrMinor
 
-                Major ->
-                    ""
-           )
+
+majorOrMinorToString : MajorOrMinor -> String
+majorOrMinorToString majorOrMinor =
+    case majorOrMinor of
+        Minor ->
+            "m"
+
+        Major ->
+            ""
 
 
 isMajor : Key -> Bool

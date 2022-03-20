@@ -24,6 +24,7 @@ module Internal.Interval exposing
     , IntervalQuality(..), quality, numberToQuality
     , Range, range, max, min
     , addOffset
+    , Serial, toSerial
     )
 
 {-|
@@ -63,6 +64,8 @@ module Internal.Interval exposing
 
 @docs betweenPitches, addOffset
 
+@docs Serial, toSerial
+
 -}
 
 
@@ -88,6 +91,40 @@ type Offset
 
 type Interval
     = Interval Direction IntervalQuality IntervalNumber
+
+
+type alias Serial =
+    { direction : Int
+    , quality : String
+    , offset : Int
+    , number : Int
+    }
+
+
+toSerial : Interval -> Serial
+toSerial (Interval d q n) =
+    let
+        ( qual, offset_ ) =
+            case q of
+                Perfect (Offset o) ->
+                    ( "perfect", o )
+
+                Imperfect (Offset o) ->
+                    ( "perfect", o )
+
+        direction_ =
+            case d of
+                Up ->
+                    1
+
+                Down ->
+                    -1
+    in
+    { direction = direction_
+    , quality = qual
+    , offset = offset_
+    , number = intervalNumberIndex n
+    }
 
 
 type Direction

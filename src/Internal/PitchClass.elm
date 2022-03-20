@@ -9,6 +9,7 @@ module Internal.PitchClass exposing
     , allInChromaticScale, allInDownwardChromaticScale, allInUpwardChromaticScale
     , natural, flat, sharp, doubleFlat, doubleSharp, tripleFlat, tripleSharp
     , pitchClass, semitones, transpose
+    , Serial, toSerial
     )
 
 {-|
@@ -30,11 +31,26 @@ module Internal.PitchClass exposing
 @docs natural, flat, sharp, doubleFlat, doubleSharp, tripleFlat, tripleSharp
 @docs pitchClass, semitones, transpose
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.Interval as Interval exposing (Direction(..), Interval(..))
 import Internal.Letter as Letter exposing (Letter(..))
 import Util.Basic
+
+
+type alias Serial =
+    { letter : String
+    , offset : Int
+    }
+
+
+toSerial : PitchClass -> Serial
+toSerial (PitchClass l (Offset o)) =
+    { letter = Letter.toString l
+    , offset = o
+    }
 
 
 allInChromaticScale : List PitchClass

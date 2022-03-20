@@ -5,6 +5,7 @@ module Music.PitchClass exposing
     , c, cSharp, d, dSharp, dFlat, e, eFlat, f, fSharp, g, gSharp, gFlat, a, aSharp, aFlat, b, bFlat
     , cFlat, eSharp, fFlat, bSharp
     , cDoubleSharp, cDoubleFlat, dDoubleSharp, dDoubleFlat, eDoubleSharp, eDoubleFlat, fDoubleSharp, fDoubleFlat, gDoubleSharp, gDoubleFlat, aDoubleSharp, aDoubleFlat, bDoubleSharp, bDoubleFlat
+    , Serial, toSerial
     )
 
 {-| A [pitch class](https://en.wikipedia.org/wiki/Pitch_class) is like a pitch, but with no octave specified. E.g. the pitch class "B♭".
@@ -41,6 +42,8 @@ These are used less frequently in music. Most likely you want a pitch from the p
 
 @docs cDoubleSharp, cDoubleFlat, dDoubleSharp, dDoubleFlat, eDoubleSharp, eDoubleFlat, fDoubleSharp, fDoubleFlat, gDoubleSharp, gDoubleFlat, aDoubleSharp, aDoubleFlat, bDoubleSharp, bDoubleFlat
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.Letter as Letter
@@ -51,6 +54,15 @@ import Internal.PitchClass as PitchClass
 {-| -}
 type alias PitchClass =
     PitchClass.PitchClass
+
+
+type alias Serial =
+    PitchClass.Serial
+
+
+toSerial : PitchClass.PitchClass -> PitchClass.Serial
+toSerial pitchClass =
+    PitchClass.toSerial pitchClass
 
 
 {-| Convert a `Pitch` to a `PitchClass`.

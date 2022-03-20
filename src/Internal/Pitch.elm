@@ -31,6 +31,7 @@ module Internal.Pitch exposing
     , pitch
     , natural, flat, sharp, doubleFlat, doubleSharp
     , fromPitchClass, fromPitchClassWithInt
+    , Serial, toSerial
     )
 
 {-|
@@ -77,6 +78,8 @@ module Internal.Pitch exposing
 @docs natural, flat, sharp, doubleFlat, doubleSharp
 @docs fromPitchClass, fromPitchClassWithInt
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.Interval as Interval exposing (Interval)
@@ -97,6 +100,19 @@ semitonesLowerLimit =
 
 type Pitch
     = Pitch PitchClass Octave
+
+
+type alias Serial =
+    { pitchClass : PitchClass.Serial
+    , octave : Octave.Serial
+    }
+
+
+toSerial : Pitch -> Serial
+toSerial (Pitch pc o) =
+    { pitchClass = PitchClass.toSerial pc
+    , octave = Octave.toSerial o
+    }
 
 
 normalize : Int -> Pitch -> Pitch

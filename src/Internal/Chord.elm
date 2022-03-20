@@ -4,6 +4,7 @@ module Internal.Chord exposing
     , toPitchClasses, containsPitchClass
     , detect
     , symbol
+    , Serial, toSerial
     )
 
 {-|
@@ -18,6 +19,8 @@ module Internal.Chord exposing
 
 @docs symbol
 
+@docs Serial, toSerial
+
 -}
 
 import Internal.ChordType as ChordType
@@ -31,6 +34,19 @@ type Chord
 chord : PitchClass.PitchClass -> ChordType.ChordType -> Chord
 chord rootPitchClass theChordType =
     Chord rootPitchClass theChordType
+
+
+type alias Serial =
+    { root : PitchClass.Serial
+    , chordType : ChordType.Serial
+    }
+
+
+toSerial : Chord -> Serial
+toSerial (Chord rootPitchClass theChordType) =
+    { root = PitchClass.toSerial rootPitchClass
+    , chordType = ChordType.toSerial theChordType
+    }
 
 
 root : Chord -> PitchClass.PitchClass
