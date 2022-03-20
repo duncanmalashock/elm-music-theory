@@ -57,7 +57,9 @@ type alias PitchClass =
 
 
 type alias Serial =
-    PitchClass.Serial
+    { letter : String
+    , offset : Int
+    }
 
 
 toSerial : PitchClass.PitchClass -> PitchClass.Serial

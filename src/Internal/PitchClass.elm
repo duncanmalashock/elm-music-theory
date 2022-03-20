@@ -10,6 +10,7 @@ module Internal.PitchClass exposing
     , natural, flat, sharp, doubleFlat, doubleSharp, tripleFlat, tripleSharp
     , pitchClass, semitones, transpose
     , Serial, toSerial
+    , fromSerial
     )
 
 {-|
@@ -51,6 +52,13 @@ toSerial (PitchClass l (Offset o)) =
     { letter = Letter.toString l
     , offset = o
     }
+
+
+fromSerial : Serial -> Maybe PitchClass
+fromSerial serial =
+    Maybe.map2 PitchClass
+        (Letter.fromString serial.letter)
+        (Offset serial.offset |> Just)
 
 
 allInChromaticScale : List PitchClass

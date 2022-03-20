@@ -1,13 +1,13 @@
 module Music.Event exposing
     ( Event, new
-    , Serial, toSerial
+    , Serial, toSerial, fromSerial
     )
 
 {-|
 
 @docs Event, new
 
-@docs Serial, toSerial
+@docs Serial, toSerial, fromSerial
 
 -}
 
@@ -32,6 +32,13 @@ toSerial serializeValue event =
     { at = Duration.toSerial event.at
     , value = serializeValue event.value
     }
+
+
+fromSerial : (serialized -> Maybe a) -> Serial serialized -> Maybe (Event a)
+fromSerial fromValue serial =
+    Maybe.map2 Event
+        (Just (Duration.fromSerial serial.at))
+        (fromValue serial.value)
 
 
 type alias Serial a =

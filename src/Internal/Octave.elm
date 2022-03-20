@@ -7,7 +7,7 @@ module Internal.Octave exposing
     , octave
     , number
     , toInterval, toString
-    , Serial, toSerial
+    , Serial, toSerial, fromSerial
     )
 
 {-|
@@ -27,7 +27,7 @@ module Internal.Octave exposing
 
 @docs toInterval, toString
 
-@docs Serial, toSerial
+@docs Serial, toSerial, fromSerial
 
 -}
 
@@ -50,6 +50,15 @@ type alias Serial =
 toSerial : Octave -> Serial
 toSerial (Octave o) =
     o
+
+
+fromSerial : Serial -> Maybe Octave
+fromSerial int =
+    if int >= 0 && int <= 9 then
+        Just (Octave int)
+
+    else
+        Nothing
 
 
 add : Int -> Octave -> Octave

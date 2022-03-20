@@ -3,7 +3,7 @@ module Internal.Letter exposing
     , semitones
     , nextWithSemitoneCount, prevWithSemitoneCount
     , index
-    , toString
+    , toString, fromString
     )
 
 {-|
@@ -15,7 +15,7 @@ module Internal.Letter exposing
 
 @docs index
 
-@docs toString
+@docs toString, fromString
 
 -}
 
@@ -53,6 +53,34 @@ toString letter =
 
         B ->
             "B"
+
+
+fromString : String -> Maybe Letter
+fromString string =
+    case string of
+        "C" ->
+            Just C
+
+        "D" ->
+            Just D
+
+        "E" ->
+            Just E
+
+        "F" ->
+            Just F
+
+        "G" ->
+            Just G
+
+        "A" ->
+            Just A
+
+        "B" ->
+            Just B
+
+        _ ->
+            Nothing
 
 
 semitones : Letter -> Int

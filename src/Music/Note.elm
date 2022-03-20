@@ -10,7 +10,7 @@ module Music.Note exposing
     , addDuration, setDuration, multiplyDuration
     , join
     , toMidiNoteNumber, toMidiVelocity
-    , Serial, toSerial
+    , Serial, toSerial, fromSerial
     )
 
 {-|
@@ -35,7 +35,7 @@ module Music.Note exposing
 
 @docs toMidiNoteNumber, toMidiVelocity
 
-@docs Serial, toSerial
+@docs Serial, toSerial, fromSerial
 
 -}
 
@@ -61,6 +61,14 @@ toSerial (Note pitch_ duration_ dynamics_) =
     , duration = Duration.toSerial duration_
     , dynamics = Dynamics.toSerial dynamics_
     }
+
+
+fromSerial : Serial -> Maybe Note
+fromSerial serial =
+    Maybe.map3 Note
+        (Pitch.fromSerial serial.pitch)
+        (Duration.fromSerial serial.duration |> Just)
+        (Dynamics.fromSerial serial.dynamics)
 
 
 note : Pitch.Pitch -> Duration.Duration -> Note

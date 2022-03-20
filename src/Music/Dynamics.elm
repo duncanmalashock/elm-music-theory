@@ -6,6 +6,7 @@ module Music.Dynamics exposing
     , louder, softer
     , toMidiVelocity
     , Serial, toSerial
+    , fromSerial
     )
 
 {-|
@@ -36,6 +37,15 @@ type alias Serial =
 toSerial : Dynamics -> Serial
 toSerial (Dynamics d) =
     d
+
+
+fromSerial : Serial -> Maybe Dynamics
+fromSerial int =
+    if int >= 0 && int <= 127 then
+        Just (Dynamics int)
+
+    else
+        Nothing
 
 
 normal : Dynamics

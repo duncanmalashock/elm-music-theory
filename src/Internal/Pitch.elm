@@ -31,7 +31,7 @@ module Internal.Pitch exposing
     , pitch
     , natural, flat, sharp, doubleFlat, doubleSharp
     , fromPitchClass, fromPitchClassWithInt
-    , Serial, toSerial
+    , Serial, toSerial, fromSerial
     )
 
 {-|
@@ -78,7 +78,7 @@ module Internal.Pitch exposing
 @docs natural, flat, sharp, doubleFlat, doubleSharp
 @docs fromPitchClass, fromPitchClassWithInt
 
-@docs Serial, toSerial
+@docs Serial, toSerial, fromSerial
 
 -}
 
@@ -113,6 +113,13 @@ toSerial (Pitch pc o) =
     { pitchClass = PitchClass.toSerial pc
     , octave = Octave.toSerial o
     }
+
+
+fromSerial : Serial -> Maybe Pitch
+fromSerial serial =
+    Maybe.map2 Pitch
+        (PitchClass.fromSerial serial.pitchClass)
+        (Octave.fromSerial serial.octave)
 
 
 normalize : Int -> Pitch -> Pitch
