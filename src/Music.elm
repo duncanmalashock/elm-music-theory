@@ -1,7 +1,7 @@
 module Music exposing
     ( Music, new
     , addNote, removeNote
-    , NoteEvent, PitchEvent, noteEvents
+    , NoteEvent, noteEvents
     )
 
 {-|
@@ -69,10 +69,6 @@ type alias Event a =
 
 type alias NoteEvent =
     Event Note.Note
-
-
-type alias PitchEvent =
-    Event Pitch.Pitch
 
 
 type alias Instrument =
