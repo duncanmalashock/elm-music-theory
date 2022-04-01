@@ -1,16 +1,16 @@
 module Music exposing
     ( Music, new
-    , addNote, removeNote
-    , noteEvents
+    , addNote, removeNote, addNoteEvents, setTempo
+    , noteEvents, tempoEvents
     )
 
 {-|
 
 @docs Music, new
 
-@docs addNote, removeNote
+@docs addNote, removeNote, addNoteEvents, setTempo
 
-@docs NoteEvent noteEvents
+@docs noteEvents, tempoEvents
 
 -}
 
@@ -42,20 +42,29 @@ new :
     , meter : Meter.Meter
     }
     -> Music
-new { tempo, key, meter } =
+new options =
     Music
         { tempoEvents =
-            [ Event.new Duration.zero tempo
+            [ Event.new Duration.zero options.tempo
             ]
         , keyEvents =
-            [ Event.new Duration.zero key
+            [ Event.new Duration.zero options.key
             ]
         , meterEvents =
-            [ Event.new Duration.zero meter
+            [ Event.new Duration.zero options.meter
             ]
         , chordEvents = []
         , noteEvents = []
         }
+
+
+addNoteEvents :
+    List (Event.Event Note.Note)
+    -> Music
+    -> Music
+addNoteEvents eventsToAdd (Music music) =
+    Music
+        { music | noteEvents = music.noteEvents ++ eventsToAdd }
 
 
 toSerial : Music -> Serial
@@ -78,16 +87,14 @@ type alias Serial =
 
 
 addNote :
-    { note : Note.Note
-    , at : Duration.Duration
-    }
+    Event.Event Note.Note
     -> Music
     -> Music
 addNote options (Music music) =
     let
         newNoteEvent : Event.Event Note.Note
         newNoteEvent =
-            Event.new options.at options.note
+            Event.new options.at options.value
     in
     Music
         { music
@@ -97,16 +104,14 @@ addNote options (Music music) =
 
 
 removeNote :
-    { note : Note.Note
-    , at : Duration.Duration
-    }
+    Event.Event Note.Note
     -> Music
     -> Music
 removeNote options (Music music) =
     let
         matches : Event.Event Note.Note -> Bool
         matches current =
-            (current.value == options.note)
+            (current.value == options.value)
                 && (current.at == options.at)
     in
     Music
@@ -116,6 +121,22 @@ removeNote options (Music music) =
         }
 
 
+setTempo :
+    Tempo.Tempo
+    -> Music
+    -> Music
+setTempo newTempo (Music music) =
+    Music
+        { music
+            | tempoEvents = [ Event.new Duration.zero newTempo ]
+        }
+
+
 noteEvents : Music -> List (Event.Event Note.Note)
 noteEvents (Music music) =
     music.noteEvents
+
+
+tempoEvents : Music -> List (Event.Event Tempo.Tempo)
+tempoEvents (Music music) =
+    music.tempoEvents
