@@ -4,6 +4,7 @@ module Music.Meter exposing
     , threeFour, fourFour, sixFour
     , sixEight, nineEight, twelveEight
     , custom
+    , measuresToDuration
     , Serial, toSerial
     )
 
@@ -19,6 +20,8 @@ module Music.Meter exposing
 
 @docs custom
 
+@docs measuresToDuration
+
 @docs Serial, toSerial
 
 -}
@@ -31,6 +34,13 @@ type Meter
         { beatsInMeasure : Int
         , beatUnit : Duration
         }
+
+
+measuresToDuration : Int -> Meter -> Duration
+measuresToDuration numMeasures (Meter details) =
+    Duration.multiplyByInt
+        (numMeasures * details.beatsInMeasure)
+        details.beatUnit
 
 
 type alias Serial =

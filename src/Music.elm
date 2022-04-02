@@ -33,6 +33,7 @@ type alias Details =
     , meterEvents : List (Event.Event Meter.Meter)
     , chordEvents : List (Event.Event Chord.Chord)
     , noteEvents : List (Event.Event Note.Note)
+    , duration : Duration.Duration
     }
 
 
@@ -40,6 +41,7 @@ new :
     { tempo : Tempo.Tempo
     , key : Key.Key
     , meter : Meter.Meter
+    , measureLength : Int
     }
     -> Music
 new options =
@@ -55,6 +57,7 @@ new options =
             ]
         , chordEvents = []
         , noteEvents = []
+        , duration = Meter.measuresToDuration options.measureLength options.meter
         }
 
 
