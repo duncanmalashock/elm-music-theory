@@ -1,6 +1,6 @@
 module Music exposing
     ( Music, new
-    , addNote, removeNote, addNoteEvents, setTempo
+    , addNote, removeNote, addNoteEvents, setInitialTempo
     , noteEvents, tempoEvents
     )
 
@@ -8,7 +8,7 @@ module Music exposing
 
 @docs Music, new
 
-@docs addNote, removeNote, addNoteEvents, setTempo
+@docs addNote, removeNote, addNoteEvents, setInitialTempo
 
 @docs noteEvents, tempoEvents
 
@@ -28,12 +28,11 @@ type Music
 
 
 type alias Details =
-    { tempoEvents : List (Event.Event Tempo.Tempo)
-    , keyEvents : List (Event.Event Key.Key)
-    , meterEvents : List (Event.Event Meter.Meter)
+    { tempoEvents : ( Tempo.Tempo, List (Event.Event Tempo.Tempo) )
+    , keyEvents : ( Key.Key, List (Event.Event Key.Key) )
+    , measures : ( Meter.Meter, List (Event.Event Meter.Meter) )
     , chordEvents : List (Event.Event Chord.Chord)
     , noteEvents : List (Event.Event Note.Note)
-    , duration : Duration.Duration
     }
 
 
@@ -41,23 +40,19 @@ new :
     { tempo : Tempo.Tempo
     , key : Key.Key
     , meter : Meter.Meter
-    , measureLength : Int
+    , measures : Int
     }
     -> Music
 new options =
     Music
         { tempoEvents =
-            [ Event.new Duration.zero options.tempo
-            ]
+            ( options.tempo, [] )
         , keyEvents =
-            [ Event.new Duration.zero options.key
-            ]
-        , meterEvents =
-            [ Event.new Duration.zero options.meter
-            ]
+            ( options.key, [] )
+        , measures =
+            ( options.meter, [] )
         , chordEvents = []
         , noteEvents = []
-        , duration = Meter.measuresToDuration options.measureLength options.meter
         }
 
 
@@ -72,18 +67,27 @@ addNoteEvents eventsToAdd (Music music) =
 
 toSerial : Music -> Serial
 toSerial (Music music) =
-    { tempoEvents = List.map (Event.toSerial Tempo.toSerial) music.tempoEvents
-    , keyEvents = List.map (Event.toSerial Key.toSerial) music.keyEvents
-    , meterEvents = List.map (Event.toSerial Meter.toSerial) music.meterEvents
+    { tempoEvents =
+        case music.tempoEvents of
+            ( head, tail ) ->
+                ( Tempo.toSerial head, List.map (Event.toSerial Tempo.toSerial) tail )
+    , keyEvents =
+        case music.keyEvents of
+            ( head, tail ) ->
+                ( Key.toSerial head, List.map (Event.toSerial Key.toSerial) tail )
+    , measures =
+        case music.measures of
+            ( head, tail ) ->
+                ( Meter.toSerial head, List.map (Event.toSerial Meter.toSerial) tail )
     , chordEvents = List.map (Event.toSerial Chord.toSerial) music.chordEvents
     , noteEvents = List.map (Event.toSerial Note.toSerial) music.noteEvents
     }
 
 
 type alias Serial =
-    { tempoEvents : List (Event.Serial Tempo.Serial)
-    , keyEvents : List (Event.Serial Key.Serial)
-    , meterEvents : List (Event.Serial Meter.Serial)
+    { tempoEvents : ( Tempo.Serial, List (Event.Serial Tempo.Serial) )
+    , keyEvents : ( Key.Serial, List (Event.Serial Key.Serial) )
+    , measures : ( Meter.Serial, List (Event.Serial Meter.Serial) )
     , chordEvents : List (Event.Serial Chord.Serial)
     , noteEvents : List (Event.Serial Note.Serial)
     }
@@ -124,14 +128,17 @@ removeNote options (Music music) =
         }
 
 
-setTempo :
+setInitialTempo :
     Tempo.Tempo
     -> Music
     -> Music
-setTempo newTempo (Music music) =
+setInitialTempo newTempo (Music music) =
     Music
         { music
-            | tempoEvents = [ Event.new Duration.zero newTempo ]
+            | tempoEvents =
+                case music.tempoEvents of
+                    ( _, tail ) ->
+                        ( newTempo, tail )
         }
 
 
@@ -142,4 +149,6 @@ noteEvents (Music music) =
 
 tempoEvents : Music -> List (Event.Event Tempo.Tempo)
 tempoEvents (Music music) =
-    music.tempoEvents
+    case music.tempoEvents of
+        ( head, tail ) ->
+            [ Event.new Duration.zero head ] ++ tail
