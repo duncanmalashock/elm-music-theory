@@ -1,11 +1,14 @@
 module Music.Event exposing
     ( Event, new
+    , sort
     , Serial, toSerial, fromSerial
     )
 
 {-|
 
 @docs Event, new
+
+@docs sort
 
 @docs Serial, toSerial, fromSerial
 
@@ -25,6 +28,15 @@ new at value =
     { at = at
     , value = value
     }
+
+
+sort : List (Event a) -> List (Event a)
+sort events =
+    List.sortBy
+        (\e ->
+            Duration.toFloat e.at
+        )
+        events
 
 
 toSerial : (a -> serialized) -> Event a -> Serial serialized

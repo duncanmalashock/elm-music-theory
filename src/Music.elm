@@ -2,6 +2,7 @@ module Music exposing
     ( Music, new
     , addNote, removeNote, addNoteEvents, setInitialTempo
     , noteEvents, tempoEvents
+    , Measure, measures
     )
 
 {-|
@@ -12,6 +13,8 @@ module Music exposing
 
 @docs noteEvents, tempoEvents
 
+@docs Measure, measures
+
 -}
 
 import Music.Chord as Chord
@@ -21,6 +24,7 @@ import Music.Key as Key
 import Music.Meter as Meter
 import Music.Note as Note
 import Music.Tempo as Tempo
+import Util.Basic
 
 
 type Music
@@ -54,6 +58,61 @@ new options =
         , chordEvents = []
         , noteEvents = []
         }
+        |> Util.Basic.applyNTimes (options.measures - 1) addMeasureAtEnd
+
+
+addMeasureAtEnd : Music -> Music
+addMeasureAtEnd (Music music) =
+    let
+        start : Duration.Duration
+        start =
+            duration (Music music)
+
+        meter : Meter.Meter
+        meter =
+            meterAtEnd (Music music)
+
+        newMeasure : Event.Event Meter.Meter
+        newMeasure =
+            Event.new start meter
+    in
+    Music
+        { music
+            | measures =
+                case music.measures of
+                    ( head, tail ) ->
+                        ( head, tail ++ [ newMeasure ] )
+        }
+
+
+meterAtEnd : Music -> Meter.Meter
+meterAtEnd (Music music) =
+    case music.measures of
+        ( head, [] ) ->
+            head
+
+        ( head, tail ) ->
+            tail
+                |> List.map .value
+                |> List.reverse
+                |> List.head
+                |> Maybe.withDefault head
+
+
+duration : Music -> Duration.Duration
+duration (Music music) =
+    let
+        lastMeasure : Event.Event Meter.Meter
+        lastMeasure =
+            case music.measures of
+                ( head, tail ) ->
+                    Event.sort tail
+                        |> List.reverse
+                        |> List.head
+                        |> Maybe.withDefault (Event.new Duration.zero head)
+    in
+    Meter.toDuration lastMeasure.value
+        |> Duration.add lastMeasure.at
 
 
 addNoteEvents :
@@ -152,3 +211,49 @@ tempoEvents (Music music) =
     case music.tempoEvents of
         ( head, tail ) ->
             [ Event.new Duration.zero head ] ++ tail
+
+
+type alias Measure =
+    { start : Duration.Duration
+    , meterChange : Maybe Meter.Meter
+    }
+
+
+measures : Music -> List Measure
+measures (Music music) =
+    case music.measures of
+        ( head, tail ) ->
+            measuresHelp
+                { previous = Nothing
+                , remaining = Event.new Duration.zero head :: tail
+                }
+
+
+measuresHelp :
+    { previous : Maybe (Event.Event Meter.Meter)
+    , remaining : List (Event.Event Meter.Meter)
+    }
+    -> List Measure
+measuresHelp { previous, remaining } =
+    let
+        eventToMeasure : Event.Event Meter.Meter -> Measure
+        eventToMeasure event =
+            { start = event.at
+            , meterChange =
+                if Just event.value == Maybe.map .value previous then
+                    Nothing
+
+                else
+                    Just event.value
+            }
+    in
+    case remaining of
+        [] ->
+            []
+
+        head :: tail ->
+            eventToMeasure head
+                :: measuresHelp
+                    { previous = Just head
+                    , remaining = tail
+                    }
