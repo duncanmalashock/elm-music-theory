@@ -215,7 +215,7 @@ tempoEvents (Music music) =
 
 type alias Measure =
     { start : Duration.Duration
-    , meterChange : Maybe Meter.Meter
+    , meter : Meter.Meter
     }
 
 
@@ -239,12 +239,7 @@ measuresHelp { previous, remaining } =
         eventToMeasure : Event.Event Meter.Meter -> Measure
         eventToMeasure event =
             { start = event.at
-            , meterChange =
-                if Just event.value == Maybe.map .value previous then
-                    Nothing
-
-                else
-                    Just event.value
+            , meter = event.value
             }
     in
     case remaining of

@@ -4,6 +4,7 @@ module Music.Meter exposing
     , threeFour, fourFour, sixFour
     , sixEight, nineEight, twelveEight
     , custom
+    , beatsPerMeasure
     , toDuration
     , Serial, toSerial
     )
@@ -19,6 +20,8 @@ module Music.Meter exposing
 @docs sixEight, nineEight, twelveEight
 
 @docs custom
+
+@docs beatsPerMeasure
 
 @docs toDuration
 
@@ -54,6 +57,11 @@ toSerial (Meter details) =
     { beatsInMeasure = details.beatsInMeasure
     , beatUnit = Duration.toSerial details.beatUnit
     }
+
+
+beatsPerMeasure : Meter -> Int
+beatsPerMeasure (Meter details) =
+    details.beatsInMeasure
 
 
 twoTwo : Meter
